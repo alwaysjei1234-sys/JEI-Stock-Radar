@@ -286,12 +286,16 @@ def main():
     risk+=clamp(-median,0,5)*8
     risk+=clamp(down5/max(1,len(pcts))*100,0,25)*1.4
     risk+=clamp(limit_down,0,50)*.8
+    divergence=(taiex_pct or 0)>1.0 and adv_ratio<.45
+    if divergence:risk+=12
+    if (taiex_pct or 0)>1.0 and median<0:risk+=4
+    if adv_ratio<.40:risk+=5
     if adv_ratio>.58 and median>.4:risk-=6
     risk=int(round(clamp(risk,0,100)))
 
     if risk>=80:level,label,cash="red","高風險防守","70%↑"
-    elif risk>=65:level,label,cash="orange","風險升高","50%–70%"
-    elif risk>=45:level,label,cash="yellow","震盪警戒","30%–50%"
+    elif risk>=65:level,label,cash="orange",("內部轉弱警戒" if divergence else "風險升高"),"50%–70%"
+    elif risk>=45:level,label,cash="yellow",("權值撐盤警戒" if divergence else "震盪警戒"),"30%–50%"
     else:level,label,cash="green","正常","20%–30%"
 
     sectors,stock_sector,sector_scores=build_sector_stats(by_code)
@@ -375,7 +379,8 @@ def main():
         "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
         "risk":{"level":level,"label":label,"score":risk,"cash":cash,"reasons":reasons,
-                "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down},
+                "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down,
+                "divergence":divergence},
         "market":{"status":market_status,"mode":("盤中即時" if live_count>=100 else "日線快照"),
                   "live_count":live_count,
                   "brief":f"{'盤中即時' if live_count>=100 else '日線快照'}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
