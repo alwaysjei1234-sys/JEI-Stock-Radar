@@ -60,7 +60,7 @@ def fetch_institutional():
             return None
         for row in data:
             raw_code=str(row[0]).strip() if row else ""
-            m=re.search(r"(?<!\\d)(\\d{4,6})(?!\\d)",raw_code)
+            m=re.search(r"([0-9A-Z]{4,8})",raw_code.upper())
             if not m: continue
             code=m.group(1)
             foreign=gi(row,["外陸資買賣超股數(不含外資自營商)","外資及陸資買賣超股數(不含外資自營商)"])
@@ -83,13 +83,13 @@ def fetch_institutional():
         debug["tpex_first"]=rows[0] if rows else None
         for r in rows:
             raw_code=str(pick(r,"SecuritiesCompanyCode","SecuritiesCompanyCode","SecuritiesCode","Code","股票代號","證券代號") or "").strip()
-            m=re.search(r"(?<!\\d)(\\d{4,6})(?!\\d)",raw_code)
+            m=re.search(r"([0-9A-Z]{4,8})",raw_code.upper())
             if not m: continue
             code=m.group(1)
-            foreign=num(pick(r,"ForeignInvestorsNetBuySell","ForeignInvestmentNetBuySell","ForeignInvestorsBuySell"))
-            trust=num(pick(r,"InvestmentTrustNetBuySell","InvestmentTrustBuySell"))
-            dealer=num(pick(r,"DealerNetBuySell","DealerBuySell"))
-            total=num(pick(r,"TotalNetBuySell","ThreeInstitutionalInvestorsNetBuySell"))
+            foreign=num(pick(r,"ForeignInvestorsInclude MainlandAreaInvestors-Difference","Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Difference","ForeignDealers-Difference"))
+            trust=num(pick(r,"SecuritiesInvestmentTrustCompanies-Difference","InvestmentTrustNetBuySell","InvestmentTrustBuySell"))
+            dealer=num(pick(r,"Dealers-Difference","DealerNetBuySell","DealerBuySell"))
+            total=num(pick(r,"TotalDifference","TotalNetBuySell","ThreeInstitutionalInvestorsNetBuySell"))
             out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TPEx OpenAPI"}
     except Exception as e: errs.append("TPEx法人:"+str(e))
     if not out and not errs: errs.append("法人來源有回應，但未解析出任何股票代碼")
@@ -325,6 +325,7 @@ def main():
     stocks=[x for x in rows if stock_only(x)]
     by_code={x["code"]:x for x in stocks}
     institutional,inst_errors,inst_debug=fetch_institutional()
+    institutional={k:v for k,v in institutional.items() if k in by_code}
     if inst_errors: errors.extend(inst_errors)
     if not institutional: errors.append("法人籌碼:官方資料暫無有效逐檔資料，已停用法人判讀")
 
