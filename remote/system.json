@@ -1,21 +1,16 @@
 {
   "schema": 4,
-  "updated_at": "2026-10-05 15:34",
+  "updated_at": "2026-10-05 15:36",
   "data_date": "1151002",
   "source_data_date": "1151002",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
   "risk": {
     "level": "green",
-    "label": "正常",
+    "label": "資料過期，暫停判讀",
     "score": 35,
     "cash": "20%–30%",
     "reasons": [
-      "加權指數 +0.25%",
-      "上漲 941 / 下跌 841（廣度 52.8%）",
-      "市場中位數 +0.00%",
-      "跌逾3% 47｜跌逾5% 12｜跌停附近 6",
-      "法人偏賣 49.3%｜3日均 49.3%｜5日均 49.3%｜淨額 +250,825張",
-      "最強族群 光通訊/CPO 100分"
+      "行情來源日期 1151002，不是今天；今日風險與選股訊號暫停判讀"
     ],
     "breadth": 52.8,
     "median_pct": 0.0,
@@ -29,7 +24,7 @@
     "institutional_withdrawal": false
   },
   "market": {
-    "status": "震盪",
+    "status": "資料過期",
     "mode": "資料過期",
     "live_count": 0,
     "live_coverage_pct": 0.0,
@@ -37,294 +32,7 @@
     "stale": true,
     "brief": "資料過期多因子市場｜加權 +0.25%｜廣度 52.8%｜中位數 +0.00%｜跌逾5% 12｜JEI 每15分鐘更新"
   },
-  "sectors": [
-    {
-      "name": "光通訊/CPO",
-      "score": 100,
-      "avg_pct": 6.96,
-      "median_pct": 5.52,
-      "breadth": 100.0,
-      "members": 9,
-      "value_billion": 381.8,
-      "leaders": [
-        {
-          "code": "3081",
-          "name": "聯亞",
-          "pct": 9.96
-        },
-        {
-          "code": "6442",
-          "name": "光聖",
-          "pct": 9.8
-        },
-        {
-          "code": "4908",
-          "name": "前鼎",
-          "pct": 9.78
-        }
-      ]
-    },
-    {
-      "name": "矽晶圓/材料",
-      "score": 94,
-      "avg_pct": 5.2,
-      "median_pct": 4.73,
-      "breadth": 100.0,
-      "members": 5,
-      "value_billion": 530.6,
-      "leaders": [
-        {
-          "code": "6488",
-          "name": "環球晶",
-          "pct": 9.68
-        },
-        {
-          "code": "3016",
-          "name": "嘉晶",
-          "pct": 7.44
-        },
-        {
-          "code": "5483",
-          "name": "中美晶",
-          "pct": 4.73
-        }
-      ]
-    },
-    {
-      "name": "PCB/載板",
-      "score": 92,
-      "avg_pct": 4.24,
-      "median_pct": 4.22,
-      "breadth": 100.0,
-      "members": 9,
-      "value_billion": 1332.6,
-      "leaders": [
-        {
-          "code": "3037",
-          "name": "欣興",
-          "pct": 7.41
-        },
-        {
-          "code": "6213",
-          "name": "聯茂",
-          "pct": 6.39
-        },
-        {
-          "code": "6274",
-          "name": "台燿",
-          "pct": 5.54
-        }
-      ]
-    },
-    {
-      "name": "功率半導體",
-      "score": 84,
-      "avg_pct": 3.79,
-      "median_pct": 3.55,
-      "breadth": 87.5,
-      "members": 8,
-      "value_billion": 284.5,
-      "leaders": [
-        {
-          "code": "3707",
-          "name": "漢磊",
-          "pct": 9.94
-        },
-        {
-          "code": "3105",
-          "name": "穩懋",
-          "pct": 9.85
-        },
-        {
-          "code": "5425",
-          "name": "台半",
-          "pct": 4.62
-        }
-      ]
-    },
-    {
-      "name": "被動元件",
-      "score": 81,
-      "avg_pct": 3.16,
-      "median_pct": 2.59,
-      "breadth": 100.0,
-      "members": 8,
-      "value_billion": 991.6,
-      "leaders": [
-        {
-          "code": "2492",
-          "name": "華新科",
-          "pct": 9.88
-        },
-        {
-          "code": "2327",
-          "name": "國巨*",
-          "pct": 3.99
-        },
-        {
-          "code": "6127",
-          "name": "九豪",
-          "pct": 2.82
-        }
-      ]
-    },
-    {
-      "name": "半導體設備/測試",
-      "score": 79,
-      "avg_pct": 2.75,
-      "median_pct": 2.04,
-      "breadth": 100.0,
-      "members": 8,
-      "value_billion": 117.4,
-      "leaders": [
-        {
-          "code": "6187",
-          "name": "萬潤",
-          "pct": 6.27
-        },
-        {
-          "code": "6223",
-          "name": "旺矽",
-          "pct": 5.57
-        },
-        {
-          "code": "6510",
-          "name": "精測",
-          "pct": 2.33
-        }
-      ]
-    },
-    {
-      "name": "封測",
-      "score": 78,
-      "avg_pct": 3.88,
-      "median_pct": 2.86,
-      "breadth": 75.0,
-      "members": 4,
-      "value_billion": 346.6,
-      "leaders": [
-        {
-          "code": "8150",
-          "name": "南茂",
-          "pct": 9.96
-        },
-        {
-          "code": "6239",
-          "name": "力成",
-          "pct": 5.3
-        },
-        {
-          "code": "3711",
-          "name": "日月光投控",
-          "pct": 0.42
-        }
-      ]
-    },
-    {
-      "name": "航運",
-      "score": 67,
-      "avg_pct": 0.94,
-      "median_pct": 0.84,
-      "breadth": 100.0,
-      "members": 3,
-      "value_billion": 25.6,
-      "leaders": [
-        {
-          "code": "2609",
-          "name": "陽明",
-          "pct": 1.53
-        },
-        {
-          "code": "2603",
-          "name": "長榮",
-          "pct": 0.84
-        },
-        {
-          "code": "2615",
-          "name": "萬海",
-          "pct": 0.44
-        }
-      ]
-    },
-    {
-      "name": "IC設計",
-      "score": 60,
-      "avg_pct": 1.75,
-      "median_pct": 0.0,
-      "breadth": 42.9,
-      "members": 7,
-      "value_billion": 470.2,
-      "leaders": [
-        {
-          "code": "4919",
-          "name": "新唐",
-          "pct": 7.24
-        },
-        {
-          "code": "6531",
-          "name": "愛普*",
-          "pct": 7.18
-        },
-        {
-          "code": "3661",
-          "name": "世芯-KY",
-          "pct": 1.2
-        }
-      ]
-    },
-    {
-      "name": "記憶體/儲存",
-      "score": 56,
-      "avg_pct": 0.36,
-      "median_pct": 0.64,
-      "breadth": 66.7,
-      "members": 6,
-      "value_billion": 407.1,
-      "leaders": [
-        {
-          "code": "2408",
-          "name": "南亞科",
-          "pct": 1.35
-        },
-        {
-          "code": "2337",
-          "name": "旺宏",
-          "pct": 0.83
-        },
-        {
-          "code": "8271",
-          "name": "宇瞻",
-          "pct": 0.75
-        }
-      ]
-    },
-    {
-      "name": "AI伺服器/散熱",
-      "score": 44,
-      "avg_pct": -0.28,
-      "median_pct": -1.14,
-      "breadth": 25.0,
-      "members": 8,
-      "value_billion": 552.7,
-      "leaders": [
-        {
-          "code": "2345",
-          "name": "智邦",
-          "pct": 3.42
-        },
-        {
-          "code": "2059",
-          "name": "川湖",
-          "pct": 2.62
-        },
-        {
-          "code": "2382",
-          "name": "廣達",
-          "pct": -0.6
-        }
-      ]
-    }
-  ],
+  "sectors": [],
   "stock_sectors": {
     "2345": "AI伺服器/散熱",
     "2382": "AI伺服器/散熱",
@@ -4715,14 +4423,14 @@
       "total": -6000.0,
       "source": "TWSE T86"
     },
-    "6581": {
+    "1463": {
       "foreign": -6000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -6000.0,
       "source": "TWSE T86"
     },
-    "1463": {
+    "6581": {
       "foreign": -6000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -4869,14 +4577,14 @@
       "total": -8000.0,
       "source": "TWSE T86"
     },
-    "2380": {
+    "1443": {
       "foreign": -8000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -8000.0,
       "source": "TWSE T86"
     },
-    "1443": {
+    "2380": {
       "foreign": -8000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -5471,14 +5179,14 @@
       "total": -17000.0,
       "source": "TWSE T86"
     },
-    "1806": {
+    "2438": {
       "foreign": -17000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -17000.0,
       "source": "TWSE T86"
     },
-    "2438": {
+    "1806": {
       "foreign": -17000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13583,52 +13291,16 @@
   "holdings": {},
   "priority": [
     {
-      "title": "市場風控",
-      "note": "加權指數 +0.25%｜上漲 941 / 下跌 841（廣度 52.8%）｜市場中位數 +0.00%｜跌逾3% 47｜跌逾5% 12｜跌停附近 6",
-      "action": "正常"
-    },
-    {
-      "title": "族群主線：光通訊/CPO",
-      "note": "熱度 100｜平均 +6.96%｜上漲比 100.0%",
-      "action": "主線"
+      "title": "行情來源過期",
+      "note": "官方來源日期 1151002，等待今日資料後再產生主攻／下一棒／妖股與族群主線",
+      "action": "暫停判讀"
     }
   ],
   "attack": [],
   "next": [],
   "monster": [],
   "rotate": [],
-  "flow": [
-    {
-      "icon": "↗",
-      "name": "市場廣度",
-      "note": "上漲 941 / 下跌 841｜廣度 52.8%",
-      "score": 53
-    },
-    {
-      "icon": "⚠",
-      "name": "尾端賣壓",
-      "note": "跌逾3% 47｜跌逾5% 12｜跌停附近 6",
-      "score": 12
-    },
-    {
-      "icon": "🔥",
-      "name": "強勢動能",
-      "note": "漲逾5% 111｜漲逾8% 59",
-      "score": 111
-    },
-    {
-      "icon": "◎",
-      "name": "市場中位數",
-      "note": "排除權值股後觀察整體溫度",
-      "score": 0.0
-    },
-    {
-      "icon": "🏦",
-      "name": "法人籌碼廣度",
-      "note": "偏賣 49.3%｜合計 +250,825張",
-      "score": 49.3
-    }
-  ],
+  "flow": [],
   "backtest": {
     "hit3": null,
     "hit5": null,
