@@ -1,6 +1,6 @@
 {
   "schema": 4,
-  "updated_at": "2026-10-05 14:39",
+  "updated_at": "2026-10-05 14:41",
   "data_date": "1151002",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
   "risk": {
@@ -13,13 +13,16 @@
       "上漲 941 / 下跌 841（廣度 52.8%）",
       "市場中位數 +0.00%",
       "跌逾3% 47｜跌逾5% 12｜跌停附近 6",
+      "法人偏賣 49.3%｜淨額 +250,825張",
       "最強族群 光通訊/CPO 100分"
     ],
     "breadth": 52.8,
     "median_pct": 0.0,
     "down5": 12,
     "limit_down": 6,
-    "divergence": false
+    "divergence": false,
+    "institutional_sell_ratio": 49.3,
+    "institutional_net_lots": 250825
   },
   "market": {
     "status": "震盪",
@@ -4705,14 +4708,14 @@
       "total": -6000.0,
       "source": "TWSE T86"
     },
-    "1463": {
+    "6581": {
       "foreign": -6000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -6000.0,
       "source": "TWSE T86"
     },
-    "6581": {
+    "1463": {
       "foreign": -6000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -4859,14 +4862,14 @@
       "total": -8000.0,
       "source": "TWSE T86"
     },
-    "1443": {
+    "2380": {
       "foreign": -8000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -8000.0,
       "source": "TWSE T86"
     },
-    "2380": {
+    "1443": {
       "foreign": -8000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -5769,14 +5772,14 @@
       "total": -28000.0,
       "source": "TWSE T86"
     },
-    "2477": {
+    "1531": {
       "foreign": -28000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -28000.0,
       "source": "TWSE T86"
     },
-    "1531": {
+    "2477": {
       "foreign": -28000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14233,6 +14236,12 @@
       "name": "市場中位數",
       "note": "排除權值股後觀察整體溫度",
       "score": 0.0
+    },
+    {
+      "icon": "🏦",
+      "name": "法人籌碼廣度",
+      "note": "偏賣 49.3%｜合計 +250,825張",
+      "score": 49.3
     }
   ],
   "backtest": {
