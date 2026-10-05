@@ -282,11 +282,24 @@ public class MainActivity extends Activity {
                         JSONObject part = new JSONObject(httpGet(url));
                         JSONArray rows = part.optJSONArray("msgArray");
                         if (rows != null) {
+                            JSONArray batchClean = new JSONArray();
                             for (int k = 0; k < rows.length(); k++) {
                                 JSONObject row = rows.optJSONObject(k);
-                                if (row != null && row.optString("c", "").length() > 0) merged.put(row);
+                                if (row != null && row.optString("c", "").length() > 0) {
+                                    merged.put(row);
+                                    batchClean.put(row);
+                                }
                             }
                             okBatches++;
+                            if (batchClean.length() > 0) {
+                                JSONObject progress = new JSONObject();
+                                progress.put("msgArray", batchClean);
+                                progress.put("jeiRequested", codes.size());
+                                progress.put("jeiReceivedTotal", merged.length());
+                                progress.put("jeiDone", end >= codes.size());
+                                progress.put("jeiAt", System.currentTimeMillis());
+                                jsCall("onMarketBatch", progress.toString());
+                            }
                         }
                         if (end < codes.size()) Thread.sleep(90);
                     } catch (Exception ignored) { }
