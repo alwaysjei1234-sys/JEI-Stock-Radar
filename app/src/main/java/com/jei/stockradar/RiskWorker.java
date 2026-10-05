@@ -1,6 +1,7 @@
 package com.jei.stockradar;
 
 import android.Manifest;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,7 +11,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
-import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -100,7 +100,7 @@ public class RiskWorker extends Worker {
                     severity >= 3 ? "🔴 JEI 大逃殺警報：" + label :
                     severity == 2 ? "🟠 JEI 市場風險升高：" + label :
                     "🟡 JEI 市場轉弱：" + label,
-                    body, NotificationCompat.PRIORITY_HIGH);
+                    body, Notification.PRIORITY_HIGH);
         }
 
         p.edit()
@@ -199,7 +199,7 @@ public class RiskWorker extends Worker {
             if (alerts.length() > max) body.append("｜另 ").append(alerts.length() - max).append(" 檔");
             notify("jei_risk", 7303,
                     "⚠ JEI 持股風控警示（" + alerts.length() + " 檔）",
-                    body.toString(), NotificationCompat.PRIORITY_HIGH);
+                    body.toString(), Notification.PRIORITY_HIGH);
         }
     }
 
@@ -227,7 +227,7 @@ public class RiskWorker extends Worker {
 
         notify("jei_system", 7302, "JEI 選股雷達有新版",
                 "版本 " + j.optString("versionName", "") + " 已可下載更新",
-                NotificationCompat.PRIORITY_DEFAULT);
+                Notification.PRIORITY_DEFAULT);
         p.edit().putInt("bg_update_notified", remote).apply();
     }
 
@@ -261,11 +261,11 @@ public class RiskWorker extends Worker {
         PendingIntent pi = PendingIntent.getActivity(c, 0, i,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        NotificationCompat.Builder b = new NotificationCompat.Builder(c, channel)
+        Notification.Builder b = new Notification.Builder(c, channel)
                 .setSmallIcon(com.jei.stockradar.R.drawable.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(body)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setStyle(new Notification.BigTextStyle().bigText(body))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .setPriority(priority);
