@@ -536,6 +536,15 @@ def main():
         errors.append(f"盤中即時覆蓋不足 {live_count}/{len(stocks)}，候選榜暫停避免誤判")
         attack=[];next_list=[];monster=[];rotate=[]
         priority=[x for x in priority if x.get("action") not in ("主攻#1","下一棒#1")]
+    if stale_source:
+        # Old market breadth/sector scores are retained only as raw historical context;
+        # do not surface them as today's actionable market state.
+        market_status="資料過期"
+        label="資料過期，暫停判讀"
+        priority=[{"title":"行情來源過期","note":f"官方來源日期 {source_data_date or '未知'}，等待今日資料後再產生主攻／下一棒／妖股與族群主線","action":"暫停判讀"}]
+        reasons=[f"行情來源日期 {source_data_date or '未知'}，不是今天；今日風險與選股訊號暫停判讀"]
+        sectors=[]
+        flow=[]
     date_key=now.strftime("%Y-%m-%d")
     history=load_history()
     history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],{"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
