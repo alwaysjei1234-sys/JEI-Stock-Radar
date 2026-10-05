@@ -399,10 +399,34 @@ def main():
     if not institutional: errors.append("法人籌碼:官方資料暫無有效逐檔資料，已停用法人判讀")
 
     taiex_pct=None
-    for x in idx_raw if isinstance(idx_raw,list) else []:
-        if str(x.get("指數","")).strip()=="發行量加權股價指數":
-            p=num(x.get("漲跌百分比"));sign=str(x.get("漲跌","")).strip()
-            taiex_pct=(-abs(p) if sign=="-" and p is not None else p);break
+    # Prefer the same-day official MI_INDEX summary when the daily OpenAPI index feed lags.
+    if now.weekday()<5:
+        try:
+            ij=fetch_json(TWSE_DAILY+"?"+urllib.parse.urlencode({"date":today_ymd,"type":"ALL","response":"json"}))
+            for t in (ij.get("tables",[]) if isinstance(ij,dict) else []):
+                fields=[re.sub(r"<[^>]+>","",str(v)).strip() for v in t.get("fields",[])]
+                if "指數" not in fields or not t.get("data"):continue
+                fi={v:i for i,v in enumerate(fields)}
+                for row in t.get("data",[]):
+                    name=str(row[fi["指數"]]).strip() if fi.get("指數") is not None and fi["指數"]<len(row) else ""
+                    if name!="發行量加權股價指數":continue
+                    def rc(*names):
+                        for n in names:
+                            i=fi.get(n)
+                            if i is not None and i<len(row):return row[i]
+                        return None
+                    p=num(rc("漲跌百分比(%)","漲跌百分比"))
+                    if p is not None:
+                        sign=str(rc("漲跌(+/-)","漲跌") or "")
+                        taiex_pct=-abs(p) if ("-" in sign or "－" in sign) else p
+                    break
+                if taiex_pct is not None:break
+        except Exception as e:errors.append("TWSE當日指數:"+str(e))
+    if taiex_pct is None:
+        for x in idx_raw if isinstance(idx_raw,list) else []:
+            if str(x.get("指數","")).strip()=="發行量加權股價指數":
+                p=num(x.get("漲跌百分比"));sign=str(x.get("漲跌","")).strip()
+                taiex_pct=(-abs(p) if sign=="-" and p is not None else p);break
     if taiex_live is not None:taiex_pct=taiex_live
 
     pcts=[x["pct"] for x in stocks if x["pct"] is not None]
