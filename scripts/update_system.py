@@ -51,6 +51,22 @@ def fetch_mis_channels(channels):
         j=json.loads(r.read().decode("utf-8-sig"))
     return j.get("msgArray",[]) if isinstance(j,dict) else []
 
+def quote_num(m,key):
+    raw=str(m.get(key,"") or "")
+    for part in raw.split("_"):
+        v=num(part)
+        if v is not None and v>0:return v
+    return None
+
+def live_price(m):
+    z=num(m.get("z"))
+    if z is not None and z>0:return z
+    b=quote_num(m,"b");a=quote_num(m,"a")
+    if b and a:return (b+a)/2.0
+    if b:return b
+    if a:return a
+    return num(m.get("y"))
+
 def enrich_live(rows):
     by_code={x["code"]:x for x in rows}
     channels=[]
@@ -70,21 +86,22 @@ def enrich_live(rows):
         code=str(m.get("c","")).strip()
         x=by_code.get(code)
         if not x:continue
-        prev=num(m.get("y"));price=num(m.get("z"))
-        if price is None or price<=0:price=prev
+        prev=num(m.get("y"));price=live_price(m)
         if price is None or price<=0 or prev is None or prev<=0:continue
         x["close"]=price;x["change"]=price-prev;x["pct"]=(price-prev)/prev*100.0
         o=num(m.get("o"));h=num(m.get("h"));l=num(m.get("l"));v=num(m.get("v"))
         if o and o>0:x["open"]=o
         if h and h>0:x["high"]=h
         if l and l>0:x["low"]=l
-        if v is not None:x["live_volume"]=v
+        if v is not None:
+            x["live_volume"]=v
+            if v>0:x["value"]=v*1000.0*price
         x["live"]=True;got+=1
     taiex=None
     try:
         idx=fetch_mis_channels(["tse_t00.tw"])
         if idx:
-            y=num(idx[0].get("y"));z=num(idx[0].get("z"))
+            y=num(idx[0].get("y"));z=live_price(idx[0])
             if z and y and y>0:taiex=(z-y)/y*100.0
     except Exception as e:errors.append("TAIEX:"+str(e))
     return rows,got,taiex,errors
@@ -323,6 +340,8 @@ def main():
     taiex_txt="--" if taiex_pct is None else f"{taiex_pct:+.2f}%"
     if risk>=80:market_status="紅燈防守"
     elif risk>=65:market_status="偏空警戒"
+    elif (taiex_pct or 0)>1.0 and adv_ratio<.45:market_status="權值強／中小型弱"
+    elif (taiex_pct or 0)<-1.0 and adv_ratio>.55:market_status="指數弱／個股抗跌"
     elif (taiex_pct or 0)>.6 and adv_ratio>.56:market_status="偏多"
     elif (taiex_pct or 0)<-.8 or adv_ratio<.42:market_status="偏空"
     else:market_status="震盪"
