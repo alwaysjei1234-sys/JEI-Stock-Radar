@@ -334,9 +334,16 @@ def main():
         if -.8<=s["pct"]<=4.8 and position(s)>=.62 and (s["open"] is None or s["close"]>=s["open"]*.995):
             r5,r10,r20,hp=recent_heat(s)
             next_pool.append((score_row(s,"next",risk,ss,hp),s,sec,ss,r5,r10,r20,hp))
-        if s["pct"]>=5 and position(s)>=.70:
+        # V3.3 abnormal-money radar: allow pre-breakout names, not only stocks already +5%.
+        # Strong close + meaningful turnover + hot sector can enter the radar earlier.
+        money_signal=(s["value"]>=300000000 and position(s)>=.72 and ss>=58 and s["pct"]>=2.2)
+        price_signal=(s["pct"]>=5 and position(s)>=.70)
+        if money_signal or price_signal:
             r5,r10,r20,hp=recent_heat(s)
-            monster_pool.append((score_row(s,"monster",risk,ss,hp),s,sec,ss,r5,r10,r20,hp))
+            base_score=score_row(s,"monster",risk,ss,hp)
+            early_bonus=6 if money_signal and s["pct"]<5 else 0
+            isolation_penalty=8 if ss<48 else 0
+            monster_pool.append((int(clamp(base_score+early_bonus-isolation_penalty-hp*.35,0,99)),s,sec,ss,r5,r10,r20,hp))
 
     attack_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
     attack=[]
@@ -357,7 +364,8 @@ def main():
     monster_pool.sort(key=lambda x:(x[0],x[1]["pct"],x[1]["value"]),reverse=True)
     monster=[]
     for score,s,sec,ss,r5,r10,r20,hp in monster_pool[:10]:
-        reason=f"{sec}熱度 {ss}｜異常強勢 {s['pct']:.2f}%｜高檔收盤｜成交值 {s['value']/1e8:.1f} 億；追價風險高"
+        phase="異常資金提前卡位" if s["pct"]<5 else "強勢加速"
+        reason=f"{phase}｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {r5:+.1f}%｜成交值 {s['value']/1e8:.1f}億｜收盤位置 {position(s)*100:.0f}%｜"+("低過熱" if hp<4 else "過熱警戒")
         monster.append(item(s,score,reason,"monster",risk,sec,ss))
 
     rotate_src=sorted(attack[:8]+next_list[:8],key=lambda x:(x.get("sector_score",50),x["score"]),reverse=True)[:8]
