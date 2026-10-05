@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(true);
         s.setAllowContentAccess(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.1");
+        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.2");
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
@@ -194,7 +194,7 @@ public class MainActivity extends Activity {
         c.setConnectTimeout(9000);
         c.setReadTimeout(12000);
         c.setRequestMethod("GET");
-        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.1");
+        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.2");
         c.setRequestProperty("Accept", "application/json,text/html,*/*");
         c.setRequestProperty("Cache-Control", "no-cache");
         int status = c.getResponseCode();
