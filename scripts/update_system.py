@@ -320,7 +320,9 @@ def main():
 
     now=datetime.now(TZ)
     live_count=0;live_errors=[];taiex_live=None
-    market_open=now.weekday()<5 and ((now.hour==8 and now.minute>=45) or 9<=now.hour<14)
+    # Taiwan regular trading is 09:00-13:30. Keep a small post-close refresh window so the
+    # final MIS quote can replace stale daily OpenAPI data before it rolls to today's date.
+    market_open=now.weekday()<5 and ((now.hour==8 and now.minute>=45) or 9<=now.hour<14 or (now.hour==14 and now.minute<=10))
     if market_open:
         try:rows,live_count,taiex_live,live_errors=enrich_live(rows)
         except Exception as e:live_errors.append(str(e))
@@ -489,6 +491,12 @@ def main():
     if next_list:priority.append({"title":next_list[0]["code"]+" "+next_list[0]["name"],"note":next_list[0]["reason"],"action":"下一棒#1"})
 
     raw_date=next((x["date"] for x in rows if x["date"]),"")
+    # Never present a stale daily date as if it were current intraday data.
+    # When MIS successfully enriched a meaningful universe, label the feed with today's
+    # Taiwan date while retaining the official daily source date separately.
+    source_data_date=raw_date
+    if live_count>=100:
+        raw_date=now.strftime("%Y-%m-%d")
     date_key=now.strftime("%Y-%m-%d")
     history=load_history()
     history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],{"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
@@ -497,7 +505,7 @@ def main():
     backtest=calc_backtest(history,{x["code"]:x["close"] for x in stocks})
 
     out={
-        "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,
+        "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,"source_data_date":source_data_date,
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
         "risk":{"level":level,"label":label,"score":risk,"cash":cash,"reasons":reasons,
                 "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down,
