@@ -43,13 +43,15 @@ def fetch_json(url,tries=3):
 
 
 def fetch_institutional():
-    out={}; errs=[]
+    out={}; errs=[]; debug={}
     try:
         j=fetch_json(TWSE_INST)
         fields=j.get("fields",[]) if isinstance(j,dict) else []
         data=j.get("data",[]) if isinstance(j,dict) else []
         if not data:
             raise RuntimeError("T86 returned no rows")
+        debug["twse_fields"]=fields
+        debug["twse_first"]=data[0] if data else None
         idx={re.sub(r"<[^>]+>","",str(name)).replace("\\n","").replace(" ",""):i for i,name in enumerate(fields)}
         def gi(row,names):
             for name in names:
@@ -77,6 +79,8 @@ def fetch_institutional():
         rows=fetch_json(TPEX_INST)
         if not isinstance(rows,list) or not rows:
             raise RuntimeError("TPEx institutional endpoint returned no rows")
+        debug["tpex_keys"]=list(rows[0].keys()) if isinstance(rows[0],dict) else []
+        debug["tpex_first"]=rows[0] if rows else None
         for r in rows:
             raw_code=str(pick(r,"SecuritiesCompanyCode","SecuritiesCompanyCode","SecuritiesCode","Code","股票代號","證券代號") or "").strip()
             m=re.search(r"(?<!\\d)(\\d{4,6})(?!\\d)",raw_code)
@@ -89,7 +93,7 @@ def fetch_institutional():
             out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TPEx OpenAPI"}
     except Exception as e: errs.append("TPEx法人:"+str(e))
     if not out and not errs: errs.append("法人來源有回應，但未解析出任何股票代碼")
-    return out,errs
+    return out,errs,debug
 
 def fetch_mis_channels(channels):
     if not channels:return []
@@ -320,7 +324,7 @@ def main():
 
     stocks=[x for x in rows if stock_only(x)]
     by_code={x["code"]:x for x in stocks}
-    institutional,inst_errors=fetch_institutional()
+    institutional,inst_errors,inst_debug=fetch_institutional()
     if inst_errors: errors.extend(inst_errors)
     if not institutional: errors.append("法人籌碼:官方資料暫無有效逐檔資料，已停用法人判讀")
 
@@ -470,7 +474,7 @@ def main():
                   "live_count":live_count,
                   "brief":f"{'盤中即時' if live_count>=100 else '日線快照'}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
         "sectors":sectors,"stock_sectors":stock_sector,"institutional":institutional,
-        "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors},
+        "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
         "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
