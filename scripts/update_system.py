@@ -9,7 +9,7 @@ TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
 TPEX_STOCK="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
 TWSE_MIS="https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
-TWSE_INST="https://www.twse.com.tw/rwd/zh/fund/T86?selectType=ALL&response=json"
+TWSE_INST="https://www.twse.com.tw/rwd/zh/fund/T86?selectType=ALLBUT0999&response=json"
 TPEX_INST="https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading"
 OUT=Path("remote/system.json")
 HISTORY=Path("remote/history.json")
@@ -50,10 +50,11 @@ def fetch_institutional():
         data=j.get("data",[]) if isinstance(j,dict) else []
         if not data:
             raise RuntimeError("T86 returned no rows")
-        idx={name:i for i,name in enumerate(fields)}
+        idx={re.sub(r"<[^>]+>","",str(name)).replace("\\n","").replace(" ",""):i for i,name in enumerate(fields)}
         def gi(row,names):
             for name in names:
-                if name in idx and idx[name]<len(row): return num(row[idx[name]])
+                key=str(name).replace(" ","")
+                if key in idx and idx[key]<len(row): return num(row[idx[key]])
             return None
         for row in data:
             code=str(row[0]).strip() if row else ""
@@ -62,6 +63,12 @@ def fetch_institutional():
             trust=gi(row,["投信買賣超股數"])
             dealer=gi(row,["自營商買賣超股數"])
             total=gi(row,["三大法人買賣超股數"])
+            # Stable positional fallback for the official T86 19-column report.
+            if len(row)>=19:
+                if foreign is None: foreign=num(row[4])
+                if trust is None: trust=num(row[10])
+                if dealer is None: dealer=num(row[11])
+                if total is None: total=num(row[18])
             out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TWSE T86"}
     except Exception as e: errs.append("TWSE法人:"+str(e))
     try:
