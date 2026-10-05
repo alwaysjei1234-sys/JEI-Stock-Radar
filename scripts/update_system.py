@@ -373,7 +373,8 @@ def main():
     today_ymd=now.strftime("%Y%m%d")
     today_roc=f"{now.year-1911:03d}{now.month:02d}{now.day:02d}"
     source_dates={re.sub(r"[^0-9]","",str(x.get("date",""))) for x in rows if x.get("date")}
-    if now.weekday()<5 and today_roc not in source_dates and today_ymd not in source_dates:
+    twse_source_dates={re.sub(r"[^0-9]","",str(x.get("date",""))) for x in rows if x.get("market")=="TWSE" and x.get("date")}
+    if now.weekday()<5 and today_roc not in twse_source_dates and today_ymd not in twse_source_dates:
         try:
             fresh_twse=fetch_twse_daily(today_ymd)
             if fresh_twse:
