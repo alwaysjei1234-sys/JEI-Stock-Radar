@@ -9,6 +9,8 @@ TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
 TPEX_STOCK="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
 TWSE_MIS="https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
+TWSE_INST="https://www.twse.com.tw/rwd/zh/fund/T86?selectType=ALL&response=json"
+TPEX_INST="https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading"
 OUT=Path("remote/system.json")
 HISTORY=Path("remote/history.json")
 TZ=ZoneInfo("Asia/Taipei")
@@ -38,6 +40,40 @@ def fetch_json(url,tries=3):
             last=e
             if i+1<tries: time.sleep(1.2*(i+1))
     raise last
+
+
+def fetch_institutional():
+    out={}; errs=[]
+    try:
+        j=fetch_json(TWSE_INST)
+        fields=j.get("fields",[]) if isinstance(j,dict) else []
+        data=j.get("data",[]) if isinstance(j,dict) else []
+        idx={name:i for i,name in enumerate(fields)}
+        def gi(row,names):
+            for name in names:
+                if name in idx and idx[name]<len(row): return num(row[idx[name]])
+            return None
+        for row in data:
+            code=str(row[0]).strip() if row else ""
+            if not re.fullmatch(r"\\d{4}",code): continue
+            foreign=gi(row,["外陸資買賣超股數(不含外資自營商)","外資及陸資買賣超股數(不含外資自營商)"])
+            trust=gi(row,["投信買賣超股數"])
+            dealer=gi(row,["自營商買賣超股數"])
+            total=gi(row,["三大法人買賣超股數"])
+            out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TWSE T86"}
+    except Exception as e: errs.append("TWSE法人:"+str(e))
+    try:
+        rows=fetch_json(TPEX_INST)
+        for r in rows if isinstance(rows,list) else []:
+            code=str(pick(r,"SecuritiesCompanyCode","Code","SecuritiesCode") or "").strip()
+            if not re.fullmatch(r"\\d{4}",code): continue
+            foreign=num(pick(r,"ForeignInvestorsNetBuySell","ForeignInvestmentNetBuySell","ForeignInvestorsBuySell"))
+            trust=num(pick(r,"InvestmentTrustNetBuySell","InvestmentTrustBuySell"))
+            dealer=num(pick(r,"DealerNetBuySell","DealerBuySell"))
+            total=num(pick(r,"TotalNetBuySell","ThreeInstitutionalInvestorsNetBuySell"))
+            out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TPEx OpenAPI"}
+    except Exception as e: errs.append("TPEx法人:"+str(e))
+    return out,errs
 
 def fetch_mis_channels(channels):
     if not channels:return []
@@ -268,6 +304,8 @@ def main():
 
     stocks=[x for x in rows if stock_only(x)]
     by_code={x["code"]:x for x in stocks}
+    institutional,inst_errors=fetch_institutional()
+    if inst_errors: errors.extend(inst_errors)
 
     taiex_pct=None
     for x in idx_raw if isinstance(idx_raw,list) else []:
@@ -414,10 +452,10 @@ def main():
         "market":{"status":market_status,"mode":("盤中即時" if live_count>=100 else "日線快照"),
                   "live_count":live_count,
                   "brief":f"{'盤中即時' if live_count>=100 else '日線快照'}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
-        "sectors":sectors,"stock_sectors":stock_sector,
+        "sectors":sectors,"stock_sectors":stock_sector,"institutional":institutional,
         "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
-        "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes"]
+        "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
