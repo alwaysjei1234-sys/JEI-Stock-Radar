@@ -46,7 +46,7 @@
 <div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="next"><b>🎯</b>下一棒</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
 <script>
 const UI_VERSION='2.0.0-remote';
-const DEFAULT_HOLDINGS=[['1711','永光',52.674,1000],['2478','大毅',127.681,1000],['2609','陽明',63.69,1000],['2748','雲品',99.341,1000],['3162','精確',85.621,1000],['3289','宜特',141.701,1000],['3707','漢磊',73.104,1000],['5347','世界',123.175,1000],['5425','台半',102.145,1000],['6150','撼訊',77.51,2000],['7711','永擎',257.8665,2000],['8070','長華*',58.383,1000]];
+const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],rotate:[],flow:[]}, updateManifest=null, refreshTimer=null;
 const $=id=>document.getElementById(id); const money=n=>Number.isFinite(n)?Math.round(n).toLocaleString('zh-TW'):'--'; const nativeOk=()=>typeof JEINative!=='undefined';
 function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
