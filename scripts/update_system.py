@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json, math, re, statistics, time, urllib.request, urllib.parse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -46,7 +47,7 @@ def fetch_mis_channels(channels):
         "Accept":"application/json,text/plain,*/*",
         "Referer":"https://mis.twse.com.tw/stock/index.jsp"
     })
-    with urllib.request.urlopen(req,timeout=15) as r:
+    with urllib.request.urlopen(req,timeout=9) as r:
         j=json.loads(r.read().decode("utf-8-sig"))
     return j.get("msgArray",[]) if isinstance(j,dict) else []
 
@@ -58,25 +59,27 @@ def enrich_live(rows):
         prefix="tse_" if x.get("market")=="TWSE" else "otc_"
         channels.append(prefix+x["code"]+".tw")
     got=0;errors=[]
-    for i in range(0,len(channels),70):
-        chunk=channels[i:i+70]
-        try:msgs=fetch_mis_channels(chunk)
-        except Exception as e:
-            errors.append(str(e));continue
-        for m in msgs:
-            code=str(m.get("c","")).strip()
-            x=by_code.get(code)
-            if not x:continue
-            prev=num(m.get("y"));price=num(m.get("z"))
-            if price is None or price<=0:price=prev
-            if price is None or price<=0 or prev is None or prev<=0:continue
-            x["close"]=price;x["change"]=price-prev;x["pct"]=(price-prev)/prev*100.0
-            o=num(m.get("o"));h=num(m.get("h"));l=num(m.get("l"));v=num(m.get("v"))
-            if o and o>0:x["open"]=o
-            if h and h>0:x["high"]=h
-            if l and l>0:x["low"]=l
-            if v is not None:x["live_volume"]=v
-            x["live"]=True;got+=1
+    chunks=[channels[i:i+70] for i in range(0,len(channels),70)]
+    messages=[]
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        futures={pool.submit(fetch_mis_channels,ch):ch for ch in chunks}
+        for fut in as_completed(futures):
+            try:messages.extend(fut.result())
+            except Exception as e:errors.append(str(e))
+    for m in messages:
+        code=str(m.get("c","")).strip()
+        x=by_code.get(code)
+        if not x:continue
+        prev=num(m.get("y"));price=num(m.get("z"))
+        if price is None or price<=0:price=prev
+        if price is None or price<=0 or prev is None or prev<=0:continue
+        x["close"]=price;x["change"]=price-prev;x["pct"]=(price-prev)/prev*100.0
+        o=num(m.get("o"));h=num(m.get("h"));l=num(m.get("l"));v=num(m.get("v"))
+        if o and o>0:x["open"]=o
+        if h and h>0:x["high"]=h
+        if l and l>0:x["low"]=l
+        if v is not None:x["live_volume"]=v
+        x["live"]=True;got+=1
     taiex=None
     try:
         idx=fetch_mis_channels(["tse_t00.tw"])
