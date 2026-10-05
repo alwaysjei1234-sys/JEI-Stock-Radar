@@ -10,6 +10,8 @@ on:
       - 'gradle.properties'
       - '.github/workflows/build-apk.yml'
   workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 0'
 
 permissions:
   contents: write
@@ -51,6 +53,12 @@ jobs:
 
       - name: Install Android SDK 35
         run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Restore stable Android debug signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: jei-android-debug-signing-v1
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
