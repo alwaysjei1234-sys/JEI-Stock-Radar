@@ -23,6 +23,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class RiskWorker extends Worker {
     private static final String SYSTEM_JSON =
@@ -39,6 +42,8 @@ public class RiskWorker extends Worker {
         try {
             ensureChannels();
             checkRisk();
+            SharedPreferences p = getApplicationContext().getSharedPreferences("jei_private", Context.MODE_PRIVATE);
+            checkHoldings(p.getInt("bg_risk_score", 0));
             checkAppUpdate();
             return Result.success();
         } catch (Exception e) {
@@ -102,6 +107,112 @@ public class RiskWorker extends Worker {
                 .putString("bg_risk_level", level)
                 .putString("bg_risk_stamp", updated)
                 .apply();
+    }
+
+
+    private void checkHoldings(int riskScore) throws Exception {
+        SharedPreferences p = getApplicationContext().getSharedPreferences("jei_private", Context.MODE_PRIVATE);
+        String raw = p.getString("holdings", "");
+        if (raw == null || raw.trim().isEmpty()) return;
+
+        JSONArray hs = new JSONArray(raw);
+        if (hs.length() == 0) return;
+
+        StringBuilder q = new StringBuilder();
+        for (int i = 0; i < hs.length(); i++) {
+            JSONObject h = hs.optJSONObject(i);
+            if (h == null) continue;
+            String code = h.optString("code", "").trim();
+            if (!code.matches("[0-9A-Za-z]{2,8}")) continue;
+            if (q.length() > 0) q.append("|");
+            q.append("tse_").append(code).append(".tw|otc_").append(code).append(".tw");
+        }
+        if (q.length() == 0) return;
+
+        String url = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch="
+                + q + "&json=1&delay=0&_=" + System.currentTimeMillis();
+        JSONObject market = new JSONObject(get(url.replace("?bg=", "&bg=")));
+        JSONArray rows = market.optJSONArray("msgArray");
+        if (rows == null || rows.length() == 0) return;
+
+        String day = new SimpleDateFormat("yyyyMMdd", Locale.US).format(new Date());
+        JSONArray alerts = new JSONArray();
+
+        for (int i = 0; i < rows.length(); i++) {
+            JSONObject m = rows.optJSONObject(i);
+            if (m == null) continue;
+            String code = m.optString("c", "");
+            String name = m.optString("n", code);
+            if (code.isEmpty() || name.isEmpty()) continue;
+
+            double price = toDouble(m.optString("z", ""));
+            double prev = toDouble(m.optString("y", ""));
+            if (!(price > 0)) price = prev;
+            if (!(price > 0) || !(prev > 0)) continue;
+
+            JSONObject h = findHolding(hs, code);
+            if (h == null) continue;
+            double cost = h.optDouble("cost", 0);
+            if (!(cost > 0)) continue;
+
+            double ch = (price - prev) / prev * 100.0;
+            double ret = (price - cost) / cost * 100.0;
+            int severity = 0;
+            String action = "";
+            if (ch <= -7.0 || ret <= -15.0) {
+                severity = 2;
+                action = "風控優先";
+            } else if (ch <= -5.0 || ret <= -12.0 || (riskScore >= 75 && ch <= -3.0)) {
+                severity = 1;
+                action = "減碼觀察";
+            }
+
+            String key = "bg_hold_" + day + "_" + code;
+            int old = p.getInt(key, 0);
+            if (severity > old) {
+                JSONObject a = new JSONObject();
+                a.put("code", code);
+                a.put("name", name);
+                a.put("change", ch);
+                a.put("return", ret);
+                a.put("action", action);
+                alerts.put(a);
+                p.edit().putInt(key, severity).apply();
+            }
+        }
+
+        if (alerts.length() > 0) {
+            StringBuilder body = new StringBuilder();
+            int max = Math.min(3, alerts.length());
+            for (int i = 0; i < max; i++) {
+                JSONObject a = alerts.optJSONObject(i);
+                if (i > 0) body.append("｜");
+                body.append(a.optString("code")).append(" ")
+                        .append(a.optString("name")).append(" ")
+                        .append(String.format(Locale.US, "%.1f%%", a.optDouble("change")))
+                        .append("／成本 ")
+                        .append(String.format(Locale.US, "%+.1f%%", a.optDouble("return")))
+                        .append(" ")
+                        .append(a.optString("action"));
+            }
+            if (alerts.length() > max) body.append("｜另 ").append(alerts.length() - max).append(" 檔");
+            notify("jei_risk", 7303,
+                    "⚠ JEI 持股風控警示（" + alerts.length() + " 檔）",
+                    body.toString(), NotificationCompat.PRIORITY_HIGH);
+        }
+    }
+
+    private JSONObject findHolding(JSONArray hs, String code) {
+        for (int i = 0; i < hs.length(); i++) {
+            JSONObject h = hs.optJSONObject(i);
+            if (h != null && code.equals(h.optString("code", ""))) return h;
+        }
+        return null;
+    }
+
+    private double toDouble(String s) {
+        try { return Double.parseDouble(s); }
+        catch (Exception e) { return Double.NaN; }
     }
 
     private void checkAppUpdate() throws Exception {
