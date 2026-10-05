@@ -53,14 +53,22 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(true);
         s.setAllowContentAccess(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/2.0");
+        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.0");
 
         webView.setWebChromeClient(new WebChromeClient());
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            private boolean bootstrapped = false;
+            @Override public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (!bootstrapped && url != null && url.startsWith("file:///android_asset/")) {
+                    bootstrapped = true;
+                    if (isOnline()) refreshRemoteUI(false);
+                }
+            }
+        });
         webView.addJavascriptInterface(new NativeBridge(), "JEINative");
 
         webView.loadUrl("file:///android_asset/index.html");
-        if (isOnline()) refreshRemoteUI(false);
     }
 
     @Override
@@ -88,7 +96,7 @@ public class MainActivity extends Activity {
         c.setConnectTimeout(9000);
         c.setReadTimeout(12000);
         c.setRequestMethod("GET");
-        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/2.0");
+        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.0");
         c.setRequestProperty("Accept", "application/json,text/html,*/*");
         c.setRequestProperty("Cache-Control", "no-cache");
         int status = c.getResponseCode();
@@ -107,7 +115,7 @@ public class MainActivity extends Activity {
         io.execute(() -> {
             try {
                 String html = httpGet(REMOTE_UI + "?ts=" + System.currentTimeMillis());
-                if (!html.contains("JEI_REMOTE_UI_V2")) throw new Exception("remote ui signature missing");
+                if (!html.contains("JEI_REMOTE_UI_V2") && !html.contains("JEI_REMOTE_UI_V3")) throw new Exception("remote ui signature missing");
                 File f = new File(getFilesDir(), "jei_remote_index.html");
                 try (FileOutputStream o = new FileOutputStream(f)) {
                     o.write(html.getBytes(StandardCharsets.UTF_8));
