@@ -12,6 +12,18 @@ android {
         versionName '3.0.1'
     }
 
+    signingConfigs {
+        jeiRelease {
+            def ks = System.getenv('JEI_KEYSTORE')
+            if (ks != null && !ks.isBlank()) {
+                storeFile file(ks)
+                storePassword System.getenv('JEI_STORE_PASSWORD')
+                keyAlias System.getenv('JEI_KEY_ALIAS')
+                keyPassword System.getenv('JEI_KEY_PASSWORD')
+            }
+        }
+    }
+
     buildFeatures {
         buildConfig true
     }
@@ -19,6 +31,7 @@ android {
     buildTypes {
         debug { minifyEnabled false }
         release {
+            signingConfig signingConfigs.jeiRelease
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
