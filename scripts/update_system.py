@@ -10,7 +10,7 @@ TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
 TPEX_STOCK="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
 TWSE_MIS="https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
 TWSE_INST="https://www.twse.com.tw/rwd/zh/fund/T86?response=json&selectType=ALLBUT0999"
-TWSE_DAILY="https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX"
+TWSE_DAILY="https://www.twse.com.tw/exchangeReport/MI_INDEX"
 TPEX_INST="https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading"
 OUT=Path("remote/system.json")
 HISTORY=Path("remote/history.json")
@@ -53,7 +53,8 @@ def fetch_twse_daily(date_yyyymmdd):
         joined="|".join(map(str,fields))
         if "證券代號" in joined and "收盤價" in joined and t.get("data"):
             if best is None or len(t.get("data",[]))>len(best.get("data",[])):best=t
-    if not best:return []
+    if not best:
+        raise RuntimeError("MI_INDEX returned no stock table: "+str(j.get("stat") if isinstance(j,dict) else type(j).__name__))
     fields=[re.sub(r"<[^>]+>","",str(x)).strip() for x in best.get("fields",[])]
     idx={x:i for i,x in enumerate(fields)}
     def cell(row,name):
