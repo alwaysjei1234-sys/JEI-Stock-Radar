@@ -17,12 +17,53 @@
 .toast{position:fixed;left:50%;bottom:102px;transform:translateX(-50%);z-index:80;background:#102b40;border:1px solid #3477a3;padding:10px 14px;border-radius:999px;font-size:11px;opacity:0;pointer-events:none;transition:.25s}.toast.show{opacity:1}.updateBanner{display:none;margin:10px 0;padding:11px 12px;border-radius:13px;background:#3a2d14;border:1px solid #745c21;color:#ffe6a2;font-size:12px}.updateBanner.show{display:flex;justify-content:space-between;gap:8px;align-items:center}.updateBanner button{border:0;background:#f4b942;color:#201600;border-radius:9px;padding:7px 9px;font-weight:900}
 .bottom{position:fixed;z-index:30;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);background:#071724ee;border-top:1px solid #1b4261;padding:7px 3px calc(7px + env(safe-area-inset-bottom));backdrop-filter:blur(12px)}.btab{text-align:center;color:#8ba7bd;font-size:9px}.btab b{font-size:18px;display:block;margin-bottom:1px}.btab.active{color:white}
 @media(min-width:760px){.wrap{padding:20px}.metrics{grid-template-columns:repeat(4,1fr)}.actions{grid-template-columns:repeat(6,1fr)}.holdingsGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stockCard{margin:0}.bottom{max-width:760px;left:50%;transform:translateX(-50%);border-radius:16px 16px 0 0;border-left:1px solid var(--line);border-right:1px solid var(--line)}}
+
+/* JEI V3.3 mobile readability pass */
+@media(max-width:759px){
+  body{padding-bottom:88px;font-size:15px}
+  .wrap{padding:16px 14px}
+  .brand{font-size:24px;line-height:1.2}
+  .sub{font-size:13px;line-height:1.5}
+  .online{font-size:13px;padding:8px 11px}
+  .risk{padding:18px 16px;border-radius:20px;margin-top:16px}
+  .riskTitle{font-size:19px;line-height:1.35}
+  .riskScore{font-size:28px}
+  .riskReasons{font-size:14px;line-height:1.65;margin-top:10px}
+  .actions{grid-template-columns:repeat(3,1fr);gap:9px}
+  .btn{font-size:14px;padding:12px 8px;min-height:46px}
+  .metrics{gap:10px}
+  .metric{padding:14px 12px;min-height:76px}
+  .metric .k{font-size:13px}
+  .metric .v{font-size:21px;margin-top:7px}
+  .tabs{gap:9px;margin-top:16px;padding-bottom:10px}
+  .tab{font-size:14px;padding:11px 14px;border-radius:13px}
+  .section h2{font-size:19px;margin:18px 0 10px}
+  .panel{padding:14px;border-radius:18px;margin-bottom:12px}
+  .panelTitle{font-size:16px;margin-bottom:10px}
+  .small{font-size:14px;line-height:1.6}.tiny{font-size:12px}
+  .stockCard{padding:15px 14px;border-radius:18px;margin:11px 0}
+  .stockName{font-size:19px}.stockCode{font-size:13px}
+  .price{font-size:24px}.change{font-size:14px;margin-top:3px}
+  .metaGrid{grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+  .meta{padding:10px;border-radius:11px}
+  .meta .k{font-size:12px}.meta .v{font-size:15px;margin-top:4px}
+  .decision{font-size:15px;line-height:1.6;padding:12px;margin-top:11px;border-radius:12px}
+  .decision b{font-size:17px}
+  .listRow{grid-template-columns:40px 1fr auto;gap:10px;padding:13px 2px}
+  .rank{font-size:15px}.rName{font-size:16px;line-height:1.4}.rSub{font-size:13px;line-height:1.5;margin-top:4px}.score{font-size:18px}
+  .chip{font-size:12px;padding:6px 9px}
+  .empty{font-size:14px;padding:26px 14px}
+  .formRow input,.holdEdit input{font-size:15px;padding:12px}
+  .formRow button{font-size:14px;padding:10px 13px}
+  .updateBanner{font-size:14px;padding:12px}
+  .btab{font-size:11px}.btab b{font-size:20px}
+}
 </style>
 </head>
 <body>
 <!-- JEI_REMOTE_UI_V2 --><!-- JEI_REMOTE_UI_V3 -->
 <div class="wrap">
-  <div class="top"><div><div class="brand">JEI 專屬選股雷達 <i>V3.2</i></div><div class="sub">多因子行情 × 族群熱度 × 持股決策 × 下一棒 × 大逃殺風控</div></div><div class="online"><span id="netDot" class="dot"></span><span id="netText">連線中</span></div></div>
+  <div class="top"><div><div class="brand">JEI 專屬選股雷達 <i>V3.3</i></div><div class="sub">多因子行情 × 族群熱度 × 持股決策 × 下一棒 × 大逃殺風控</div></div><div class="online"><span id="netDot" class="dot"></span><span id="netText">連線中</span></div></div>
   <div id="updateBanner" class="updateBanner"><span id="updateText">有新版系統</span><button onclick="openUpdate()">更新</button></div>
   <div id="riskBox" class="risk green"><div class="riskTop"><div><div id="riskTitle" class="riskTitle">🟢 大逃殺預警：等待同步</div><div id="riskTime" class="sub">先同步 JEI 雲端資料</div></div><div id="riskScore" class="riskScore">--</div></div><div id="riskReasons" class="riskReasons">市場警戒永遠優先於買進訊號。</div></div>
   <div class="actions"><button class="btn primary" onclick="refreshAll(true)">↻ 全部更新</button><button class="btn" onclick="go('hold')">💰 持股</button><button class="btn" onclick="go('attack')">🔥 主攻</button><button class="btn" onclick="go('next')">🎯 下一棒</button><button class="btn" onclick="go('monster')">🚀 妖股</button><button class="btn" onclick="go('settings')">⚙ 更新系統</button></div>
@@ -45,7 +86,7 @@
 <div id="toast" class="toast"></div>
 <div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="next"><b>🎯</b>下一棒</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
 <script>
-const UI_VERSION='3.2.0-remote';
+const UI_VERSION='3.3.0-remote';
 const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],rotate:[],flow:[],sectors:[],stock_sectors:{}}, updateManifest=null, refreshTimer=null, systemTimer=null, lastMarketAt='';
 const $=id=>document.getElementById(id); const money=n=>Number.isFinite(n)?Math.round(n).toLocaleString('zh-TW'):'--'; const nativeOk=()=>typeof JEINative!=='undefined';
