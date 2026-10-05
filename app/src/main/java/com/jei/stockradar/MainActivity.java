@@ -45,6 +45,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends Activity {
     private static final String REMOTE_UI = "https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/index.html";
@@ -54,6 +55,7 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final ExecutorService io = Executors.newFixedThreadPool(3);
+    private final AtomicBoolean marketScanRunning = new AtomicBoolean(false);
     private SharedPreferences prefs;
 
     @Override
@@ -256,6 +258,7 @@ public class MainActivity extends Activity {
     }
 
     private void fetchMarket(String jsonCodes) {
+        if (!marketScanRunning.compareAndSet(false, true)) return;
         io.execute(() -> {
             try {
                 JSONArray a = new JSONArray(jsonCodes);
@@ -314,6 +317,8 @@ public class MainActivity extends Activity {
                 jsCall("onMarketData", out.toString());
             } catch (Exception e) {
                 jsCall("onMarketError", e.getMessage() == null ? "行情連線失敗" : e.getMessage());
+            } finally {
+                marketScanRunning.set(false);
             }
         });
     }
