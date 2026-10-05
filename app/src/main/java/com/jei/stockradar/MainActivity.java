@@ -1,6 +1,9 @@
 package com.jei.stockradar;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,7 +11,9 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.content.pm.PackageManager;
 import android.util.Base64;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -16,6 +21,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,6 +58,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        setupNotifications();
+        scheduleRiskWorker();
         handleImportIntent(getIntent(), false);
         webView = new WebView(this);
         setContentView(webView);
@@ -55,7 +70,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(true);
         s.setAllowContentAccess(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.0");
+        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.1");
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
@@ -122,6 +137,38 @@ public class MainActivity extends Activity {
         handleImportIntent(intent, true);
     }
 
+    private void setupNotifications() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager nm = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel risk = new NotificationChannel(
+                    "jei_risk", "JEI 大逃殺與持股風險", NotificationManager.IMPORTANCE_HIGH);
+            risk.setDescription("市場風險、急跌與重要持股警示");
+            nm.createNotificationChannel(risk);
+            NotificationChannel sys = new NotificationChannel(
+                    "jei_system", "JEI 系統更新", NotificationManager.IMPORTANCE_DEFAULT);
+            sys.setDescription("APP 新版本與系統更新通知");
+            nm.createNotificationChannel(sys);
+        }
+        if (Build.VERSION.SDK_INT >= 33
+                && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 9103);
+        }
+    }
+
+    private void scheduleRiskWorker() {
+        Constraints c = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        PeriodicWorkRequest req = new PeriodicWorkRequest.Builder(
+                RiskWorker.class, 15, TimeUnit.MINUTES)
+                .setConstraints(c)
+                .build();
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "JEI_RISK_WATCH",
+                ExistingPeriodicWorkPolicy.KEEP,
+                req);
+    }
+
     @Override
     public void onBackPressed() {
         if (webView != null && webView.canGoBack()) webView.goBack();
@@ -147,7 +194,7 @@ public class MainActivity extends Activity {
         c.setConnectTimeout(9000);
         c.setReadTimeout(12000);
         c.setRequestMethod("GET");
-        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.0");
+        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.1");
         c.setRequestProperty("Accept", "application/json,text/html,*/*");
         c.setRequestProperty("Cache-Control", "no-cache");
         int status = c.getResponseCode();
