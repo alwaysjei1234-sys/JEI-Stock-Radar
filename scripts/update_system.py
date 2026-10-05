@@ -465,6 +465,7 @@ def main():
                   "live_count":live_count,
                   "brief":f"{'盤中即時' if live_count>=100 else '日線快照'}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
         "sectors":sectors,"stock_sectors":stock_sector,"institutional":institutional,
+        "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors},
         "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
