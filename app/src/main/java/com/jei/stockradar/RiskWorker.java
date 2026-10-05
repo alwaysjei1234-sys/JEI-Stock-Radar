@@ -56,7 +56,7 @@ public class RiskWorker extends Worker {
         HttpURLConnection c = (HttpURLConnection)new URL(url + sep + "bg=" + System.currentTimeMillis()).openConnection();
         c.setConnectTimeout(9000);
         c.setReadTimeout(12000);
-        c.setRequestProperty("User-Agent", "JEIStockRadar-Background/3.1");
+        c.setRequestProperty("User-Agent", "JEIStockRadar-Background/3.2");
         int status = c.getResponseCode();
         InputStream in = status >= 200 && status < 300 ? c.getInputStream() : c.getErrorStream();
         if (in == null) throw new Exception("HTTP " + status);
@@ -136,6 +136,10 @@ public class RiskWorker extends Worker {
         JSONArray rows = market.optJSONArray("msgArray");
         if (rows == null || rows.length() == 0) return;
 
+        JSONObject sys = new JSONObject(get(SYSTEM_JSON));
+        JSONObject stockSectors = sys.optJSONObject("stock_sectors");
+        JSONArray sectorRows = sys.optJSONArray("sectors");
+
         String day = new SimpleDateFormat("yyyyMMdd", Locale.US).format(new Date());
         JSONArray alerts = new JSONArray();
 
@@ -158,14 +162,23 @@ public class RiskWorker extends Worker {
 
             double ch = (price - prev) / prev * 100.0;
             double ret = (price - cost) / cost * 100.0;
+            String sector = stockSectors == null ? "其他" : stockSectors.optString(code, "其他");
+            int sectorScore = findSectorScore(sectorRows, sector);
+
             int severity = 0;
             String action = "";
-            if (ch <= -7.0 || ret <= -15.0) {
+            if ((riskScore >= 80 && ch < 0) || ch <= -7.0 || ret <= -15.0) {
+                severity = 3;
+                action = riskScore >= 80 ? "市場紅燈降部位" : "風控優先";
+            } else if (ret >= 25.0 && (ch <= -3.0 || sectorScore < 45)) {
                 severity = 2;
-                action = "風控優先";
-            } else if (ch <= -5.0 || ret <= -12.0 || (riskScore >= 75 && ch <= -3.0)) {
+                action = "移動停利";
+            } else if (ch <= -5.0 || ret <= -12.0 || (riskScore >= 65 && ch <= -3.0)) {
+                severity = 2;
+                action = "減碼防守";
+            } else if ((ret >= 12.0 && ch <= -3.0) || (sectorScore < 40 && ch <= -2.0)) {
                 severity = 1;
-                action = "減碼觀察";
+                action = ret >= 12.0 ? "鎖利觀察" : "族群轉弱";
             }
 
             String key = "bg_hold_" + day + "_" + code;
@@ -177,6 +190,9 @@ public class RiskWorker extends Worker {
                 a.put("change", ch);
                 a.put("return", ret);
                 a.put("action", action);
+                a.put("sector", sector);
+                a.put("sectorScore", sectorScore);
+                a.put("severity", severity);
                 alerts.put(a);
                 p.edit().putInt(key, severity).apply();
             }
@@ -194,13 +210,24 @@ public class RiskWorker extends Worker {
                         .append("／成本 ")
                         .append(String.format(Locale.US, "%+.1f%%", a.optDouble("return")))
                         .append(" ")
-                        .append(a.optString("action"));
+                        .append(a.optString("action"))
+                        .append(" [").append(a.optString("sector")).append(" ")
+                        .append(a.optInt("sectorScore", 50)).append("分]");
             }
             if (alerts.length() > max) body.append("｜另 ").append(alerts.length() - max).append(" 檔");
             notify("jei_risk", 7303,
                     "⚠ JEI 持股風控警示（" + alerts.length() + " 檔）",
                     body.toString(), Notification.PRIORITY_HIGH);
         }
+    }
+
+    private int findSectorScore(JSONArray sectors, String name) {
+        if (sectors == null || name == null) return 50;
+        for (int i = 0; i < sectors.length(); i++) {
+            JSONObject x = sectors.optJSONObject(i);
+            if (x != null && name.equals(x.optString("name", ""))) return x.optInt("score", 50);
+        }
+        return 50;
     }
 
     private JSONObject findHolding(JSONArray hs, String code) {
