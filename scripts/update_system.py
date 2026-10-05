@@ -134,12 +134,33 @@ def enrich_live(rows):
         prefix="tse_" if x.get("market")=="TWSE" else "otc_"
         channels.append(prefix+x["code"]+".tw")
     got=0;errors=[]
-    chunks=[channels[i:i+70] for i in range(0,len(channels),70)]
+    # MIS is sensitive to oversized ex_ch queries/rate bursts. Use conservative
+    # batches and retry failed/empty chunks at half size so a full-market scan
+    # does not silently fall back to a stale daily snapshot.
+    chunks=[channels[i:i+25] for i in range(0,len(channels),25)]
     messages=[]
-    with ThreadPoolExecutor(max_workers=5) as pool:
-        futures={pool.submit(fetch_mis_channels,ch):ch for ch in chunks}
+    def fetch_chunk(ch):
+        try:
+            r=fetch_mis_channels(ch)
+            if r:return r,[]
+            raise RuntimeError("empty MIS batch")
+        except Exception as first:
+            if len(ch)<=8:return [],[str(first)]
+            out=[];errs=[]
+            mid=max(1,len(ch)//2)
+            for sub in (ch[:mid],ch[mid:]):
+                try:
+                    rr=fetch_mis_channels(sub)
+                    if rr:out.extend(rr)
+                    else:errs.append("empty MIS retry")
+                except Exception as e:errs.append(str(e))
+                time.sleep(.12)
+            return out,errs
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        futures={pool.submit(fetch_chunk,ch):ch for ch in chunks}
         for fut in as_completed(futures):
-            try:messages.extend(fut.result())
+            try:
+                got_rows,errs=fut.result();messages.extend(got_rows);errors.extend(errs)
             except Exception as e:errors.append(str(e))
     for m in messages:
         code=str(m.get("c","")).strip()
@@ -495,8 +516,16 @@ def main():
     # When MIS successfully enriched a meaningful universe, label the feed with today's
     # Taiwan date while retaining the official daily source date separately.
     source_data_date=raw_date
-    if live_count>=100:
+    live_coverage=live_count/max(1,len(stocks))
+    live_valid=live_count>=500 and live_coverage>=.35
+    if live_valid:
         raw_date=now.strftime("%Y-%m-%d")
+    elif market_open:
+        # Safety invariant: never advertise stale daily candidates as today's
+        # intraday monster/next/attack radar when full-market live coverage failed.
+        errors.append(f"盤中即時覆蓋不足 {live_count}/{len(stocks)}，候選榜暫停避免誤判")
+        attack=[];next_list=[];monster=[];rotate=[]
+        priority=[x for x in priority if x.get("action") not in ("主攻#1","下一棒#1")]
     date_key=now.strftime("%Y-%m-%d")
     history=load_history()
     history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],{"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
@@ -511,9 +540,9 @@ def main():
                 "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down,
                 "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000),
                 "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
-        "market":{"status":market_status,"mode":("盤中即時" if live_count>=100 else "日線快照"),
-                  "live_count":live_count,
-                  "brief":f"{'盤中即時' if live_count>=100 else '日線快照'}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
+        "market":{"status":market_status,"mode":("盤中即時" if live_valid else ("盤中資料不足" if market_open else "日線快照")),
+                  "live_count":live_count,"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,
+                  "brief":f"{'盤中即時' if live_valid else ('盤中資料不足' if market_open else '日線快照')}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
         "sectors":sectors,"stock_sectors":stock_sector,"institutional":institutional,
         "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
         "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
