@@ -55,10 +55,26 @@ jobs:
         run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Restore stable Android debug signing key
+        id: jei-debug-key
         uses: actions/cache@v4
         with:
           path: ~/.android/debug.keystore
-          key: jei-android-debug-signing-v1
+          key: jei-android-debug-signing-v2
+
+      - name: Ensure stable Android debug signing key
+        run: |
+          mkdir -p "$HOME/.android"
+          if [ ! -s "$HOME/.android/debug.keystore" ]; then
+            keytool -genkeypair -v \
+              -keystore "$HOME/.android/debug.keystore" \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+          test -s "$HOME/.android/debug.keystore"
+          keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
