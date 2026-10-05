@@ -48,6 +48,8 @@ def fetch_institutional():
         j=fetch_json(TWSE_INST)
         fields=j.get("fields",[]) if isinstance(j,dict) else []
         data=j.get("data",[]) if isinstance(j,dict) else []
+        if not data:
+            raise RuntimeError("T86 returned no rows")
         idx={name:i for i,name in enumerate(fields)}
         def gi(row,names):
             for name in names:
@@ -64,7 +66,9 @@ def fetch_institutional():
     except Exception as e: errs.append("TWSE法人:"+str(e))
     try:
         rows=fetch_json(TPEX_INST)
-        for r in rows if isinstance(rows,list) else []:
+        if not isinstance(rows,list) or not rows:
+            raise RuntimeError("TPEx institutional endpoint returned no rows")
+        for r in rows:
             code=str(pick(r,"SecuritiesCompanyCode","Code","SecuritiesCode") or "").strip()
             if not re.fullmatch(r"\\d{4}",code): continue
             foreign=num(pick(r,"ForeignInvestorsNetBuySell","ForeignInvestmentNetBuySell","ForeignInvestorsBuySell"))
@@ -306,6 +310,7 @@ def main():
     by_code={x["code"]:x for x in stocks}
     institutional,inst_errors=fetch_institutional()
     if inst_errors: errors.extend(inst_errors)
+    if not institutional: errors.append("法人籌碼:官方資料暫無有效逐檔資料，已停用法人判讀")
 
     taiex_pct=None
     for x in idx_raw if isinstance(idx_raw,list) else []:
