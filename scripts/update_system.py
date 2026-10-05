@@ -9,7 +9,7 @@ TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
 TPEX_STOCK="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
 TWSE_MIS="https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
-TWSE_INST="https://www.twse.com.tw/rwd/zh/fund/T86?selectType=ALLBUT0999&response=json"
+TWSE_INST="https://www.twse.com.tw/rwd/zh/fund/T86?response=json&selectType=ALLBUT0999"
 TPEX_INST="https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading"
 OUT=Path("remote/system.json")
 HISTORY=Path("remote/history.json")
@@ -45,7 +45,10 @@ def fetch_json(url,tries=3):
 def fetch_institutional():
     out={}; errs=[]; debug={}
     try:
-        j=fetch_json(TWSE_INST)
+        try:
+            j=fetch_json(TWSE_INST)
+        except Exception:
+            j=fetch_json("https://www.twse.com.tw/fund/T86?response=json&selectType=ALLBUT0999")
         fields=j.get("fields",[]) if isinstance(j,dict) else []
         data=j.get("data",[]) if isinstance(j,dict) else []
         if not data:
