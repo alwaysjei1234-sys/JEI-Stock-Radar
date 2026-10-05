@@ -190,18 +190,20 @@ def price_plan(s,mode,risk):
 
 def score_row(s,mode,risk,sector_score,heat_penalty=0):
     p=s["pct"];pos=position(s)
-    liq=clamp((math.log10(max(s.get("value",0),1))-7.0)*5,0,18)
+    value=max(s.get("value",0),1)
+    liq=clamp((math.log10(value)-7.0)*5,0,18)
+    value_accel=clamp((math.log10(value)-8.0)*2.2,0,6)
     sector=clamp((sector_score-45)*.34,0,15)
     risk_pen=clamp((risk-35)*.13,0,9)
     chase=max(0,p-7.0)*(4.0 if mode!="monster" else .5)
     if mode=="attack":
         momentum=clamp(p,0,7)*3.4
-        score=34+momentum+pos*13+liq+sector-risk_pen-chase-heat_penalty
+        score=34+momentum+pos*13+liq+sector+value_accel-risk_pen-chase-heat_penalty
     elif mode=="next":
         momentum=clamp(p+1,0,5.5)*3.5
-        score=39+momentum+pos*15+liq+sector-risk_pen-max(0,p-4.2)*5-heat_penalty*1.25
+        score=39+momentum+pos*15+liq+sector+value_accel*1.25-risk_pen-max(0,p-4.2)*5-heat_penalty*1.25
     else:
-        score=38+clamp(p,0,10)*3.7+pos*12+liq+sector-risk_pen
+        score=38+clamp(p,0,10)*3.7+pos*12+liq+sector+value_accel*.5-risk_pen
     return int(round(clamp(score,0,99)))
 
 def item(s,score,reason,mode,risk,sector,sector_score):
@@ -348,7 +350,8 @@ def main():
     next_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
     next_list=[]
     for score,s,sec,ss,r5,r10,r20,hp in next_pool[:10]:
-        reason=f"{sec}熱度 {ss}｜今日 {s['pct']:+.2f}%｜5日 {r5:+.1f}%｜10日 {r10:+.1f}%｜"+("低過熱、準備型" if hp<4 else "已有漲幅、降權")
+        setup=round(clamp(ss*.42+position(s)*100*.28+clamp((math.log10(max(s.get("value",1),1))-7)*12,0,100)*.18+(100-min(100,hp*5))*.12,0,99))
+        reason=f"準備發動 {setup}分｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {r5:+.1f}%｜10日 {r10:+.1f}%｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "過熱降權")
         next_list.append(item(s,score,reason,"next",risk,sec,ss))
 
     monster_pool.sort(key=lambda x:(x[0],x[1]["pct"],x[1]["value"]),reverse=True)
