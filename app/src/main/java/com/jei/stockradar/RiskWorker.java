@@ -52,7 +52,8 @@ public class RiskWorker extends Worker {
     }
 
     private String get(String url) throws Exception {
-        HttpURLConnection c = (HttpURLConnection)new URL(url + "?bg=" + System.currentTimeMillis()).openConnection();
+        String sep = url.contains("?") ? "&" : "?";
+        HttpURLConnection c = (HttpURLConnection)new URL(url + sep + "bg=" + System.currentTimeMillis()).openConnection();
         c.setConnectTimeout(9000);
         c.setReadTimeout(12000);
         c.setRequestProperty("User-Agent", "JEIStockRadar-Background/3.1");
@@ -131,7 +132,7 @@ public class RiskWorker extends Worker {
 
         String url = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch="
                 + q + "&json=1&delay=0&_=" + System.currentTimeMillis();
-        JSONObject market = new JSONObject(get(url.replace("?bg=", "&bg=")));
+        JSONObject market = new JSONObject(get(url));
         JSONArray rows = market.optJSONArray("msgArray");
         if (rows == null || rows.length() == 0) return;
 
