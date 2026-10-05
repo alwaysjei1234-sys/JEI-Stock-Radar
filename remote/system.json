@@ -1,188 +1,187 @@
 {
   "schema": 3,
-  "updated_at": "2026-10-05 12:23",
+  "updated_at": "2026-10-05 12:25",
   "data_date": "1151002",
   "summary": "風險優先；持股決策由手機本機成本＋即時行情計算；主攻、下一棒、妖股由 JEI 排程刷新。",
   "risk": {
     "level": "green",
     "label": "正常",
-    "score": 34,
+    "score": 38,
     "cash": "20%–30%",
     "reasons": [
       "加權指數 +0.25%",
-      "上漲 489 / 下跌 511",
+      "上漲 941 / 下跌 841",
       "市場中位數 +0.00%",
-      "跌逾5% 4 檔",
-      "部分資料源降級：TPEX:IncompleteRead(1506921 bytes read, 3159720 more expected)"
+      "跌逾5% 12 檔"
     ]
   },
   "market": {
     "status": "震盪",
-    "brief": "最新市場快照｜加權 +0.25%｜上漲 489 / 下跌 511｜中位數 +0.00%｜JEI 每15分鐘更新"
+    "brief": "最新市場快照｜加權 +0.25%｜上漲 941 / 下跌 841｜中位數 +0.00%｜JEI 每15分鐘更新"
   },
   "holdings": {},
   "priority": [
     {
       "title": "市場風控",
-      "note": "加權指數 +0.25%｜上漲 489 / 下跌 511｜市場中位數 +0.00%｜跌逾5% 4 檔｜部分資料源降級：TPEX:IncompleteRead(1506921 bytes read, 3159720 more expected)",
+      "note": "加權指數 +0.25%｜上漲 941 / 下跌 841｜市場中位數 +0.00%｜跌逾5% 12 檔",
       "action": "正常"
     },
     {
-      "title": "2409 友達",
-      "note": "漲幅 5.61%｜收盤位於日內高檔｜成交值 280.3 億",
+      "title": "6488 環球晶",
+      "note": "漲幅 9.68%｜收盤位於日內高檔｜成交值 177.6 億",
       "action": "主攻#1"
     },
     {
-      "title": "8046 南電",
-      "note": "尚未噴出｜漲幅 2.82%｜收盤靠近高點｜成交值 239.8 億",
+      "title": "2383 台光電",
+      "note": "尚未噴出｜漲幅 4.22%｜收盤靠近高點｜成交值 122.8 億",
       "action": "下一棒#1"
     }
   ],
   "attack": [
     {
-      "code": "2409",
-      "name": "友達",
-      "score": 99,
-      "reason": "漲幅 5.61%｜收盤位於日內高檔｜成交值 280.3 億",
-      "price": 40.45,
-      "change_pct": 5.61,
+      "code": "6488",
+      "name": "環球晶",
+      "score": 84,
+      "reason": "漲幅 9.68%｜收盤位於日內高檔｜成交值 177.6 億",
+      "price": 1190.0,
+      "change_pct": 9.68,
+      "market": "TPEX"
+    },
+    {
+      "code": "3163",
+      "name": "波若威",
+      "score": 82,
+      "reason": "漲幅 9.52%｜收盤位於日內高檔｜成交值 53.2 億",
+      "price": 713.0,
+      "change_pct": 9.52,
+      "market": "TPEX"
+    },
+    {
+      "code": "6672",
+      "name": "騰輝電子-KY",
+      "score": 79,
+      "reason": "漲幅 8.26%｜收盤位於日內高檔｜成交值 70.5 億",
+      "price": 439.0,
+      "change_pct": 8.26,
       "market": "TWSE"
     },
     {
       "code": "3037",
       "name": "欣興",
-      "score": 99,
+      "score": 77,
       "reason": "漲幅 7.41%｜收盤位於日內高檔｜成交值 235.1 億",
       "price": 1305.0,
       "change_pct": 7.41,
       "market": "TWSE"
     },
     {
-      "code": "6213",
-      "name": "聯茂",
-      "score": 99,
-      "reason": "漲幅 6.39%｜收盤位於日內高檔｜成交值 163.7 億",
-      "price": 683.0,
-      "change_pct": 6.39,
-      "market": "TWSE"
-    },
-    {
-      "code": "2383",
-      "name": "台光電",
-      "score": 99,
-      "reason": "漲幅 4.22%｜收盤位於日內高檔｜成交值 122.8 億",
-      "price": 5185.0,
-      "change_pct": 4.22,
-      "market": "TWSE"
-    },
-    {
-      "code": "3042",
-      "name": "晶技",
-      "score": 99,
-      "reason": "漲幅 5.49%｜收盤位於日內高檔｜成交值 98.3 億",
-      "price": 230.5,
-      "change_pct": 5.49,
-      "market": "TWSE"
-    },
-    {
-      "code": "6239",
-      "name": "力成",
-      "score": 99,
-      "reason": "漲幅 5.30%｜收盤位於日內高檔｜成交值 94.1 億",
-      "price": 308.0,
-      "change_pct": 5.3,
-      "market": "TWSE"
-    },
-    {
-      "code": "3450",
-      "name": "聯鈞",
-      "score": 99,
-      "reason": "漲幅 5.44%｜收盤位於日內高檔｜成交值 93.6 億",
-      "price": 543.0,
-      "change_pct": 5.44,
-      "market": "TWSE"
-    },
-    {
       "code": "4919",
       "name": "新唐",
-      "score": 99,
+      "score": 75,
       "reason": "漲幅 7.24%｜收盤位於日內高檔｜成交值 89.6 億",
       "price": 163.0,
       "change_pct": 7.24,
+      "market": "TWSE"
+    },
+    {
+      "code": "6531",
+      "name": "愛普*",
+      "score": 73,
+      "reason": "漲幅 7.18%｜收盤位於日內高檔｜成交值 58.3 億",
+      "price": 1000.0,
+      "change_pct": 7.18,
+      "market": "TWSE"
+    },
+    {
+      "code": "3016",
+      "name": "嘉晶",
+      "score": 72,
+      "reason": "漲幅 7.44%｜收盤位於日內高檔｜成交值 15.4 億",
+      "price": 180.5,
+      "change_pct": 7.44,
+      "market": "TWSE"
+    },
+    {
+      "code": "4551",
+      "name": "智伸科",
+      "score": 72,
+      "reason": "漲幅 7.83%｜收盤位於日內高檔｜成交值 6.1 億",
+      "price": 186.0,
+      "change_pct": 7.83,
       "market": "TWSE"
     }
   ],
   "next": [
     {
-      "code": "8046",
-      "name": "南電",
-      "score": 99,
-      "reason": "尚未噴出｜漲幅 2.82%｜收盤靠近高點｜成交值 239.8 億",
-      "price": 1460.0,
-      "change_pct": 2.82,
+      "code": "2383",
+      "name": "台光電",
+      "score": 86,
+      "reason": "尚未噴出｜漲幅 4.22%｜收盤靠近高點｜成交值 122.8 億",
+      "price": 5185.0,
+      "change_pct": 4.22,
       "market": "TWSE"
+    },
+    {
+      "code": "1815",
+      "name": "富喬",
+      "score": 82,
+      "reason": "尚未噴出｜漲幅 4.31%｜收盤靠近高點｜成交值 51.2 億",
+      "price": 121.0,
+      "change_pct": 4.31,
+      "market": "TPEX"
     },
     {
       "code": "3189",
       "name": "景碩",
-      "score": 99,
+      "score": 81,
       "reason": "尚未噴出｜漲幅 3.96%｜收盤靠近高點｜成交值 195.5 億",
       "price": 1050.0,
       "change_pct": 3.96,
       "market": "TWSE"
     },
     {
-      "code": "1303",
-      "name": "南亞",
-      "score": 99,
-      "reason": "尚未噴出｜漲幅 2.36%｜收盤靠近高點｜成交值 109.2 億",
-      "price": 260.0,
-      "change_pct": 2.36,
-      "market": "TWSE"
+      "code": "8086",
+      "name": "宏捷科",
+      "score": 80,
+      "reason": "尚未噴出｜漲幅 4.35%｜收盤靠近高點｜成交值 10.1 億",
+      "price": 120.0,
+      "change_pct": 4.35,
+      "market": "TPEX"
     },
     {
       "code": "2345",
       "name": "智邦",
-      "score": 99,
+      "score": 79,
       "reason": "尚未噴出｜漲幅 3.42%｜收盤靠近高點｜成交值 104.1 億",
       "price": 1965.0,
       "change_pct": 3.42,
       "market": "TWSE"
     },
     {
-      "code": "2059",
-      "name": "川湖",
-      "score": 99,
-      "reason": "尚未噴出｜漲幅 2.62%｜收盤靠近高點｜成交值 60.5 億",
-      "price": 12145.0,
-      "change_pct": 2.62,
+      "code": "3030",
+      "name": "德律",
+      "score": 79,
+      "reason": "尚未噴出｜漲幅 3.81%｜收盤靠近高點｜成交值 11.5 億",
+      "price": 300.0,
+      "change_pct": 3.81,
       "market": "TWSE"
     },
     {
       "code": "8039",
       "name": "台虹",
-      "score": 99,
+      "score": 78,
       "reason": "尚未噴出｜漲幅 2.60%｜收盤靠近高點｜成交值 55.0 億",
       "price": 296.0,
       "change_pct": 2.6,
       "market": "TWSE"
     },
     {
-      "code": "6139",
-      "name": "亞翔",
-      "score": 99,
-      "reason": "尚未噴出｜漲幅 2.11%｜收盤靠近高點｜成交值 25.3 億",
-      "price": 775.0,
-      "change_pct": 2.11,
-      "market": "TWSE"
-    },
-    {
-      "code": "3030",
-      "name": "德律",
-      "score": 99,
-      "reason": "尚未噴出｜漲幅 3.81%｜收盤靠近高點｜成交值 11.5 億",
-      "price": 300.0,
-      "change_pct": 3.81,
+      "code": "8046",
+      "name": "南電",
+      "score": 77,
+      "reason": "尚未噴出｜漲幅 2.82%｜收盤靠近高點｜成交值 239.8 億",
+      "price": 1460.0,
+      "change_pct": 2.82,
       "market": "TWSE"
     }
   ],
@@ -197,113 +196,113 @@
       "market": "TWSE"
     },
     {
-      "code": "4764",
-      "name": "雙鍵",
+      "code": "3081",
+      "name": "聯亞",
       "score": 99,
-      "reason": "異常強勢 10.00%｜高檔收盤｜成交值 3.0 億；追價風險高",
-      "price": 203.5,
-      "change_pct": 10.0,
-      "market": "TWSE"
+      "reason": "異常強勢 9.96%｜高檔收盤｜成交值 122.0 億；追價風險高",
+      "price": 2925.0,
+      "change_pct": 9.96,
+      "market": "TPEX"
     },
     {
-      "code": "2444",
-      "name": "兆勁",
+      "code": "8150",
+      "name": "南茂",
       "score": 99,
-      "reason": "異常強勢 10.00%｜高檔收盤｜成交值 0.9 億；追價風險高",
-      "price": 16.5,
-      "change_pct": 10.0,
-      "market": "TWSE"
-    },
-    {
-      "code": "1459",
-      "name": "聯發",
-      "score": 99,
-      "reason": "異常強勢 10.00%｜高檔收盤｜成交值 0.2 億；追價風險高",
-      "price": 18.7,
-      "change_pct": 10.0,
-      "market": "TWSE"
-    },
-    {
-      "code": "4720",
-      "name": "德淵",
-      "score": 99,
-      "reason": "異常強勢 9.97%｜高檔收盤｜成交值 0.7 億；追價風險高",
-      "price": 20.95,
-      "change_pct": 9.97,
-      "market": "TWSE"
-    },
-    {
-      "code": "3311",
-      "name": "閎暉",
-      "score": 99,
-      "reason": "異常強勢 9.97%｜高檔收盤｜成交值 1.2 億；追價風險高",
-      "price": 49.65,
-      "change_pct": 9.97,
-      "market": "TWSE"
-    },
-    {
-      "code": "9933",
-      "name": "中鼎",
-      "score": 99,
-      "reason": "異常強勢 9.96%｜高檔收盤｜成交值 9.7 億；追價風險高",
-      "price": 45.8,
+      "reason": "異常強勢 9.96%｜高檔收盤｜成交值 121.6 億；追價風險高",
+      "price": 127.0,
       "change_pct": 9.96,
       "market": "TWSE"
     },
     {
-      "code": "1709",
-      "name": "和益",
+      "code": "2492",
+      "name": "華新科",
       "score": 99,
-      "reason": "異常強勢 9.96%｜高檔收盤｜成交值 19.0 億；追價風險高",
-      "price": 58.5,
-      "change_pct": 9.96,
+      "reason": "異常強勢 9.88%｜高檔收盤｜成交值 195.5 億；追價風險高",
+      "price": 361.5,
+      "change_pct": 9.88,
+      "market": "TWSE"
+    },
+    {
+      "code": "3105",
+      "name": "穩懋",
+      "score": 99,
+      "reason": "異常強勢 9.85%｜高檔收盤｜成交值 159.8 億；追價風險高",
+      "price": 591.0,
+      "change_pct": 9.85,
+      "market": "TPEX"
+    },
+    {
+      "code": "6488",
+      "name": "環球晶",
+      "score": 99,
+      "reason": "異常強勢 9.68%｜高檔收盤｜成交值 177.6 億；追價風險高",
+      "price": 1190.0,
+      "change_pct": 9.68,
+      "market": "TPEX"
+    },
+    {
+      "code": "4991",
+      "name": "環宇-KY",
+      "score": 98,
+      "reason": "異常強勢 9.99%｜高檔收盤｜成交值 42.1 億；追價風險高",
+      "price": 534.0,
+      "change_pct": 9.99,
+      "market": "TPEX"
+    },
+    {
+      "code": "8021",
+      "name": "尖點",
+      "score": 98,
+      "reason": "異常強勢 9.94%｜高檔收盤｜成交值 49.8 億；追價風險高",
+      "price": 553.0,
+      "change_pct": 9.94,
       "market": "TWSE"
     }
   ],
   "rotate": [
     {
-      "code": "2409",
-      "name": "友達",
-      "score": 99,
-      "reason": "換股候選｜漲幅 5.61%｜收盤位於日內高檔｜成交值 280.3 億",
-      "price": 40.45,
-      "change_pct": 5.61,
+      "code": "6488",
+      "name": "環球晶",
+      "score": 84,
+      "reason": "換股候選｜漲幅 9.68%｜收盤位於日內高檔｜成交值 177.6 億",
+      "price": 1190.0,
+      "change_pct": 9.68,
+      "market": "TPEX"
+    },
+    {
+      "code": "3163",
+      "name": "波若威",
+      "score": 82,
+      "reason": "換股候選｜漲幅 9.52%｜收盤位於日內高檔｜成交值 53.2 億",
+      "price": 713.0,
+      "change_pct": 9.52,
+      "market": "TPEX"
+    },
+    {
+      "code": "6672",
+      "name": "騰輝電子-KY",
+      "score": 79,
+      "reason": "換股候選｜漲幅 8.26%｜收盤位於日內高檔｜成交值 70.5 億",
+      "price": 439.0,
+      "change_pct": 8.26,
       "market": "TWSE"
     },
     {
       "code": "3037",
       "name": "欣興",
-      "score": 99,
+      "score": 77,
       "reason": "換股候選｜漲幅 7.41%｜收盤位於日內高檔｜成交值 235.1 億",
       "price": 1305.0,
       "change_pct": 7.41,
       "market": "TWSE"
     },
     {
-      "code": "6213",
-      "name": "聯茂",
-      "score": 99,
-      "reason": "換股候選｜漲幅 6.39%｜收盤位於日內高檔｜成交值 163.7 億",
-      "price": 683.0,
-      "change_pct": 6.39,
-      "market": "TWSE"
-    },
-    {
-      "code": "2383",
-      "name": "台光電",
-      "score": 99,
-      "reason": "換股候選｜漲幅 4.22%｜收盤位於日內高檔｜成交值 122.8 億",
-      "price": 5185.0,
-      "change_pct": 4.22,
-      "market": "TWSE"
-    },
-    {
-      "code": "3042",
-      "name": "晶技",
-      "score": 99,
-      "reason": "換股候選｜漲幅 5.49%｜收盤位於日內高檔｜成交值 98.3 億",
-      "price": 230.5,
-      "change_pct": 5.49,
+      "code": "4919",
+      "name": "新唐",
+      "score": 75,
+      "reason": "換股候選｜漲幅 7.24%｜收盤位於日內高檔｜成交值 89.6 億",
+      "price": 163.0,
+      "change_pct": 7.24,
       "market": "TWSE"
     }
   ],
@@ -311,20 +310,20 @@
     {
       "icon": "↗",
       "name": "上漲家數",
-      "note": "489 檔｜廣度 48.9%",
-      "score": 489
+      "note": "941 檔｜廣度 52.8%",
+      "score": 941
     },
     {
       "icon": "↘",
       "name": "下跌家數",
-      "note": "511 檔｜平盤 94 檔",
-      "score": 511
+      "note": "841 檔｜平盤 179 檔",
+      "score": 841
     },
     {
       "icon": "⚠",
       "name": "跌逾 5%",
       "note": "市場急跌壓力檔數",
-      "score": 4
+      "score": 12
     },
     {
       "icon": "🔥",
