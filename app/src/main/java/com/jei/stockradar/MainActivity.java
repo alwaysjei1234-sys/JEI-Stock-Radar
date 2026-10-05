@@ -43,6 +43,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity {
     private static final String REMOTE_UI = "https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/index.html";
@@ -70,7 +72,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(true);
         s.setAllowContentAccess(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.2");
+        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.5");
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
@@ -194,7 +196,7 @@ public class MainActivity extends Activity {
         c.setConnectTimeout(9000);
         c.setReadTimeout(12000);
         c.setRequestMethod("GET");
-        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.2");
+        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.5");
         c.setRequestProperty("Accept", "application/json,text/html,*/*");
         c.setRequestProperty("Cache-Control", "no-cache");
         int status = c.getResponseCode();
@@ -257,16 +259,46 @@ public class MainActivity extends Activity {
         io.execute(() -> {
             try {
                 JSONArray a = new JSONArray(jsonCodes);
-                StringBuilder q = new StringBuilder();
+                List<String> codes = new ArrayList<>();
                 for (int i = 0; i < a.length(); i++) {
-                    String code = a.getString(i).trim();
-                    if (!code.matches("[0-9A-Za-z]{2,8}")) continue;
-                    if (q.length() > 0) q.append('|');
-                    q.append("tse_").append(code).append(".tw|otc_").append(code).append(".tw");
+                    String code = a.optString(i, "").trim();
+                    if (code.matches("[0-9A-Za-z]{2,8}") && !codes.contains(code)) codes.add(code);
                 }
-                String url = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch="
-                        + q + "&json=1&delay=0&_=" + System.currentTimeMillis();
-                jsCall("onMarketData", httpGet(url));
+                JSONArray merged = new JSONArray();
+                int okBatches = 0;
+                // Keep MIS URLs short and gentle. Each stock is queried on both TWSE/TPEX
+                // because the UI's candidate universe may mix markets.
+                for (int start = 0; start < codes.size(); start += 18) {
+                    StringBuilder q = new StringBuilder();
+                    int end = Math.min(codes.size(), start + 18);
+                    for (int i = start; i < end; i++) {
+                        String code = codes.get(i);
+                        if (q.length() > 0) q.append('|');
+                        q.append("tse_").append(code).append(".tw|otc_").append(code).append(".tw");
+                    }
+                    try {
+                        String url = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch="
+                                + q + "&json=1&delay=0&_=" + System.currentTimeMillis();
+                        JSONObject part = new JSONObject(httpGet(url));
+                        JSONArray rows = part.optJSONArray("msgArray");
+                        if (rows != null) {
+                            for (int k = 0; k < rows.length(); k++) {
+                                JSONObject row = rows.optJSONObject(k);
+                                if (row != null && row.optString("c", "").length() > 0) merged.put(row);
+                            }
+                            okBatches++;
+                        }
+                        if (end < codes.size()) Thread.sleep(90);
+                    } catch (Exception ignored) { }
+                }
+                if (okBatches == 0 || merged.length() == 0) throw new Exception("MIS batches returned no quotes");
+                JSONObject out = new JSONObject();
+                out.put("msgArray", merged);
+                out.put("jeiRequested", codes.size());
+                out.put("jeiReceived", merged.length());
+                out.put("jeiBatches", okBatches);
+                out.put("jeiAt", System.currentTimeMillis());
+                jsCall("onMarketData", out.toString());
             } catch (Exception e) {
                 jsCall("onMarketError", e.getMessage() == null ? "行情連線失敗" : e.getMessage());
             }
