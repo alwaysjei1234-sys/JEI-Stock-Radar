@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, math, re, statistics, urllib.request
+import json, math, re, statistics, time, urllib.request
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -8,12 +8,34 @@ TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
 TPEX_STOCK="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
 OUT=Path("remote/system.json")
+HISTORY=Path("remote/history.json")
 TZ=ZoneInfo("Asia/Taipei")
 
-def fetch_json(url):
-    req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 JEI-Stock-Radar-Updater/3.0","Accept":"application/json"})
-    with urllib.request.urlopen(req,timeout=30) as r:
-        return json.loads(r.read().decode("utf-8-sig"))
+SECTOR_BASKETS={
+    "AI伺服器/散熱":["2345","2382","3231","6669","3017","3324","3653","2059"],
+    "PCB/載板":["3037","3189","8046","2368","2383","6274","6213","1815","8039"],
+    "光通訊/CPO":["3081","3450","4979","3363","3163","6442","4908","4977","3234"],
+    "被動元件":["2327","2492","2478","2375","6173","6127","8043","3090"],
+    "記憶體/儲存":["2408","2344","2337","8299","3260","8271"],
+    "功率半導體":["3707","5425","8261","2481","6138","3317","3105","8086"],
+    "半導體設備/測試":["3289","6223","6510","3131","3583","6187","5443","6640"],
+    "矽晶圓/材料":["6488","3532","6182","3016","5483"],
+    "IC設計":["2454","3034","3443","6643","6531","4919","3661"],
+    "封測":["6239","8150","2449","3711"],
+    "航運":["2609","2603","2615"]
+}
+
+def fetch_json(url,tries=3):
+    last=None
+    for i in range(tries):
+        try:
+            req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 JEI-Stock-Radar-Updater/3.2","Accept":"application/json"})
+            with urllib.request.urlopen(req,timeout=35) as r:
+                return json.loads(r.read().decode("utf-8-sig"))
+        except Exception as e:
+            last=e
+            if i+1<tries: time.sleep(1.2*(i+1))
+    raise last
 
 def num(v):
     if v is None:return None
@@ -49,20 +71,109 @@ def norm_tpex(r):
             "market":"TPEX"}
 
 def clamp(x,lo,hi):return max(lo,min(hi,x))
+
 def position(s):
     h,l,c=s.get("high"),s.get("low"),s.get("close")
     if h is None or l is None or c is None or h<=l:return .5
     return clamp((c-l)/(h-l),0,1)
-def stock_only(s):return bool(re.fullmatch(r"\d{4}",s.get("code",""))) and s.get("close") and s.get("pct") is not None
-def score_row(s,mode):
-    p=s["pct"];pos=position(s);liq=clamp((math.log10(max(s.get("value",0),1))-7.0)*5,0,15)
-    if mode=="attack":score=30+clamp(p,0,10)*3+pos*10+liq
-    elif mode=="next":score=38+clamp(p+.5,0,5)*4+pos*14+liq
-    else:score=35+clamp(p,0,12)*4+pos*10+liq
+
+def range_pct(s):
+    h,l,c=s.get("high"),s.get("low"),s.get("close")
+    if h is None or l is None or c is None or c<=0:return 3.0
+    return clamp((h-l)/c*100.0,1.0,12.0)
+
+def stock_only(s):
+    return bool(re.fullmatch(r"\d{4}",s.get("code",""))) and s.get("close") and s.get("pct") is not None
+
+def build_sector_stats(by_code):
+    stats=[];stock_sector={}
+    for name,codes in SECTOR_BASKETS.items():
+        members=[by_code[c] for c in codes if c in by_code and by_code[c].get("pct") is not None]
+        if len(members)<2: continue
+        pcts=[x["pct"] for x in members]
+        vals=[x.get("value",0) for x in members]
+        adv=sum(1 for p in pcts if p>0)
+        avg=statistics.mean(pcts);med=statistics.median(pcts)
+        breadth=adv/len(members)
+        hot=sum(1 for p in pcts if p>=3)
+        score=round(clamp(50+avg*7+(breadth-.5)*32+hot*2,0,100))
+        leaders=sorted(members,key=lambda x:(x["pct"],x.get("value",0)),reverse=True)[:3]
+        stats.append({"name":name,"score":score,"avg_pct":round(avg,2),"median_pct":round(med,2),
+                      "breadth":round(breadth*100,1),"members":len(members),
+                      "value_billion":round(sum(vals)/1e8,1),
+                      "leaders":[{"code":x["code"],"name":x["name"],"pct":round(x["pct"],2)} for x in leaders]})
+        for c in codes: stock_sector[c]=name
+    stats.sort(key=lambda x:(x["score"],x["value_billion"]),reverse=True)
+    score_map={x["name"]:x["score"] for x in stats}
+    return stats,stock_sector,score_map
+
+def price_plan(s,mode,risk):
+    c=s["close"];rp=range_pct(s)
+    pull=clamp(rp*.28,0.8,2.8)/100
+    entry_low=c*(1-pull);entry_high=c*(1+.004 if mode=="attack" else 0)
+    stop_pct=clamp(max(3.5,rp*1.25)+(1.0 if risk>=65 else 0),3.5,8.5)/100
+    defense=c*(1-stop_pct)
+    reward=max(.045,stop_pct*1.35)
+    target1=c*(1+reward)
+    target2=c*(1+reward*1.75)
+    return {"entry_low":round(entry_low,2),"entry_high":round(entry_high,2),
+            "defense":round(defense,2),"target1":round(target1,2),"target2":round(target2,2)}
+
+def score_row(s,mode,risk,sector_score):
+    p=s["pct"];pos=position(s)
+    liq=clamp((math.log10(max(s.get("value",0),1))-7.0)*5,0,18)
+    sector=clamp((sector_score-45)*.34,0,15)
+    risk_pen=clamp((risk-35)*.13,0,9)
+    chase=max(0,p-7.0)*(4.0 if mode!="monster" else .5)
+    if mode=="attack":
+        momentum=clamp(p,0,7)*3.4
+        score=34+momentum+pos*13+liq+sector-risk_pen-chase
+    elif mode=="next":
+        momentum=clamp(p+1,0,5.5)*3.5
+        score=39+momentum+pos*15+liq+sector-risk_pen-max(0,p-4.2)*5
+    else:
+        score=38+clamp(p,0,10)*3.7+pos*12+liq+sector-risk_pen
     return int(round(clamp(score,0,99)))
-def item(s,score,reason):
-    return {"code":s["code"],"name":s["name"],"score":score,"reason":reason,"price":s["close"],
-            "change_pct":round(s["pct"],2),"market":s["market"]}
+
+def item(s,score,reason,mode,risk,sector,sector_score):
+    x={"code":s["code"],"name":s["name"],"score":score,"reason":reason,"price":s["close"],
+       "change_pct":round(s["pct"],2),"market":s["market"],"sector":sector or "其他","sector_score":sector_score}
+    x.update(price_plan(s,mode,risk))
+    return x
+
+def load_history():
+    try:
+        h=json.loads(HISTORY.read_text(encoding="utf-8"))
+        return h if isinstance(h,list) else []
+    except Exception:return []
+
+def update_history(history,date_key,stocks,signals):
+    price_map={x["code"]:x["close"] for x in stocks if x.get("close")}
+    snap={"date":date_key,"prices":price_map,"signals":[{"code":x["code"],"price":x["price"],"score":x["score"]} for x in signals[:8]]}
+    history=[x for x in history if x.get("date")!=date_key]
+    history.append(snap)
+    history=history[-90:]
+    return history
+
+def calc_backtest(history,current_prices):
+    if len(history)<2:return {"hit3":None,"hit5":None,"hit10":None,"samples":0}
+    periods=[(3,"hit3"),(5,"hit5"),(10,"hit10")]
+    out={"hit3":None,"hit5":None,"hit10":None,"samples":0}
+    total_samples=0
+    for days,key in periods:
+        wins=0;n=0
+        for i,snap in enumerate(history):
+            if i+days>=len(history):continue
+            future=history[i+days].get("prices",{})
+            for sig in snap.get("signals",[]):
+                p0=num(sig.get("price"));p1=num(future.get(sig.get("code")))
+                if p0 and p1:
+                    n+=1
+                    if p1/p0-1>=.03:wins+=1
+        if n:
+            out[key]=round(wins/n*100,1);total_samples=max(total_samples,n)
+    out["samples"]=total_samples
+    return out
 
 def main():
     errors=[]
@@ -72,54 +183,128 @@ def main():
     except Exception as e:idx_raw=[];errors.append("TWSE指數:"+str(e))
     try:tpex_raw=fetch_json(TPEX_STOCK)
     except Exception as e:tpex_raw=[];errors.append("TPEX:"+str(e))
+
     rows=[norm_twse(x) for x in twse_raw if isinstance(x,dict)]+[norm_tpex(x) for x in tpex_raw if isinstance(x,dict)]
     rows=[x for x in rows if x["code"] and x["close"]]
     stocks=[x for x in rows if stock_only(x)]
+    by_code={x["code"]:x for x in stocks}
+
     taiex_pct=None
     for x in idx_raw if isinstance(idx_raw,list) else []:
         if str(x.get("指數","")).strip()=="發行量加權股價指數":
             p=num(x.get("漲跌百分比"));sign=str(x.get("漲跌","")).strip()
             taiex_pct=(-abs(p) if sign=="-" and p is not None else p);break
+
     pcts=[x["pct"] for x in stocks if x["pct"] is not None]
     adv=sum(1 for p in pcts if p>0);dec=sum(1 for p in pcts if p<0);flat=max(0,len(pcts)-adv-dec)
     adv_ratio=adv/max(1,adv+dec);median=statistics.median(pcts) if pcts else 0
-    down5=sum(1 for p in pcts if p<=-5);limit_down=sum(1 for p in pcts if p<=-9.4)
-    risk=34
-    if taiex_pct is not None:risk+=clamp(-taiex_pct,0,6)*9-clamp(taiex_pct,0,4)*5
-    risk+=clamp((.48-adv_ratio)*100,0,35)*.9+clamp(-median,0,5)*7+clamp(down5/max(1,len(pcts))*100,0,20)*1.2+clamp(limit_down,0,40)*.7
+    down3=sum(1 for p in pcts if p<=-3);down5=sum(1 for p in pcts if p<=-5);limit_down=sum(1 for p in pcts if p<=-9.4)
+    up5=sum(1 for p in pcts if p>=5);up8=sum(1 for p in pcts if p>=8)
+
+    risk=30
+    if taiex_pct is not None:risk+=clamp(-taiex_pct,0,6)*10-clamp(taiex_pct,0,4)*4
+    risk+=clamp((.50-adv_ratio)*100,0,40)*1.0
+    risk+=clamp(-median,0,5)*8
+    risk+=clamp(down5/max(1,len(pcts))*100,0,25)*1.4
+    risk+=clamp(limit_down,0,50)*.8
+    if adv_ratio>.58 and median>.4:risk-=6
     risk=int(round(clamp(risk,0,100)))
+
     if risk>=80:level,label,cash="red","高風險防守","70%↑"
     elif risk>=65:level,label,cash="orange","風險升高","50%–70%"
     elif risk>=45:level,label,cash="yellow","震盪警戒","30%–50%"
     else:level,label,cash="green","正常","20%–30%"
-    tradable=[x for x in stocks if x["value"]>=20000000]
-    attacks=sorted([x for x in tradable if 1.5<=x["pct"]<=9.7 and position(x)>=.62],key=lambda s:(score_row(s,"attack"),s["value"]),reverse=True)[:8]
-    attack=[item(s,score_row(s,"attack"),f"漲幅 {s['pct']:.2f}%｜收盤位於日內高檔｜成交值 {s['value']/1e8:.1f} 億") for s in attacks]
-    attack_codes={x["code"] for x in attacks}
-    nexts=sorted([x for x in tradable if x["code"] not in attack_codes and -.5<=x["pct"]<=4.5 and position(x)>=.68 and (x["open"] is None or x["close"]>=x["open"])],key=lambda s:(score_row(s,"next"),s["value"]),reverse=True)[:8]
-    next_list=[item(s,score_row(s,"next"),f"尚未噴出｜漲幅 {s['pct']:.2f}%｜收盤靠近高點｜成交值 {s['value']/1e8:.1f} 億") for s in nexts]
-    monsters=sorted([x for x in tradable if x["pct"]>=5 and position(x)>=.72],key=lambda s:(score_row(s,"monster"),s["pct"],s["value"]),reverse=True)[:8]
-    monster=[item(s,score_row(s,"monster"),f"異常強勢 {s['pct']:.2f}%｜高檔收盤｜成交值 {s['value']/1e8:.1f} 億；追價風險高") for s in monsters]
-    rotate=[dict(x,reason="換股候選｜"+x["reason"]) for x in attack[:5]]
+
+    sectors,stock_sector,sector_scores=build_sector_stats(by_code)
+    tradable=[x for x in stocks if x["value"]>=30000000]
+
+    def secinfo(s):
+        sec=stock_sector.get(s["code"],"其他")
+        return sec,sector_scores.get(sec,50)
+
+    attack_pool=[]
+    next_pool=[]
+    monster_pool=[]
+    for s in tradable:
+        sec,ss=secinfo(s)
+        if .8<=s["pct"]<=8.8 and position(s)>=.58:
+            attack_pool.append((score_row(s,"attack",risk,ss),s,sec,ss))
+        if -.8<=s["pct"]<=4.8 and position(s)>=.62 and (s["open"] is None or s["close"]>=s["open"]*.995):
+            next_pool.append((score_row(s,"next",risk,ss),s,sec,ss))
+        if s["pct"]>=5 and position(s)>=.70:
+            monster_pool.append((score_row(s,"monster",risk,ss),s,sec,ss))
+
+    attack_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
+    attack=[]
+    for score,s,sec,ss in attack_pool[:10]:
+        chase="｜接近漲停，勿追高" if s["pct"]>=8.5 else ""
+        reason=f"{sec}熱度 {ss}｜漲幅 {s['pct']:.2f}%｜收盤位置 {position(s)*100:.0f}%｜成交值 {s['value']/1e8:.1f} 億{chase}"
+        attack.append(item(s,score,reason,"attack",risk,sec,ss))
+
+    attack_codes={x["code"] for x in attack[:5]}
+    next_pool=[x for x in next_pool if x[1]["code"] not in attack_codes]
+    next_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
+    next_list=[]
+    for score,s,sec,ss in next_pool[:10]:
+        reason=f"{sec}熱度 {ss}｜尚未過熱 {s['pct']:+.2f}%｜收盤位置 {position(s)*100:.0f}%｜成交值 {s['value']/1e8:.1f} 億"
+        next_list.append(item(s,score,reason,"next",risk,sec,ss))
+
+    monster_pool.sort(key=lambda x:(x[0],x[1]["pct"],x[1]["value"]),reverse=True)
+    monster=[]
+    for score,s,sec,ss in monster_pool[:10]:
+        reason=f"{sec}熱度 {ss}｜異常強勢 {s['pct']:.2f}%｜高檔收盤｜成交值 {s['value']/1e8:.1f} 億；追價風險高"
+        monster.append(item(s,score,reason,"monster",risk,sec,ss))
+
+    rotate=sorted(attack[:8]+next_list[:8],key=lambda x:(x.get("sector_score",50),x["score"]),reverse=True)[:8]
+    for x in rotate:x["reason"]="換股候選｜"+x["reason"]
+
     taiex_txt="--" if taiex_pct is None else f"{taiex_pct:+.2f}%"
-    market_status="偏多" if (taiex_pct or 0)>.5 and adv_ratio>.55 else ("偏空" if (taiex_pct or 0)<-.8 or adv_ratio<.4 else "震盪")
-    reasons=[f"加權指數 {taiex_txt}",f"上漲 {adv} / 下跌 {dec}",f"市場中位數 {median:+.2f}%",f"跌逾5% {down5} 檔"]
-    if errors:reasons.append("部分資料源降級："+"；".join(errors)[:120])
-    flow=[{"icon":"↗","name":"上漲家數","note":f"{adv} 檔｜廣度 {adv_ratio*100:.1f}%","score":adv},
-          {"icon":"↘","name":"下跌家數","note":f"{dec} 檔｜平盤 {flat} 檔","score":dec},
-          {"icon":"⚠","name":"跌逾 5%","note":"市場急跌壓力檔數","score":down5},
-          {"icon":"🔥","name":"強勢動能","note":"漲幅≥5% 且高檔收盤","score":len(monsters)}]
-    priority=[{"title":"市場風控","note":"｜".join(reasons),"action":label}]
+    if risk>=80:market_status="紅燈防守"
+    elif risk>=65:market_status="偏空警戒"
+    elif (taiex_pct or 0)>.6 and adv_ratio>.56:market_status="偏多"
+    elif (taiex_pct or 0)<-.8 or adv_ratio<.42:market_status="偏空"
+    else:market_status="震盪"
+
+    reasons=[f"加權指數 {taiex_txt}",f"上漲 {adv} / 下跌 {dec}（廣度 {adv_ratio*100:.1f}%）",
+             f"市場中位數 {median:+.2f}%",f"跌逾3% {down3}｜跌逾5% {down5}｜跌停附近 {limit_down}"]
+    if sectors:reasons.append("最強族群 "+sectors[0]["name"]+f" {sectors[0]['score']}分")
+    if errors:reasons.append("部分資料源降級："+"；".join(errors)[:140])
+
+    flow=[
+        {"icon":"↗","name":"市場廣度","note":f"上漲 {adv} / 下跌 {dec}｜廣度 {adv_ratio*100:.1f}%","score":round(adv_ratio*100)},
+        {"icon":"⚠","name":"尾端賣壓","note":f"跌逾3% {down3}｜跌逾5% {down5}｜跌停附近 {limit_down}","score":down5},
+        {"icon":"🔥","name":"強勢動能","note":f"漲逾5% {up5}｜漲逾8% {up8}","score":up5},
+        {"icon":"◎","name":"市場中位數","note":"排除權值股後觀察整體溫度","score":round(median,2)}
+    ]
+
+    priority=[{"title":"市場風控","note":"｜".join(reasons[:4]),"action":label}]
+    if sectors:priority.append({"title":"族群主線："+sectors[0]["name"],"note":f"熱度 {sectors[0]['score']}｜平均 {sectors[0]['avg_pct']:+.2f}%｜上漲比 {sectors[0]['breadth']:.1f}%","action":"主線"})
     if attack:priority.append({"title":attack[0]["code"]+" "+attack[0]["name"],"note":attack[0]["reason"],"action":"主攻#1"})
     if next_list:priority.append({"title":next_list[0]["code"]+" "+next_list[0]["name"],"note":next_list[0]["reason"],"action":"下一棒#1"})
-    now=datetime.now(TZ);data_date=next((x["date"] for x in rows if x["date"]),"")
-    out={"schema":3,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":data_date,
-         "summary":"風險優先；持股決策由手機本機成本＋即時行情計算；主攻、下一棒、妖股由 JEI 排程刷新。",
-         "risk":{"level":level,"label":label,"score":risk,"cash":cash,"reasons":reasons},
-         "market":{"status":market_status,"brief":f"最新市場快照｜加權 {taiex_txt}｜上漲 {adv} / 下跌 {dec}｜中位數 {median:+.2f}%｜JEI 每15分鐘更新"},
-         "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
-         "backtest":{"hit3":None,"hit5":None,"hit10":None,"samples":0},
-         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes"]}
-    OUT.parent.mkdir(parents=True,exist_ok=True);OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    print(json.dumps({"updated_at":out["updated_at"],"risk":risk,"stocks":len(stocks),"errors":errors},ensure_ascii=False))
+
+    now=datetime.now(TZ)
+    raw_date=next((x["date"] for x in rows if x["date"]),"")
+    date_key=now.strftime("%Y-%m-%d")
+    history=load_history()
+    history=update_history(history,date_key,stocks,attack[:5]+next_list[:5])
+    HISTORY.parent.mkdir(parents=True,exist_ok=True)
+    HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
+    backtest=calc_backtest(history,{x["code"]:x["close"] for x in stocks})
+
+    out={
+        "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,
+        "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
+        "risk":{"level":level,"label":label,"score":risk,"cash":cash,"reasons":reasons,
+                "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down},
+        "market":{"status":market_status,
+                  "brief":f"多因子市場快照｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
+        "sectors":sectors,"stock_sectors":stock_sector,
+        "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
+        "backtest":backtest,
+        "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes"]
+    }
+    OUT.parent.mkdir(parents=True,exist_ok=True)
+    OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    print(json.dumps({"updated_at":out["updated_at"],"risk":risk,"stocks":len(stocks),"sectors":len(sectors),"errors":errors},ensure_ascii=False))
+
 if __name__=="__main__":main()
