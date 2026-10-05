@@ -518,11 +518,21 @@ def main():
     source_data_date=raw_date
     live_coverage=live_count/max(1,len(stocks))
     live_valid=live_count>=500 and live_coverage>=.35
+    today_iso=now.strftime("%Y-%m-%d")
+    today_roc=f"{now.year-1911:03d}{now.month:02d}{now.day:02d}"
+    source_compact=re.sub(r"[^0-9]","",str(source_data_date or ""))
+    source_is_today=source_compact in (today_roc,re.sub(r"[^0-9]","",today_iso))
+    stale_source=not source_is_today
     if live_valid:
-        raw_date=now.strftime("%Y-%m-%d")
+        raw_date=today_iso
+        stale_source=False
+    elif stale_source:
+        # Safety invariant applies all day, including after close: stale official
+        # daily data must never be presented as today's attack/next/monster radar.
+        errors.append(f"行情來源仍為 {source_data_date or '未知日期'}，今日候選榜暫停避免誤判")
+        attack=[];next_list=[];monster=[];rotate=[]
+        priority=[x for x in priority if x.get("action") not in ("主攻#1","下一棒#1")]
     elif market_open:
-        # Safety invariant: never advertise stale daily candidates as today's
-        # intraday monster/next/attack radar when full-market live coverage failed.
         errors.append(f"盤中即時覆蓋不足 {live_count}/{len(stocks)}，候選榜暫停避免誤判")
         attack=[];next_list=[];monster=[];rotate=[]
         priority=[x for x in priority if x.get("action") not in ("主攻#1","下一棒#1")]
@@ -540,9 +550,9 @@ def main():
                 "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down,
                 "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000),
                 "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
-        "market":{"status":market_status,"mode":("盤中即時" if live_valid else ("盤中資料不足" if market_open else "日線快照")),
-                  "live_count":live_count,"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,
-                  "brief":f"{'盤中即時' if live_valid else ('盤中資料不足' if market_open else '日線快照')}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
+        "market":{"status":market_status,"mode":("盤中即時" if live_valid else ("資料過期" if stale_source else ("盤中資料不足" if market_open else "今日收盤"))),
+                  "live_count":live_count,"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source,
+                  "brief":f"{'盤中即時' if live_valid else ('資料過期' if stale_source else ('盤中資料不足' if market_open else '今日收盤'))}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
         "sectors":sectors,"stock_sectors":stock_sector,"institutional":institutional,
         "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
         "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
