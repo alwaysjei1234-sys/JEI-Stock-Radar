@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -66,3 +66,12 @@ jobs:
           path: "JEI_Stock_Radar_V3.apk"
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish stable APK download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete jei-latest --cleanup-tag --yes || true
+          gh release create jei-latest "JEI_Stock_Radar_V3.apk" \
+            --title "JEI Stock Radar latest" \
+            --notes "Latest installable JEI Android build. The app checks remote/update.json and downloads this APK when an update is available."
