@@ -188,7 +188,7 @@ def price_plan(s,mode,risk):
     return {"entry_low":round(entry_low,2),"entry_high":round(entry_high,2),
             "defense":round(defense,2),"target1":round(target1,2),"target2":round(target2,2)}
 
-def score_row(s,mode,risk,sector_score):
+def score_row(s,mode,risk,sector_score,heat_penalty=0):
     p=s["pct"];pos=position(s)
     liq=clamp((math.log10(max(s.get("value",0),1))-7.0)*5,0,18)
     sector=clamp((sector_score-45)*.34,0,15)
@@ -196,10 +196,10 @@ def score_row(s,mode,risk,sector_score):
     chase=max(0,p-7.0)*(4.0 if mode!="monster" else .5)
     if mode=="attack":
         momentum=clamp(p,0,7)*3.4
-        score=34+momentum+pos*13+liq+sector-risk_pen-chase
+        score=34+momentum+pos*13+liq+sector-risk_pen-chase-heat_penalty
     elif mode=="next":
         momentum=clamp(p+1,0,5.5)*3.5
-        score=39+momentum+pos*15+liq+sector-risk_pen-max(0,p-4.2)*5
+        score=39+momentum+pos*15+liq+sector-risk_pen-max(0,p-4.2)*5-heat_penalty*1.25
     else:
         score=38+clamp(p,0,10)*3.7+pos*12+liq+sector-risk_pen
     return int(round(clamp(score,0,99)))
@@ -305,21 +305,40 @@ def main():
         sec=stock_sector.get(s["code"],"其他")
         return sec,sector_scores.get(sec,50)
 
+    hist_for_heat=load_history()
+    recent_for_heat=hist_for_heat[-20:]
+    def recent_heat(s):
+        code=s["code"]; cur=s["close"]; vals=[]
+        for n in (5,10,20):
+            snaps=recent_for_heat[-n:] if len(recent_for_heat)>=n else recent_for_heat
+            base=None
+            for snap in snaps:
+                p=num((snap.get("prices") or {}).get(code))
+                if p and p>0:
+                    base=p; break
+            vals.append(((cur/base-1)*100) if base else 0)
+        r5,r10,r20=vals
+        penalty=clamp(max(0,r5-12)*.8+max(0,r10-20)*.55+max(0,r20-32)*.35,0,24)
+        return r5,r10,r20,penalty
+
     attack_pool=[]
     next_pool=[]
     monster_pool=[]
     for s in tradable:
         sec,ss=secinfo(s)
         if .8<=s["pct"]<=8.8 and position(s)>=.58:
-            attack_pool.append((score_row(s,"attack",risk,ss),s,sec,ss))
+            r5,r10,r20,hp=recent_heat(s)
+            attack_pool.append((score_row(s,"attack",risk,ss,hp),s,sec,ss,r5,r10,r20,hp))
         if -.8<=s["pct"]<=4.8 and position(s)>=.62 and (s["open"] is None or s["close"]>=s["open"]*.995):
-            next_pool.append((score_row(s,"next",risk,ss),s,sec,ss))
+            r5,r10,r20,hp=recent_heat(s)
+            next_pool.append((score_row(s,"next",risk,ss,hp),s,sec,ss,r5,r10,r20,hp))
         if s["pct"]>=5 and position(s)>=.70:
-            monster_pool.append((score_row(s,"monster",risk,ss),s,sec,ss))
+            r5,r10,r20,hp=recent_heat(s)
+            monster_pool.append((score_row(s,"monster",risk,ss,hp),s,sec,ss,r5,r10,r20,hp))
 
     attack_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
     attack=[]
-    for score,s,sec,ss in attack_pool[:10]:
+    for score,s,sec,ss,r5,r10,r20,hp in attack_pool[:10]:
         chase="｜接近漲停，勿追高" if s["pct"]>=8.5 else ""
         reason=f"{sec}熱度 {ss}｜漲幅 {s['pct']:.2f}%｜收盤位置 {position(s)*100:.0f}%｜成交值 {s['value']/1e8:.1f} 億{chase}"
         attack.append(item(s,score,reason,"attack",risk,sec,ss))
@@ -328,13 +347,13 @@ def main():
     next_pool=[x for x in next_pool if x[1]["code"] not in attack_codes]
     next_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
     next_list=[]
-    for score,s,sec,ss in next_pool[:10]:
-        reason=f"{sec}熱度 {ss}｜尚未過熱 {s['pct']:+.2f}%｜收盤位置 {position(s)*100:.0f}%｜成交值 {s['value']/1e8:.1f} 億"
+    for score,s,sec,ss,r5,r10,r20,hp in next_pool[:10]:
+        reason=f"{sec}熱度 {ss}｜今日 {s['pct']:+.2f}%｜5日 {r5:+.1f}%｜10日 {r10:+.1f}%｜"+("低過熱、準備型" if hp<4 else "已有漲幅、降權")
         next_list.append(item(s,score,reason,"next",risk,sec,ss))
 
     monster_pool.sort(key=lambda x:(x[0],x[1]["pct"],x[1]["value"]),reverse=True)
     monster=[]
-    for score,s,sec,ss in monster_pool[:10]:
+    for score,s,sec,ss,r5,r10,r20,hp in monster_pool[:10]:
         reason=f"{sec}熱度 {ss}｜異常強勢 {s['pct']:.2f}%｜高檔收盤｜成交值 {s['value']/1e8:.1f} 億；追價風險高"
         monster.append(item(s,score,reason,"monster",risk,sec,ss))
 
