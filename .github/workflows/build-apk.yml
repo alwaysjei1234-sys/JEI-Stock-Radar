@@ -1,9 +1,18 @@
-name: Build Android APK
+name: Build JEI Android APK
 
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'app/**'
+      - 'build.gradle'
+      - 'settings.gradle'
+      - 'gradle.properties'
+      - '.github/workflows/build-apk.yml'
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -44,15 +53,16 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Build debug APK
+      - name: Build installable APK
         run: gradle :app:assembleDebug --stacktrace
 
-      - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk "JEI_專屬選股雷達_V1.0.apk"
+      - name: Package
+        run: cp app/build/outputs/apk/debug/app-debug.apk "JEI_Stock_Radar_V2.apk"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: JEI-Stock-Radar-V1.0-APK
-          path: "JEI_專屬選股雷達_V1.0.apk"
+          name: JEI-Stock-Radar-V2-APK
+          path: "JEI_Stock_Radar_V2.apk"
+          if-no-files-found: error
           retention-days: 30
