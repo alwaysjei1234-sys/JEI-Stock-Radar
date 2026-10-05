@@ -10,6 +10,7 @@ TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
 TPEX_STOCK="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
 TWSE_MIS="https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
 TWSE_INST="https://www.twse.com.tw/rwd/zh/fund/T86?response=json&selectType=ALLBUT0999"
+TWSE_DAILY="https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX"
 TPEX_INST="https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading"
 OUT=Path("remote/system.json")
 HISTORY=Path("remote/history.json")
@@ -41,6 +42,34 @@ def fetch_json(url,tries=3):
             if i+1<tries: time.sleep(1.2*(i+1))
     raise last
 
+
+def fetch_twse_daily(date_yyyymmdd):
+    url=TWSE_DAILY+"?"+urllib.parse.urlencode({"date":date_yyyymmdd,"type":"ALLBUT0999","response":"json"})
+    j=fetch_json(url)
+    tables=j.get("tables",[]) if isinstance(j,dict) else []
+    best=None
+    for t in tables:
+        fields=t.get("fields",[]) if isinstance(t,dict) else []
+        joined="|".join(map(str,fields))
+        if "證券代號" in joined and "收盤價" in joined and t.get("data"):
+            if best is None or len(t.get("data",[]))>len(best.get("data",[])):best=t
+    if not best:return []
+    fields=[re.sub(r"<[^>]+>","",str(x)).strip() for x in best.get("fields",[])]
+    idx={x:i for i,x in enumerate(fields)}
+    def cell(row,name):
+        i=idx.get(name);return row[i] if i is not None and i<len(row) else None
+    out=[]
+    for row in best.get("data",[]):
+        code=str(cell(row,"證券代號") or "").strip()
+        if not re.fullmatch(r"[0-9A-Z]{4,8}",code):continue
+        close=num(cell(row,"收盤價"));change=num(cell(row,"漲跌價差"))
+        sign=str(cell(row,"漲跌(+/-)") or "")
+        if change is not None and ("-" in sign or "－" in sign):change=-abs(change)
+        out.append({"date":date_yyyymmdd,"code":code,"name":str(cell(row,"證券名稱") or "").strip(),
+                    "open":num(cell(row,"開盤價")),"high":num(cell(row,"最高價")),"low":num(cell(row,"最低價")),
+                    "close":close,"change":change,"pct":pct_from_change(close,change),
+                    "volume":num(cell(row,"成交股數")) or 0,"value":num(cell(row,"成交金額")) or 0,"market":"TWSE"})
+    return out
 
 def fetch_institutional():
     out={}; errs=[]; debug={}
@@ -340,6 +369,17 @@ def main():
     rows=[x for x in rows if x["code"] and x["close"]]
 
     now=datetime.now(TZ)
+    today_ymd=now.strftime("%Y%m%d")
+    today_roc=f"{now.year-1911:03d}{now.month:02d}{now.day:02d}"
+    source_dates={re.sub(r"[^0-9]","",str(x.get("date",""))) for x in rows if x.get("date")}
+    if now.weekday()<5 and today_roc not in source_dates and today_ymd not in source_dates:
+        try:
+            fresh_twse=fetch_twse_daily(today_ymd)
+            if fresh_twse:
+                fresh_codes={x["code"] for x in fresh_twse}
+                rows=[x for x in rows if not (x.get("market")=="TWSE" and x.get("code") in fresh_codes)]+fresh_twse
+                errors.append(f"TWSE OpenAPI落後，已用當日MI_INDEX補入 {len(fresh_twse)} 檔")
+        except Exception as e:errors.append("TWSE當日補資料:"+str(e))
     live_count=0;live_errors=[];taiex_live=None
     # Taiwan regular trading is 09:00-13:30. Keep a small post-close refresh window so the
     # final MIS quote can replace stale daily OpenAPI data before it rolls to today's date.
