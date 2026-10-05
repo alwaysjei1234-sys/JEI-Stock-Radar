@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, math, re, statistics, time, urllib.request
+import json, math, re, statistics, time, urllib.request, urllib.parse
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
 TPEX_STOCK="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
+TWSE_MIS="https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
 OUT=Path("remote/system.json")
 HISTORY=Path("remote/history.json")
 TZ=ZoneInfo("Asia/Taipei")
@@ -36,6 +37,54 @@ def fetch_json(url,tries=3):
             last=e
             if i+1<tries: time.sleep(1.2*(i+1))
     raise last
+
+def fetch_mis_channels(channels):
+    if not channels:return []
+    qs=urllib.parse.urlencode({"ex_ch":"|".join(channels),"json":"1","delay":"0","_":str(int(time.time()*1000))})
+    req=urllib.request.Request(TWSE_MIS+"?"+qs,headers={
+        "User-Agent":"Mozilla/5.0 JEI-Stock-Radar-Updater/3.2",
+        "Accept":"application/json,text/plain,*/*",
+        "Referer":"https://mis.twse.com.tw/stock/index.jsp"
+    })
+    with urllib.request.urlopen(req,timeout=15) as r:
+        j=json.loads(r.read().decode("utf-8-sig"))
+    return j.get("msgArray",[]) if isinstance(j,dict) else []
+
+def enrich_live(rows):
+    by_code={x["code"]:x for x in rows}
+    channels=[]
+    for x in rows:
+        if not re.fullmatch(r"\d{4}",x.get("code","")):continue
+        prefix="tse_" if x.get("market")=="TWSE" else "otc_"
+        channels.append(prefix+x["code"]+".tw")
+    got=0;errors=[]
+    for i in range(0,len(channels),70):
+        chunk=channels[i:i+70]
+        try:msgs=fetch_mis_channels(chunk)
+        except Exception as e:
+            errors.append(str(e));continue
+        for m in msgs:
+            code=str(m.get("c","")).strip()
+            x=by_code.get(code)
+            if not x:continue
+            prev=num(m.get("y"));price=num(m.get("z"))
+            if price is None or price<=0:price=prev
+            if price is None or price<=0 or prev is None or prev<=0:continue
+            x["close"]=price;x["change"]=price-prev;x["pct"]=(price-prev)/prev*100.0
+            o=num(m.get("o"));h=num(m.get("h"));l=num(m.get("l"));v=num(m.get("v"))
+            if o and o>0:x["open"]=o
+            if h and h>0:x["high"]=h
+            if l and l>0:x["low"]=l
+            if v is not None:x["live_volume"]=v
+            x["live"]=True;got+=1
+    taiex=None
+    try:
+        idx=fetch_mis_channels(["tse_t00.tw"])
+        if idx:
+            y=num(idx[0].get("y"));z=num(idx[0].get("z"))
+            if z and y and y>0:taiex=(z-y)/y*100.0
+    except Exception as e:errors.append("TAIEX:"+str(e))
+    return rows,got,taiex,errors
 
 def num(v):
     if v is None:return None
@@ -96,7 +145,7 @@ def build_sector_stats(by_code):
         avg=statistics.mean(pcts);med=statistics.median(pcts)
         breadth=adv/len(members)
         hot=sum(1 for p in pcts if p>=3)
-        score=round(clamp(50+avg*7+(breadth-.5)*32+hot*2,0,100))
+        score=round(clamp(50+avg*5+(breadth-.5)*24+hot*1.5,0,100))
         leaders=sorted(members,key=lambda x:(x["pct"],x.get("value",0)),reverse=True)[:3]
         stats.append({"name":name,"score":score,"avg_pct":round(avg,2),"median_pct":round(med,2),
                       "breadth":round(breadth*100,1),"members":len(members),
@@ -110,7 +159,7 @@ def build_sector_stats(by_code):
 def price_plan(s,mode,risk):
     c=s["close"];rp=range_pct(s)
     pull=clamp(rp*.28,0.8,2.8)/100
-    entry_low=c*(1-pull);entry_high=c*(1+.004 if mode=="attack" else 0)
+    entry_low=c*(1-pull);entry_high=c*(1.004 if mode=="attack" else 1.0)
     stop_pct=clamp(max(3.5,rp*1.25)+(1.0 if risk>=65 else 0),3.5,8.5)/100
     defense=c*(1-stop_pct)
     reward=max(.045,stop_pct*1.35)
@@ -186,6 +235,15 @@ def main():
 
     rows=[norm_twse(x) for x in twse_raw if isinstance(x,dict)]+[norm_tpex(x) for x in tpex_raw if isinstance(x,dict)]
     rows=[x for x in rows if x["code"] and x["close"]]
+
+    now=datetime.now(TZ)
+    live_count=0;live_errors=[];taiex_live=None
+    market_open=now.weekday()<5 and ((now.hour==8 and now.minute>=45) or 9<=now.hour<14)
+    if market_open:
+        try:rows,live_count,taiex_live,live_errors=enrich_live(rows)
+        except Exception as e:live_errors.append(str(e))
+        if live_errors and live_count<100:errors.append("MIS盤中:"+(";".join(live_errors))[:120])
+
     stocks=[x for x in rows if stock_only(x)]
     by_code={x["code"]:x for x in stocks}
 
@@ -194,6 +252,7 @@ def main():
         if str(x.get("指數","")).strip()=="發行量加權股價指數":
             p=num(x.get("漲跌百分比"));sign=str(x.get("漲跌","")).strip()
             taiex_pct=(-abs(p) if sign=="-" and p is not None else p);break
+    if taiex_live is not None:taiex_pct=taiex_live
 
     pcts=[x["pct"] for x in stocks if x["pct"] is not None]
     adv=sum(1 for p in pcts if p>0);dec=sum(1 for p in pcts if p<0);flat=max(0,len(pcts)-adv-dec)
@@ -255,8 +314,8 @@ def main():
         reason=f"{sec}熱度 {ss}｜異常強勢 {s['pct']:.2f}%｜高檔收盤｜成交值 {s['value']/1e8:.1f} 億；追價風險高"
         monster.append(item(s,score,reason,"monster",risk,sec,ss))
 
-    rotate=sorted(attack[:8]+next_list[:8],key=lambda x:(x.get("sector_score",50),x["score"]),reverse=True)[:8]
-    for x in rotate:x["reason"]="換股候選｜"+x["reason"]
+    rotate_src=sorted(attack[:8]+next_list[:8],key=lambda x:(x.get("sector_score",50),x["score"]),reverse=True)[:8]
+    rotate=[dict(x,reason="換股候選｜"+x["reason"]) for x in rotate_src]
 
     taiex_txt="--" if taiex_pct is None else f"{taiex_pct:+.2f}%"
     if risk>=80:market_status="紅燈防守"
@@ -282,7 +341,6 @@ def main():
     if attack:priority.append({"title":attack[0]["code"]+" "+attack[0]["name"],"note":attack[0]["reason"],"action":"主攻#1"})
     if next_list:priority.append({"title":next_list[0]["code"]+" "+next_list[0]["name"],"note":next_list[0]["reason"],"action":"下一棒#1"})
 
-    now=datetime.now(TZ)
     raw_date=next((x["date"] for x in rows if x["date"]),"")
     date_key=now.strftime("%Y-%m-%d")
     history=load_history()
@@ -296,15 +354,16 @@ def main():
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
         "risk":{"level":level,"label":label,"score":risk,"cash":cash,"reasons":reasons,
                 "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down},
-        "market":{"status":market_status,
-                  "brief":f"多因子市場快照｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
+        "market":{"status":market_status,"mode":("盤中即時" if live_count>=100 else "日線快照"),
+                  "live_count":live_count,
+                  "brief":f"{'盤中即時' if live_count>=100 else '日線快照'}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
         "sectors":sectors,"stock_sectors":stock_sector,
         "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
-        "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes"]
+        "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes"]
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    print(json.dumps({"updated_at":out["updated_at"],"risk":risk,"stocks":len(stocks),"sectors":len(sectors),"errors":errors},ensure_ascii=False))
+    print(json.dumps({"updated_at":out["updated_at"],"risk":risk,"stocks":len(stocks),"live_count":live_count,"sectors":len(sectors),"errors":errors},ensure_ascii=False))
 
 if __name__=="__main__":main()
