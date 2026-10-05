@@ -57,8 +57,10 @@ def fetch_institutional():
                 if key in idx and idx[key]<len(row): return num(row[idx[key]])
             return None
         for row in data:
-            code=str(row[0]).strip() if row else ""
-            if not re.fullmatch(r"\\d{4}",code): continue
+            raw_code=str(row[0]).strip() if row else ""
+            m=re.search(r"(?<!\\d)(\\d{4,6})(?!\\d)",raw_code)
+            if not m: continue
+            code=m.group(1)
             foreign=gi(row,["外陸資買賣超股數(不含外資自營商)","外資及陸資買賣超股數(不含外資自營商)"])
             trust=gi(row,["投信買賣超股數"])
             dealer=gi(row,["自營商買賣超股數"])
@@ -76,14 +78,17 @@ def fetch_institutional():
         if not isinstance(rows,list) or not rows:
             raise RuntimeError("TPEx institutional endpoint returned no rows")
         for r in rows:
-            code=str(pick(r,"SecuritiesCompanyCode","Code","SecuritiesCode") or "").strip()
-            if not re.fullmatch(r"\\d{4}",code): continue
+            raw_code=str(pick(r,"SecuritiesCompanyCode","SecuritiesCompanyCode","SecuritiesCode","Code","股票代號","證券代號") or "").strip()
+            m=re.search(r"(?<!\\d)(\\d{4,6})(?!\\d)",raw_code)
+            if not m: continue
+            code=m.group(1)
             foreign=num(pick(r,"ForeignInvestorsNetBuySell","ForeignInvestmentNetBuySell","ForeignInvestorsBuySell"))
             trust=num(pick(r,"InvestmentTrustNetBuySell","InvestmentTrustBuySell"))
             dealer=num(pick(r,"DealerNetBuySell","DealerBuySell"))
             total=num(pick(r,"TotalNetBuySell","ThreeInstitutionalInvestorsNetBuySell"))
             out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TPEx OpenAPI"}
     except Exception as e: errs.append("TPEx法人:"+str(e))
+    if not out and not errs: errs.append("法人來源有回應，但未解析出任何股票代碼")
     return out,errs
 
 def fetch_mis_channels(channels):
