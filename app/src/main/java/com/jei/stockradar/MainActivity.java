@@ -9,6 +9,7 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -44,6 +45,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        handleImportIntent(getIntent(), false);
         webView = new WebView(this);
         setContentView(webView);
 
@@ -69,6 +71,55 @@ public class MainActivity extends Activity {
         webView.addJavascriptInterface(new NativeBridge(), "JEINative");
 
         webView.loadUrl("file:///android_asset/index.html");
+    }
+
+    private boolean handleImportIntent(Intent intent, boolean notifyUi) {
+        try {
+            if (intent == null) return false;
+            Uri data = intent.getData();
+            if (data == null || !"jeistock".equalsIgnoreCase(data.getScheme())
+                    || !"import".equalsIgnoreCase(data.getHost())) return false;
+            String encoded = data.getQueryParameter("data");
+            if (encoded == null || encoded.length() < 8) return false;
+            byte[] raw = Base64.decode(encoded, Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING);
+            JSONArray src = new JSONArray(new String(raw, StandardCharsets.UTF_8));
+            JSONArray clean = new JSONArray();
+            for (int i = 0; i < src.length(); i++) {
+                JSONObject x = src.optJSONObject(i);
+                if (x == null) continue;
+                String code = x.optString("code", "").trim();
+                String name = x.optString("name", code).trim();
+                double cost = x.optDouble("cost", 0);
+                long shares = x.optLong("shares", 0);
+                if (!code.matches("[0-9A-Za-z]{2,8}") || cost <= 0 || shares <= 0) continue;
+                JSONObject y = new JSONObject();
+                y.put("code", code);
+                y.put("name", name.isEmpty() ? code : name);
+                y.put("cost", cost);
+                y.put("shares", shares);
+                clean.put(y);
+            }
+            if (clean.length() == 0) return false;
+            prefs.edit().putString("holdings", clean.toString()).apply();
+            if (notifyUi && webView != null) {
+                runOnUiThread(() -> webView.evaluateJavascript(
+                        "loadHoldings();refreshMarket();go('hold');toast('持股已匯入');", null));
+            }
+            runOnUiThread(() -> Toast.makeText(this,
+                    "已匯入 " + clean.length() + " 檔持股", Toast.LENGTH_SHORT).show());
+            return true;
+        } catch (Exception e) {
+            runOnUiThread(() -> Toast.makeText(this,
+                    "持股匯入失敗", Toast.LENGTH_SHORT).show());
+            return false;
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleImportIntent(intent, true);
     }
 
     @Override
