@@ -345,6 +345,13 @@ def main():
     down3=sum(1 for p in pcts if p<=-3);down5=sum(1 for p in pcts if p<=-5);limit_down=sum(1 for p in pcts if p<=-9.4)
     up5=sum(1 for p in pcts if p>=5);up8=sum(1 for p in pcts if p>=8)
 
+    # Institutional breadth: use direction across the whole stock universe, not a single stock.
+    inst_vals=[num(v.get("total")) for v in institutional.values()]
+    inst_vals=[x for x in inst_vals if x is not None]
+    inst_sell=sum(1 for x in inst_vals if x<0); inst_buy=sum(1 for x in inst_vals if x>0)
+    inst_sell_ratio=inst_sell/max(1,inst_sell+inst_buy)
+    inst_total=sum(inst_vals) if inst_vals else 0
+
     risk=30
     if taiex_pct is not None:risk+=clamp(-taiex_pct,0,6)*10-clamp(taiex_pct,0,4)*4
     risk+=clamp((.50-adv_ratio)*100,0,40)*1.0
@@ -356,6 +363,11 @@ def main():
     if (taiex_pct or 0)>1.0 and median<0:risk+=4
     if adv_ratio<.40:risk+=5
     if adv_ratio>.58 and median>.4:risk-=6
+    # Raise crash risk only when institutional selling is broad and price breadth also deteriorates.
+    if len(inst_vals)>=500:
+        if inst_sell_ratio>=.68 and adv_ratio<.45:risk+=12
+        elif inst_sell_ratio>=.60 and adv_ratio<.50:risk+=7
+        if inst_sell_ratio<=.40 and adv_ratio>.52:risk-=4
     risk=int(round(clamp(risk,0,100)))
 
     if risk>=80:level,label,cash="red","高風險防守","70%↑"
@@ -445,6 +457,7 @@ def main():
 
     reasons=[f"加權指數 {taiex_txt}",f"上漲 {adv} / 下跌 {dec}（廣度 {adv_ratio*100:.1f}%）",
              f"市場中位數 {median:+.2f}%",f"跌逾3% {down3}｜跌逾5% {down5}｜跌停附近 {limit_down}"]
+    if inst_vals:reasons.append(f"法人偏賣 {inst_sell_ratio*100:.1f}%｜淨額 {inst_total/1000:+,.0f}張")
     if sectors:reasons.append("最強族群 "+sectors[0]["name"]+f" {sectors[0]['score']}分")
     if errors:reasons.append("部分資料源降級："+"；".join(errors)[:140])
 
@@ -452,7 +465,8 @@ def main():
         {"icon":"↗","name":"市場廣度","note":f"上漲 {adv} / 下跌 {dec}｜廣度 {adv_ratio*100:.1f}%","score":round(adv_ratio*100)},
         {"icon":"⚠","name":"尾端賣壓","note":f"跌逾3% {down3}｜跌逾5% {down5}｜跌停附近 {limit_down}","score":down5},
         {"icon":"🔥","name":"強勢動能","note":f"漲逾5% {up5}｜漲逾8% {up8}","score":up5},
-        {"icon":"◎","name":"市場中位數","note":"排除權值股後觀察整體溫度","score":round(median,2)}
+        {"icon":"◎","name":"市場中位數","note":"排除權值股後觀察整體溫度","score":round(median,2)},
+        {"icon":"🏦","name":"法人籌碼廣度","note":f"偏賣 {inst_sell_ratio*100:.1f}%｜合計 {inst_total/1000:+,.0f}張","score":round(inst_sell_ratio*100,1)}
     ]
 
     priority=[{"title":"市場風控","note":"｜".join(reasons[:4]),"action":label}]
@@ -473,7 +487,7 @@ def main():
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
         "risk":{"level":level,"label":label,"score":risk,"cash":cash,"reasons":reasons,
                 "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down,
-                "divergence":divergence},
+                "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000)},
         "market":{"status":market_status,"mode":("盤中即時" if live_count>=100 else "日線快照"),
                   "live_count":live_count,
                   "brief":f"{'盤中即時' if live_count>=100 else '日線快照'}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
