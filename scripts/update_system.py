@@ -6,7 +6,7 @@ from zoneinfo import ZoneInfo
 
 TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
-TPEX_STOCK="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes"
+TPEX_STOCK="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
 OUT=Path("remote/system.json")
 TZ=ZoneInfo("Asia/Taipei")
 
@@ -55,10 +55,10 @@ def position(s):
     return clamp((c-l)/(h-l),0,1)
 def stock_only(s):return bool(re.fullmatch(r"\d{4}",s.get("code",""))) and s.get("close") and s.get("pct") is not None
 def score_row(s,mode):
-    p=s["pct"];pos=position(s);liq=clamp((math.log10(max(s.get("value",0),1))-7.0)*8,0,20)
-    if mode=="attack":score=52+clamp(p,0,10)*3.5+pos*14+liq
-    elif mode=="next":score=58+clamp(p+.5,0,5)*3+pos*17+liq
-    else:score=48+clamp(p,0,12)*4+pos*12+liq
+    p=s["pct"];pos=position(s);liq=clamp((math.log10(max(s.get("value",0),1))-7.0)*5,0,15)
+    if mode=="attack":score=30+clamp(p,0,10)*3+pos*10+liq
+    elif mode=="next":score=38+clamp(p+.5,0,5)*4+pos*14+liq
+    else:score=35+clamp(p,0,12)*4+pos*10+liq
     return int(round(clamp(score,0,99)))
 def item(s,score,reason):
     return {"code":s["code"],"name":s["name"],"score":score,"reason":reason,"price":s["close"],
