@@ -89,20 +89,39 @@ def fetch_twse_daily(date_yyyymmdd):
     return out
 
 def fetch_tpex_daily(date_obj):
-    # Official TPEx daily close quotes; ROC date is required by this endpoint.
+    # Official TPEx daily close quotes. Prefer the maintained OpenAPI date endpoint.
     roc=f"{date_obj.year-1911}/{date_obj.month:02d}/{date_obj.day:02d}"
-    url="https://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_result.php?"+urllib.parse.urlencode({"l":"zh-tw","o":"json","d":roc})
-    j=fetch_json(url)
-    rows=(j.get("aaData") or j.get("data") or []) if isinstance(j,dict) else []
-    out=[]
-    for row in rows:
-        if not isinstance(row,list) or len(row)<9:continue
-        code=re.sub(r"<[^>]+>","",str(row[0])).strip()
-        if not re.fullmatch(r"[0-9A-Z]{4,8}",code):continue
-        close=num(row[2])
-        if close is None:continue
-        out.append({"code":code,"close":close})
-    return out
+    candidates=[
+        "https://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_result.php?"+urllib.parse.urlencode({"l":"zh-tw","o":"json","d":roc}),
+        "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes?"+urllib.parse.urlencode({"date":roc,"id":"","response":"json"})
+    ]
+    last=None
+    for url in candidates:
+        try:
+            j=fetch_json(url)
+            rows=[]
+            if isinstance(j,dict):
+                rows=j.get("aaData") or j.get("data") or []
+                if not rows and isinstance(j.get("tables"),list):
+                    for t in j["tables"]:
+                        if isinstance(t,dict) and t.get("data"):
+                            rows=t["data"]; break
+            out=[]
+            for row in rows:
+                if isinstance(row,dict):
+                    code=str(pick(row,"SecuritiesCompanyCode","Code","股票代號","證券代號") or "").strip()
+                    close=num(pick(row,"Close","ClosePrice","收盤價"))
+                elif isinstance(row,list) and len(row)>=3:
+                    code=re.sub(r"<[^>]+>","",str(row[0])).strip()
+                    close=num(row[2])
+                else:
+                    continue
+                if re.fullmatch(r"[0-9A-Z]{4,8}",code) and close is not None:
+                    out.append({"code":code,"close":close})
+            if out:return out
+            last=RuntimeError("TPEx returned no parsed rows")
+        except Exception as e:last=e
+    raise last or RuntimeError("TPEx daily unavailable")
 
 def backfill_twse_history(history, now, min_days=20):
     """Backfill recent TWSE trading-day closes from official MI_INDEX."""
@@ -112,20 +131,23 @@ def backfill_twse_history(history, now, min_days=20):
         attempts+=1
         if d.weekday()<5:
             key=d.isoformat()
-            if key not in snaps:
-                try:
+            try:
+                if key in snaps:
+                    prices=dict(snaps[key].get("prices") or {})
+                else:
                     rows=fetch_twse_daily(d.strftime("%Y%m%d"))
                     prices={x["code"]:x["close"] for x in rows if x.get("close")}
-                    try:
-                        otc=fetch_tpex_daily(d)
-                        prices.update({x["code"]:x["close"] for x in otc if x.get("close")})
-                    except Exception as otc_e:
-                        errors.append("TPEx "+key+":"+str(otc_e)[:60])
-                    if prices:
-                        snaps[key]={"date":key,"prices":prices,"signals":[]}
-                except Exception as e:
-                    if "no stock table" not in str(e):
-                        errors.append(key+":"+str(e)[:80])
+                try:
+                    otc=fetch_tpex_daily(d)
+                    prices.update({x["code"]:x["close"] for x in otc if x.get("close")})
+                except Exception as otc_e:
+                    errors.append("TPEx "+key+":"+str(otc_e)[:60])
+                if prices:
+                    oldsnap=snaps.get(key,{})
+                    snaps[key]={"date":key,"prices":prices,"signals":oldsnap.get("signals",[]),**({"institutional_market":oldsnap["institutional_market"]} if oldsnap.get("institutional_market") else {})}
+            except Exception as e:
+                if "no stock table" not in str(e):
+                    errors.append(key+":"+str(e)[:80])
         d-=timedelta(days=1)
     return sorted(snaps.values(),key=lambda x:str(x.get("date","")))[-90:],errors
 
