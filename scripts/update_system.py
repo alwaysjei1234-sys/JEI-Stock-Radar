@@ -101,7 +101,8 @@ def fetch_institutional():
             raise RuntimeError("T86 returned no rows")
         debug["twse_fields"]=fields
         debug["twse_first"]=data[0] if data else None
-        idx={re.sub(r"<[^>]+>","",str(name)).replace("\\n","").replace(" ",""):i for i,name in enumerate(fields)}
+        idx={re.sub(r"<[^>]+>","",str(name)).replace("\
+","").replace(" ",""):i for i,name in enumerate(fields)}
         def gi(row,names):
             for name in names:
                 key=str(name).replace(" ","")
@@ -222,7 +223,13 @@ def enrich_live(rows):
         if v is not None:
             x["live_volume"]=v
             if v>0:x["value"]=v*1000.0*price
-        # MIS d/t are the exchange quote date/time; preserve them instead of using updater runtime.\n        qd=str(m.get("d","") or "").strip(); qt=str(m.get("t","") or "").strip()\n        if qd and qt:\n            x["quote_time"]=f"{qd[:4]}-{qd[4:6]}-{qd[6:8]} {qt}"\n        elif qt:\n            x["quote_time"]=qt\n        x["live"]=True;got+=1
+        # MIS d/t are the exchange quote date/time; preserve them instead of using updater runtime.
+        qd=str(m.get("d","") or "").strip(); qt=str(m.get("t","") or "").strip()
+        if qd and qt:
+            x["quote_time"]=f"{qd[:4]}-{qd[4:6]}-{qd[6:8]} {qt}"
+        elif qt:
+            x["quote_time"]=qt
+        x["live"]=True;got+=1
     taiex=None
     try:
         idx=fetch_mis_channels(["tse_t00.tw"])
@@ -431,7 +438,10 @@ def main():
     # Taiwan regular trading is 09:00-13:30. Keep a small post-close refresh window so the
     # final MIS quote can replace stale daily OpenAPI data before it rolls to today's date.
     market_open=now.weekday()<5 and ((now.hour==8 and now.minute>=45) or 9<=now.hour<14 or (now.hour==14 and now.minute<=10))
-    # After close, official daily OpenAPI may still expose the prior trading date for a while.\n    # During a bounded post-close window, use MIS final quotes to bridge that lag.\n    post_close_refresh=now.weekday()<5 and 14<=now.hour<16\n    if market_open or post_close_refresh:
+    # After close, official daily OpenAPI may still expose the prior trading date for a while.
+    # During a bounded post-close window, use MIS final quotes to bridge that lag.
+    post_close_refresh=now.weekday()<5 and 14<=now.hour<16
+    if market_open or post_close_refresh:
         try:rows,live_count,taiex_live,live_errors=enrich_live(rows)
         except Exception as e:live_errors.append(str(e))
         if live_errors and live_count<100:errors.append("MIS盤中:"+(";".join(live_errors))[:120])
@@ -661,7 +671,8 @@ def main():
     history=load_history()
     history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],{"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
     HISTORY.parent.mkdir(parents=True,exist_ok=True)
-    HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
+    HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":"))+"
+",encoding="utf-8")
     backtest=calc_backtest(history,{x["code"]:x["close"] for x in stocks})
 
     out={
@@ -696,7 +707,8 @@ def main():
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
-    OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"
+",encoding="utf-8")
     print(json.dumps({"updated_at":out["updated_at"],"risk":risk,"stocks":len(stocks),"live_count":live_count,"sectors":len(sectors),"errors":errors},ensure_ascii=False))
 
 if __name__=="__main__":main()
