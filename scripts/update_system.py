@@ -88,13 +88,25 @@ def fetch_twse_daily(date_yyyymmdd):
                     "volume":num(cell(row,"成交股數")) or 0,"value":num(cell(row,"成交金額")) or 0,"market":"TWSE"})
     return out
 
+def fetch_json_fast(url, timeout=8, tries=1):
+    last=None
+    for i in range(tries):
+        try:
+            req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 JEI-Stock-Radar-Updater/3.2","Accept":"application/json"})
+            with urllib.request.urlopen(req,timeout=timeout) as r:
+                return json.loads(r.read().decode("utf-8-sig"))
+        except Exception as e:
+            last=e
+    raise last
+
+
 def fetch_tpex_daily(date_obj):
     # Official TPEx whole-market daily close quotes.
     roc=f"{date_obj.year-1911}/{date_obj.month:02d}/{date_obj.day:02d}"
     url="https://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_result.php?"+urllib.parse.urlencode({
         "l":"zh-tw","o":"json","d":roc,"s":"0,asc,0"
     })
-    j=fetch_json(url)
+    j=fetch_json_fast(url, timeout=8, tries=1)
     rows=(j.get("aaData") or j.get("data") or []) if isinstance(j,dict) else []
     out=[]
     for row in rows:
@@ -128,8 +140,12 @@ def backfill_twse_history(history, now, min_days=20):
                     rows=fetch_twse_daily(d.strftime("%Y%m%d"))
                     prices={x["code"]:x["close"] for x in rows if x.get("close")}
                     oldsnap={}
-                otc=fetch_tpex_daily(d)
-                prices.update({x["code"]:x["close"] for x in otc if x.get("close")})
+                # Skip TPEx network call once this historical snapshot is already enriched.
+                otc_probes=("5347","5425","6150","6187")
+                has_otc=any(num(prices.get(code)) for code in otc_probes)
+                if not has_otc:
+                    otc=fetch_tpex_daily(d)
+                    prices.update({x["code"]:x["close"] for x in otc if x.get("close")})
                 if prices:
                     snaps[key]={"date":key,"prices":prices,"signals":oldsnap.get("signals",[]),**({"institutional_market":oldsnap["institutional_market"]} if oldsnap.get("institutional_market") else {})}
                     processed+=1
