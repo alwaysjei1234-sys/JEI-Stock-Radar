@@ -89,39 +89,32 @@ def fetch_twse_daily(date_yyyymmdd):
     return out
 
 def fetch_tpex_daily(date_obj):
-    # Official TPEx daily close quotes. Prefer the maintained OpenAPI date endpoint.
+    # Official TPEx whole-market historical daily close report.
     roc=f"{date_obj.year-1911}/{date_obj.month:02d}/{date_obj.day:02d}"
-    candidates=[
-        "https://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_result.php?"+urllib.parse.urlencode({"l":"zh-tw","o":"json","d":roc}),
-        "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes?"+urllib.parse.urlencode({"date":roc,"id":"","response":"json"})
-    ]
-    last=None
-    for url in candidates:
-        try:
-            j=fetch_json(url)
-            rows=[]
-            if isinstance(j,dict):
-                rows=j.get("aaData") or j.get("data") or []
-                if not rows and isinstance(j.get("tables"),list):
-                    for t in j["tables"]:
-                        if isinstance(t,dict) and t.get("data"):
-                            rows=t["data"]; break
-            out=[]
-            for row in rows:
-                if isinstance(row,dict):
-                    code=str(pick(row,"SecuritiesCompanyCode","Code","股票代號","證券代號") or "").strip()
-                    close=num(pick(row,"Close","ClosePrice","收盤價"))
-                elif isinstance(row,list) and len(row)>=3:
-                    code=re.sub(r"<[^>]+>","",str(row[0])).strip()
-                    close=num(row[2])
-                else:
-                    continue
-                if re.fullmatch(r"[0-9A-Z]{4,8}",code) and close is not None:
-                    out.append({"code":code,"close":close})
-            if out:return out
-            last=RuntimeError("TPEx returned no parsed rows")
-        except Exception as e:last=e
-    raise last or RuntimeError("TPEx daily unavailable")
+    url="https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?"+urllib.parse.urlencode({
+        "l":"zh-tw","o":"json","d":roc,"se":"EW","s":"0,asc,0"
+    })
+    j=fetch_json(url)
+    rows=[]
+    if isinstance(j,dict):
+        rows=j.get("aaData") or j.get("data") or []
+        if not rows and isinstance(j.get("tables"),list):
+            for t in j["tables"]:
+                if isinstance(t,dict) and t.get("data"):
+                    rows=t["data"];break
+    out=[]
+    for row in rows:
+        if isinstance(row,dict):
+            code=str(pick(row,"SecuritiesCompanyCode","Code","股票代號","證券代號") or "").strip()
+            close=num(pick(row,"Close","ClosePrice","收盤價"))
+        elif isinstance(row,list) and len(row)>=3:
+            code=re.sub(r"<[^>]+>","",str(row[0])).strip()
+            close=num(row[2])
+        else:continue
+        if re.fullmatch(r"[0-9A-Z]{4,8}",code) and close is not None:
+            out.append({"code":code,"close":close})
+    if not out:raise RuntimeError("TPEx historical report returned no parsed rows")
+    return out
 
 def backfill_twse_history(history, now, min_days=20):
     """Backfill recent TWSE trading-day closes from official MI_INDEX."""
