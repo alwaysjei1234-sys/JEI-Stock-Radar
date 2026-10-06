@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(true);
         s.setAllowContentAccess(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.5");
+        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.7");
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
@@ -213,6 +213,44 @@ public class MainActivity extends Activity {
         return sb.toString();
     }
 
+    private String httpPostJson(String url, String body, String token) throws Exception {
+        Uri u = Uri.parse(url);
+        if (!"https".equalsIgnoreCase(u.getScheme())) throw new Exception("AI endpoint 必須使用 HTTPS");
+        HttpURLConnection c = (HttpURLConnection)new URL(url).openConnection();
+        c.setConnectTimeout(12000);
+        c.setReadTimeout(65000);
+        c.setRequestMethod("POST");
+        c.setDoOutput(true);
+        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.7");
+        c.setRequestProperty("Accept", "application/json");
+        c.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+        if (token != null && !token.trim().isEmpty()) c.setRequestProperty("X-JEI-Token", token.trim());
+        byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+        try (java.io.OutputStream os = c.getOutputStream()) { os.write(bytes); }
+        int status = c.getResponseCode();
+        InputStream in = status >= 200 && status < 300 ? c.getInputStream() : c.getErrorStream();
+        if (in == null) throw new Exception("HTTP " + status);
+        BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = r.readLine()) != null) sb.append(line).append('\n');
+        r.close();
+        if (status < 200 || status >= 300) throw new Exception("HTTP " + status + ": " + sb);
+        return sb.toString();
+    }
+
+    private void consultAI(String url, String payload, String token) {
+        io.execute(() -> {
+            try {
+                if (url == null || url.trim().isEmpty()) throw new Exception("尚未設定 AI 雲端網址");
+                if (payload == null || payload.length() > 180000) throw new Exception("AI 請求內容過大");
+                jsCall("onAIConsultResult", httpPostJson(url.trim(), payload, token));
+            } catch (Exception e) {
+                jsCall("onAIConsultError", e.getMessage() == null ? "AI 會診連線失敗" : e.getMessage());
+            }
+        });
+    }
+
     private void refreshRemoteUI(boolean userTriggered) {
         io.execute(() -> {
             try {
@@ -331,6 +369,9 @@ public class MainActivity extends Activity {
         @JavascriptInterface public void refreshSystem() { MainActivity.this.fetchSystem(); }
         @JavascriptInterface public void checkForUpdates() { MainActivity.this.checkUpdate(); }
         @JavascriptInterface public void refreshMarketData(String codesJson) { MainActivity.this.fetchMarket(codesJson); }
+        @JavascriptInterface public void consultAI(String url, String payload, String token) {
+            MainActivity.this.consultAI(url, payload, token);
+        }
         @JavascriptInterface public void saveHoldings(String json) {
             prefs.edit().putString("holdings", json).apply();
         }
