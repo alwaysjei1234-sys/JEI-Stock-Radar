@@ -706,8 +706,7 @@ def main():
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
-    OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"
-",encoding="utf-8")
+    OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
     print(json.dumps({"updated_at":out["updated_at"],"risk":risk,"stocks":len(stocks),"live_count":live_count,"sectors":len(sectors),"errors":errors},ensure_ascii=False))
 
 if __name__=="__main__":main()
