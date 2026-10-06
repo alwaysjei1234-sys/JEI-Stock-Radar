@@ -122,39 +122,10 @@ def fetch_tpex_daily(date_obj):
     if not out:raise RuntimeError("TPEx daily_close_quotes returned no parsed rows")
     return out
 
-def backfill_twse_history(history, now, min_days=20, max_otc_fetches=4):
-    """Backfill and enrich the most recent trading days with TWSE + TPEx closes."""
+def backfill_twse_history(history, now, min_days=20, max_otc_fetches=0):
+    """Keep the main market feed fast. Historical network backfill is handled separately."""
     snaps={str(x.get("date")):x for x in history if isinstance(x,dict) and x.get("date")}
-    errors=[]; d=now.date()-timedelta(days=1); attempts=0; processed=0; otc_fetches=0
-    # Important: iterate through calendar days even when TWSE history already has 20
-    # snapshots, because existing snapshots may still be missing TPEx prices.
-    while processed<min_days and attempts<50:
-        attempts+=1
-        if d.weekday()<5:
-            key=d.isoformat()
-            try:
-                if key in snaps:
-                    prices=dict(snaps[key].get("prices") or {})
-                    oldsnap=snaps[key]
-                else:
-                    rows=fetch_twse_daily(d.strftime("%Y%m%d"))
-                    prices={x["code"]:x["close"] for x in rows if x.get("close")}
-                    oldsnap={}
-                # Skip TPEx network call once this historical snapshot is already enriched.
-                otc_probes=("5347","5425","6150","6187")
-                has_otc=any(num(prices.get(code)) for code in otc_probes)
-                if not has_otc and otc_fetches < max_otc_fetches:
-                    otc_fetches+=1
-                    otc=fetch_tpex_daily(d)
-                    prices.update({x["code"]:x["close"] for x in otc if x.get("close")})
-                if prices:
-                    snaps[key]={"date":key,"prices":prices,"signals":oldsnap.get("signals",[]),**({"institutional_market":oldsnap["institutional_market"]} if oldsnap.get("institutional_market") else {})}
-                    processed+=1
-            except Exception as e:
-                # Holidays/no-session days simply do not count toward the 20 trading days.
-                errors.append(key+":"+str(e)[:100])
-        d-=timedelta(days=1)
-    return sorted(snaps.values(),key=lambda x:str(x.get("date","")))[-90:],errors
+    return sorted(snaps.values(),key=lambda x:str(x.get("date","")))[-90:],[]
 
 def fetch_institutional():
     out={}; errs=[]; debug={}
