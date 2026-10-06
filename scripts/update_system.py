@@ -588,20 +588,30 @@ def main():
     otc_cov={code:sum(1 for snap in hist_for_heat if num((snap.get("prices") or {}).get(code))) for code in otc_probe}
     # During staged backfill, keep the feed publishable; expose coverage in system data.
     otc_history_ready=min(otc_cov.values() or [0])>=5
-    recent_for_heat=hist_for_heat[-20:]
+    recent_for_heat=hist_for_heat[-21:]
     def recent_heat(s):
-        code=s["code"]; cur=s["close"]; vals=[]
+        code=s["code"]; cur=s["close"]
+        series=[]
+        for snap in recent_for_heat:
+            p=num((snap.get("prices") or {}).get(code))
+            if p and p>0:
+                series.append(p)
+        vals=[]
         for n in (5,10,20):
-            snaps=recent_for_heat[-n:] if len(recent_for_heat)>=n else recent_for_heat
-            base=None
-            for snap in snaps:
-                p=num((snap.get("prices") or {}).get(code))
-                if p and p>0:
-                    base=p; break
-            vals.append(((cur/base-1)*100) if base else 0)
+            if len(series)>=n+1:
+                base=series[-(n+1)]
+                vals.append((cur/base-1)*100)
+            else:
+                vals.append(None)
         r5,r10,r20=vals
-        penalty=clamp(max(0,r5-12)*.8+max(0,r10-20)*.55+max(0,r20-32)*.35,0,24)
+        p5=0 if r5 is None else max(0,r5-12)*.8
+        p10=0 if r10 is None else max(0,r10-20)*.55
+        p20=0 if r20 is None else max(0,r20-32)*.35
+        penalty=clamp(p5+p10+p20,0,24)
         return r5,r10,r20,penalty
+
+    def fmt_ret(v):
+        return "資料不足" if v is None else f"{v:+.1f}%"
 
     attack_pool=[]
     next_pool=[]
@@ -638,14 +648,14 @@ def main():
     next_list=[]
     for score,s,sec,ss,r5,r10,r20,hp in next_pool[:10]:
         setup=round(clamp(ss*.42+position(s)*100*.28+clamp((math.log10(max(s.get("value",1),1))-7)*12,0,100)*.18+(100-min(100,hp*5))*.12,0,99))
-        reason=f"準備發動 {setup}分｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {r5:+.1f}%｜10日 {r10:+.1f}%｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "過熱降權")
+        reason=f"準備發動 {setup}分｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "過熱降權")
         next_list.append(item(s,score,reason,"next",risk,sec,ss))
 
     monster_pool.sort(key=lambda x:(x[0],x[1]["pct"],x[1]["value"]),reverse=True)
     monster=[]
     for score,s,sec,ss,r5,r10,r20,hp in monster_pool[:10]:
         phase="異常資金提前卡位" if s["pct"]<5 else "強勢加速"
-        reason=f"{phase}｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {r5:+.1f}%｜成交值 {s['value']/1e8:.1f}億｜收盤位置 {position(s)*100:.0f}%｜"+("低過熱" if hp<4 else "過熱警戒")
+        reason=f"{phase}｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜成交值 {s['value']/1e8:.1f}億｜收盤位置 {position(s)*100:.0f}%｜"+("低過熱" if hp<4 else "過熱警戒")
         monster.append(item(s,score,reason,"monster",risk,sec,ss))
 
     rotate_src=sorted(attack[:8]+next_list[:8],key=lambda x:(x.get("sector_score",50),x["score"]),reverse=True)[:8]
