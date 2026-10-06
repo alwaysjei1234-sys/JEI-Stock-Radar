@@ -671,8 +671,7 @@ def main():
     history=load_history()
     history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],{"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
     HISTORY.parent.mkdir(parents=True,exist_ok=True)
-    HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":"))+"
-",encoding="utf-8")
+    HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":"))+"\\n",encoding="utf-8")
     backtest=calc_backtest(history,{x["code"]:x["close"] for x in stocks})
 
     out={
