@@ -152,7 +152,14 @@ public class RiskWorker extends Worker {
 
             double price = toDouble(m.optString("z", ""));
             double prev = toDouble(m.optString("y", ""));
-            if (!(price > 0)) price = prev;
+            if (!(price > 0)) {
+                double bid = firstQuote(m.optString("b", ""));
+                double ask = firstQuote(m.optString("a", ""));
+                if (bid > 0 && ask > 0) price = (bid + ask) / 2.0;
+                else if (bid > 0) price = bid;
+                else if (ask > 0) price = ask;
+                else price = prev;
+            }
             if (!(price > 0) || !(prev > 0)) continue;
 
             JSONObject h = findHolding(hs, code);
@@ -236,6 +243,16 @@ public class RiskWorker extends Worker {
             if (h != null && code.equals(h.optString("code", ""))) return h;
         }
         return null;
+    }
+
+    private double firstQuote(String levels) {
+        if (levels == null || levels.isEmpty() || "-".equals(levels)) return 0;
+        String[] parts = levels.split("_");
+        for (String part : parts) {
+            double v = toDouble(part);
+            if (v > 0) return v;
+        }
+        return 0;
     }
 
     private double toDouble(String s) {
