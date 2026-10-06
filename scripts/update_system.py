@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json, math, re, statistics, time, urllib.request, urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -87,6 +87,28 @@ def fetch_twse_daily(date_yyyymmdd):
                     "close":close,"change":change,"pct":pct_from_change(close,change),
                     "volume":num(cell(row,"成交股數")) or 0,"value":num(cell(row,"成交金額")) or 0,"market":"TWSE"})
     return out
+
+def backfill_twse_history(history, now, min_days=20):
+    """Backfill recent TWSE trading-day closes from official MI_INDEX."""
+    snaps={str(x.get("date")):x for x in history if isinstance(x,dict) and x.get("date")}
+    if len(snaps)>=min_days:
+        return sorted(snaps.values(),key=lambda x:str(x.get("date","")))[-90:],[]
+    errors=[]; d=now.date()-timedelta(days=1); attempts=0
+    while len(snaps)<min_days and attempts<45:
+        attempts+=1
+        if d.weekday()<5:
+            key=d.isoformat()
+            if key not in snaps:
+                try:
+                    rows=fetch_twse_daily(d.strftime("%Y%m%d"))
+                    prices={x["code"]:x["close"] for x in rows if x.get("close")}
+                    if prices:
+                        snaps[key]={"date":key,"prices":prices,"signals":[]}
+                except Exception as e:
+                    if "no stock table" not in str(e):
+                        errors.append(key+":"+str(e)[:80])
+        d-=timedelta(days=1)
+    return sorted(snaps.values(),key=lambda x:str(x.get("date","")))[-90:],errors
 
 def fetch_institutional():
     out={}; errs=[]; debug={}
@@ -540,6 +562,9 @@ def main():
         return sec,sector_scores.get(sec,50)
 
     hist_for_heat=load_history()
+    hist_for_heat,history_backfill_errors=backfill_twse_history(hist_for_heat,now,20)
+    if history_backfill_errors:
+        errors.append("歷史行情回補:"+history_backfill_errors[0])
     recent_for_heat=hist_for_heat[-20:]
     def recent_heat(s):
         code=s["code"]; cur=s["close"]; vals=[]
@@ -668,7 +693,7 @@ def main():
         sectors=[]
         flow=[]
     date_key=now.strftime("%Y-%m-%d")
-    history=load_history()
+    history=hist_for_heat
     history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],{"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
     HISTORY.parent.mkdir(parents=True,exist_ok=True)
     HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
