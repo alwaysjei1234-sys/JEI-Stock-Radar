@@ -222,7 +222,7 @@ def enrich_live(rows):
         if v is not None:
             x["live_volume"]=v
             if v>0:x["value"]=v*1000.0*price
-        x["live"]=True;got+=1
+        # MIS d/t are the exchange quote date/time; preserve them instead of using updater runtime.\n        qd=str(m.get("d","") or "").strip(); qt=str(m.get("t","") or "").strip()\n        if qd and qt:\n            x["quote_time"]=f"{qd[:4]}-{qd[4:6]}-{qd[6:8]} {qt}"\n        elif qt:\n            x["quote_time"]=qt\n        x["live"]=True;got+=1
     taiex=None
     try:
         idx=fetch_mis_channels(["tse_t00.tw"])
@@ -690,7 +690,7 @@ def main():
             "risk_action":holding_decision(holdings_by_code.get(p["code"]),p["cost"],risk)["action"],
             "risk_reason":holding_decision(holdings_by_code.get(p["code"]),p["cost"],risk)["reason"],
             "limit_status":holding_decision(holdings_by_code.get(p["code"]),p["cost"],risk)["limit_status"],
-            "quote_time":now.strftime("%Y-%m-%d %H:%M") if bool((holdings_by_code.get(p["code"]) or {}).get("live")) else None
+            "quote_time":(holdings_by_code.get(p["code"]) or {}).get("quote_time") if bool((holdings_by_code.get(p["code"]) or {}).get("live")) else None
         } for p in PORTFOLIO},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
