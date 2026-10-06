@@ -1,0 +1,53 @@
+name: Update JEI Network Consensus
+
+on:
+  schedule:
+    - cron: '50 5 * * 1-5'
+    - cron: '30 12 * * 1-5'
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'scripts/update_web_reco.py'
+      - '.github/workflows/update-web-reco.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jei-web-consensus
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build network consensus
+        run: python scripts/update_web_reco.py
+      - name: Publish network recommendation board
+        run: |
+          if git diff --quiet -- remote/system.json; then
+            echo "No web recommendation change"
+            exit 0
+          fi
+          git config user.name "JEI Web Consensus Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add remote/system.json
+          git commit -m "Auto-update JEI network consensus"
+          for i in 1 2 3; do
+            if git push; then exit 0; fi
+            echo "Push raced with another feed update; rebasing (attempt $i)"
+            git fetch origin main
+            git rebase origin/main
+            sleep 3
+          done
+          echo "Web consensus publish failed after retries"
+          exit 1
