@@ -89,31 +89,25 @@ def fetch_twse_daily(date_yyyymmdd):
     return out
 
 def fetch_tpex_daily(date_obj):
-    # Official TPEx whole-market historical daily close report.
+    # Official TPEx whole-market daily close quotes.
     roc=f"{date_obj.year-1911}/{date_obj.month:02d}/{date_obj.day:02d}"
-    url="https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?"+urllib.parse.urlencode({
-        "l":"zh-tw","o":"json","d":roc,"se":"EW","s":"0,asc,0"
+    url="https://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_result.php?"+urllib.parse.urlencode({
+        "l":"zh-tw","o":"json","d":roc,"s":"0,asc,0"
     })
     j=fetch_json(url)
-    rows=[]
-    if isinstance(j,dict):
-        rows=j.get("aaData") or j.get("data") or []
-        if not rows and isinstance(j.get("tables"),list):
-            for t in j["tables"]:
-                if isinstance(t,dict) and t.get("data"):
-                    rows=t["data"];break
+    rows=(j.get("aaData") or j.get("data") or []) if isinstance(j,dict) else []
     out=[]
     for row in rows:
-        if isinstance(row,dict):
-            code=str(pick(row,"SecuritiesCompanyCode","Code","股票代號","證券代號") or "").strip()
-            close=num(pick(row,"Close","ClosePrice","收盤價"))
-        elif isinstance(row,list) and len(row)>=3:
+        if isinstance(row,list) and len(row)>=3:
             code=re.sub(r"<[^>]+>","",str(row[0])).strip()
             close=num(row[2])
+        elif isinstance(row,dict):
+            code=str(pick(row,"SecuritiesCompanyCode","Code","股票代號","證券代號") or "").strip()
+            close=num(pick(row,"Close","ClosePrice","收盤價"))
         else:continue
         if re.fullmatch(r"[0-9A-Z]{4,8}",code) and close is not None:
             out.append({"code":code,"close":close})
-    if not out:raise RuntimeError("TPEx historical report returned no parsed rows")
+    if not out:raise RuntimeError("TPEx daily_close_quotes returned no parsed rows")
     return out
 
 def backfill_twse_history(history, now, min_days=20):
@@ -599,6 +593,11 @@ def main():
     hist_for_heat,history_backfill_errors=backfill_twse_history(hist_for_heat,now,20)
     if history_backfill_errors:
         errors.append("歷史行情回補:"+history_backfill_errors[0])
+    # Fail loudly if OTC history did not actually backfill; a green workflow must mean usable momentum data.
+    otc_probe=("5347","5425","6150","6187")
+    otc_cov={code:sum(1 for snap in hist_for_heat if num((snap.get("prices") or {}).get(code))) for code in otc_probe}
+    if max(otc_cov.values() or [0])<5:
+        raise RuntimeError("TPEx history coverage validation failed: "+json.dumps(otc_cov,ensure_ascii=False))
     recent_for_heat=hist_for_heat[-20:]
     def recent_heat(s):
         code=s["code"]; cur=s["close"]; vals=[]
