@@ -373,6 +373,35 @@ def calc_backtest(history,current_prices):
     out["samples"]=total_samples
     return out
 
+def holding_decision(row, cost, market_risk):
+    if not row or not row.get("close"):
+        return {"action":"資料不足","reason":"尚無有效行情","limit_status":"未知"}
+    price=row["close"]; day=row.get("pct") or 0
+    pnl=(price/cost-1)*100
+    limit_status="漲停" if day>=9.4 else ("跌停" if day<=-9.4 else "正常")
+    if pnl>=50:
+        action="移動停利"
+        reason="獲利超過50%，保留強勢部位但啟動移動停利，避免大波段獲利明顯回吐"
+    elif pnl>=15:
+        action="獲利續抱" if day>-3 else "提高警戒"
+        reason="已有15%以上獲利，趨勢未明顯轉弱可續抱；單日轉弱時優先保護獲利"
+    elif pnl<=-12:
+        action="反彈減碼" if day>0 else "提高警戒"
+        reason="成本虧損超過12%，不再只用續抱觀察；反彈時優先降低套牢部位風險"
+    elif day<=-5 or market_risk>=80:
+        action="減碼/防守"
+        reason="單日跌幅過大或整體市場進入高風險區"
+    elif day<=-3 or market_risk>=65:
+        action="提高警戒"
+        reason="個股動能轉弱或整體市場風險升高"
+    elif limit_status=="漲停" and pnl<0:
+        action="強勢反彈續抱"
+        reason="目前漲停但仍低於成本，先看強勢反彈延續，不把漲停誤判成停損訊號"
+    else:
+        action="續抱觀察"
+        reason="價格與整體市場風險目前仍在可控範圍"
+    return {"action":action,"reason":reason,"limit_status":limit_status}
+
 def main():
     errors=[]
     try:twse_raw=fetch_json(TWSE_STOCK)
