@@ -431,7 +431,7 @@ def main():
     # Taiwan regular trading is 09:00-13:30. Keep a small post-close refresh window so the
     # final MIS quote can replace stale daily OpenAPI data before it rolls to today's date.
     market_open=now.weekday()<5 and ((now.hour==8 and now.minute>=45) or 9<=now.hour<14 or (now.hour==14 and now.minute<=10))
-    if market_open:
+    # After close, official daily OpenAPI may still expose the prior trading date for a while.\n    # During a bounded post-close window, use MIS final quotes to bridge that lag.\n    post_close_refresh=now.weekday()<5 and 14<=now.hour<16\n    if market_open or post_close_refresh:
         try:rows,live_count,taiex_live,live_errors=enrich_live(rows)
         except Exception as e:live_errors.append(str(e))
         if live_errors and live_count<100:errors.append("MIS盤中:"+(";".join(live_errors))[:120])
@@ -672,7 +672,7 @@ def main():
                 "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000),
                 "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
         "market":{"status":market_status,"mode":("盤中即時" if live_valid else ("資料過期" if stale_source else ("盤中資料不足" if market_open else "今日收盤"))),
-                  "live_count":live_count,"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source,
+                  "live_count":live_count,"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source,"post_close_refresh":post_close_refresh,
                   "brief":f"{'盤中即時' if live_valid else ('資料過期' if stale_source else ('盤中資料不足' if market_open else '今日收盤'))}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
         "sectors":sectors,"stock_sectors":stock_sector,
         "universe":[{"code":x["code"],"name":x["name"],"market":x["market"]} for x in stocks if re.fullmatch(r"[1-9][0-9]{3}",x["code"])],
