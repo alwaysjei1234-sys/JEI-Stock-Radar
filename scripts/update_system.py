@@ -16,6 +16,21 @@ OUT=Path("remote/system.json")
 HISTORY=Path("remote/history.json")
 TZ=ZoneInfo("Asia/Taipei")
 
+PORTFOLIO = [
+    {"code":"1711","name":"永光","cost":52.674,"shares":1000},
+    {"code":"2478","name":"大毅","cost":127.681,"shares":1000},
+    {"code":"2609","name":"陽明","cost":63.69,"shares":1000},
+    {"code":"2748","name":"雲品","cost":99.341,"shares":1000},
+    {"code":"3162","name":"精確","cost":85.621,"shares":1000},
+    {"code":"3289","name":"宜特","cost":141.701,"shares":1000},
+    {"code":"3707","name":"漢磊","cost":73.104,"shares":1000},
+    {"code":"5347","name":"世界","cost":123.175,"shares":1000},
+    {"code":"5425","name":"台半","cost":102.145,"shares":1000},
+    {"code":"6150","name":"撼訊","cost":77.51,"shares":2000},
+    {"code":"7711","name":"永擎","cost":257.8665,"shares":2000},
+    {"code":"8070","name":"長華*","cost":58.383,"shares":1000},
+]
+
 SECTOR_BASKETS={
     "AI伺服器/散熱":["2345","2382","3231","6669","3017","3324","3653","2059"],
     "PCB/載板":["3037","3189","8046","2368","2383","6274","6213","1815","8039"],
@@ -632,7 +647,17 @@ def main():
         "universe":[{"code":x["code"],"name":x["name"],"market":x["market"]} for x in stocks if re.fullmatch(r"[1-9][0-9]{3}",x["code"])],
         "institutional":institutional,
         "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
-        "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
+        "holdings":{p["code"]:{
+            "code":p["code"],"name":(by_code.get(p["code"]) or {}).get("name") or p["name"],
+            "cost":p["cost"],"shares":p["shares"],
+            "price":(by_code.get(p["code"]) or {}).get("close"),
+            "change_pct":round((by_code.get(p["code"]) or {}).get("pct"),2) if (by_code.get(p["code"]) or {}).get("pct") is not None else None,
+            "live":bool((by_code.get(p["code"]) or {}).get("live")),
+            "market_value":round(((by_code.get(p["code"]) or {}).get("close") or 0)*p["shares"]),
+            "pnl":round((((by_code.get(p["code"]) or {}).get("close") or p["cost"])-p["cost"])*p["shares"]),
+            "pnl_pct":round((((by_code.get(p["code"]) or {}).get("close") or p["cost"])/p["cost"]-1)*100,2),
+            "risk_action":("資料不足" if not (by_code.get(p["code"]) or {}).get("close") else ("減碼/防守" if ((by_code.get(p["code"]) or {}).get("pct") or 0)<=-5 or risk>=80 else ("提高警戒" if risk>=65 or ((by_code.get(p["code"]) or {}).get("pct") or 0)<=-3 else "續抱觀察")))
+        } for p in PORTFOLIO},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
     }
