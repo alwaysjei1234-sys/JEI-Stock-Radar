@@ -14,6 +14,7 @@
 .stockCard{border:1px solid #173a56;border-radius:14px;padding:12px;margin:8px 0;background:#0a1c2c}.stockTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.stockName{font-size:16px;font-weight:950}.stockCode{color:#8fb1cc;font-size:11px}.price{font-size:19px;font-weight:950;text-align:right}.change{font-size:11px;font-weight:850;text-align:right}.metaGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}.meta{background:#0d2438;border-radius:9px;padding:7px}.meta .k{font-size:9px;color:#7999b1}.meta .v{font-size:11px;font-weight:850;margin-top:3px}.decision{margin-top:9px;padding:9px;border-radius:10px;background:#102b42;font-size:12px;line-height:1.45}
 .listRow{display:grid;grid-template-columns:38px 1fr auto;gap:8px;align-items:center;border-bottom:1px solid #14334d;padding:10px 2px}.listRow:last-child{border-bottom:0}.rank{font-size:13px;color:#6dc8ff;font-weight:950}.rName{font-weight:900}.rSub{font-size:10px;color:var(--mut);margin-top:2px}.score{font-weight:950;font-size:16px}.empty{padding:24px 12px;text-align:center;border:1px dashed #285271;border-radius:14px;color:#91aec3;background:#081827;line-height:1.6}.statusline{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.chip{font-size:10px;padding:4px 7px;border:1px solid #275471;border-radius:999px;color:#a7c3d7}
 .formRow{display:flex;gap:8px}.formRow input{min-width:0;flex:1;background:#081928;border:1px solid #24506e;border-radius:11px;color:white;padding:10px}.formRow button{border:0;border-radius:11px;background:#237fc9;color:#fff;font-weight:900;padding:0 12px}.holdEdit{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.holdEdit input{width:100%;background:#081928;border:1px solid #244860;color:white;border-radius:10px;padding:9px;font-size:12px}
+.chatWrap{display:flex;flex-direction:column;gap:10px}.chatLog{min-height:340px;max-height:58vh;overflow:auto;padding:6px 2px 14px}.chatMsg{display:flex;margin:9px 0}.chatMsg.me{justify-content:flex-end}.chatBubble{max-width:88%;padding:11px 13px;border-radius:16px;background:#0d2940;border:1px solid #25516e;font-size:14px;line-height:1.55;white-space:pre-wrap}.chatMsg.me .chatBubble{background:#1d6fae;border-color:#3b9adb}.chatInput{display:grid;grid-template-columns:1fr auto;gap:8px;position:sticky;bottom:84px;background:#071724;padding:8px 0}.chatInput input{min-width:0;background:#081928;border:1px solid #24506e;border-radius:13px;color:#fff;padding:12px 13px;font-size:15px}.chatInput button{border:0;border-radius:13px;background:#237fc9;color:#fff;font-weight:900;padding:0 16px}.quickAsk{display:flex;gap:7px;overflow:auto;padding:4px 0 8px}.quickAsk button{white-space:nowrap;border:1px solid #275471;background:#0c2235;color:#cbe6f7;border-radius:999px;padding:7px 10px;font-size:12px}
 .toast{position:fixed;left:50%;bottom:102px;transform:translateX(-50%);z-index:80;background:#102b40;border:1px solid #3477a3;padding:10px 14px;border-radius:999px;font-size:11px;opacity:0;pointer-events:none;transition:.25s}.toast.show{opacity:1}.updateBanner{display:none;margin:10px 0;padding:11px 12px;border-radius:13px;background:#3a2d14;border:1px solid #745c21;color:#ffe6a2;font-size:12px}.updateBanner.show{display:flex;justify-content:space-between;gap:8px;align-items:center}.updateBanner button{border:0;background:#f4b942;color:#201600;border-radius:9px;padding:7px 9px;font-weight:900}
 .bottom{position:fixed;z-index:30;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);background:#071724ee;border-top:1px solid #1b4261;padding:7px 3px calc(7px + env(safe-area-inset-bottom));backdrop-filter:blur(12px)}.btab{text-align:center;color:#8ba7bd;font-size:9px}.btab b{font-size:18px;display:block;margin-bottom:1px}.btab.active{color:white}
 @media(min-width:760px){.wrap{padding:20px}.metrics{grid-template-columns:repeat(4,1fr)}.actions{grid-template-columns:repeat(6,1fr)}.holdingsGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stockCard{margin:0}.bottom{max-width:760px;left:50%;transform:translateX(-50%);border-radius:16px 16px 0 0;border-left:1px solid var(--line);border-right:1px solid var(--line)}}
@@ -66,11 +67,11 @@
   <div class="top"><div><div class="brand">JEI 專屬選股雷達 <i>V3.4 LIVE</i></div><div class="sub">多因子行情 × 族群熱度 × 持股決策 × 下一棒 × 大逃殺風控</div></div><div class="online"><span id="netDot" class="dot"></span><span id="netText">連線中</span></div></div>
   <div id="updateBanner" class="updateBanner"><span id="updateText">有新版系統</span><button onclick="openUpdate()">更新</button></div>
   <div id="riskBox" class="risk green"><div class="riskTop"><div><div id="riskTitle" class="riskTitle">🟢 大逃殺預警：等待同步</div><div id="riskTime" class="sub">先同步 JEI 雲端資料</div></div><div id="riskScore" class="riskScore">--</div></div><div id="riskReasons" class="riskReasons">市場警戒永遠優先於買進訊號。</div></div>
-  <div class="actions"><button class="btn primary" onclick="refreshAll(true)">↻ 全部更新</button><button class="btn" onclick="go('hold')">💰 持股</button><button class="btn" onclick="go('attack')">🔥 主攻</button><button class="btn" onclick="go('next')">🎯 下一棒</button><button class="btn" onclick="go('monster')">🚀 妖股</button><button class="btn" onclick="go('tomorrowMonster')">🌙 明日妖股</button><button class="btn" onclick="go('futureMonster')">🔭 未來妖股</button><button class="btn" onclick="go('webReco')">🌐 網路推薦</button><button class="btn" onclick="go('settings')">⚙ 更新系統</button></div>
+  <div class="actions"><button class="btn primary" onclick="refreshAll(true)">↻ 全部更新</button><button class="btn" onclick="go('hold')">💰 持股</button><button class="btn" onclick="go('attack')">🔥 主攻</button><button class="btn" onclick="go('monster')">🚀 妖股</button><button class="btn" onclick="go('tomorrowMonster')">🌙 明日妖股</button><button class="btn" onclick="go('futureMonster')">🔭 未來妖股</button><button class="btn" onclick="go('webReco')">🌐 網路推薦</button><button class="btn" onclick="go('settings')">⚙ 更新系統</button></div>
   <div class="metrics"><div class="metric"><div class="k">市場狀態</div><div id="marketState" class="v cyanTxt">同步中</div></div><div class="metric"><div class="k">建議現金</div><div id="cashLevel" class="v">--</div></div><div class="metric"><div class="k">持股總損益</div><div id="totalPnl" class="v">--</div></div><div class="metric"><div class="k">持股風險</div><div id="portfolioRisk" class="v">--</div></div><div class="metric"><div class="k">資料更新</div><div id="updatedAgo" class="v small">等待更新</div></div></div>
-  <div class="tabs"><div class="tab active" data-go="home">總覽</div><div class="tab" data-go="hold">我的持股</div><div class="tab" data-go="attack">今日主攻</div><div class="tab" data-go="next">下一棒</div><div class="tab" data-go="monster">突然妖股</div><div class="tab" data-go="tomorrowMonster">明日妖股</div><div class="tab" data-go="futureMonster">未來妖股</div><div class="tab" data-go="webReco">網路推薦</div><div class="tab" data-go="rotate">換股雷達</div><div class="tab" data-go="flow">資金流</div><div class="tab" data-go="sector">族群熱度</div><div class="tab" data-go="backtest">回測</div><div class="tab" data-go="settings">更新系統</div></div>
+  <div class="tabs"><div class="tab active" data-go="home">總覽</div><div class="tab" data-go="hold">我的持股</div><div class="tab" data-go="attack">今日主攻</div><div class="tab" data-go="monster">突然妖股</div><div class="tab" data-go="tomorrowMonster">明日妖股</div><div class="tab" data-go="futureMonster">未來妖股</div><div class="tab" data-go="webReco">網路推薦</div><div class="tab" data-go="rotate">持股換股</div><div class="tab" data-go="flow">資金流</div><div class="tab" data-go="sector">族群熱度</div><div class="tab" data-go="backtest">回測</div><div class="tab" data-go="settings">更新系統</div></div>
   <section id="home" class="section active">
-    <h2>今日決策總覽</h2><div class="panel"><div class="panelTitle">JEI 核心順序</div><div id="homeSummary" class="small mut">1. 大逃殺預警 → 2. 持股風險 → 3. 換股雷達 → 4. 今日主攻 → 5. 下一棒 → 6. 妖股雷達</div><div class="statusline"><span class="chip">TWSE 即時行情</span><span class="chip">JEI 遠端資料</span><span class="chip">60秒行情刷新</span><span class="chip">啟動自動更新介面</span></div></div>
+    <h2>今日決策總覽</h2><div class="panel"><div class="panelTitle">JEI 核心順序</div><div id="homeSummary" class="small mut">1. 大逃殺預警 → 2. 持股風險 → 3. 持股換股 → 4. 今日主攻 → 5. 明日妖股 → 6. 未來妖股 → 7. 網路共識</div><div class="statusline"><span class="chip">TWSE 即時行情</span><span class="chip">JEI 遠端資料</span><span class="chip">60秒行情刷新</span><span class="chip">啟動自動更新介面</span></div></div>
     <div class="panel"><div class="panelTitle">市場資金摘要</div><div id="marketBrief" class="small mut">等待 JEI 系統資料...</div></div>
     <div class="panel"><div class="panelTitle">優先處理</div><div id="priorityList" class="empty">資料同步後顯示今天最需要處理的持股與候選股。</div></div><div class="panel"><div class="panelTitle">最強族群 TOP 3</div><div id="sectorTop" class="small mut">等待族群資料...</div></div>
   </section>
@@ -81,15 +82,16 @@
   <section id="tomorrowMonster" class="section"><h2>🌙 明日妖股候選</h2><div class="panel"><div class="sub">偏重收盤強勢、量能、族群熱度與低過熱；是候選排序，不代表保證隔日漲停。</div><div id="tomorrowMonsterList" style="margin-top:8px"></div></div></section>
   <section id="futureMonster" class="section"><h2>🔭 未來妖股觀察</h2><div class="panel"><div class="sub">偏重 1–4 週族群延伸、趨勢與資金條件，提前找可能發動但尚未過熱的標的。</div><div id="futureMonsterList" style="margin-top:8px"></div></div></section>
   <section id="webReco" class="section"><h2>🌐 網路共識推薦</h2><div class="panel"><div class="panelTitle">外部資訊 × 法人資金 × JEI 交叉驗證</div><div id="webRecoStamp" class="sub">等待網路資料...</div><div class="sub" style="margin-top:6px">綜合公開投顧/研報、財經媒體、網友公開討論與法人資金；不照抄單一老師報牌。網路聲量高但資金轉弱或已過熱，會直接降分。</div><div id="webRecoList" style="margin-top:10px"></div></div></section>
-  <section id="rotate" class="section"><h2>🔄 換股雷達</h2><div id="rotateList" class="panel"></div></section>
+  <section id="rotate" class="section"><h2>🔄 我的持股換股建議</h2><div class="panel"><div class="sub">只用來回答「手上哪檔較弱、可換成哪檔較強」，不再當成另一套選股榜。</div><div id="rotateList" style="margin-top:8px"></div></div></section>
   <section id="flow" class="section"><h2>🌊 資金流向</h2><div id="flowList" class="panel"></div></section><section id="sector" class="section"><h2>🌡 族群熱度與資金主線</h2><div id="sectorList" class="panel"></div></section>
   <section id="backtest" class="section"><h2>📊 JEI 命中率與回測</h2><div id="backtestBox" class="panel"><div class="empty">等待歷史資料累積</div></div></section>
+  <section id="chat" class="section"><h2>💬 JEI 對話助手</h2><div class="panel chatWrap"><div class="sub">可直接問：我的永光怎麼辦？明日妖股前三名？網路推薦哪幾檔？現在大盤風險？力成法人有沒有跑？</div><div class="quickAsk"><button onclick="askQuick('現在大盤風險？')">大盤風險</button><button onclick="askQuick('明日妖股前三名')">明日妖股</button><button onclick="askQuick('未來妖股前三名')">未來妖股</button><button onclick="askQuick('網路推薦前三名')">網路推薦</button><button onclick="askQuick('我的持股哪檔風險最高？')">持股風險</button></div><div id="chatLog" class="chatLog"></div><div class="chatInput"><input id="chatBox" placeholder="輸入問題，例如：永光現在怎麼辦？" onkeydown="if(event.key==='Enter')sendChat()"><button onclick="sendChat()">送出</button></div></div></section>
   <section id="settings" class="section"><h2>⚙ 更新系統與連線</h2><div class="panel"><div class="panelTitle">系統狀態</div><div id="sysStatus" class="small mut">檢查中...</div><div class="statusline"><span class="chip" id="appVer">APP --</span><span class="chip" id="uiVer">UI --</span><span class="chip">遠端UI：已啟用</span></div><div class="actions" style="grid-template-columns:1fr 1fr;margin-top:10px"><button class="btn primary" onclick="refreshRemoteUI()">更新介面</button><button class="btn" onclick="checkUpdate()">檢查APP版本</button></div></div><div class="panel"><div class="panelTitle">資料連結</div><div class="small mut">行情：台灣證交所 MIS 公開行情接口<br>JEI 排名 / 風險：GitHub 遠端 feed（交易時段每15分鐘排程更新）<br>持股：本機私有儲存<br>介面：每次啟動自動抓最新版本，離線時使用內建版。</div></div></section>
 </div>
 <div id="toast" class="toast"></div>
-<div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="next"><b>🎯</b>下一棒</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
+<div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="chat"><b>💬</b>聊天</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
 <script>
-const UI_VERSION='3.5.3-live';
+const UI_VERSION='3.6.0-live';
 const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],tomorrow_monster:[],future_monster:[],rotate:[],flow:[],sectors:[],stock_sectors:{},universe:[]}, updateManifest=null, refreshTimer=null, systemTimer=null, lastMarketAt='',liveScanReceived=0;
 const $=id=>document.getElementById(id); const money=n=>Number.isFinite(n)?Math.round(n).toLocaleString('zh-TW'):'--'; const nativeOk=()=>typeof JEINative!=='undefined';
@@ -220,6 +222,91 @@ function applyLiveRanks(){
  });
  renderRank('attackList',system.attack,'今日尚未產生主攻名單');renderRank('nextList',system.next,'今日尚未產生下一棒名單');renderRank('monsterList',system.monster,'目前沒有符合條件的突然妖股');renderRank('tomorrowMonsterList',system.tomorrow_monster,'目前沒有符合條件的明日妖股候選');renderRank('futureMonsterList',system.future_monster,'目前沒有符合條件的未來妖股候選');renderRank('rotateList',system.rotate,'目前沒有明確換股訊號');
 }
+
+let chatHistory=[],chatLastCode='';
+function chatSay(who,text){
+ const log=$('chatLog');if(!log)return;
+ const row=document.createElement('div');row.className='chatMsg '+(who==='me'?'me':'bot');
+ const b=document.createElement('div');b.className='chatBubble';b.textContent=text;row.appendChild(b);log.appendChild(row);log.scrollTop=log.scrollHeight;
+ chatHistory.push({who,text});if(chatHistory.length>30)chatHistory=chatHistory.slice(-30);
+ try{localStorage.setItem('jei_chat_history',JSON.stringify(chatHistory))}catch(e){}
+}
+function initChat(){
+ try{const h=JSON.parse(localStorage.getItem('jei_chat_history')||'[]');if(Array.isArray(h))chatHistory=h.slice(-20)}catch(e){}
+ const log=$('chatLog');if(!log)return;log.innerHTML='';
+ if(!chatHistory.length){chatSay('bot','我是 JEI 對話助手。可以直接問你的持股、今日主攻、明日妖股、未來妖股、網路推薦、法人資金與大盤風險。')}
+ else{const copy=[...chatHistory];chatHistory=[];copy.forEach(x=>chatSay(x.who,x.text))}
+}
+function askQuick(q){$('chatBox').value=q;sendChat()}
+function stockCatalog(){
+ const all=[];const push=x=>{if(x&&x.code&&!all.some(z=>z.code===String(x.code)))all.push({code:String(x.code),name:String(x.name||x.code)})};
+ holdings.forEach(push);(system.universe||[]).forEach(push);
+ ['attack','next','monster','tomorrow_monster','future_monster','rotate','web_recommendations'].forEach(k=>(system[k]||[]).forEach(push));
+ return all
+}
+function findChatStock(q){
+ const direct=String(q).match(/\b([0-9A-Z]{4,8})\b/i);const cat=stockCatalog();
+ if(direct){const code=direct[1].toUpperCase(),x=cat.find(z=>z.code.toUpperCase()===code);if(x){chatLastCode=x.code;return x}}
+ const hits=cat.filter(x=>x.name&&String(q).includes(x.name.replace('*',''))).sort((a,b)=>b.name.length-a.name.length);
+ if(hits.length){chatLastCode=hits[0].code;return hits[0]}
+ if(chatLastCode&&/[它他這支這檔這個]/.test(q))return cat.find(x=>x.code===chatLastCode)||null;
+ return null
+}
+function listText(arr,n=3){
+ if(!Array.isArray(arr)||!arr.length)return '目前沒有符合條件的名單。';
+ return arr.slice(0,n).map((x,i)=>`${i+1}. ${x.code} ${x.name}｜${x.score??'--'}分｜${x.reason||''}`).join('\n')
+}
+function chatHolding(stock){
+ const h=holdings.find(x=>x.code===stock.code);if(!h)return null;
+ const m=market[h.code]||{},sys=(system.holdings||{})[h.code]||{};
+ const p=Number.isFinite(+m.price)?+m.price:(Number.isFinite(+sys.price)?+sys.price:NaN);
+ const ch=Number.isFinite(+m.prev)&&+m.prev>0&&Number.isFinite(p)?(p-(+m.prev))/(+m.prev)*100:(Number.isFinite(+sys.change_pct)?+sys.change_pct:NaN);
+ const pnl=Number.isFinite(p)?(p-h.cost)*h.shares:NaN,ret=Number.isFinite(pnl)?pnl/(h.cost*h.shares)*100:NaN,a=holdingAdvice(h,m,p,ret,ch),d=holdingDiagnosis(h,m,p,ret,ch,a);
+ const priceTxt=Number.isFinite(p)?p:'--',retTxt=Number.isFinite(ret)?(ret>=0?'+':'')+ret.toFixed(1)+'%':'--';
+ return `${h.code} ${h.name}｜現價 ${priceTxt}｜成本 ${h.cost}｜報酬 ${retTxt}\nJEI：${a.action}｜${a.reason}\n下跌/籌碼診斷：${d.tag}（可信度 ${d.conf}%）｜${d.why}\n${d.instText}\n防守 ${a.defense}｜目標1 ${a.target1}｜目標2 ${a.target2}`
+}
+function chatStockInfo(stock){
+ const code=stock.code,inst=(system.institutional||{})[code]||null;
+ const buckets=[['明日妖股',system.tomorrow_monster],['未來妖股',system.future_monster],['突然妖股',system.monster],['今日主攻',system.attack],['網路推薦',system.web_recommendations]];
+ const found=buckets.map(([k,a])=>[k,(a||[]).find(x=>x.code===code)]).filter(x=>x[1]);
+ let out=`${code} ${stock.name}`;
+ if(found.length)out+='\n'+found.map(([k,x])=>`${k}：${x.score??'--'}分｜${x.reason||''}`).join('\n');
+ if(inst){
+  const lots=v=>Number.isFinite(+v)?(+v/1000):0;
+  out+=`\n法人：外資 ${lots(inst.foreign)>=0?'+':''}${lots(inst.foreign).toFixed(1)}張｜投信 ${lots(inst.trust)>=0?'+':''}${lots(inst.trust).toFixed(1)}張｜自營商 ${lots(inst.dealer)>=0?'+':''}${lots(inst.dealer).toFixed(1)}張｜合計 ${lots(inst.total)>=0?'+':''}${lots(inst.total).toFixed(1)}張`;
+ }
+ if(!found.length&&!inst)out+='\n目前 JEI 沒有足夠資料把這檔列入主要候選。';
+ return out
+}
+function answerChat(q){
+ q=String(q||'').trim();if(!q)return '';
+ const stock=findChatStock(q);
+ if(stock){
+  const htxt=chatHolding(stock);
+  if(htxt)return htxt;
+  return chatStockInfo(stock)
+ }
+ if(/大盤|風險|現金|逃殺/.test(q)){
+  const r=system.risk||{},m=system.market||{};
+  return `目前市場：${m.status||'--'}｜大逃殺風險 ${r.score??'--'}/100｜建議現金 ${r.cash||'--'}\n${(r.reasons||[]).slice(0,5).join('｜')}`;
+ }
+ if(/明日妖股|明天.*妖|隔日/.test(q))return '明日妖股候選：\n'+listText(system.tomorrow_monster,5);
+ if(/未來妖股|1.?4週|波段妖/.test(q))return '未來妖股觀察：\n'+listText(system.future_monster,5);
+ if(/突然妖股|妖股|盤中.*異常/.test(q))return '突然妖股雷達：\n'+listText(system.monster,5);
+ if(/主攻|今天.*買|今日.*推薦/.test(q))return '今日主攻：\n'+listText(system.attack,5);
+ if(/網路推薦|投顧|老師|網友|網路共識/.test(q))return '網路共識推薦：\n'+listText(system.web_recommendations,5);
+ if(/持股.*風險|哪檔.*弱|哪檔.*賣/.test(q)){
+  const scored=holdings.map(h=>{const m=market[h.code]||{},sys=(system.holdings||{})[h.code]||{},p=Number.isFinite(+m.price)?+m.price:+sys.price,ret=Number.isFinite(p)?(p/h.cost-1)*100:0,a=holdingAdvice(h,m,p,ret,Number.isFinite(+sys.change_pct)?+sys.change_pct:0);return{h,risk:100-(+a.score||50),a,ret}}).sort((a,b)=>b.risk-a.risk);
+  if(!scored.length)return '目前沒有持股資料。';
+  return '目前較需要優先檢查的持股：\n'+scored.slice(0,3).map((x,i)=>`${i+1}. ${x.h.code} ${x.h.name}｜${x.a.action}｜報酬 ${x.ret>=0?'+':''}${x.ret.toFixed(1)}%`).join('\n');
+ }
+ if(/換股/.test(q))return '持股換股候選：\n'+listText(system.rotate,5);
+ return '你可以直接問股票名稱或代號，例如「永光怎麼辦」、「2368法人有沒有跑」、「明日妖股前三名」、「網路推薦哪幾檔」、「我的持股哪檔風險最高」。目前這個聊天會讀取 JEI 即時/收盤資料與你手機裡的持股。';
+}
+function sendChat(){
+ const box=$('chatBox'),q=(box&&box.value||'').trim();if(!q)return;box.value='';chatSay('me',q);
+ setTimeout(()=>chatSay('bot',answerChat(q)),80)
+}
 function refreshSystem(){if(nativeOk())JEINative.refreshSystem()}
 function checkUpdate(){if(nativeOk())JEINative.checkForUpdates()}
 function refreshRemoteUI(){if(nativeOk()){JEINative.refreshRemoteUI();toast('正在檢查最新介面')}}
@@ -234,6 +321,6 @@ window.JEI_NATIVE={
  onUpdateManifest(raw){try{updateManifest=JSON.parse(raw);const local=nativeOk()?JEINative.getAppVersionCode():12,remote=+updateManifest.versionCode||0;if(remote>local){$('updateBanner').classList.add('show');$('updateText').textContent=`APP 新版 ${updateManifest.versionName||''} 可更新`}else $('updateBanner').classList.remove('show')}catch(e){}},
  onUpdateError(e){}
 };
-function init(){loadHoldings();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible')refreshMarket()},120000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
+function init(){loadHoldings();initChat();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible')refreshMarket()},120000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshAll(false)});init();
 </script></body></html>
