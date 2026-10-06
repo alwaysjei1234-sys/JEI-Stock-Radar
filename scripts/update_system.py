@@ -29,6 +29,7 @@ PORTFOLIO = [
     {"code":"6150","name":"撼訊","cost":77.51,"shares":2000},
     {"code":"7711","name":"永擎","cost":257.8665,"shares":2000},
     {"code":"8070","name":"長華*","cost":58.383,"shares":1000},
+    {"code":"00937B","name":"群益ESG投等債20+","cost":15.6283,"shares":44000},
 ]
 
 SECTOR_BASKETS={
