@@ -686,7 +686,10 @@ def main():
             "market_value":round(((by_code.get(p["code"]) or {}).get("close") or 0)*p["shares"]),
             "pnl":round((((by_code.get(p["code"]) or {}).get("close") or p["cost"])-p["cost"])*p["shares"]),
             "pnl_pct":round((((by_code.get(p["code"]) or {}).get("close") or p["cost"])/p["cost"]-1)*100,2),
-            "risk_action":("資料不足" if not (by_code.get(p["code"]) or {}).get("close") else ("減碼/防守" if ((by_code.get(p["code"]) or {}).get("pct") or 0)<=-5 or risk>=80 else ("提高警戒" if risk>=65 or ((by_code.get(p["code"]) or {}).get("pct") or 0)<=-3 else "續抱觀察")))
+            "risk_action":holding_decision(by_code.get(p["code"]),p["cost"],risk)["action"],
+            "risk_reason":holding_decision(by_code.get(p["code"]),p["cost"],risk)["reason"],
+            "limit_status":holding_decision(by_code.get(p["code"]),p["cost"],risk)["limit_status"],
+            "quote_time":now.strftime("%Y-%m-%d %H:%M") if bool((by_code.get(p["code"]) or {}).get("live")) else None
         } for p in PORTFOLIO},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
