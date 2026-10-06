@@ -125,7 +125,7 @@ def fetch_tpex_daily(date_obj):
 def backfill_twse_history(history, now, min_days=20, max_otc_fetches=4):
     """Backfill and enrich the most recent trading days with TWSE + TPEx closes."""
     snaps={str(x.get("date")):x for x in history if isinstance(x,dict) and x.get("date")}
-        errors=[]; d=now.date()-timedelta(days=1); attempts=0; processed=0; otc_fetches=0
+    errors=[]; d=now.date()-timedelta(days=1); attempts=0; processed=0; otc_fetches=0
     # Important: iterate through calendar days even when TWSE history already has 20
     # snapshots, because existing snapshots may still be missing TPEx prices.
     while processed<min_days and attempts<50:
