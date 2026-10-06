@@ -658,6 +658,42 @@ def main():
         reason=f"{phase}｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜成交值 {s['value']/1e8:.1f}億｜收盤位置 {position(s)*100:.0f}%｜"+("低過熱" if hp<4 else "過熱警戒")
         monster.append(item(s,score,reason,"monster",risk,sec,ss))
 
+    # 明日妖股：偏重「尚未完全噴出、收盤強、量能足、族群不弱」的隔日爆發候選。
+    tomorrow_pool=[]
+    for base,s,sec,ss,r5,r10,r20,hp in next_pool[:60]:
+        if s["pct"] < 0.3 or s["pct"] > 5.8: continue
+        if position(s) < .68 or s.get("value",0) < 100000000: continue
+        if ss < 48 or hp >= 14: continue
+        close_bonus=(position(s)-.68)*28
+        sector_bonus=max(0,ss-50)*.22
+        momentum_bonus=max(0,s["pct"])*1.6
+        score=int(round(clamp(base+close_bonus+sector_bonus+momentum_bonus-hp*.45,0,99)))
+        tomorrow_pool.append((score,s,sec,ss,r5,r10,r20,hp))
+    tomorrow_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
+    tomorrow_monster=[]
+    for score,s,sec,ss,r5,r10,r20,hp in tomorrow_pool[:10]:
+        reason=f"隔日爆發候選｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜收盤位置 {position(s)*100:.0f}%｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "控追價")
+        tomorrow_monster.append(item(s,score,reason,"next",risk,sec,ss))
+
+    # 未來妖股：找 1~4 週題材/族群仍有延伸性、但短線尚未過熱的提前觀察名單。
+    future_pool=[]
+    for s in tradable:
+        sec,ss=secinfo(s)
+        if ss < 50 or s["pct"] < -3.0 or s["pct"] > 6.5 or position(s) < .42: continue
+        r5,r10,r20,hp=recent_heat(s)
+        if hp >= 18: continue
+        mom5=0 if r5 is None else clamp(r5,-8,16)
+        mom10=0 if r10 is None else clamp(r10,-12,24)
+        mom20=0 if r20 is None else clamp(r20,-18,35)
+        liq=clamp((math.log10(max(s.get("value",1),1))-7.5)*5,0,18)
+        score=44+(ss-45)*.42+position(s)*13+liq+mom5*.45+mom10*.28+mom20*.12-hp*.55-risk*.05
+        future_pool.append((int(round(clamp(score,0,99))),s,sec,ss,r5,r10,r20,hp))
+    future_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
+    future_monster=[]
+    for score,s,sec,ss,r5,r10,r20,hp in future_pool[:12]:
+        reason=f"1–4週潛力觀察｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜20日 {fmt_ret(r20)}｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "控制追價")
+        future_monster.append(item(s,score,reason,"next",risk,sec,ss))
+
     rotate_src=sorted(attack[:8]+next_list[:8],key=lambda x:(x.get("sector_score",50),x["score"]),reverse=True)[:8]
     rotate=[dict(x,reason="換股候選｜"+x["reason"]) for x in rotate_src]
 
@@ -710,11 +746,11 @@ def main():
         # Safety invariant applies all day, including after close: stale official
         # daily data must never be presented as today's attack/next/monster radar.
         errors.append(f"行情來源仍為 {source_data_date or '未知日期'}，今日候選榜暫停避免誤判")
-        attack=[];next_list=[];monster=[];rotate=[]
+        attack=[];next_list=[];monster=[];tomorrow_monster=[];future_monster=[];rotate=[]
         priority=[x for x in priority if x.get("action") not in ("主攻#1","下一棒#1")]
     elif market_open:
         errors.append(f"盤中即時覆蓋不足 {live_count}/{len(stocks)}，候選榜暫停避免誤判")
-        attack=[];next_list=[];monster=[];rotate=[]
+        attack=[];next_list=[];monster=[];tomorrow_monster=[];future_monster=[];rotate=[]
         priority=[x for x in priority if x.get("action") not in ("主攻#1","下一棒#1")]
     if stale_source:
         # Old market breadth/sector scores are retained only as raw historical context;
@@ -759,7 +795,7 @@ def main():
             "risk_reason":holding_decision(holdings_by_code.get(p["code"]),p["cost"],risk)["reason"],
             "limit_status":holding_decision(holdings_by_code.get(p["code"]),p["cost"],risk)["limit_status"],
             "quote_time":(holdings_by_code.get(p["code"]) or {}).get("quote_time") if bool((holdings_by_code.get(p["code"]) or {}).get("live")) else None
-        } for p in PORTFOLIO},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
+        } for p in PORTFOLIO},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"tomorrow_monster":tomorrow_monster,"future_monster":future_monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
     }
