@@ -768,6 +768,16 @@ def main():
     HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     backtest=calc_backtest(history,{x["code"]:x["close"] for x in stocks})
 
+    old_web_recommendations=[]; old_web_updated_at=None; old_web_status={}
+    try:
+        if OUT.exists():
+            old_out=json.loads(OUT.read_text(encoding="utf-8"))
+            old_web_recommendations=old_out.get("web_recommendations") or []
+            old_web_updated_at=old_out.get("web_recommendations_updated_at")
+            old_web_status=old_out.get("web_recommendations_status") or {}
+    except Exception:
+        pass
+
     out={
         "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,"source_data_date":source_data_date,
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
@@ -797,6 +807,9 @@ def main():
             "quote_time":(holdings_by_code.get(p["code"]) or {}).get("quote_time") if bool((holdings_by_code.get(p["code"]) or {}).get("live")) else None
         } for p in PORTFOLIO},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"tomorrow_monster":tomorrow_monster,"future_monster":future_monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
+        "web_recommendations":old_web_recommendations,
+        "web_recommendations_updated_at":old_web_updated_at,
+        "web_recommendations_status":old_web_status,
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
