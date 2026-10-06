@@ -1,26 +1,26 @@
 {
   "schema": 4,
-  "updated_at": "2026-10-06 10:25",
+  "updated_at": "2026-10-06 10:39",
   "data_date": "2026-10-06",
   "source_data_date": "1151005",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
   "risk": {
-    "level": "green",
-    "label": "正常",
-    "score": 40,
-    "cash": "20%–30%",
+    "level": "yellow",
+    "label": "震盪警戒",
+    "score": 49,
+    "cash": "30%–50%",
     "reasons": [
-      "加權指數 -0.17%",
-      "上漲 908 / 下跌 973（廣度 48.3%）",
-      "市場中位數 +0.00%",
-      "跌逾3% 82｜跌逾5% 29｜跌停附近 5",
+      "加權指數 -0.37%",
+      "上漲 815 / 下跌 1088（廣度 42.8%）",
+      "市場中位數 -0.17%",
+      "跌逾3% 101｜跌逾5% 37｜跌停附近 5",
       "法人偏賣 57.4%｜3日均 57.4%｜5日均 57.4%｜淨額 -541,521張",
       "最強族群 航運 69分",
       "部分資料源降級：TWSE當日補資料:MI_INDEX returned no stock table: 很抱歉，沒有符合條件的資料!"
     ],
-    "breadth": 48.3,
-    "median_pct": 0.0,
-    "down5": 29,
+    "breadth": 42.8,
+    "median_pct": -0.17,
+    "down5": 37,
     "limit_down": 5,
     "divergence": false,
     "institutional_sell_ratio": 57.4,
@@ -36,17 +36,17 @@
     "live_coverage_pct": 100.0,
     "live_valid": true,
     "stale": false,
-    "brief": "盤中即時多因子市場｜加權 -0.17%｜廣度 48.3%｜中位數 +0.00%｜跌逾5% 29｜JEI 每15分鐘更新"
+    "brief": "盤中即時多因子市場｜加權 -0.37%｜廣度 42.8%｜中位數 -0.17%｜跌逾5% 37｜JEI 每15分鐘更新"
   },
   "sectors": [
     {
       "name": "航運",
       "score": 69,
-      "avg_pct": 1.42,
-      "median_pct": 1.58,
+      "avg_pct": 1.31,
+      "median_pct": 1.36,
       "breadth": 100.0,
       "members": 3,
-      "value_billion": 11.6,
+      "value_billion": 12.4,
       "leaders": [
         {
           "code": "2609",
@@ -56,262 +56,262 @@
         {
           "code": "2615",
           "name": "萬海",
-          "pct": 1.58
+          "pct": 1.36
         },
         {
           "code": "2603",
           "name": "長榮",
-          "pct": 1.07
+          "pct": 0.96
         }
       ]
     },
     {
       "name": "矽晶圓/材料",
-      "score": 68,
-      "avg_pct": 1.66,
-      "median_pct": 1.28,
+      "score": 65,
+      "avg_pct": 1.16,
+      "median_pct": 0.85,
       "breadth": 80.0,
       "members": 5,
-      "value_billion": 227.8,
+      "value_billion": 236.0,
       "leaders": [
         {
           "code": "3016",
           "name": "嘉晶",
-          "pct": 3.58
+          "pct": 3.03
         },
         {
           "code": "6488",
           "name": "環球晶",
-          "pct": 3.18
+          "pct": 2.75
         },
         {
           "code": "3532",
           "name": "台勝科",
-          "pct": 1.28
+          "pct": 0.85
         }
       ]
     },
     {
       "name": "封測",
-      "score": 62,
-      "avg_pct": 1.22,
-      "median_pct": 1.43,
+      "score": 60,
+      "avg_pct": 0.84,
+      "median_pct": 1.26,
       "breadth": 75.0,
       "members": 4,
-      "value_billion": 151.0,
+      "value_billion": 171.1,
       "leaders": [
-        {
-          "code": "8150",
-          "name": "南茂",
-          "pct": 2.62
-        },
         {
           "code": "6239",
           "name": "力成",
-          "pct": 2.27
+          "pct": 1.6
+        },
+        {
+          "code": "8150",
+          "name": "南茂",
+          "pct": 1.41
         },
         {
           "code": "2449",
           "name": "京元電子",
-          "pct": 0.6
+          "pct": 1.11
         }
       ]
     },
     {
       "name": "PCB/載板",
-      "score": 59,
-      "avg_pct": 0.61,
-      "median_pct": 0.97,
-      "breadth": 55.6,
+      "score": 53,
+      "avg_pct": -0.06,
+      "median_pct": -0.97,
+      "breadth": 44.4,
       "members": 9,
-      "value_billion": 1003.9,
+      "value_billion": 1062.8,
       "leaders": [
         {
           "code": "6213",
           "name": "聯茂",
-          "pct": 5.33
+          "pct": 5.66
         },
         {
           "code": "2383",
           "name": "台光電",
-          "pct": 3.77
+          "pct": 3.29
         },
         {
           "code": "2368",
           "name": "金像電",
-          "pct": 3.5
-        }
-      ]
-    },
-    {
-      "name": "被動元件",
-      "score": 50,
-      "avg_pct": 0.03,
-      "median_pct": -0.16,
-      "breadth": 50.0,
-      "members": 8,
-      "value_billion": 196.6,
-      "leaders": [
-        {
-          "code": "2492",
-          "name": "華新科",
-          "pct": 1.97
-        },
-        {
-          "code": "2478",
-          "name": "大毅",
-          "pct": 0.59
-        },
-        {
-          "code": "6173",
-          "name": "信昌電",
-          "pct": 0.17
+          "pct": 3.09
         }
       ]
     },
     {
       "name": "AI伺服器/散熱",
-      "score": 49,
-      "avg_pct": 0.15,
-      "median_pct": -0.48,
+      "score": 47,
+      "avg_pct": -0.24,
+      "median_pct": -0.87,
       "breadth": 37.5,
       "members": 8,
-      "value_billion": 286.2,
+      "value_billion": 305.8,
       "leaders": [
         {
           "code": "6669",
           "name": "緯穎",
-          "pct": 5.7
+          "pct": 5.0
         },
         {
           "code": "3017",
           "name": "奇鋐",
-          "pct": 1.19
+          "pct": 1.26
         },
         {
           "code": "2382",
           "name": "廣達",
-          "pct": 0.38
+          "pct": 0.3
         }
       ]
     },
     {
       "name": "半導體設備/測試",
-      "score": 45,
-      "avg_pct": -0.34,
-      "median_pct": -0.25,
+      "score": 44,
+      "avg_pct": -0.59,
+      "median_pct": -0.39,
       "breadth": 37.5,
       "members": 8,
-      "value_billion": 84.5,
+      "value_billion": 90.4,
       "leaders": [
         {
           "code": "6223",
           "name": "旺矽",
-          "pct": 1.77
-        },
-        {
-          "code": "3289",
-          "name": "宜特",
-          "pct": 0.89
+          "pct": 2.13
         },
         {
           "code": "3583",
           "name": "辛耘",
           "pct": 0.74
-        }
-      ]
-    },
-    {
-      "name": "記憶體/儲存",
-      "score": 44,
-      "avg_pct": -0.44,
-      "median_pct": -0.35,
-      "breadth": 33.3,
-      "members": 6,
-      "value_billion": 167.9,
-      "leaders": [
-        {
-          "code": "8271",
-          "name": "宇瞻",
-          "pct": 0.37
         },
         {
-          "code": "2408",
-          "name": "南亞科",
-          "pct": 0.09
-        },
-        {
-          "code": "8299",
-          "name": "群聯",
-          "pct": 0.0
+          "code": "3289",
+          "name": "宜特",
+          "pct": 0.53
         }
       ]
     },
     {
       "name": "IC設計",
-      "score": 42,
-      "avg_pct": -0.9,
-      "median_pct": -0.83,
+      "score": 41,
+      "avg_pct": -1.16,
+      "median_pct": -1.9,
       "breadth": 28.6,
       "members": 7,
-      "value_billion": 449.2,
+      "value_billion": 490.8,
       "leaders": [
         {
           "code": "3661",
           "name": "世芯-KY",
-          "pct": 3.48
+          "pct": 4.81
         },
         {
           "code": "6643",
           "name": "M31",
-          "pct": 1.08
+          "pct": 0.2
         },
         {
-          "code": "6531",
-          "name": "愛普*",
-          "pct": -0.24
+          "code": "3034",
+          "name": "聯詠",
+          "pct": -1.01
+        }
+      ]
+    },
+    {
+      "name": "記憶體/儲存",
+      "score": 38,
+      "avg_pct": -0.75,
+      "median_pct": -0.78,
+      "breadth": 16.7,
+      "members": 6,
+      "value_billion": 179.7,
+      "leaders": [
+        {
+          "code": "8271",
+          "name": "宇瞻",
+          "pct": 0.12
+        },
+        {
+          "code": "2408",
+          "name": "南亞科",
+          "pct": -0.09
+        },
+        {
+          "code": "8299",
+          "name": "群聯",
+          "pct": -0.6
+        }
+      ]
+    },
+    {
+      "name": "被動元件",
+      "score": 37,
+      "avg_pct": -0.73,
+      "median_pct": -1.0,
+      "breadth": 12.5,
+      "members": 8,
+      "value_billion": 203.5,
+      "leaders": [
+        {
+          "code": "2492",
+          "name": "華新科",
+          "pct": 0.47
+        },
+        {
+          "code": "6173",
+          "name": "信昌電",
+          "pct": 0.0
+        },
+        {
+          "code": "2478",
+          "name": "大毅",
+          "pct": -0.2
         }
       ]
     },
     {
       "name": "光通訊/CPO",
-      "score": 31,
-      "avg_pct": -1.92,
-      "median_pct": -1.73,
-      "breadth": 11.1,
+      "score": 24,
+      "avg_pct": -2.9,
+      "median_pct": -2.83,
+      "breadth": 0.0,
       "members": 9,
-      "value_billion": 109.1,
+      "value_billion": 126.8,
       "leaders": [
         {
           "code": "4977",
           "name": "眾達-KY",
-          "pct": 0.14
+          "pct": -0.57
         },
         {
-          "code": "6442",
-          "name": "光聖",
-          "pct": -1.61
+          "code": "3081",
+          "name": "聯亞",
+          "pct": -2.25
         },
         {
-          "code": "3163",
-          "name": "波若威",
-          "pct": -1.62
+          "code": "3363",
+          "name": "上詮",
+          "pct": -2.26
         }
       ]
     },
     {
       "name": "功率半導體",
-      "score": 23,
-      "avg_pct": -3.03,
-      "median_pct": -2.55,
+      "score": 19,
+      "avg_pct": -3.71,
+      "median_pct": -3.15,
       "breadth": 0.0,
       "members": 8,
-      "value_billion": 143.7,
+      "value_billion": 152.2,
       "leaders": [
         {
           "code": "3707",
           "name": "漢磊",
-          "pct": -1.0
+          "pct": -1.88
         },
         {
           "code": "8086",
@@ -321,7 +321,7 @@
         {
           "code": "6138",
           "name": "茂達",
-          "pct": -2.35
+          "pct": -2.52
         }
       ]
     }
@@ -14284,14 +14284,14 @@
       "total": -10000.0,
       "source": "TWSE T86"
     },
-    "2007": {
+    "9943": {
       "foreign": -10000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -10000.0,
       "source": "TWSE T86"
     },
-    "9943": {
+    "2007": {
       "foreign": -10000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -23490,12 +23490,12 @@
       "name": "大毅",
       "cost": 127.681,
       "shares": 1000,
-      "price": 127.25,
-      "change_pct": 0.59,
+      "price": 126.25,
+      "change_pct": -0.2,
       "live": true,
-      "market_value": 127250,
-      "pnl": -431,
-      "pnl_pct": -0.34,
+      "market_value": 126250,
+      "pnl": -1431,
+      "pnl_pct": -1.12,
       "risk_action": "續抱觀察"
     },
     "2609": {
@@ -23516,12 +23516,12 @@
       "name": "雲品",
       "cost": 99.341,
       "shares": 1000,
-      "price": 38.675,
-      "change_pct": 0.19,
+      "price": 38.7,
+      "change_pct": 0.26,
       "live": true,
-      "market_value": 38675,
-      "pnl": -60666,
-      "pnl_pct": -61.07,
+      "market_value": 38700,
+      "pnl": -60641,
+      "pnl_pct": -61.04,
       "risk_action": "續抱觀察"
     },
     "3162": {
@@ -23529,12 +23529,12 @@
       "name": "精確",
       "cost": 85.621,
       "shares": 1000,
-      "price": 87.85,
-      "change_pct": 1.09,
+      "price": 87.9,
+      "change_pct": 1.15,
       "live": true,
-      "market_value": 87850,
-      "pnl": 2229,
-      "pnl_pct": 2.6,
+      "market_value": 87900,
+      "pnl": 2279,
+      "pnl_pct": 2.66,
       "risk_action": "續抱觀察"
     },
     "3289": {
@@ -23542,12 +23542,12 @@
       "name": "宜特",
       "cost": 141.701,
       "shares": 1000,
-      "price": 142.25,
-      "change_pct": 0.89,
+      "price": 141.75,
+      "change_pct": 0.53,
       "live": true,
-      "market_value": 142250,
-      "pnl": 549,
-      "pnl_pct": 0.39,
+      "market_value": 141750,
+      "pnl": 49,
+      "pnl_pct": 0.03,
       "risk_action": "續抱觀察"
     },
     "3707": {
@@ -23555,12 +23555,12 @@
       "name": "漢磊",
       "cost": 73.104,
       "shares": 1000,
-      "price": 84.45,
-      "change_pct": -1.0,
+      "price": 83.69999999999999,
+      "change_pct": -1.88,
       "live": true,
-      "market_value": 84450,
-      "pnl": 11346,
-      "pnl_pct": 15.52,
+      "market_value": 83700,
+      "pnl": 10596,
+      "pnl_pct": 14.49,
       "risk_action": "續抱觀察"
     },
     "5347": {
@@ -23568,12 +23568,12 @@
       "name": "世界",
       "cost": 123.175,
       "shares": 1000,
-      "price": 193.0,
-      "change_pct": 4.89,
+      "price": 191.75,
+      "change_pct": 4.21,
       "live": true,
-      "market_value": 193000,
-      "pnl": 69825,
-      "pnl_pct": 56.69,
+      "market_value": 191750,
+      "pnl": 68575,
+      "pnl_pct": 55.67,
       "risk_action": "續抱觀察"
     },
     "5425": {
@@ -23581,25 +23581,25 @@
       "name": "台半",
       "cost": 102.145,
       "shares": 1000,
-      "price": 100.75,
-      "change_pct": -4.5,
+      "price": 99.80000000000001,
+      "change_pct": -5.4,
       "live": true,
-      "market_value": 100750,
-      "pnl": -1395,
-      "pnl_pct": -1.37,
-      "risk_action": "提高警戒"
+      "market_value": 99800,
+      "pnl": -2345,
+      "pnl_pct": -2.3,
+      "risk_action": "減碼/防守"
     },
     "6150": {
       "code": "6150",
       "name": "撼訊",
       "cost": 77.51,
       "shares": 2000,
-      "price": 65.15,
-      "change_pct": -1.73,
+      "price": 65.30000000000001,
+      "change_pct": -1.51,
       "live": true,
-      "market_value": 130300,
-      "pnl": -24720,
-      "pnl_pct": -15.95,
+      "market_value": 130600,
+      "pnl": -24420,
+      "pnl_pct": -15.75,
       "risk_action": "續抱觀察"
     },
     "7711": {
@@ -23607,12 +23607,12 @@
       "name": "永擎",
       "cost": 257.8665,
       "shares": 2000,
-      "price": 621.0,
-      "change_pct": -2.05,
+      "price": 616.5,
+      "change_pct": -2.76,
       "live": true,
-      "market_value": 1242000,
-      "pnl": 726267,
-      "pnl_pct": 140.82,
+      "market_value": 1233000,
+      "pnl": 717267,
+      "pnl_pct": 139.08,
       "risk_action": "續抱觀察"
     },
     "8070": {
@@ -23620,34 +23620,34 @@
       "name": "長華*",
       "cost": 58.383,
       "shares": 1000,
-      "price": 51.4,
-      "change_pct": -0.58,
+      "price": 51.05,
+      "change_pct": -1.26,
       "live": true,
-      "market_value": 51400,
-      "pnl": -6983,
-      "pnl_pct": -11.96,
+      "market_value": 51050,
+      "pnl": -7333,
+      "pnl_pct": -12.56,
       "risk_action": "續抱觀察"
     }
   },
   "priority": [
     {
       "title": "市場風控",
-      "note": "加權指數 -0.17%｜上漲 908 / 下跌 973（廣度 48.3%）｜市場中位數 +0.00%｜跌逾3% 82｜跌逾5% 29｜跌停附近 5",
-      "action": "正常"
+      "note": "加權指數 -0.37%｜上漲 815 / 下跌 1088（廣度 42.8%）｜市場中位數 -0.17%｜跌逾3% 101｜跌逾5% 37｜跌停附近 5",
+      "action": "震盪警戒"
     },
     {
       "title": "族群主線：航運",
-      "note": "熱度 69｜平均 +1.42%｜上漲比 100.0%",
+      "note": "熱度 69｜平均 +1.31%｜上漲比 100.0%",
       "action": "主線"
     },
     {
       "title": "6213 聯茂",
-      "note": "PCB/載板熱度 59｜漲幅 5.33%｜收盤位置 76%｜成交值 160.5 億",
+      "note": "PCB/載板熱度 53｜漲幅 5.66%｜收盤位置 83%｜成交值 169.0 億",
       "action": "主攻#1"
     },
     {
-      "title": "6488 環球晶",
-      "note": "準備發動 65分｜矽晶圓/材料 68分｜今日 +3.18%｜5日 +3.2%｜10日 +3.2%｜成交值 124.0億｜低過熱",
+      "title": "5347 世界",
+      "note": "準備發動 58分｜其他 50分｜今日 +4.21%｜5日 +4.2%｜10日 +4.2%｜成交值 44.8億｜低過熱",
       "action": "下一棒#1"
     }
   ],
@@ -23655,324 +23655,324 @@
     {
       "code": "6213",
       "name": "聯茂",
-      "score": 87,
-      "reason": "PCB/載板熱度 59｜漲幅 5.33%｜收盤位置 76%｜成交值 160.5 億",
-      "price": 791.0,
-      "change_pct": 5.33,
+      "score": 86,
+      "reason": "PCB/載板熱度 53｜漲幅 5.66%｜收盤位置 83%｜成交值 169.0 億",
+      "price": 793.5,
+      "change_pct": 5.66,
       "market": "TWSE",
       "sector": "PCB/載板",
-      "sector_score": 59,
-      "entry_low": 780.36,
-      "entry_high": 794.16,
-      "defense": 743.5,
-      "target1": 855.12,
-      "target2": 903.22
-    },
-    {
-      "code": "6257",
-      "name": "矽格",
-      "score": 83,
-      "reason": "其他熱度 50｜漲幅 6.06%｜收盤位置 79%｜成交值 50.0 億",
-      "price": 275.75,
-      "change_pct": 6.06,
-      "market": "TWSE",
-      "sector": "其他",
-      "sector_score": 50,
-      "entry_low": 272.81,
-      "entry_high": 276.85,
-      "defense": 262.62,
-      "target1": 293.47,
-      "target2": 306.76
-    },
-    {
-      "code": "1785",
-      "name": "光洋科",
-      "score": 82,
-      "reason": "其他熱度 50｜漲幅 7.56%｜收盤位置 87%｜成交值 18.0 億",
-      "price": 110.25,
-      "change_pct": 7.56,
-      "market": "TPEX",
-      "sector": "其他",
-      "sector_score": 50,
-      "entry_low": 107.59,
-      "entry_high": 110.69,
-      "defense": 100.88,
-      "target1": 122.9,
-      "target2": 132.39
-    },
-    {
-      "code": "2305",
-      "name": "全友",
-      "score": 81,
-      "reason": "其他熱度 50｜漲幅 6.92%｜收盤位置 73%｜成交值 11.9 億",
-      "price": 61.8,
-      "change_pct": 6.92,
-      "market": "TWSE",
-      "sector": "其他",
-      "sector_score": 50,
-      "entry_low": 60.07,
-      "entry_high": 62.05,
-      "defense": 56.55,
-      "target1": 68.89,
-      "target2": 74.21
-    },
-    {
-      "code": "6449",
-      "name": "鈺邦",
-      "score": 81,
-      "reason": "其他熱度 50｜漲幅 7.16%｜收盤位置 85%｜成交值 8.9 億",
-      "price": 243.25,
-      "change_pct": 7.16,
-      "market": "TWSE",
-      "sector": "其他",
-      "sector_score": 50,
-      "entry_low": 239.89,
-      "entry_high": 244.22,
-      "defense": 228.25,
-      "target1": 263.5,
-      "target2": 278.69
-    },
-    {
-      "code": "6488",
-      "name": "環球晶",
-      "score": 80,
-      "reason": "矽晶圓/材料熱度 68｜漲幅 3.18%｜收盤位置 63%｜成交值 124.0 億",
-      "price": 1217.5,
-      "change_pct": 3.18,
-      "market": "TPEX",
-      "sector": "矽晶圓/材料",
-      "sector_score": 68,
-      "entry_low": 1185.3,
-      "entry_high": 1222.37,
-      "defense": 1114.01,
-      "target1": 1357.21,
-      "target2": 1461.99
-    },
-    {
-      "code": "6669",
-      "name": "緯穎",
-      "score": 80,
-      "reason": "AI伺服器/散熱熱度 49｜漲幅 5.70%｜收盤位置 58%｜成交值 77.2 億",
-      "price": 2272.5,
-      "change_pct": 5.7,
-      "market": "TWSE",
-      "sector": "AI伺服器/散熱",
-      "sector_score": 49,
-      "entry_low": 2230.5,
-      "entry_high": 2281.59,
-      "defense": 2085.0,
-      "target1": 2525.62,
-      "target2": 2715.47
-    },
-    {
-      "code": "2368",
-      "name": "金像電",
-      "score": 79,
-      "reason": "PCB/載板熱度 59｜漲幅 3.50%｜收盤位置 61%｜成交值 198.6 億",
-      "price": 1257.5,
-      "change_pct": 3.5,
-      "market": "TWSE",
-      "sector": "PCB/載板",
-      "sector_score": 59,
-      "entry_low": 1230.9,
-      "entry_high": 1262.53,
-      "defense": 1150.61,
-      "target1": 1401.8,
-      "target2": 1510.02
-    },
-    {
-      "code": "5347",
-      "name": "世界",
-      "score": 79,
-      "reason": "其他熱度 50｜漲幅 4.89%｜收盤位置 81%｜成交值 42.3 億",
-      "price": 193.0,
-      "change_pct": 4.89,
-      "market": "TPEX",
-      "sector": "其他",
-      "sector_score": 50,
-      "entry_low": 190.06,
-      "entry_high": 193.77,
-      "defense": 179.88,
-      "target1": 210.72,
-      "target2": 224.01
-    },
-    {
-      "code": "6197",
-      "name": "佳必琪",
-      "score": 78,
-      "reason": "其他熱度 50｜漲幅 5.87%｜收盤位置 71%｜成交值 18.2 億",
-      "price": 365.25,
-      "change_pct": 5.87,
-      "market": "TWSE",
-      "sector": "其他",
-      "sector_score": 50,
-      "entry_low": 359.65,
-      "entry_high": 366.71,
-      "defense": 340.25,
-      "target1": 399.0,
-      "target2": 424.31
-    }
-  ],
-  "next": [
-    {
-      "code": "6488",
-      "name": "環球晶",
-      "score": 91,
-      "reason": "準備發動 65分｜矽晶圓/材料 68分｜今日 +3.18%｜5日 +3.2%｜10日 +3.2%｜成交值 124.0億｜低過熱",
-      "price": 1217.5,
-      "change_pct": 3.18,
-      "market": "TPEX",
-      "sector": "矽晶圓/材料",
-      "sector_score": 68,
-      "entry_low": 1185.3,
-      "entry_high": 1217.5,
-      "defense": 1114.01,
-      "target1": 1357.21,
-      "target2": 1461.99
+      "sector_score": 53,
+      "entry_low": 782.86,
+      "entry_high": 796.67,
+      "defense": 746.0,
+      "target1": 857.62,
+      "target2": 905.72
     },
     {
       "code": "3661",
       "name": "世芯-KY",
-      "score": 87,
-      "reason": "準備發動 60分｜IC設計 42分｜今日 +3.48%｜5日 +3.5%｜10日 +3.5%｜成交值 83.9億｜低過熱",
-      "price": 4087.5,
-      "change_pct": 3.48,
+      "score": 80,
+      "reason": "IC設計熱度 41｜漲幅 4.81%｜收盤位置 92%｜成交值 98.0 億",
+      "price": 4140.0,
+      "change_pct": 4.81,
       "market": "TWSE",
       "sector": "IC設計",
-      "sector_score": 42,
-      "entry_low": 4009.1,
-      "entry_high": 4087.5,
-      "defense": 3740.06,
-      "target1": 4556.54,
-      "target2": 4908.32
+      "sector_score": 41,
+      "entry_low": 4051.8,
+      "entry_high": 4156.56,
+      "defense": 3788.1,
+      "target1": 4615.06,
+      "target2": 4971.36
     },
     {
-      "code": "8150",
-      "name": "南茂",
-      "score": 87,
-      "reason": "準備發動 66分｜封測 62分｜今日 +2.62%｜5日 +2.6%｜10日 +2.6%｜成交值 56.3億｜低過熱",
-      "price": 127.25,
-      "change_pct": 2.62,
+      "code": "6257",
+      "name": "矽格",
+      "score": 77,
+      "reason": "其他熱度 50｜漲幅 5.29%｜收盤位置 60%｜成交值 51.4 億",
+      "price": 273.75,
+      "change_pct": 5.29,
       "market": "TWSE",
-      "sector": "封測",
-      "sector_score": 62,
-      "entry_low": 125.71,
-      "entry_high": 127.25,
-      "defense": 120.38,
-      "target1": 136.53,
-      "target2": 143.49
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 270.81,
+      "entry_high": 274.85,
+      "defense": 260.62,
+      "target1": 291.47,
+      "target2": 304.76
+    },
+    {
+      "code": "3147",
+      "name": "大綜",
+      "score": 77,
+      "reason": "其他熱度 50｜漲幅 7.45%｜收盤位置 83%｜成交值 6.3 億",
+      "price": 295.5,
+      "change_pct": 7.45,
+      "market": "TPEX",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 289.62,
+      "entry_high": 296.68,
+      "defense": 270.38,
+      "target1": 329.41,
+      "target2": 354.84
+    },
+    {
+      "code": "6488",
+      "name": "環球晶",
+      "score": 76,
+      "reason": "矽晶圓/材料熱度 65｜漲幅 2.75%｜收盤位置 59%｜成交值 127.8 億",
+      "price": 1212.5,
+      "change_pct": 2.75,
+      "market": "TPEX",
+      "sector": "矽晶圓/材料",
+      "sector_score": 65,
+      "entry_low": 1180.3,
+      "entry_high": 1217.35,
+      "defense": 1109.44,
+      "target1": 1351.63,
+      "target2": 1455.99
+    },
+    {
+      "code": "1785",
+      "name": "光洋科",
+      "score": 76,
+      "reason": "其他熱度 50｜漲幅 5.61%｜收盤位置 66%｜成交值 19.8 億",
+      "price": 108.25,
+      "change_pct": 5.61,
+      "market": "TPEX",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 105.59,
+      "entry_high": 108.68,
+      "defense": 99.05,
+      "target1": 120.67,
+      "target2": 129.99
+    },
+    {
+      "code": "5347",
+      "name": "世界",
+      "score": 74,
+      "reason": "其他熱度 50｜漲幅 4.21%｜收盤位置 69%｜成交值 44.8 億",
+      "price": 191.75,
+      "change_pct": 4.21,
+      "market": "TPEX",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 188.81,
+      "entry_high": 192.52,
+      "defense": 178.62,
+      "target1": 209.47,
+      "target2": 222.76
+    },
+    {
+      "code": "6197",
+      "name": "佳必琪",
+      "score": 74,
+      "reason": "其他熱度 50｜漲幅 5.36%｜收盤位置 62%｜成交值 18.9 億",
+      "price": 363.5,
+      "change_pct": 5.36,
+      "market": "TWSE",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 357.9,
+      "entry_high": 364.95,
+      "defense": 338.5,
+      "target1": 397.25,
+      "target2": 422.56
+    },
+    {
+      "code": "4174",
+      "name": "浩鼎",
+      "score": 74,
+      "reason": "其他熱度 50｜漲幅 6.98%｜收盤位置 91%｜成交值 0.9 億",
+      "price": 49.425,
+      "change_pct": 6.98,
+      "market": "TPEX",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 48.32,
+      "entry_high": 49.62,
+      "defense": 45.22,
+      "target1": 55.1,
+      "target2": 59.35
+    },
+    {
+      "code": "3025",
+      "name": "星通",
+      "score": 72,
+      "reason": "其他熱度 50｜漲幅 7.51%｜收盤位置 88%｜成交值 0.8 億",
+      "price": 60.1,
+      "change_pct": 7.51,
+      "market": "TWSE",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 58.67,
+      "entry_high": 60.34,
+      "defense": 54.99,
+      "target1": 67.0,
+      "target2": 72.17
+    }
+  ],
+  "next": [
+    {
+      "code": "5347",
+      "name": "世界",
+      "score": 85,
+      "reason": "準備發動 58分｜其他 50分｜今日 +4.21%｜5日 +4.2%｜10日 +4.2%｜成交值 44.8億｜低過熱",
+      "price": 191.75,
+      "change_pct": 4.21,
+      "market": "TPEX",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 188.81,
+      "entry_high": 191.75,
+      "defense": 178.62,
+      "target1": 209.47,
+      "target2": 222.76
+    },
+    {
+      "code": "3693",
+      "name": "營邦",
+      "score": 80,
+      "reason": "準備發動 58分｜其他 50分｜今日 +3.70%｜5日 +3.7%｜10日 +3.7%｜成交值 11.1億｜低過熱",
+      "price": 714.5,
+      "change_pct": 3.7,
+      "market": "TPEX",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 701.9,
+      "entry_high": 714.5,
+      "defense": 658.25,
+      "target1": 790.44,
+      "target2": 847.39
     },
     {
       "code": "3016",
       "name": "嘉晶",
-      "score": 85,
-      "reason": "準備發動 67分｜矽晶圓/材料 68分｜今日 +3.58%｜5日 +3.6%｜10日 +3.6%｜成交值 5.4億｜低過熱",
-      "price": 188.0,
-      "change_pct": 3.58,
+      "score": 79,
+      "reason": "準備發動 62分｜矽晶圓/材料 65分｜今日 +3.03%｜5日 +3.0%｜10日 +3.0%｜成交值 5.6億｜低過熱",
+      "price": 187.0,
+      "change_pct": 3.03,
       "market": "TWSE",
       "sector": "矽晶圓/材料",
-      "sector_score": 68,
-      "entry_low": 185.76,
-      "entry_high": 188.0,
-      "defense": 178.0,
-      "target1": 201.5,
-      "target2": 211.62
+      "sector_score": 65,
+      "entry_low": 184.76,
+      "entry_high": 187.0,
+      "defense": 177.0,
+      "target1": 200.5,
+      "target2": 210.63
     },
     {
-      "code": "2492",
-      "name": "華新科",
-      "score": 82,
-      "reason": "準備發動 61分｜被動元件 50分｜今日 +1.97%｜5日 +2.0%｜10日 +2.0%｜成交值 94.5億｜低過熱",
-      "price": 375.75,
-      "change_pct": 1.97,
+      "code": "2449",
+      "name": "京元電子",
+      "score": 78,
+      "reason": "準備發動 62分｜封測 60分｜今日 +1.11%｜5日 +1.1%｜10日 +1.1%｜成交值 40.2億｜低過熱",
+      "price": 297.25,
+      "change_pct": 1.11,
       "market": "TWSE",
-      "sector": "被動元件",
+      "sector": "封測",
+      "sector_score": 60,
+      "entry_low": 293.75,
+      "entry_high": 297.25,
+      "defense": 281.62,
+      "target1": 318.34,
+      "target2": 334.16
+    },
+    {
+      "code": "2609",
+      "name": "陽明",
+      "score": 77,
+      "reason": "準備發動 68分｜航運 69分｜今日 +1.62%｜5日 +1.6%｜10日 +1.6%｜成交值 4.4億｜低過熱",
+      "price": 59.650000000000006,
+      "change_pct": 1.62,
+      "market": "TWSE",
+      "sector": "航運",
+      "sector_score": 69,
+      "entry_low": 59.17,
+      "entry_high": 59.65,
+      "defense": 57.56,
+      "target1": 62.47,
+      "target2": 64.58
+    },
+    {
+      "code": "3013",
+      "name": "晟銘電",
+      "score": 77,
+      "reason": "準備發動 61分｜其他 50分｜今日 +3.33%｜5日 +3.3%｜10日 +3.3%｜成交值 4.2億｜低過熱",
+      "price": 96.1,
+      "change_pct": 3.33,
+      "market": "TWSE",
+      "sector": "其他",
       "sector_score": 50,
-      "entry_low": 370.85,
-      "entry_high": 375.75,
-      "defense": 353.88,
-      "target1": 405.28,
-      "target2": 427.43
+      "entry_low": 94.42,
+      "entry_high": 96.1,
+      "defense": 88.6,
+      "target1": 106.22,
+      "target2": 113.82
+    },
+    {
+      "code": "1476",
+      "name": "儒鴻",
+      "score": 76,
+      "reason": "準備發動 64分｜其他 50分｜今日 +2.96%｜5日 +3.0%｜10日 +3.0%｜成交值 3.2億｜低過熱",
+      "price": 286.75,
+      "change_pct": 2.96,
+      "market": "TWSE",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 283.25,
+      "entry_high": 286.75,
+      "defense": 271.12,
+      "target1": 307.84,
+      "target2": 323.66
+    },
+    {
+      "code": "6223",
+      "name": "旺矽",
+      "score": 75,
+      "reason": "準備發動 56分｜半導體設備/測試 44分｜今日 +2.13%｜5日 +2.1%｜10日 +2.1%｜成交值 28.8億｜低過熱",
+      "price": 5637.5,
+      "change_pct": 2.13,
+      "market": "TPEX",
+      "sector": "半導體設備/測試",
+      "sector_score": 44,
+      "entry_low": 5553.5,
+      "entry_high": 5637.5,
+      "defense": 5262.5,
+      "target1": 6143.75,
+      "target2": 6523.44
     },
     {
       "code": "3518",
       "name": "柏騰",
-      "score": 82,
-      "reason": "準備發動 60分｜其他 50分｜今日 +4.21%｜5日 +4.2%｜10日 +4.2%｜成交值 7.8億｜低過熱",
-      "price": 50.8,
-      "change_pct": 4.21,
+      "score": 75,
+      "reason": "準備發動 57分｜其他 50分｜今日 +2.77%｜5日 +2.8%｜10日 +2.8%｜成交值 8.1億｜低過熱",
+      "price": 50.1,
+      "change_pct": 2.77,
       "market": "TWSE",
       "sector": "其他",
       "sector_score": 50,
-      "entry_low": 49.38,
-      "entry_high": 50.8,
-      "defense": 46.48,
-      "target1": 56.63,
-      "target2": 61.0
+      "entry_low": 48.7,
+      "entry_high": 50.1,
+      "defense": 45.84,
+      "target1": 55.85,
+      "target2": 60.16
     },
     {
-      "code": "8046",
-      "name": "南電",
-      "score": 81,
-      "reason": "準備發動 65分｜PCB/載板 59分｜今日 +1.17%｜5日 +1.2%｜10日 +1.2%｜成交值 57.4億｜低過熱",
-      "price": 1512.5,
-      "change_pct": 1.17,
+      "code": "2603",
+      "name": "長榮",
+      "score": 75,
+      "reason": "準備發動 68分｜航運 69分｜今日 +0.96%｜5日 +1.0%｜10日 +1.0%｜成交值 4.9億｜低過熱",
+      "price": 236.75,
+      "change_pct": 0.96,
       "market": "TWSE",
-      "sector": "PCB/載板",
-      "sector_score": 59,
-      "entry_low": 1500.4,
-      "entry_high": 1512.5,
-      "defense": 1459.56,
-      "target1": 1583.97,
-      "target2": 1637.56
-    },
-    {
-      "code": "4906",
-      "name": "正文",
-      "score": 80,
-      "reason": "準備發動 61分｜其他 50分｜今日 +3.68%｜5日 +3.7%｜10日 +3.7%｜成交值 4.4億｜低過熱",
-      "price": 43.7,
-      "change_pct": 3.68,
-      "market": "TWSE",
-      "sector": "其他",
-      "sector_score": 50,
-      "entry_low": 42.93,
-      "entry_high": 43.7,
-      "defense": 40.26,
-      "target1": 48.34,
-      "target2": 51.82
-    },
-    {
-      "code": "1569",
-      "name": "濱川",
-      "score": 80,
-      "reason": "準備發動 62分｜其他 50分｜今日 +4.67%｜5日 +4.7%｜10日 +4.7%｜成交值 3.2億｜低過熱",
-      "price": 71.69999999999999,
-      "change_pct": 4.67,
-      "market": "TPEX",
-      "sector": "其他",
-      "sector_score": 50,
-      "entry_low": 70.75,
-      "entry_high": 71.7,
-      "defense": 67.45,
-      "target1": 77.44,
-      "target2": 81.74
-    },
-    {
-      "code": "6505",
-      "name": "台塑化",
-      "score": 79,
-      "reason": "準備發動 57分｜其他 50分｜今日 +3.19%｜5日 +3.2%｜10日 +3.2%｜成交值 13.0億｜低過熱",
-      "price": 101.75,
-      "change_pct": 3.19,
-      "market": "TWSE",
-      "sector": "其他",
-      "sector_score": 50,
-      "entry_low": 100.13,
-      "entry_high": 101.75,
-      "defense": 94.5,
-      "target1": 111.54,
-      "target2": 118.88
+      "sector": "航運",
+      "sector_score": 69,
+      "entry_low": 234.86,
+      "entry_high": 236.75,
+      "defense": 228.46,
+      "target1": 247.94,
+      "target2": 256.33
     }
   ],
   "monster": [
@@ -23980,7 +23980,7 @@
       "code": "1711",
       "name": "永光",
       "score": 99,
-      "reason": "強勢加速｜其他 50分｜今日 +9.95%｜5日 +10.0%｜成交值 14.3億｜收盤位置 100%｜低過熱",
+      "reason": "強勢加速｜其他 50分｜今日 +9.95%｜5日 +10.0%｜成交值 14.6億｜收盤位置 100%｜低過熱",
       "price": 48.6,
       "change_pct": 9.95,
       "market": "TWSE",
@@ -23996,7 +23996,7 @@
       "code": "6456",
       "name": "GIS-KY",
       "score": 99,
-      "reason": "強勢加速｜其他 50分｜今日 +9.93%｜5日 +9.9%｜成交值 14.5億｜收盤位置 100%｜低過熱",
+      "reason": "強勢加速｜其他 50分｜今日 +9.93%｜5日 +9.9%｜成交值 14.6億｜收盤位置 100%｜低過熱",
       "price": 99.6,
       "change_pct": 9.93,
       "market": "TWSE",
@@ -24012,7 +24012,7 @@
       "code": "7788",
       "name": "松川精密",
       "score": 99,
-      "reason": "強勢加速｜其他 50分｜今日 +9.92%｜5日 +9.9%｜成交值 13.5億｜收盤位置 100%｜低過熱",
+      "reason": "強勢加速｜其他 50分｜今日 +9.92%｜5日 +9.9%｜成交值 13.6億｜收盤位置 100%｜低過熱",
       "price": 365.5,
       "change_pct": 9.92,
       "market": "TWSE",
@@ -24028,7 +24028,7 @@
       "code": "3441",
       "name": "聯一光",
       "score": 99,
-      "reason": "強勢加速｜其他 50分｜今日 +9.91%｜5日 +9.9%｜成交值 49.1億｜收盤位置 100%｜低過熱",
+      "reason": "強勢加速｜其他 50分｜今日 +9.91%｜5日 +9.9%｜成交值 49.3億｜收盤位置 100%｜低過熱",
       "price": 255.0,
       "change_pct": 9.91,
       "market": "TPEX",
@@ -24041,25 +24041,25 @@
       "target2": 305.2
     },
     {
-      "code": "5432",
-      "name": "新門",
-      "score": 94,
-      "reason": "強勢加速｜其他 50分｜今日 +9.83%｜5日 +9.8%｜成交值 1.8億｜收盤位置 100%｜低過熱",
-      "price": 195.5,
-      "change_pct": 9.83,
+      "code": "6716",
+      "name": "應廣",
+      "score": 96,
+      "reason": "強勢加速｜其他 50分｜今日 +9.77%｜5日 +9.8%｜成交值 5.4億｜收盤位置 100%｜低過熱",
+      "price": 146.0,
+      "change_pct": 9.77,
       "market": "TPEX",
       "sector": "其他",
       "sector_score": 50,
-      "entry_low": 192.7,
-      "entry_high": 195.5,
-      "defense": 183.0,
-      "target1": 212.38,
-      "target2": 225.03
+      "entry_low": 144.18,
+      "entry_high": 146.0,
+      "defense": 137.88,
+      "target1": 156.97,
+      "target2": 165.2
     },
     {
       "code": "4720",
       "name": "德淵",
-      "score": 93,
+      "score": 92,
       "reason": "強勢加速｜其他 50分｜今日 +10.00%｜5日 +10.0%｜成交值 1.1億｜收盤位置 100%｜低過熱",
       "price": 25.3,
       "change_pct": 10.0,
@@ -24075,7 +24075,7 @@
     {
       "code": "4755",
       "name": "三福化",
-      "score": 93,
+      "score": 92,
       "reason": "強勢加速｜其他 50分｜今日 +9.92%｜5日 +9.9%｜成交值 1.0億｜收盤位置 100%｜低過熱",
       "price": 133.0,
       "change_pct": 9.92,
@@ -24091,7 +24091,7 @@
     {
       "code": "6152",
       "name": "百一",
-      "score": 93,
+      "score": 92,
       "reason": "強勢加速｜其他 50分｜今日 +9.86%｜5日 +9.9%｜成交值 1.1億｜收盤位置 100%｜低過熱",
       "price": 18.95,
       "change_pct": 9.86,
@@ -24107,7 +24107,7 @@
     {
       "code": "6983",
       "name": "華洋精機",
-      "score": 92,
+      "score": 91,
       "reason": "強勢加速｜其他 50分｜今日 +9.87%｜5日 +9.9%｜成交值 0.9億｜收盤位置 100%｜低過熱",
       "price": 395.0,
       "change_pct": 9.87,
@@ -24121,176 +24121,176 @@
       "target2": 474.32
     },
     {
-      "code": "2415",
-      "name": "錩新",
-      "score": 91,
-      "reason": "強勢加速｜其他 50分｜今日 +9.86%｜5日 +9.9%｜成交值 0.4億｜收盤位置 100%｜低過熱",
-      "price": 30.65,
-      "change_pct": 9.86,
-      "market": "TWSE",
+      "code": "3297",
+      "name": "杭特",
+      "score": 89,
+      "reason": "強勢加速｜其他 50分｜今日 +9.97%｜5日 +10.0%｜成交值 0.3億｜收盤位置 100%｜低過熱",
+      "price": 35.3,
+      "change_pct": 9.97,
+      "market": "TPEX",
       "sector": "其他",
       "sector_score": 50,
-      "entry_low": 29.92,
-      "entry_high": 30.65,
-      "defense": 28.04,
-      "target1": 34.17,
-      "target2": 36.8
+      "entry_low": 34.66,
+      "entry_high": 35.3,
+      "defense": 32.42,
+      "target1": 39.18,
+      "target2": 42.09
     }
   ],
   "rotate": [
     {
-      "code": "6488",
-      "name": "環球晶",
-      "score": 91,
-      "reason": "換股候選｜準備發動 65分｜矽晶圓/材料 68分｜今日 +3.18%｜5日 +3.2%｜10日 +3.2%｜成交值 124.0億｜低過熱",
-      "price": 1217.5,
-      "change_pct": 3.18,
-      "market": "TPEX",
-      "sector": "矽晶圓/材料",
-      "sector_score": 68,
-      "entry_low": 1185.3,
-      "entry_high": 1217.5,
-      "defense": 1114.01,
-      "target1": 1357.21,
-      "target2": 1461.99
+      "code": "2609",
+      "name": "陽明",
+      "score": 77,
+      "reason": "換股候選｜準備發動 68分｜航運 69分｜今日 +1.62%｜5日 +1.6%｜10日 +1.6%｜成交值 4.4億｜低過熱",
+      "price": 59.650000000000006,
+      "change_pct": 1.62,
+      "market": "TWSE",
+      "sector": "航運",
+      "sector_score": 69,
+      "entry_low": 59.17,
+      "entry_high": 59.65,
+      "defense": 57.56,
+      "target1": 62.47,
+      "target2": 64.58
     },
     {
       "code": "3016",
       "name": "嘉晶",
-      "score": 85,
-      "reason": "換股候選｜準備發動 67分｜矽晶圓/材料 68分｜今日 +3.58%｜5日 +3.6%｜10日 +3.6%｜成交值 5.4億｜低過熱",
-      "price": 188.0,
-      "change_pct": 3.58,
+      "score": 79,
+      "reason": "換股候選｜準備發動 62分｜矽晶圓/材料 65分｜今日 +3.03%｜5日 +3.0%｜10日 +3.0%｜成交值 5.6億｜低過熱",
+      "price": 187.0,
+      "change_pct": 3.03,
       "market": "TWSE",
       "sector": "矽晶圓/材料",
-      "sector_score": 68,
-      "entry_low": 185.76,
-      "entry_high": 188.0,
-      "defense": 178.0,
-      "target1": 201.5,
-      "target2": 211.62
+      "sector_score": 65,
+      "entry_low": 184.76,
+      "entry_high": 187.0,
+      "defense": 177.0,
+      "target1": 200.5,
+      "target2": 210.63
     },
     {
       "code": "6488",
       "name": "環球晶",
-      "score": 80,
-      "reason": "換股候選｜矽晶圓/材料熱度 68｜漲幅 3.18%｜收盤位置 63%｜成交值 124.0 億",
-      "price": 1217.5,
-      "change_pct": 3.18,
+      "score": 76,
+      "reason": "換股候選｜矽晶圓/材料熱度 65｜漲幅 2.75%｜收盤位置 59%｜成交值 127.8 億",
+      "price": 1212.5,
+      "change_pct": 2.75,
       "market": "TPEX",
       "sector": "矽晶圓/材料",
-      "sector_score": 68,
-      "entry_low": 1185.3,
-      "entry_high": 1222.37,
-      "defense": 1114.01,
-      "target1": 1357.21,
-      "target2": 1461.99
+      "sector_score": 65,
+      "entry_low": 1180.3,
+      "entry_high": 1217.35,
+      "defense": 1109.44,
+      "target1": 1351.63,
+      "target2": 1455.99
     },
     {
-      "code": "8150",
-      "name": "南茂",
-      "score": 87,
-      "reason": "換股候選｜準備發動 66分｜封測 62分｜今日 +2.62%｜5日 +2.6%｜10日 +2.6%｜成交值 56.3億｜低過熱",
-      "price": 127.25,
-      "change_pct": 2.62,
+      "code": "2449",
+      "name": "京元電子",
+      "score": 78,
+      "reason": "換股候選｜準備發動 62分｜封測 60分｜今日 +1.11%｜5日 +1.1%｜10日 +1.1%｜成交值 40.2億｜低過熱",
+      "price": 297.25,
+      "change_pct": 1.11,
       "market": "TWSE",
       "sector": "封測",
-      "sector_score": 62,
-      "entry_low": 125.71,
-      "entry_high": 127.25,
-      "defense": 120.38,
-      "target1": 136.53,
-      "target2": 143.49
+      "sector_score": 60,
+      "entry_low": 293.75,
+      "entry_high": 297.25,
+      "defense": 281.62,
+      "target1": 318.34,
+      "target2": 334.16
     },
     {
       "code": "6213",
       "name": "聯茂",
-      "score": 87,
-      "reason": "換股候選｜PCB/載板熱度 59｜漲幅 5.33%｜收盤位置 76%｜成交值 160.5 億",
-      "price": 791.0,
-      "change_pct": 5.33,
+      "score": 86,
+      "reason": "換股候選｜PCB/載板熱度 53｜漲幅 5.66%｜收盤位置 83%｜成交值 169.0 億",
+      "price": 793.5,
+      "change_pct": 5.66,
       "market": "TWSE",
       "sector": "PCB/載板",
-      "sector_score": 59,
-      "entry_low": 780.36,
-      "entry_high": 794.16,
-      "defense": 743.5,
-      "target1": 855.12,
-      "target2": 903.22
+      "sector_score": 53,
+      "entry_low": 782.86,
+      "entry_high": 796.67,
+      "defense": 746.0,
+      "target1": 857.62,
+      "target2": 905.72
     },
     {
-      "code": "8046",
-      "name": "南電",
-      "score": 81,
-      "reason": "換股候選｜準備發動 65分｜PCB/載板 59分｜今日 +1.17%｜5日 +1.2%｜10日 +1.2%｜成交值 57.4億｜低過熱",
-      "price": 1512.5,
-      "change_pct": 1.17,
-      "market": "TWSE",
-      "sector": "PCB/載板",
-      "sector_score": 59,
-      "entry_low": 1500.4,
-      "entry_high": 1512.5,
-      "defense": 1459.56,
-      "target1": 1583.97,
-      "target2": 1637.56
+      "code": "5347",
+      "name": "世界",
+      "score": 85,
+      "reason": "換股候選｜準備發動 58分｜其他 50分｜今日 +4.21%｜5日 +4.2%｜10日 +4.2%｜成交值 44.8億｜低過熱",
+      "price": 191.75,
+      "change_pct": 4.21,
+      "market": "TPEX",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 188.81,
+      "entry_high": 191.75,
+      "defense": 178.62,
+      "target1": 209.47,
+      "target2": 222.76
     },
     {
-      "code": "2368",
-      "name": "金像電",
-      "score": 79,
-      "reason": "換股候選｜PCB/載板熱度 59｜漲幅 3.50%｜收盤位置 61%｜成交值 198.6 億",
-      "price": 1257.5,
-      "change_pct": 3.5,
-      "market": "TWSE",
-      "sector": "PCB/載板",
-      "sector_score": 59,
-      "entry_low": 1230.9,
-      "entry_high": 1262.53,
-      "defense": 1150.61,
-      "target1": 1401.8,
-      "target2": 1510.02
+      "code": "3693",
+      "name": "營邦",
+      "score": 80,
+      "reason": "換股候選｜準備發動 58分｜其他 50分｜今日 +3.70%｜5日 +3.7%｜10日 +3.7%｜成交值 11.1億｜低過熱",
+      "price": 714.5,
+      "change_pct": 3.7,
+      "market": "TPEX",
+      "sector": "其他",
+      "sector_score": 50,
+      "entry_low": 701.9,
+      "entry_high": 714.5,
+      "defense": 658.25,
+      "target1": 790.44,
+      "target2": 847.39
     },
     {
       "code": "6257",
       "name": "矽格",
-      "score": 83,
-      "reason": "換股候選｜其他熱度 50｜漲幅 6.06%｜收盤位置 79%｜成交值 50.0 億",
-      "price": 275.75,
-      "change_pct": 6.06,
+      "score": 77,
+      "reason": "換股候選｜其他熱度 50｜漲幅 5.29%｜收盤位置 60%｜成交值 51.4 億",
+      "price": 273.75,
+      "change_pct": 5.29,
       "market": "TWSE",
       "sector": "其他",
       "sector_score": 50,
-      "entry_low": 272.81,
-      "entry_high": 276.85,
-      "defense": 262.62,
-      "target1": 293.47,
-      "target2": 306.76
+      "entry_low": 270.81,
+      "entry_high": 274.85,
+      "defense": 260.62,
+      "target1": 291.47,
+      "target2": 304.76
     }
   ],
   "flow": [
     {
       "icon": "↗",
       "name": "市場廣度",
-      "note": "上漲 908 / 下跌 973｜廣度 48.3%",
-      "score": 48
+      "note": "上漲 815 / 下跌 1088｜廣度 42.8%",
+      "score": 43
     },
     {
       "icon": "⚠",
       "name": "尾端賣壓",
-      "note": "跌逾3% 82｜跌逾5% 29｜跌停附近 5",
-      "score": 29
+      "note": "跌逾3% 101｜跌逾5% 37｜跌停附近 5",
+      "score": 37
     },
     {
       "icon": "🔥",
       "name": "強勢動能",
-      "note": "漲逾5% 51｜漲逾8% 26",
-      "score": 51
+      "note": "漲逾5% 47｜漲逾8% 24",
+      "score": 47
     },
     {
       "icon": "◎",
       "name": "市場中位數",
       "note": "排除權值股後觀察整體溫度",
-      "score": 0.0
+      "score": -0.17
     },
     {
       "icon": "🏦",
