@@ -88,11 +88,25 @@ def fetch_twse_daily(date_yyyymmdd):
                     "volume":num(cell(row,"成交股數")) or 0,"value":num(cell(row,"成交金額")) or 0,"market":"TWSE"})
     return out
 
+def fetch_tpex_daily(date_obj):
+    # Official TPEx daily close quotes; ROC date is required by this endpoint.
+    roc=f"{date_obj.year-1911}/{date_obj.month:02d}/{date_obj.day:02d}"
+    url="https://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_result.php?"+urllib.parse.urlencode({"l":"zh-tw","o":"json","d":roc})
+    j=fetch_json(url)
+    rows=(j.get("aaData") or j.get("data") or []) if isinstance(j,dict) else []
+    out=[]
+    for row in rows:
+        if not isinstance(row,list) or len(row)<9:continue
+        code=re.sub(r"<[^>]+>","",str(row[0])).strip()
+        if not re.fullmatch(r"[0-9A-Z]{4,8}",code):continue
+        close=num(row[2])
+        if close is None:continue
+        out.append({"code":code,"close":close})
+    return out
+
 def backfill_twse_history(history, now, min_days=20):
     """Backfill recent TWSE trading-day closes from official MI_INDEX."""
     snaps={str(x.get("date")):x for x in history if isinstance(x,dict) and x.get("date")}
-    if len(snaps)>=min_days:
-        return sorted(snaps.values(),key=lambda x:str(x.get("date","")))[-90:],[]
     errors=[]; d=now.date()-timedelta(days=1); attempts=0
     while len(snaps)<min_days and attempts<45:
         attempts+=1
@@ -102,6 +116,11 @@ def backfill_twse_history(history, now, min_days=20):
                 try:
                     rows=fetch_twse_daily(d.strftime("%Y%m%d"))
                     prices={x["code"]:x["close"] for x in rows if x.get("close")}
+                    try:
+                        otc=fetch_tpex_daily(d)
+                        prices.update({x["code"]:x["close"] for x in otc if x.get("close")})
+                    except Exception as otc_e:
+                        errors.append("TPEx "+key+":"+str(otc_e)[:60])
                     if prices:
                         snaps[key]={"date":key,"prices":prices,"signals":[]}
                 except Exception as e:
