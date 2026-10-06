@@ -111,30 +111,31 @@ def fetch_tpex_daily(date_obj):
     return out
 
 def backfill_twse_history(history, now, min_days=20):
-    """Backfill recent TWSE trading-day closes from official MI_INDEX."""
+    """Backfill and enrich the most recent trading days with TWSE + TPEx closes."""
     snaps={str(x.get("date")):x for x in history if isinstance(x,dict) and x.get("date")}
-    errors=[]; d=now.date()-timedelta(days=1); attempts=0
-    while len(snaps)<min_days and attempts<45:
+    errors=[]; d=now.date()-timedelta(days=1); attempts=0; processed=0
+    # Important: iterate through calendar days even when TWSE history already has 20
+    # snapshots, because existing snapshots may still be missing TPEx prices.
+    while processed<min_days and attempts<50:
         attempts+=1
         if d.weekday()<5:
             key=d.isoformat()
             try:
                 if key in snaps:
                     prices=dict(snaps[key].get("prices") or {})
+                    oldsnap=snaps[key]
                 else:
                     rows=fetch_twse_daily(d.strftime("%Y%m%d"))
                     prices={x["code"]:x["close"] for x in rows if x.get("close")}
-                try:
-                    otc=fetch_tpex_daily(d)
-                    prices.update({x["code"]:x["close"] for x in otc if x.get("close")})
-                except Exception as otc_e:
-                    errors.append("TPEx "+key+":"+str(otc_e)[:60])
+                    oldsnap={}
+                otc=fetch_tpex_daily(d)
+                prices.update({x["code"]:x["close"] for x in otc if x.get("close")})
                 if prices:
-                    oldsnap=snaps.get(key,{})
                     snaps[key]={"date":key,"prices":prices,"signals":oldsnap.get("signals",[]),**({"institutional_market":oldsnap["institutional_market"]} if oldsnap.get("institutional_market") else {})}
+                    processed+=1
             except Exception as e:
-                if "no stock table" not in str(e):
-                    errors.append(key+":"+str(e)[:80])
+                # Holidays/no-session days simply do not count toward the 20 trading days.
+                errors.append(key+":"+str(e)[:100])
         d-=timedelta(days=1)
     return sorted(snaps.values(),key=lambda x:str(x.get("date","")))[-90:],errors
 
