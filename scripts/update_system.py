@@ -438,6 +438,7 @@ def main():
 
     stocks=[x for x in rows if stock_only(x)]
     by_code={x["code"]:x for x in stocks}
+    holdings_by_code={x["code"]:x for x in rows if x.get("code")}
     institutional,inst_errors,inst_debug=fetch_institutional()
     institutional={k:v for k,v in institutional.items() if k in by_code}
     if inst_errors: errors.extend(inst_errors)
@@ -678,18 +679,18 @@ def main():
         "institutional":institutional,
         "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
         "holdings":{p["code"]:{
-            "code":p["code"],"name":(by_code.get(p["code"]) or {}).get("name") or p["name"],
+            "code":p["code"],"name":(holdings_by_code.get(p["code"]) or {}).get("name") or p["name"],
             "cost":p["cost"],"shares":p["shares"],
-            "price":(by_code.get(p["code"]) or {}).get("close"),
-            "change_pct":round((by_code.get(p["code"]) or {}).get("pct"),2) if (by_code.get(p["code"]) or {}).get("pct") is not None else None,
-            "live":bool((by_code.get(p["code"]) or {}).get("live")),
-            "market_value":round(((by_code.get(p["code"]) or {}).get("close") or 0)*p["shares"]),
-            "pnl":round((((by_code.get(p["code"]) or {}).get("close") or p["cost"])-p["cost"])*p["shares"]),
-            "pnl_pct":round((((by_code.get(p["code"]) or {}).get("close") or p["cost"])/p["cost"]-1)*100,2),
-            "risk_action":holding_decision(by_code.get(p["code"]),p["cost"],risk)["action"],
-            "risk_reason":holding_decision(by_code.get(p["code"]),p["cost"],risk)["reason"],
-            "limit_status":holding_decision(by_code.get(p["code"]),p["cost"],risk)["limit_status"],
-            "quote_time":now.strftime("%Y-%m-%d %H:%M") if bool((by_code.get(p["code"]) or {}).get("live")) else None
+            "price":(holdings_by_code.get(p["code"]) or {}).get("close"),
+            "change_pct":round((holdings_by_code.get(p["code"]) or {}).get("pct"),2) if (holdings_by_code.get(p["code"]) or {}).get("pct") is not None else None,
+            "live":bool((holdings_by_code.get(p["code"]) or {}).get("live")),
+            "market_value":round(((holdings_by_code.get(p["code"]) or {}).get("close") or 0)*p["shares"]),
+            "pnl":round((((holdings_by_code.get(p["code"]) or {}).get("close") or p["cost"])-p["cost"])*p["shares"]),
+            "pnl_pct":round((((holdings_by_code.get(p["code"]) or {}).get("close") or p["cost"])/p["cost"]-1)*100,2),
+            "risk_action":holding_decision(holdings_by_code.get(p["code"]),p["cost"],risk)["action"],
+            "risk_reason":holding_decision(holdings_by_code.get(p["code"]),p["cost"],risk)["reason"],
+            "limit_status":holding_decision(holdings_by_code.get(p["code"]),p["cost"],risk)["limit_status"],
+            "quote_time":now.strftime("%Y-%m-%d %H:%M") if bool((holdings_by_code.get(p["code"]) or {}).get("live")) else None
         } for p in PORTFOLIO},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
