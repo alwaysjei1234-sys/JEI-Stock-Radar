@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/remote/index.html"
+    }
+  ],
   "functions": {
     "api/consult.js": {
       "maxDuration": 60
