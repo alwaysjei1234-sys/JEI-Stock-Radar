@@ -274,6 +274,19 @@ function testAiCloud(silent=true){
   .then(({ok,j})=>{if(!ok)throw new Error(j?.error||'HTTP error');renderAiHealth(j);if(!silent)toast('AI 雲端連線正常')})
   .catch(e=>{aiHealthLoaded=false;$('aiStatusBar').innerHTML='<span class="chip warn">AI 雲端離線</span>';if($('aiCloudStatus'))$('aiCloudStatus').textContent='AI 雲端連線失敗｜'+e.message;if(!silent)toast('AI 連線失敗')})
 }
+function importAiSetupFromHash(){
+ try{
+  const raw=String(location.hash||'').replace(/^#/,'');
+  const p=new URLSearchParams(raw);
+  const t=(p.get('jei_token')||'').trim();
+  if(t){
+    settingSet('ai_backend_url','https://jei-stock-radar.vercel.app/api/consult');
+    settingSet('ai_backend_token',t);
+    history.replaceState(null,'',location.pathname+location.search);
+    setTimeout(()=>toast('JEI AI 私人連線已自動設定'),250);
+  }
+ }catch(e){}
+}
 function loadAiCloud(){
  const def='https://jei-stock-radar.vercel.app/api/consult';
  let u=settingGet('ai_backend_url'),t=settingGet('ai_backend_token'),m=settingGet('ai_mode')||'local';
@@ -447,6 +460,6 @@ window.JEI_NATIVE={
  onAIConsultResult(raw){renderAiConsultResult(raw)},
  onAIConsultError(e){aiPending=false;chatSay('bot','AI 會診連線失敗：'+e)}
 };
-function init(){loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible')refreshMarket()},120000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
+function init(){importAiSetupFromHash();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible')refreshMarket()},120000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshAll(false)});init();
 </script></body></html>
