@@ -91,7 +91,7 @@
 <div id="toast" class="toast"></div>
 <div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="chat"><b>💬</b>聊天</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
 <script>
-const UI_VERSION='3.7.0-live';
+const UI_VERSION='3.7.1-live';
 const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],tomorrow_monster:[],future_monster:[],rotate:[],flow:[],sectors:[],stock_sectors:{},universe:[]}, updateManifest=null, refreshTimer=null, systemTimer=null, lastMarketAt='',liveScanReceived=0;
 const $=id=>document.getElementById(id); const money=n=>Number.isFinite(n)?Math.round(n).toLocaleString('zh-TW'):'--'; const nativeOk=()=>typeof JEINative!=='undefined';
@@ -229,7 +229,7 @@ function settingSet(k,v){try{if(nativeOk())JEINative.saveSetting(k,v);else local
 function aiSelectedProviders(){return [...document.querySelectorAll('.aiProvider.on')].map(x=>x.dataset.provider)}
 function setAiMode(mode){aiMode=mode;settingSet('ai_mode',mode);['local','single','panel'].forEach(m=>{const id=m==='local'?'modeLocal':m==='single'?'modeSingle':'modePanel';$(id).classList.toggle('active',m===mode)});$('aiProviders').style.display=mode==='local'?'none':'flex';$('aiCloudHint').textContent=mode==='local'?'JEI 快速模式不使用外部 AI。':(mode==='single'?'單一 AI：使用你選取的第一個 AI。':'多 AI 會診：同一問題同時送給多家 AI，再產生 JEI 綜合結論。')}
 function toggleProvider(btn){if(aiMode==='local')return;btn.classList.toggle('on');if(!document.querySelector('.aiProvider.on'))btn.classList.add('on')}
-function loadAiCloud(){const u=settingGet('ai_backend_url'),t=settingGet('ai_backend_token'),m=settingGet('ai_mode')||'local';if($('aiBackendUrl'))$('aiBackendUrl').value=u;if($('aiBackendToken'))$('aiBackendToken').value=t;if($('aiCloudStatus'))$('aiCloudStatus').textContent=u?'AI 雲端已設定｜API Key 保留在伺服器端':'尚未設定。API Key 不會放在 APP，會留在雲端伺服器。';setAiMode(['local','single','panel'].includes(m)?m:'local')}
+function loadAiCloud(){const def='https://jei-stock-radar.vercel.app/api/consult';let u=settingGet('ai_backend_url'),t=settingGet('ai_backend_token'),m=settingGet('ai_mode')||'local';if(!u){u=def;settingSet('ai_backend_url',u)}if($('aiBackendUrl'))$('aiBackendUrl').value=u;if($('aiBackendToken'))$('aiBackendToken').value=t;if($('aiCloudStatus'))$('aiCloudStatus').textContent='JEI AI 雲端已連接｜API Key 保留在伺服器端';setAiMode(['local','single','panel'].includes(m)?m:'local')}
 function saveAiCloud(){const u=$('aiBackendUrl').value.trim(),t=$('aiBackendToken').value.trim();if(u&&!/^https:\/\//i.test(u)){toast('AI 雲端網址必須是 HTTPS');return}settingSet('ai_backend_url',u);settingSet('ai_backend_token',t);loadAiCloud();toast('AI 雲端設定已儲存')}
 function aiContext(q){
  const stock=findChatStock(q);const h=stock?holdings.find(x=>x.code===stock.code):null;
@@ -349,8 +349,20 @@ function sendChat(){
  const box=$('chatBox'),q=(box&&box.value||'').trim();if(!q)return;box.value='';chatSay('me',q);
  if(aiMode==='local')setTimeout(()=>chatSay('bot',answerChat(q)),80);else sendAiConsult(q)
 }
-function refreshSystem(){if(nativeOk())JEINative.refreshSystem()}
-function checkUpdate(){if(nativeOk())JEINative.checkForUpdates()}
+function refreshSystem(){
+ if(nativeOk()){JEINative.refreshSystem();return}
+ fetch('/remote/system.json?ts='+Date.now(),{cache:'no-store'})
+  .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
+  .then(j=>{system=j||{};system.holdings=system.holdings||{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI Vercel feed 已連線｜'+(system.updated_at||'無時間')})
+  .catch(e=>{$('sysStatus').textContent='JEI feed 暫時無法連線｜'+e.message;$('netDot').classList.add('off');$('netText').textContent='資料離線'})
+}
+function checkUpdate(){
+ if(nativeOk()){JEINative.checkForUpdates();return}
+ fetch('/remote/update.json?ts='+Date.now(),{cache:'no-store'})
+  .then(r=>r.ok?r.json():null)
+  .then(j=>{if(!j)return;updateManifest=j;const remote=+j.versionCode||0;$('updateBanner').classList.toggle('show',false)})
+  .catch(()=>{})
+}
 function refreshRemoteUI(){if(nativeOk()){JEINative.refreshRemoteUI();toast('正在檢查最新介面')}}
 function refreshAll(manual=false){refreshSystem();if(tradingWindow())refreshMarket();else{seedMarketFromSystem();showFeedStatus()}checkUpdate();if(manual)toast(tradingWindow()?'正在更新 JEI、即時行情與版本':'正在更新 JEI 收盤資料與版本')}
 function openUpdate(){if(updateManifest&&updateManifest.url&&nativeOk())JEINative.openUrl(updateManifest.url)}
