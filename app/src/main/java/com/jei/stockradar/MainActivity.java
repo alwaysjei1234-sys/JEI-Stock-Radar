@@ -48,9 +48,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends Activity {
-    private static final String REMOTE_UI = "https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/index.html";
-    private static final String SYSTEM_JSON = "https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/system.json";
-    private static final String UPDATE_JSON = "https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/update.json";
+    private static final String REMOTE_UI = "https://jei-stock-radar.vercel.app/remote/index.html";
+    private static final String SYSTEM_JSON = "https://jei-stock-radar.vercel.app/remote/system.json";
+    private static final String UPDATE_JSON = "https://jei-stock-radar.vercel.app/remote/update.json";
     private static final String PREFS = "jei_private";
 
     private WebView webView;
@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(true);
         s.setAllowContentAccess(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.7");
+        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.7.1");
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
@@ -221,7 +221,7 @@ public class MainActivity extends Activity {
         c.setReadTimeout(65000);
         c.setRequestMethod("POST");
         c.setDoOutput(true);
-        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.7");
+        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.7.1");
         c.setRequestProperty("Accept", "application/json");
         c.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         if (token != null && !token.trim().isEmpty()) c.setRequestProperty("X-JEI-Token", token.trim());
@@ -261,7 +261,7 @@ public class MainActivity extends Activity {
                     o.write(html.getBytes(StandardCharsets.UTF_8));
                 }
                 runOnUiThread(() -> webView.loadDataWithBaseURL(
-                        "https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/",
+                        "https://jei-stock-radar.vercel.app/remote/",
                         html, "text/html", "UTF-8", null));
             } catch (Exception e) {
                 if (userTriggered) runOnUiThread(() ->
