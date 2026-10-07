@@ -1,31 +1,29 @@
-# JEI 多 AI 會診雲端
+# JEI 免費多 AI 會診
 
-此資料夾提供 JEI Android App 的安全 AI 中繼層。**不要把任何 AI API Key 寫進 Android APK、remote/index.html 或 GitHub repository。**
+JEI 3.9 改為 **零付費優先**。程式不再自動呼叫 Vercel AI Gateway，也不會因為免費額度用完而自動切到付費模型。
 
-## 支援
-- ChatGPT / OpenAI Responses API
-- Gemini GenerateContent API
-- Claude Messages API
-- Grok / xAI Chat Completions API
-- 多 AI 平行會診 + JEI 綜合結論
+## 可用的免費來源
 
-## Vercel 環境變數
-至少設定一家 AI 即可：
+- Gemini Free：Google AI Studio 免費層，預設模型 `gemini-2.5-flash`
+- Groq Free：`openai/gpt-oss-120b`
+- Groq Free：`qwen/qwen3.8-27b`
+- OpenRouter Free：`openrouter/free`，由 OpenRouter 在免費模型中路由
 
-- `OPENAI_API_KEY`
-- `OPENAI_MODEL`（可省略，預設 `gpt-5.6-luna`）
+## 使用方式
+
+在 JEI → 更新 →「免費多 AI 設定」貼上免費 API Key。Key 只儲存在目前手機/瀏覽器設定；每次會診時經由 HTTPS 傳到 JEI 自己的 Vercel 中繼層，程式庫不會保存或提交 Key。
+
+可只設定其中一組。設定越多，多 AI 會診可得到越多獨立答案。某家免費額度或速率限制用完時，JEI 只略過該模型。
+
+## Vercel 環境變數（可選）
+
+若不想每台裝置各自輸入，也可在 Vercel 專案設定：
 - `GEMINI_API_KEY`
-- `GEMINI_MODEL`（可省略，預設 `gemini-3.6-flash`）
-- `ANTHROPIC_API_KEY`
-- `ANTHROPIC_MODEL`（可省略，預設 `claude-sonnet-4-5`）
-- `XAI_API_KEY`
-- `XAI_MODEL`（可省略，預設 `grok-4.5`）
-- `JEI_CLIENT_TOKEN`：自訂一組長密碼，APP 端只存這支手機。
+- `GROQ_API_KEY`
+- `OPENROUTER_API_KEY`
 
-部署後 API 位址為：
-`https://<your-vercel-project>.vercel.app/api/consult`
+`JEI_CLIENT_TOKEN` 仍用來保護 JEI 中繼 API，與 AI 計費無關。
 
-在 JEI App → 更新 →「多 AI 雲端」填入上述網址與 `JEI_CLIENT_TOKEN`。
+## 重要
 
-## 隱私
-APP 只把本次問題需要的市場摘要、候選榜、法人資料與持股資訊送到你自己的中繼層，再轉交你勾選的 AI 供應商。API Key 留在伺服器端。
+ChatGPT、Claude、Grok 的一般免費網頁帳號不等於免費 API，因此 JEI 不會冒用這些名稱。免費會診只顯示實際被呼叫的模型/服務。
