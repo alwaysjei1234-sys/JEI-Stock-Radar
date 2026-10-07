@@ -45,9 +45,36 @@ function providerKey(provider){
   return "";
 }
 
+let gatewayHealthCache={at:0,value:null};
+async function gatewayHealth(){
+  const token=await gatewayToken();
+  if(!token) return {ok:false,reason:"missing-token"};
+  if(gatewayHealthCache.value && Date.now()-gatewayHealthCache.at<60000) return gatewayHealthCache.value;
+  let value;
+  try{
+    await fetchJson("https://ai-gateway.vercel.sh/v1/credits",{
+      method:"GET",
+      headers:{"Authorization":"Bearer "+token}
+    },12000);
+    value={ok:true,billing_required:false};
+  }catch(e){
+    const msg=String(e?.message||e);
+    const billing=/valid credit card|credit card on file|payment method|payment source|billing/i.test(msg);
+    value=billing
+      ? {ok:false,billing_required:true,error:msg.slice(0,240)}
+      : {ok:true,billing_required:false,check_warning:msg.slice(0,240)};
+  }
+  gatewayHealthCache={at:Date.now(),value};
+  return value;
+}
+
 async function providerStatus(provider){
   if(providerKey(provider)) return {available:true,via:"direct",model:DIRECT_MODELS[provider]};
-  if(await gatewayToken()) return {available:true,via:"vercel-ai-gateway",model:GATEWAY_MODELS[provider]};
+  if(await gatewayToken()){
+    const gh=await gatewayHealth();
+    if(gh.billing_required) return {available:false,via:"vercel-ai-gateway",model:GATEWAY_MODELS[provider],billing_required:true};
+    return {available:true,via:"vercel-ai-gateway",model:GATEWAY_MODELS[provider]};
+  }
   return {available:false,via:"none",model:GATEWAY_MODELS[provider]};
 }
 
@@ -276,7 +303,7 @@ module.exports = async function handler(req,res){
   const providers=[...new Set(requested.map(String))].filter(x=>CALLERS[x]).slice(0,4);
   const settled=await Promise.all(providers.map(async provider=>{
     const status=await providerStatus(provider);
-    if(!status.available) return {provider,label:LABELS[provider],skipped:true,reason:"此 AI 尚未連線"};
+    if(!status.available) return {provider,label:LABELS[provider],skipped:true,billing_required:!!status.billing_required,reason:status.billing_required?"Vercel AI Gateway 尚未啟用計費":"此 AI 尚未連線"};
     try{
       const text=await CALLERS[provider](body);
       if(text===null) return {provider,label:LABELS[provider],skipped:true,reason:"此 AI 尚未連線"};
@@ -289,13 +316,16 @@ module.exports = async function handler(req,res){
   const answers=settled.filter(x=>x.text);
   const skipped=settled.filter(x=>x.skipped);
   const failed=settled.filter(x=>x.error);
+  const billingRequired=settled.some(x=>x.billing_required)||failed.some(x=>/valid credit card|credit card on file|payment method|payment source|billing/i.test(String(x.error||"")));
   let consensus="";
   if(answers.length) consensus=await synthesize(body,answers);
+  else if(billingRequired) consensus="Vercel AI Gateway 已連線，但帳戶尚未有可用的付款方式／AI Gateway 額度，因此模型目前無法回覆。請先到 Vercel Team Settings → Billing 新增有效付款方式，再回 JEI 按「測試 AI」。";
   else consensus="目前選取的 AI 都沒有成功回覆。請查看模型連線狀態或稍後再試。";
 
   return json(res,200,{
     ok:answers.length>0,
     answers,skipped,failed,consensus,
+    billing_required:billingRequired,
     as_of:new Date().toISOString()
   });
 };
