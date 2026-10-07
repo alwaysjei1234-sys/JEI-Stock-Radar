@@ -349,8 +349,20 @@ function sendChat(){
  const box=$('chatBox'),q=(box&&box.value||'').trim();if(!q)return;box.value='';chatSay('me',q);
  if(aiMode==='local')setTimeout(()=>chatSay('bot',answerChat(q)),80);else sendAiConsult(q)
 }
-function refreshSystem(){if(nativeOk())JEINative.refreshSystem()}
-function checkUpdate(){if(nativeOk())JEINative.checkForUpdates()}
+function refreshSystem(){
+ if(nativeOk()){JEINative.refreshSystem();return}
+ fetch('/remote/system.json?ts='+Date.now(),{cache:'no-store'})
+  .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
+  .then(j=>{system=j||{};system.holdings=system.holdings||{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI Vercel feed 已連線｜'+(system.updated_at||'無時間')})
+  .catch(e=>{$('sysStatus').textContent='JEI feed 暫時無法連線｜'+e.message;$('netDot').classList.add('off');$('netText').textContent='資料離線'})
+}
+function checkUpdate(){
+ if(nativeOk()){JEINative.checkForUpdates();return}
+ fetch('/remote/update.json?ts='+Date.now(),{cache:'no-store'})
+  .then(r=>r.ok?r.json():null)
+  .then(j=>{if(!j)return;updateManifest=j;const remote=+j.versionCode||0;$('updateBanner').classList.toggle('show',false)})
+  .catch(()=>{})
+}
 function refreshRemoteUI(){if(nativeOk()){JEINative.refreshRemoteUI();toast('正在檢查最新介面')}}
 function refreshAll(manual=false){refreshSystem();if(tradingWindow())refreshMarket();else{seedMarketFromSystem();showFeedStatus()}checkUpdate();if(manual)toast(tradingWindow()?'正在更新 JEI、即時行情與版本':'正在更新 JEI 收盤資料與版本')}
 function openUpdate(){if(updateManifest&&updateManifest.url&&nativeOk())JEINative.openUrl(updateManifest.url)}
