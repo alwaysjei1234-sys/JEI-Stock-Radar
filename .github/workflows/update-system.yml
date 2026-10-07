@@ -3,8 +3,9 @@ name: Update JEI Market Feed
 
 on:
   schedule:
-    - cron: '*/15 1-5 * * 1-5'
-    - cron: '0,5,10 6 * * 1-5'
+    # 09:00-16:45 Taiwan time (UTC+8): keep running after close until official
+    # TWSE/TPEx daily files have rolled to the current trading date.
+    - cron: '*/15 1-8 * * 1-5'
   workflow_dispatch:
   push:
     branches: [ "main" ]
