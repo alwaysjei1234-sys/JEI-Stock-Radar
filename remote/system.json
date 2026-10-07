@@ -1,20 +1,20 @@
 {
   "schema": 4,
-  "updated_at": "2026-10-07 23:44",
+  "updated_at": "2026-10-08 02:09",
   "data_date": "2026-10-07",
   "source_data_date": "1151007",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
   "risk": {
     "level": "orange",
-    "label": "高風險：法人撤退＋外部風險升溫",
-    "score": 72,
+    "label": "高風險：外資防守＋美債殖利率壓力",
+    "score": 73,
     "cash": "50%–60%",
     "reasons": [
-      "10/7 外資現貨賣超130.44億元，三大法人偏賣，法人籌碼仍需防守",
-      "外資台指期淨空仍約79,101口，避險部位維持高檔",
-      "台股市場廣度尚未崩壞，因此未升級為紅色大逃殺",
-      "融資位於高檔，若高Beta與主流電子同步轉弱，可能放大下跌",
-      "晚間美股／殖利率／半導體外部風險升溫，JEI 綜合警戒維持橘色"
+      "10/7 外資現貨賣超約130.4億元，台股接近5萬點但法人站在賣方",
+      "外資台指期淨空仍約7.9萬口，避險部位維持高檔",
+      "台股10/7廣度仍為上漲家數多於下跌家數、跌停約7檔，尚未形成全面踩踏",
+      "美國10年債殖利率10/7盤中一度約5.37%，為股市估值與高Beta部位帶來壓力",
+      "美股自紀錄高點回落、海外小型股與亞洲科技偏弱，外部風險較前次略升"
     ],
     "breadth": 57.6,
     "median_pct": 0.16,
@@ -28,19 +28,19 @@
     "institutional_withdrawal": false,
     "foreign_cash_billion": -130.44,
     "foreign_futures_net": -79101,
-    "external_risk": "US yields / US equities / semiconductor high-beta risk elevated",
+    "external_risk": "US 10Y briefly 5.36% area; US equities pulled back from records; global/small-cap breadth remains fragile",
     "composite_guard": true
   },
   "market": {
     "status": "🟠 高風險",
-    "mode": "收盤＋外部風險監控",
+    "mode": "收盤＋夜間外部風險監控",
     "live_count": 0,
     "close_count": 1961,
     "live_coverage_pct": 0,
     "live_valid": false,
     "stale": false,
     "post_close_refresh": false,
-    "brief": "JEI 綜合風控：台股內部廣度尚未崩壞，但外資籌碼、槓桿與晚間外部市場風險升溫；維持🟠72，防止不完整排程資料錯誤降級。"
+    "brief": "JEI 73：台股內部尚未踩踏，但外資現貨偏賣、期貨高淨空，加上美債殖利率衝高與全球風險資產轉弱；風險略擴散，未達紅燈。"
   },
   "sectors": [
     {
