@@ -20,8 +20,21 @@ const GATEWAY_MODELS = {
   xai: process.env.JEI_XAI_GATEWAY_MODEL || "xai/grok-4.5"
 };
 
-function gatewayToken(){
-  return process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN || "";
+let oidcTokenPromise=null;
+async function gatewayToken(){
+  const direct=process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN || "";
+  if(direct) return direct;
+  if(!oidcTokenPromise){
+    oidcTokenPromise=(async()=>{
+      try{
+        const mod=await import("@vercel/oidc");
+        return (await mod.getVercelOidcToken()) || "";
+      }catch(e){
+        return "";
+      }
+    })();
+  }
+  return oidcTokenPromise;
 }
 
 function providerKey(provider){
@@ -32,9 +45,9 @@ function providerKey(provider){
   return "";
 }
 
-function providerStatus(provider){
+async function providerStatus(provider){
   if(providerKey(provider)) return {available:true,via:"direct",model:DIRECT_MODELS[provider]};
-  if(gatewayToken()) return {available:true,via:"vercel-ai-gateway",model:GATEWAY_MODELS[provider]};
+  if(await gatewayToken()) return {available:true,via:"vercel-ai-gateway",model:GATEWAY_MODELS[provider]};
   return {available:false,via:"none",model:GATEWAY_MODELS[provider]};
 }
 
@@ -116,7 +129,7 @@ ${history||"無"}
 }
 
 async function askGateway(provider,body){
-  const token=gatewayToken();
+  const token=await gatewayToken();
   if(!token) return null;
   const model=GATEWAY_MODELS[provider];
   const payload={
@@ -215,7 +228,7 @@ async function synthesize(body,answers){
 ${compact}`};
   const order=["openai","gemini","anthropic","xai"];
   for(const provider of order){
-    if(!providerStatus(provider).available) continue;
+    if(!(await providerStatus(provider)).available) continue;
     try{
       const out=await CALLERS[provider](synthBody);
       if(out) return out;
@@ -235,11 +248,11 @@ module.exports = async function handler(req,res){
 
   if(req.method==="GET"){
     const providers={};
-    for(const p of Object.keys(LABELS)) providers[p]={label:LABELS[p],...providerStatus(p)};
+    for(const p of Object.keys(LABELS)) providers[p]={label:LABELS[p],...(await providerStatus(p))};
     return json(res,200,{
       ok:true,
       service:"JEI Multi-AI Gateway",
-      gateway:!!gatewayToken(),
+      gateway:!!(await gatewayToken()),
       tokenRequired:!!process.env.JEI_CLIENT_TOKEN,
       providers
     });
@@ -262,7 +275,7 @@ module.exports = async function handler(req,res){
   const requested=Array.isArray(body.providers)&&body.providers.length?body.providers:["openai"];
   const providers=[...new Set(requested.map(String))].filter(x=>CALLERS[x]).slice(0,4);
   const settled=await Promise.all(providers.map(async provider=>{
-    const status=providerStatus(provider);
+    const status=await providerStatus(provider);
     if(!status.available) return {provider,label:LABELS[provider],skipped:true,reason:"此 AI 尚未連線"};
     try{
       const text=await CALLERS[provider](body);
