@@ -1,81 +1,59 @@
-// JEI Multi-AI consultation gateway.
-// Vercel Serverless Function. Provider API keys stay server-side.
-// When provider keys are absent, Vercel AI Gateway is used through the
-// deployment OIDC token, so JEI can run ChatGPT/Gemini/Claude/Grok without
-// embedding any provider key in the Android app or public web UI.
+// JEI Free Multi-AI consultation gateway.
+// Zero-paid design: this endpoint NEVER falls back to Vercel AI Gateway.
+// Free provider keys can be supplied per request from the user's device or
+// configured as Vercel environment variables. No provider key is committed.
 
-const LABELS = {openai:"ChatGPT",gemini:"Gemini",anthropic:"Claude",xai:"Grok"};
-
-const DIRECT_MODELS = {
-  openai: process.env.OPENAI_MODEL || "gpt-5.6-luna",
-  gemini: process.env.GEMINI_MODEL || "gemini-3.6-flash",
-  anthropic: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-5",
-  xai: process.env.XAI_MODEL || "grok-4.5"
-};
-
-const GATEWAY_MODELS = {
-  openai: process.env.JEI_OPENAI_GATEWAY_MODEL || "openai/gpt-5.6-sol",
-  gemini: process.env.JEI_GEMINI_GATEWAY_MODEL || "google/gemini-3.1-pro-preview",
-  anthropic: process.env.JEI_ANTHROPIC_GATEWAY_MODEL || "anthropic/claude-fable-5",
-  xai: process.env.JEI_XAI_GATEWAY_MODEL || "xai/grok-4.5"
-};
-
-let oidcTokenPromise=null;
-async function gatewayToken(){
-  const direct=process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN || "";
-  if(direct) return direct;
-  if(!oidcTokenPromise){
-    oidcTokenPromise=(async()=>{
-      try{
-        const mod=await import("@vercel/oidc");
-        return (await mod.getVercelOidcToken()) || "";
-      }catch(e){
-        return "";
-      }
-    })();
+const PROVIDERS = {
+  gemini_free: {
+    label: "Gemini Free",
+    key: "gemini",
+    model: process.env.GEMINI_FREE_MODEL || "gemini-2.5-flash",
+    via: "Google AI Studio Free Tier"
+  },
+  groq_oss: {
+    label: "GPT-OSS 120B",
+    key: "groq",
+    model: process.env.GROQ_OSS_MODEL || "openai/gpt-oss-120b",
+    via: "Groq Free Plan"
+  },
+  groq_qwen: {
+    label: "Qwen 3.8 27B",
+    key: "groq",
+    model: process.env.GROQ_QWEN_MODEL || "qwen/qwen3.8-27b",
+    via: "Groq Free Plan"
+  },
+  openrouter_free: {
+    label: "OpenRouter Free",
+    key: "openrouter",
+    model: process.env.OPENROUTER_FREE_MODEL || "openrouter/free",
+    via: "OpenRouter Free"
   }
-  return oidcTokenPromise;
-}
+};
 
-function providerKey(provider){
-  if(provider==="openai") return process.env.OPENAI_API_KEY || "";
-  if(provider==="gemini") return process.env.GEMINI_API_KEY || "";
-  if(provider==="anthropic") return process.env.ANTHROPIC_API_KEY || "";
-  if(provider==="xai") return process.env.XAI_API_KEY || "";
+function envKey(kind){
+  if(kind==="gemini") return process.env.GEMINI_API_KEY || "";
+  if(kind==="groq") return process.env.GROQ_API_KEY || "";
+  if(kind==="openrouter") return process.env.OPENROUTER_API_KEY || "";
   return "";
 }
-
-let gatewayHealthCache={at:0,value:null};
-async function gatewayHealth(){
-  const token=await gatewayToken();
-  if(!token) return {ok:false,reason:"missing-token"};
-  if(gatewayHealthCache.value && Date.now()-gatewayHealthCache.at<60000) return gatewayHealthCache.value;
-  let value;
-  try{
-    await fetchJson("https://ai-gateway.vercel.sh/v1/credits",{
-      method:"GET",
-      headers:{"Authorization":"Bearer "+token}
-    },12000);
-    value={ok:true,billing_required:false};
-  }catch(e){
-    const msg=String(e?.message||e);
-    const billing=/valid credit card|credit card on file|payment method|payment source|billing/i.test(msg);
-    value=billing
-      ? {ok:false,billing_required:true,error:msg.slice(0,240)}
-      : {ok:true,billing_required:false,check_warning:msg.slice(0,240)};
-  }
-  gatewayHealthCache={at:Date.now(),value};
-  return value;
+function requestKey(body,kind){
+  const k=body?.free_keys?.[kind];
+  return String(k||"").trim() || envKey(kind);
 }
-
-async function providerStatus(provider){
-  if(providerKey(provider)) return {available:true,via:"direct",model:DIRECT_MODELS[provider]};
-  if(await gatewayToken()){
-    const gh=await gatewayHealth();
-    if(gh.billing_required) return {available:false,via:"vercel-ai-gateway",model:GATEWAY_MODELS[provider],billing_required:true};
-    return {available:true,via:"vercel-ai-gateway",model:GATEWAY_MODELS[provider]};
-  }
-  return {available:false,via:"none",model:GATEWAY_MODELS[provider]};
+function providerStatus(provider,body={}){
+  const p=PROVIDERS[provider];
+  if(!p) return {available:false};
+  const fromEnv=!!envKey(p.key);
+  const fromRequest=!!String(body?.free_keys?.[p.key]||"").trim();
+  return {
+    available:fromEnv||fromRequest,
+    label:p.label,
+    via:p.via,
+    model:p.model,
+    key_group:p.key,
+    server_key:fromEnv,
+    requires_client_key:!fromEnv
+  };
 }
 
 function json(res,status,obj){
@@ -86,48 +64,37 @@ function json(res,status,obj){
   res.setHeader("Access-Control-Allow-Headers","Content-Type, X-JEI-Token");
   res.end(JSON.stringify(obj));
 }
-
-function textOf(v,max=18000){
+function textOf(v,max=15000){
   const s=typeof v==="string"?v:JSON.stringify(v??{});
   return s.length>max?s.slice(0,max)+"…":s;
 }
-
-function extractOpenAI(j){
-  if(typeof j.output_text==="string"&&j.output_text.trim()) return j.output_text.trim();
-  const out=[];
-  for(const item of (j.output||[])){
-    for(const c of (item.content||[])){
-      if(typeof c.text==="string") out.push(c.text);
-      else if(typeof c.output_text==="string") out.push(c.output_text);
-    }
-  }
-  return out.join("\n").trim();
-}
-
 function extractGemini(j){
   const p=j?.candidates?.[0]?.content?.parts||[];
-  return p.map(x=>x.text||"").join("\n").trim();
+  return p.map(x=>x?.text||"").join("\n").trim();
 }
-
-function extractAnthropic(j){
-  return (j?.content||[]).map(x=>x?.text||"").join("\n").trim();
-}
-
 function extractChat(j){
   const c=j?.choices?.[0]?.message?.content;
   if(typeof c==="string") return c.trim();
   if(Array.isArray(c)) return c.map(x=>x?.text||x?.content||"").join("\n").trim();
   return "";
 }
-
-async function fetchJson(url,opts,timeout=50000){
+function friendlyError(e){
+  const s=String(e?.message||e||"連線失敗");
+  if(/429|rate limit|quota|resource exhausted|too many requests/i.test(s)) return "免費額度或速率限制已到，稍後再試";
+  if(/401|403|api key|unauthorized|forbidden|invalid key/i.test(s)) return "免費 API Key 無效或尚未啟用";
+  return s.slice(0,500);
+}
+async function fetchJson(url,opts,timeout=45000){
   const ctrl=new AbortController();
   const timer=setTimeout(()=>ctrl.abort(),timeout);
   try{
     const r=await fetch(url,{...opts,signal:ctrl.signal});
     const raw=await r.text();
     let j={}; try{j=JSON.parse(raw)}catch{}
-    if(!r.ok) throw new Error((j?.error?.message||j?.message||raw||("HTTP "+r.status)).slice(0,700));
+    if(!r.ok){
+      const msg=j?.error?.message||j?.message||raw||("HTTP "+r.status);
+      throw new Error("HTTP "+r.status+" "+String(msg).slice(0,700));
+    }
     return j;
   }finally{clearTimeout(timer)}
 }
@@ -139,15 +106,15 @@ const SYSTEM = `你是 JEI 台股投資分析會診成員。你會收到 JEI 的
 3. 個股回答優先依序分析：大盤風險 → 族群強弱 → 價格/量能 → 法人資金 → 使用者成本與部位。
 4. 不保證漲停、翻倍或獲利。可以給機率式判斷，但要說明關鍵條件與失效點。
 5. 對持股要給可執行方案：續抱/觀察/減碼/停利，以及防守價或失效條件（若資料中有）。
-6. 回答繁體中文，先講結論，再講理由、風險與下一步；通常控制在 500 字內。
+6. 回答繁體中文，先講結論，再講理由、風險與下一步；通常控制在 450 字內。
 7. 多 AI 會診時要獨立判斷，不迎合其他模型。若不確定，明確寫出不確定因素。`;
 
 function userPrompt(body){
-  const history=(body.history||[]).slice(-10).map(x=>`${x.role}: ${textOf(x.content,1400)}`).join("\n");
-  return `使用者問題：${textOf(body.question,3500)}
+  const history=(body.history||[]).slice(-8).map(x=>`${x.role}: ${textOf(x.content,1000)}`).join("\n");
+  return `使用者問題：${textOf(body.question,2800)}
 
 JEI 市場/持股資料：
-${textOf(body.context,18000)}
+${textOf(body.context,14500)}
 
 最近對話：
 ${history||"無"}
@@ -155,92 +122,61 @@ ${history||"無"}
 請根據上述資料做判斷。若問題需要未提供的即時新聞或行情，請直接說目前資料不足，不要自行編造。`;
 }
 
-async function askGateway(provider,body){
-  const token=await gatewayToken();
-  if(!token) return null;
-  const model=GATEWAY_MODELS[provider];
-  const payload={
-    model,
-    messages:[
-      {role:"system",content:SYSTEM},
-      {role:"user",content:userPrompt(body)}
-    ],
-    stream:false,
-    max_tokens:1000
-  };
-  if(provider==="openai") payload.reasoning={effort:process.env.OPENAI_REASONING||"low"};
-  const j=await fetchJson("https://ai-gateway.vercel.sh/v1/chat/completions",{
-    method:"POST",
-    headers:{"Authorization":"Bearer "+token,"Content-Type":"application/json"},
-    body:JSON.stringify(payload)
-  },52000);
-  const out=extractChat(j);
-  return out||"無有效回覆";
-}
-
-async function askOpenAI(body){
-  const key=process.env.OPENAI_API_KEY;
-  if(!key) return askGateway("openai",body);
-  const j=await fetchJson("https://api.openai.com/v1/responses",{
-    method:"POST",
-    headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json"},
-    body:JSON.stringify({
-      model:DIRECT_MODELS.openai,
-      reasoning:{effort:process.env.OPENAI_REASONING||"low"},
-      max_output_tokens:1000,
-      input:[
-        {role:"system",content:[{type:"input_text",text:SYSTEM}]},
-        {role:"user",content:[{type:"input_text",text:userPrompt(body)}]}
-      ]
-    })
-  },52000);
-  return extractOpenAI(j)||"無有效回覆";
-}
-
 async function askGemini(body){
-  const key=process.env.GEMINI_API_KEY;
-  if(!key) return askGateway("gemini",body);
-  const j=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(DIRECT_MODELS.gemini)}:generateContent`,{
+  const key=requestKey(body,"gemini");
+  if(!key) return null;
+  const model=PROVIDERS.gemini_free.model;
+  const j=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{
     method:"POST",
     headers:{"x-goog-api-key":key,"Content-Type":"application/json"},
     body:JSON.stringify({
       system_instruction:{parts:[{text:SYSTEM}]},
       contents:[{role:"user",parts:[{text:userPrompt(body)}]}],
-      generationConfig:{temperature:0.3,maxOutputTokens:1000}
+      generationConfig:{temperature:0.25,maxOutputTokens:900}
     })
-  },52000);
+  });
   return extractGemini(j)||"無有效回覆";
 }
-
-async function askAnthropic(body){
-  const key=process.env.ANTHROPIC_API_KEY;
-  if(!key) return askGateway("anthropic",body);
-  const j=await fetchJson("https://api.anthropic.com/v1/messages",{
-    method:"POST",
-    headers:{"x-api-key":key,"anthropic-version":"2023-06-01","Content-Type":"application/json"},
-    body:JSON.stringify({
-      model:DIRECT_MODELS.anthropic,max_tokens:1000,temperature:0.3,system:SYSTEM,
-      messages:[{role:"user",content:userPrompt(body)}]
-    })
-  },52000);
-  return extractAnthropic(j)||"無有效回覆";
-}
-
-async function askXai(body){
-  const key=process.env.XAI_API_KEY;
-  if(!key) return askGateway("xai",body);
-  const j=await fetchJson("https://api.x.ai/v1/chat/completions",{
+async function askGroq(body,provider){
+  const key=requestKey(body,"groq");
+  if(!key) return null;
+  const model=PROVIDERS[provider].model;
+  const j=await fetchJson("https://api.groq.com/openai/v1/chat/completions",{
     method:"POST",
     headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json"},
     body:JSON.stringify({
-      model:DIRECT_MODELS.xai,temperature:0.3,max_tokens:1000,
+      model,temperature:0.25,max_tokens:900,
       messages:[{role:"system",content:SYSTEM},{role:"user",content:userPrompt(body)}]
     })
-  },52000);
+  });
+  return extractChat(j)||"無有效回覆";
+}
+async function askOpenRouter(body){
+  const key=requestKey(body,"openrouter");
+  if(!key) return null;
+  const j=await fetchJson("https://openrouter.ai/api/v1/chat/completions",{
+    method:"POST",
+    headers:{
+      "Authorization":"Bearer "+key,
+      "Content-Type":"application/json",
+      "HTTP-Referer":"https://jei-stock-radar.vercel.app",
+      "X-Title":"JEI Stock Radar"
+    },
+    body:JSON.stringify({
+      model:PROVIDERS.openrouter_free.model,
+      temperature:0.25,max_tokens:900,
+      messages:[{role:"system",content:SYSTEM},{role:"user",content:userPrompt(body)}]
+    })
+  });
   return extractChat(j)||"無有效回覆";
 }
 
-const CALLERS={openai:askOpenAI,gemini:askGemini,anthropic:askAnthropic,xai:askXai};
+const CALLERS = {
+  gemini_free: body=>askGemini(body),
+  groq_oss: body=>askGroq(body,"groq_oss"),
+  groq_qwen: body=>askGroq(body,"groq_qwen"),
+  openrouter_free: body=>askOpenRouter(body)
+};
 
 async function synthesize(body,answers){
   if(answers.length===1) return answers[0].text;
@@ -253,44 +189,44 @@ async function synthesize(body,answers){
 不可用多數決取代判斷，也不要新增未提供的市場事實。
 
 ${compact}`};
-  const order=["openai","gemini","anthropic","xai"];
+  const order=["gemini_free","groq_oss","groq_qwen","openrouter_free"];
   for(const provider of order){
-    if(!(await providerStatus(provider)).available) continue;
+    const st=providerStatus(provider,body);
+    if(!st.available) continue;
     try{
       const out=await CALLERS[provider](synthBody);
       if(out) return out;
     }catch(e){}
   }
-  return "各 AI 已完成回覆；綜合判讀模型暫時不可用，請以各家共同風險與失效條件為優先。";
+  return "各免費 AI 已完成回覆；綜合模型暫時受免費額度限制，請優先參考各家共同風險與失效條件。";
 }
 
-module.exports = async function handler(req,res){
+module.exports=async function handler(req,res){
   if(req.method==="OPTIONS"){
     res.statusCode=204;
     res.setHeader("Access-Control-Allow-Origin","*");
     res.setHeader("Access-Control-Allow-Headers","Content-Type, X-JEI-Token");
-    res.end();
-    return;
+    res.end(); return;
   }
 
   if(req.method==="GET"){
     const providers={};
-    for(const p of Object.keys(LABELS)) providers[p]={label:LABELS[p],...(await providerStatus(p))};
+    for(const p of Object.keys(PROVIDERS)) providers[p]=providerStatus(p,{});
     return json(res,200,{
       ok:true,
-      service:"JEI Multi-AI Gateway",
-      gateway:!!(await gatewayToken()),
+      service:"JEI Free Multi-AI",
+      free_only:true,
+      paid_gateway:false,
       tokenRequired:!!process.env.JEI_CLIENT_TOKEN,
       providers
     });
   }
-
   if(req.method!=="POST") return json(res,405,{error:"Method not allowed"});
 
   const expected=process.env.JEI_CLIENT_TOKEN||"";
   const got=String(req.headers["x-jei-token"]||"");
-  if(!expected) return json(res,503,{error:"JEI AI gateway 尚未設定存取碼，為避免公開消耗 AI 額度已停止雲端問答"});
-  if(got!==expected) return json(res,401,{error:"JEI 存取碼不正確"});
+  if(!expected) return json(res,503,{error:"JEI 中繼層尚未設定私人連線碼"});
+  if(got!==expected) return json(res,401,{error:"JEI 私人連線碼不正確"});
 
   let body=req.body;
   if(typeof body==="string"){
@@ -299,33 +235,32 @@ module.exports = async function handler(req,res){
   body=body||{};
   if(!String(body.question||"").trim()) return json(res,400,{error:"question required"});
 
-  const requested=Array.isArray(body.providers)&&body.providers.length?body.providers:["openai"];
+  const requested=Array.isArray(body.providers)&&body.providers.length?body.providers:Object.keys(PROVIDERS);
   const providers=[...new Set(requested.map(String))].filter(x=>CALLERS[x]).slice(0,4);
+
   const settled=await Promise.all(providers.map(async provider=>{
-    const status=await providerStatus(provider);
-    if(!status.available) return {provider,label:LABELS[provider],skipped:true,billing_required:!!status.billing_required,reason:status.billing_required?"Vercel AI Gateway 尚未啟用計費":"此 AI 尚未連線"};
+    const st=providerStatus(provider,body);
+    if(!st.available) return {provider,label:PROVIDERS[provider].label,skipped:true,reason:"尚未設定免費 API Key",key_group:PROVIDERS[provider].key};
     try{
       const text=await CALLERS[provider](body);
-      if(text===null) return {provider,label:LABELS[provider],skipped:true,reason:"此 AI 尚未連線"};
-      return {provider,label:LABELS[provider],text,via:status.via,model:status.model};
+      if(!text) return {provider,label:PROVIDERS[provider].label,skipped:true,reason:"尚未設定免費 API Key"};
+      return {provider,label:PROVIDERS[provider].label,text,via:st.via,model:st.model};
     }catch(e){
-      return {provider,label:LABELS[provider],error:String(e?.message||e).slice(0,700),via:status.via,model:status.model};
+      return {provider,label:PROVIDERS[provider].label,error:friendlyError(e),via:st.via,model:st.model};
     }
   }));
 
   const answers=settled.filter(x=>x.text);
   const skipped=settled.filter(x=>x.skipped);
   const failed=settled.filter(x=>x.error);
-  const billingRequired=settled.some(x=>x.billing_required)||failed.some(x=>/valid credit card|credit card on file|payment method|payment source|billing/i.test(String(x.error||"")));
-  let consensus="";
-  if(answers.length) consensus=await synthesize(body,answers);
-  else if(billingRequired) consensus="Vercel AI Gateway 已連線，但帳戶尚未有可用的付款方式／AI Gateway 額度，因此模型目前無法回覆。請先到 Vercel Team Settings → Billing 新增有效付款方式，再回 JEI 按「測試 AI」。";
-  else consensus="目前選取的 AI 都沒有成功回覆。請查看模型連線狀態或稍後再試。";
+  const consensus=answers.length
+    ? await synthesize(body,answers)
+    : "目前沒有免費 AI 成功回覆。請確認至少設定一組免費 API Key；若 Key 正確，可能是今日免費額度或速率限制已到。";
 
   return json(res,200,{
     ok:answers.length>0,
+    free_only:true,
     answers,skipped,failed,consensus,
-    billing_required:billingRequired,
     as_of:new Date().toISOString()
   });
 };
