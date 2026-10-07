@@ -474,6 +474,22 @@ def main():
                 rows=[x for x in rows if not (x.get("market")=="TWSE" and x.get("code") in fresh_codes)]+fresh_twse
                 errors.append(f"TWSE OpenAPI落後，已用當日MI_INDEX補入 {len(fresh_twse)} 檔")
         except Exception as e:errors.append("TWSE當日補資料:"+str(e))
+    # TPEx OpenAPI can be CDN-cached on cloud runners. If its date lags today,
+    # force a cache-busted refetch before treating the whole feed as stale.
+    tpex_source_dates={re.sub(r"[^0-9]","",str(x.get("date",""))) for x in rows if x.get("market")=="TPEX" and x.get("date")}
+    if now.weekday()<5 and today_roc not in tpex_source_dates and today_ymd not in tpex_source_dates:
+        try:
+            sep="&" if "?" in TPEX_STOCK else "?"
+            fresh_tpex_raw=fetch_json(TPEX_STOCK+sep+"_="+str(int(time.time())))
+            fresh_tpex=[norm_tpex(x) for x in fresh_tpex_raw if isinstance(x,dict)]
+            fresh_tpex=[x for x in fresh_tpex if x.get("code") and x.get("close")]
+            fresh_dates={re.sub(r"[^0-9]","",str(x.get("date",""))) for x in fresh_tpex if x.get("date")}
+            if fresh_tpex and (today_roc in fresh_dates or today_ymd in fresh_dates):
+                fresh_codes={x["code"] for x in fresh_tpex}
+                rows=[x for x in rows if not (x.get("market")=="TPEX" and x.get("code") in fresh_codes)]+fresh_tpex
+                errors.append(f"TPEx OpenAPI快取落後，已強制重抓 {len(fresh_tpex)} 檔")
+        except Exception as e:errors.append("TPEx當日補資料:"+str(e))
+
     live_count=0;live_errors=[];taiex_live=None
     # Taiwan regular trading is 09:00-13:30. Keep a small post-close refresh window so the
     # final MIS quote can replace stale daily OpenAPI data before it rolls to today's date.
@@ -727,17 +743,29 @@ def main():
     if attack:priority.append({"title":attack[0]["code"]+" "+attack[0]["name"],"note":attack[0]["reason"],"action":"主攻#1"})
     if next_list:priority.append({"title":next_list[0]["code"]+" "+next_list[0]["name"],"note":next_list[0]["reason"],"action":"下一棒#1"})
 
-    raw_date=next((x["date"] for x in rows if x["date"]),"")
-    # Never present a stale daily date as if it were current intraday data.
-    # When MIS successfully enriched a meaningful universe, label the feed with today's
-    # Taiwan date while retaining the official daily source date separately.
-    source_data_date=raw_date
-    live_coverage=live_count/max(1,len(stocks))
-    live_valid=live_count>=500 and live_coverage>=.35
+    # Determine freshness per market instead of taking the first row's date.
+    # The old "first row wins" logic could mark the whole feed stale even after TWSE
+    # had already been refreshed to today, because TPEx rows happened to appear first.
     today_iso=now.strftime("%Y-%m-%d")
     today_roc=f"{now.year-1911:03d}{now.month:02d}{now.day:02d}"
-    source_compact=re.sub(r"[^0-9]","",str(source_data_date or ""))
-    source_is_today=source_compact in (today_roc,re.sub(r"[^0-9]","",today_iso))
+    today_iso_compact=re.sub(r"[^0-9]","",today_iso)
+    def market_dates(market):
+        return {re.sub(r"[^0-9]","",str(x.get("date",""))) for x in rows if x.get("market")==market and x.get("date")}
+    final_twse_dates=market_dates("TWSE")
+    final_tpex_dates=market_dates("TPEX")
+    twse_today=(today_roc in final_twse_dates or today_iso_compact in final_twse_dates)
+    tpex_today=(today_roc in final_tpex_dates or today_iso_compact in final_tpex_dates)
+    source_is_today=twse_today and tpex_today
+    if source_is_today:
+        source_data_date=today_roc
+        raw_date=today_iso
+    else:
+        twse_latest=max(final_twse_dates) if final_twse_dates else "未知"
+        tpex_latest=max(final_tpex_dates) if final_tpex_dates else "未知"
+        source_data_date=f"TWSE:{twse_latest} / TPEx:{tpex_latest}"
+        raw_date=source_data_date
+    live_coverage=live_count/max(1,len(stocks))
+    live_valid=live_count>=500 and live_coverage>=.35
     stale_source=not source_is_today
     if live_valid:
         raw_date=today_iso
