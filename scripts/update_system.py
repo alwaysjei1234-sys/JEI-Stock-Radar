@@ -583,6 +583,19 @@ def main():
         if inst_withdrawal and adv_ratio<.48:risk+=8
     risk=int(round(clamp(risk,0,100)))
 
+    # JEI composite-risk guard:
+    # The scheduled local-market model is only a partial model. It must not downgrade
+    # a newer/manual composite alert that includes foreign futures, margin leverage,
+    # high-beta behavior and US/SOX external risk unless those inputs are also present.
+    # This prevents a partial refresh from overwriting an orange/red composite warning.
+    previous_risk = (old.get("risk") or {}) if isinstance(old, dict) else {}
+    previous_score = int(previous_risk.get("score") or 0)
+    previous_level = str(previous_risk.get("level") or "").lower()
+    composite_fields = ("foreign_cash_billion","foreign_futures_net","margin_balance","external_risk")
+    previous_is_composite = previous_level in ("orange","red") and any(k in previous_risk for k in composite_fields)
+    if previous_is_composite and risk < previous_score:
+        risk = previous_score
+
     if risk>=80:level,label,cash="red","高風險防守","70%↑"
     elif risk>=65:level,label,cash="orange",("內部轉弱警戒" if divergence else "風險升高"),"50%–70%"
     elif risk>=45:level,label,cash="yellow",("權值撐盤警戒" if divergence else "震盪警戒"),"30%–50%"
