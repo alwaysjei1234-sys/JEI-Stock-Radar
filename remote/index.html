@@ -85,13 +85,13 @@
   <section id="rotate" class="section"><h2>🔄 我的持股換股建議</h2><div class="panel"><div class="sub">只用來回答「手上哪檔較弱、可換成哪檔較強」，不再當成另一套選股榜。</div><div id="rotateList" style="margin-top:8px"></div></div></section>
   <section id="flow" class="section"><h2>🌊 資金流向</h2><div id="flowList" class="panel"></div></section><section id="sector" class="section"><h2>🌡 族群熱度與資金主線</h2><div id="sectorList" class="panel"></div></section>
   <section id="backtest" class="section"><h2>📊 JEI 命中率與回測</h2><div id="backtestBox" class="panel"><div class="empty">等待歷史資料累積</div></div></section>
-  <section id="chat" class="section"><h2>💬 JEI AI 對話中心</h2><div class="panel chatWrap"><div class="sub">JEI 快速模式直接讀你的即時/收盤資料；雲端模式可由 ChatGPT、Gemini、Claude、Grok 獨立分析，再由 JEI 彙整。</div><div class="aiModes"><button id="modeLocal" class="aiMode active" onclick="setAiMode('local')">JEI 快速</button><button id="modeSingle" class="aiMode" onclick="setAiMode('single')">單一 AI</button><button id="modePanel" class="aiMode" onclick="setAiMode('panel')">🧠 多 AI 會診</button></div><div id="aiProviders" class="aiProviders"><button class="aiProvider on" data-provider="openai" onclick="toggleProvider(this)"><span class="pDot"></span>ChatGPT</button><button class="aiProvider on" data-provider="gemini" onclick="toggleProvider(this)"><span class="pDot"></span>Gemini</button><button class="aiProvider on" data-provider="anthropic" onclick="toggleProvider(this)"><span class="pDot"></span>Claude</button><button class="aiProvider on" data-provider="xai" onclick="toggleProvider(this)"><span class="pDot"></span>Grok</button></div><div id="aiCloudHint" class="sub">JEI 快速模式不使用雲端 AI 額度。</div><div id="aiStatusBar" class="aiStatusBar"><span class="chip">AI 雲端檢查中</span></div><div class="quickAsk"><button onclick="askQuick('現在大盤風險？')">大盤風險</button><button onclick="askQuick('明日妖股前三名')">明日妖股</button><button onclick="askQuick('未來妖股前三名')">未來妖股</button><button onclick="askQuick('網路推薦前三名')">網路推薦</button><button onclick="askQuick('我的持股哪檔風險最高？')">持股風險</button><button onclick="askQuick('幫我把目前持股分成續抱、警戒、優先減碼')">持股分級</button></div><div class="chatTools"><button onclick="testAiCloud(false)">測試 AI</button><button onclick="clearChat()">清除對話</button></div><div id="chatLog" class="chatLog"></div><div class="chatInput"><input id="chatBox" placeholder="直接問：漢磊明天怎麼看？永擎該停利嗎？" onkeydown="if(event.key==='Enter')sendChat()"><button id="chatSendBtn" onclick="sendChat()">送出</button></div></div></section>
-  <section id="settings" class="section"><h2>⚙ 更新系統與連線</h2><div class="panel"><div class="panelTitle">系統狀態</div><div id="sysStatus" class="small mut">檢查中...</div><div class="statusline"><span class="chip" id="appVer">APP --</span><span class="chip" id="uiVer">UI --</span><span class="chip">遠端UI：已啟用</span></div><div class="actions" style="grid-template-columns:1fr 1fr;margin-top:10px"><button class="btn primary" onclick="refreshRemoteUI()">更新介面</button><button class="btn" onclick="checkUpdate()">檢查APP版本</button></div></div><div class="panel"><div class="panelTitle">🧠 多 AI 雲端</div><div class="aiSetup"><input id="aiBackendUrl" placeholder="AI 雲端網址"><input id="aiBackendToken" type="password" placeholder="JEI 私人存取碼（只存這支手機）"><div class="actions" style="grid-template-columns:1fr 1fr;margin:0"><button class="btn primary" onclick="saveAiCloud()">儲存設定</button><button class="btn" onclick="testAiCloud(false)">測試 AI 連線</button></div><div id="aiCloudStatus" class="sub">檢查中。供應商 API Key 不會放在 APP；JEI 優先使用安全的 Vercel AI Gateway。若顯示「尚未啟用計費」，只要到 Vercel Team Settings → Billing 新增付款方式即可。</div><div class="sub">多 AI 會診會同時呼叫多個模型並再做一次綜合判讀，額度消耗會比單一 AI 高。</div></div></div><div class="panel"><div class="panelTitle">資料連結</div><div class="small mut">行情：台灣證交所 MIS 公開行情接口<br>JEI 排名 / 風險：GitHub 遠端 feed（交易時段每15分鐘排程更新）<br>持股：本機私有儲存<br>介面：每次啟動自動抓最新版本，離線時使用內建版。</div></div></section>
+  <section id="chat" class="section"><h2>💬 JEI AI 對話中心</h2><div class="panel chatWrap"><div class="sub">多 AI 會診已改為「零付費優先」：Gemini 免費層、Groq 免費層與 OpenRouter 免費模型。免費額度用完只會略過，不會轉成付費。</div><div class="aiModes"><button id="modeLocal" class="aiMode active" onclick="setAiMode('local')">JEI 快速</button><button id="modeSingle" class="aiMode" onclick="setAiMode('single')">單一免費 AI</button><button id="modePanel" class="aiMode" onclick="setAiMode('panel')">🧠 免費多 AI 會診</button></div><div id="aiProviders" class="aiProviders"><button class="aiProvider on" data-provider="gemini_free" onclick="toggleProvider(this)"><span class="pDot"></span>Gemini Free</button><button class="aiProvider on" data-provider="groq_oss" onclick="toggleProvider(this)"><span class="pDot"></span>GPT-OSS 120B</button><button class="aiProvider on" data-provider="groq_qwen" onclick="toggleProvider(this)"><span class="pDot"></span>Qwen 3.8</button><button class="aiProvider on" data-provider="openrouter_free" onclick="toggleProvider(this)"><span class="pDot"></span>OpenRouter Free</button></div><div id="aiCloudHint" class="sub">JEI 快速模式不使用任何外部 AI 額度。</div><div id="aiStatusBar" class="aiStatusBar"><span class="chip">免費 AI 檢查中</span></div><div class="quickAsk"><button onclick="askQuick('現在大盤風險？')">大盤風險</button><button onclick="askQuick('明日妖股前三名')">明日妖股</button><button onclick="askQuick('未來妖股前三名')">未來妖股</button><button onclick="askQuick('網路推薦前三名')">網路推薦</button><button onclick="askQuick('我的持股哪檔風險最高？')">持股風險</button><button onclick="askQuick('幫我把目前持股分成續抱、警戒、優先減碼')">持股分級</button></div><div class="chatTools"><button onclick="testAiCloud(false)">測試 AI</button><button onclick="clearChat()">清除對話</button></div><div id="chatLog" class="chatLog"></div><div class="chatInput"><input id="chatBox" placeholder="直接問：漢磊明天怎麼看？永擎該停利嗎？" onkeydown="if(event.key==='Enter')sendChat()"><button id="chatSendBtn" onclick="sendChat()">送出</button></div></div></section>
+  <section id="settings" class="section"><h2>⚙ 更新系統與連線</h2><div class="panel"><div class="panelTitle">系統狀態</div><div id="sysStatus" class="small mut">檢查中...</div><div class="statusline"><span class="chip" id="appVer">APP --</span><span class="chip" id="uiVer">UI --</span><span class="chip">遠端UI：已啟用</span></div><div class="actions" style="grid-template-columns:1fr 1fr;margin-top:10px"><button class="btn primary" onclick="refreshRemoteUI()">更新介面</button><button class="btn" onclick="checkUpdate()">檢查APP版本</button></div></div><div class="panel"><div class="panelTitle">🆓 免費多 AI 設定</div><div class="aiSetup"><input id="geminiFreeKey" type="password" placeholder="Gemini 免費 API Key"><input id="groqFreeKey" type="password" placeholder="Groq 免費 API Key（同時供 GPT-OSS / Qwen 使用）"><input id="openrouterFreeKey" type="password" placeholder="OpenRouter 免費 API Key"><div class="actions" style="grid-template-columns:1fr 1fr;margin:0"><button class="btn primary" onclick="saveFreeAiKeys()">儲存免費 AI</button><button class="btn" onclick="testAiCloud(false)">檢查免費 AI</button></div><div id="aiCloudStatus" class="sub">免費 Key 只存這支手機/瀏覽器，送出問題時才透過你的 JEI 中繼層使用；不啟用 Vercel AI Gateway，也不會自動轉付費。</div><div class="sub">可只設定其中一組；設定越多，多 AI 會診的獨立意見越多。免費額度用完會自動略過該模型。</div><div class="quickAsk"><button onclick="openExternal('https://aistudio.google.com/apikey')">申請 Gemini Key</button><button onclick="openExternal('https://console.groq.com/keys')">申請 Groq Key</button><button onclick="openExternal('https://openrouter.ai/settings/keys')">申請 OpenRouter Key</button></div><div style="display:none"><input id="aiBackendUrl"><input id="aiBackendToken"><button onclick="saveAiCloud()"></button></div></div></div><div class="panel"><div class="panelTitle">資料連結</div><div class="small mut">行情：台灣證交所 MIS 公開行情接口<br>JEI 排名 / 風險：GitHub 遠端 feed（交易時段每15分鐘排程更新）<br>持股：本機私有儲存<br>介面：每次啟動自動抓最新版本，離線時使用內建版。</div></div></section>
 </div>
 <div id="toast" class="toast"></div>
 <div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="chat"><b>💬</b>聊天</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
 <script>
-const UI_VERSION='3.8.0-ai';
+const UI_VERSION='3.9.0-free-ai';
 const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],tomorrow_monster:[],future_monster:[],rotate:[],flow:[],sectors:[],stock_sectors:{},universe:[]}, updateManifest=null, refreshTimer=null, systemTimer=null, lastMarketAt='',liveScanReceived=0;
 const $=id=>document.getElementById(id); const money=n=>Number.isFinite(n)?Math.round(n).toLocaleString('zh-TW'):'--'; const nativeOk=()=>typeof JEINative!=='undefined';
@@ -224,7 +224,7 @@ function applyLiveRanks(){
 }
 
 let aiMode='local',aiPending=false,aiProviderStatus={},aiHealthLoaded=false;
-const AI_LABELS={openai:'ChatGPT',gemini:'Gemini',anthropic:'Claude',xai:'Grok'};
+const AI_LABELS={gemini_free:'Gemini Free',groq_oss:'GPT-OSS 120B',groq_qwen:'Qwen 3.8',openrouter_free:'OpenRouter Free'};
 function settingGet(k){try{return nativeOk()?JEINative.loadSetting(k):(localStorage.getItem('s_'+k)||'')}catch(e){return ''}}
 function settingSet(k,v){try{if(nativeOk())JEINative.saveSetting(k,v);else localStorage.setItem('s_'+k,v)}catch(e){}}
 function aiSelectedProviders(){return [...document.querySelectorAll('.aiProvider.on')].map(x=>x.dataset.provider)}
@@ -239,11 +239,9 @@ function setAiMode(mode){
  aiMode=mode;settingSet('ai_mode',mode);
  ['local','single','panel'].forEach(m=>{const id=m==='local'?'modeLocal':m==='single'?'modeSingle':'modePanel';$(id).classList.toggle('active',m===mode)});
  $('aiProviders').style.display=mode==='local'?'none':'flex';
- const token=settingGet('ai_backend_token');
- if(mode==='local')$('aiCloudHint').textContent='JEI 快速模式直接讀目前 JEI 行情、法人、族群與持股，不使用雲端 AI 額度。';
- else if(!token)$('aiCloudHint').textContent='雲端 AI 已建好；第一次使用請到「更新」輸入 JEI 私人存取碼。';
- else if(mode==='single')$('aiCloudHint').textContent='單一 AI：使用你選取的第一個可用模型分析，較省額度。';
- else $('aiCloudHint').textContent='多 AI 會診：多家模型平行分析，再由 JEI 整合共識、分歧與風險。';
+ if(mode==='local')$('aiCloudHint').textContent='JEI 快速模式直接讀目前 JEI 行情、法人、族群與持股，不使用外部 AI 額度。';
+ else if(mode==='single')$('aiCloudHint').textContent='單一免費 AI：只呼叫一個已設定的免費模型。';
+ else $('aiCloudHint').textContent='免費多 AI 會診：Gemini / GPT-OSS / Qwen / OpenRouter Free 平行分析；額度用完只略過，不轉付費。';
 }
 function toggleProvider(btn){
  if(aiMode==='local'||btn.classList.contains('unavailable'))return;
@@ -251,29 +249,34 @@ function toggleProvider(btn){
  if(!document.querySelector('.aiProvider.on'))btn.classList.add('on');
  persistAiProviders()
 }
+function freeKeyForProvider(p){
+ if(p==='gemini_free')return settingGet('free_gemini_key');
+ if(p==='groq_oss'||p==='groq_qwen')return settingGet('free_groq_key');
+ if(p==='openrouter_free')return settingGet('free_openrouter_key');
+ return ''
+}
+function freeAiKeys(){return{gemini:settingGet('free_gemini_key'),groq:settingGet('free_groq_key'),openrouter:settingGet('free_openrouter_key')}}
 function renderAiHealth(j){
  aiHealthLoaded=true;aiProviderStatus=j.providers||{};
- const chips=[];
+ const chips=[];let available=0;
  document.querySelectorAll('.aiProvider').forEach(b=>{
-   const p=b.dataset.provider,s=aiProviderStatus[p]||{},ok=!!s.available;
+   const p=b.dataset.provider,s=aiProviderStatus[p]||{},ok=!!s.server_key||!!freeKeyForProvider(p);
+   aiProviderStatus[p]={...s,available:ok};
+   if(ok)available++;
    b.classList.toggle('ready',ok);b.classList.toggle('unavailable',!ok);
-   b.title=ok?((s.via==='vercel-ai-gateway'?'Vercel AI Gateway':'供應商直連')+'｜'+(s.model||'')):'目前不可用';
-   chips.push('<span class="chip '+(ok?'ok':'warn')+'">'+AI_LABELS[p]+' '+(ok?'✓':'--')+'</span>')
+   b.title=ok?((s.via||'免費 API')+'｜'+(s.model||'')):'請到「更新」設定免費 API Key';
+   chips.push('<span class="chip '+(ok?'ok':'warn')+'">'+AI_LABELS[p]+' '+(ok?'✓':'需Key')+'</span>')
  });
- const gate=j.gateway?'Gateway ✓':'Gateway --';
- chips.unshift('<span class="chip '+(j.gateway?'ok':'warn')+'">'+gate+'</span>');
+ chips.unshift('<span class="chip ok">付費 Gateway 關閉 ✓</span>');
  $('aiStatusBar').innerHTML=chips.join('');
- const available=Object.values(aiProviderStatus).filter(x=>x&&x.available).length;
- const billingRequired=Object.values(aiProviderStatus).some(x=>x&&x.billing_required);
- const tokenState=j.tokenRequired?(settingGet('ai_backend_token')?'私人存取碼 ✓':'需要私人存取碼'):'免存取碼';
- if($('aiCloudStatus'))$('aiCloudStatus').textContent=billingRequired?'Vercel AI Gateway 已連線，但尚未啟用計費｜請到 Vercel Team Settings → Billing 新增付款方式':(available?('JEI AI 雲端已連線｜可用 '+available+' 家 AI｜'+tokenState):'JEI AI 雲端可連線，但目前沒有可用模型');
+ if($('aiCloudStatus'))$('aiCloudStatus').textContent=available?('免費多 AI 已就緒｜可用 '+available+' 個模型｜不會自動產生費用'):'尚未設定免費 API Key｜可先申請 Gemini、Groq 或 OpenRouter 任一組';
 }
 function testAiCloud(silent=true){
  const u=settingGet('ai_backend_url')||'https://jei-stock-radar.vercel.app/api/consult';
  fetch(u+(u.includes('?')?'&':'?')+'health='+Date.now(),{method:'GET',cache:'no-store'})
   .then(r=>r.json().then(j=>({ok:r.ok,j})))
-  .then(({ok,j})=>{if(!ok)throw new Error(j?.error||'HTTP error');renderAiHealth(j);if(!silent)toast('AI 雲端連線正常')})
-  .catch(e=>{aiHealthLoaded=false;$('aiStatusBar').innerHTML='<span class="chip warn">AI 雲端離線</span>';if($('aiCloudStatus'))$('aiCloudStatus').textContent='AI 雲端連線失敗｜'+e.message;if(!silent)toast('AI 連線失敗')})
+  .then(({ok,j})=>{if(!ok)throw new Error(j?.error||'HTTP error');renderAiHealth(j);if(!silent){const n=Object.values(aiProviderStatus).filter(x=>x&&x.available).length;toast(n?'免費 AI 已設定 '+n+' 個模型':'請先申請至少一組免費 Key')}})
+  .catch(e=>{aiHealthLoaded=false;$('aiStatusBar').innerHTML='<span class="chip warn">JEI 中繼離線</span>';if($('aiCloudStatus'))$('aiCloudStatus').textContent='JEI 中繼連線失敗｜'+e.message;if(!silent)toast('JEI 連線失敗')})
 }
 function importAiSetupFromHash(){
  try{
@@ -294,10 +297,20 @@ function loadAiCloud(){
  if(!u){u=def;settingSet('ai_backend_url',u)}
  if($('aiBackendUrl'))$('aiBackendUrl').value=u;
  if($('aiBackendToken'))$('aiBackendToken').value=t;
+ if($('geminiFreeKey'))$('geminiFreeKey').value=settingGet('free_gemini_key');
+ if($('groqFreeKey'))$('groqFreeKey').value=settingGet('free_groq_key');
+ if($('openrouterFreeKey'))$('openrouterFreeKey').value=settingGet('free_openrouter_key');
  restoreAiProviders();
  setAiMode(['local','single','panel'].includes(m)?m:'local');
  testAiCloud(true)
 }
+function saveFreeAiKeys(){
+ settingSet('free_gemini_key',($('geminiFreeKey')?.value||'').trim());
+ settingSet('free_groq_key',($('groqFreeKey')?.value||'').trim());
+ settingSet('free_openrouter_key',($('openrouterFreeKey')?.value||'').trim());
+ testAiCloud(true);toast('免費 AI 設定已儲存')
+}
+function openExternal(u){if(nativeOk()&&typeof JEINative.openUrl==='function')JEINative.openUrl(u);else window.open(u,'_blank','noopener')}
 function saveAiCloud(){
  const u=$('aiBackendUrl').value.trim()||'https://jei-stock-radar.vercel.app/api/consult',t=$('aiBackendToken').value.trim();
  if(!/^https:\/\//i.test(u)){toast('AI 雲端網址必須是 HTTPS');return}
@@ -325,11 +338,9 @@ function renderAiConsultResult(raw){
  if(answers.length)answers.forEach(x=>chatSay('bot',`【${x.label||x.provider}｜${x.model||'AI'}】\n${x.text||'無回覆'}`));
  if(j.consensus)chatSay('bot',`【JEI 多 AI 綜合結論】\n${j.consensus}`);
  const failed=j.failed||[];
- const billingRequired=!!j.billing_required||failed.some(x=>/valid credit card|credit card on file|payment method|payment source|billing/i.test(String(x.error||'')))||(j.skipped||[]).some(x=>x&&x.billing_required);
- if(billingRequired)chatSay('bot','AI Gateway 已經接通，但 Vercel 帳戶目前沒有可用的付款方式／AI 額度。請先到 Vercel → Team Settings → Billing 新增有效付款方式，完成後回來按「測試 AI」，不用重裝 APP。');
- else if(failed.length)chatSay('bot','部分 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,90)+'）').join('、'));
- const skipped=(j.skipped||[]).filter(x=>!x.billing_required).map(x=>x.label||x.provider);
- if(skipped.length)chatSay('bot','目前未啟用：'+skipped.join('、'));
+ if(failed.length)chatSay('bot','部分免費 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,100)+'）').join('、'));
+ const skipped=(j.skipped||[]).map(x=>x.label||x.provider);
+ if(skipped.length)chatSay('bot','尚未設定免費 Key：'+skipped.join('、'));
 }
 function sendAiConsult(q){
  if(aiPending){toast('上一個 AI 會診還在處理');return}
@@ -338,15 +349,11 @@ function sendAiConsult(q){
  if(!token){chatSay('bot','雲端 AI 已準備好，但需要 JEI 私人存取碼。請到「更新 → 多 AI 雲端」輸入一次即可。');return}
  let providers=aiSelectedProviders().filter(p=>!aiHealthLoaded||aiProviderStatus[p]?.available!==false);
  if(aiMode==='single')providers=providers.slice(0,1);
- if(!providers.length){
-  if(Object.values(aiProviderStatus).some(x=>x&&x.billing_required))chatSay('bot','AI Gateway 已連線，但 Vercel 尚未啟用計費。請到 Vercel → Team Settings → Billing 新增有效付款方式，之後回來按「測試 AI」。');
-  else chatSay('bot','目前沒有選到可用的 AI。請按「測試 AI」確認連線狀態。');
-  return
- }
+ if(!providers.length){chatSay('bot','目前沒有可用的免費 AI。請到「更新 → 免費多 AI 設定」申請並貼上 Gemini、Groq 或 OpenRouter 任一組免費 Key。');return}
  const hist=chatHistory.slice(0,-1).slice(-10).map(x=>({role:x.who==='me'?'user':'assistant',content:x.text}));
- const payload={question:q,mode:aiMode,providers,context:aiContext(q),history:hist};
+ const payload={question:q,mode:aiMode,providers,free_keys:freeAiKeys(),context:aiContext(q),history:hist};
  aiPending=true;if($('chatSendBtn'))$('chatSendBtn').disabled=true;
- chatSay('bot',aiMode==='panel'?'🧠 多 AI 會診中：'+providers.map(p=>AI_LABELS[p]).join('＋')+'…':'正在詢問 '+AI_LABELS[providers[0]]+'…');
+ chatSay('bot',aiMode==='panel'?'🧠 免費多 AI 會診中：'+providers.map(p=>AI_LABELS[p]).join('＋')+'…':'正在詢問 '+AI_LABELS[providers[0]]+'…');
  if(nativeOk()&&typeof JEINative.consultAI==='function')JEINative.consultAI(url,JSON.stringify(payload),token);
  else fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-JEI-Token':token},body:JSON.stringify(payload)})
   .then(r=>r.text().then(raw=>{if(!r.ok){let m=raw;try{m=JSON.parse(raw).error||raw}catch(e){}throw new Error(m)}return raw}))
