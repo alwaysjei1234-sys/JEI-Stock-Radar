@@ -29,9 +29,9 @@ import java.util.Locale;
 
 public class RiskWorker extends Worker {
     private static final String SYSTEM_JSON =
-            "https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/system.json";
+            "https://jei-stock-radar.vercel.app/remote/system.json";
     private static final String UPDATE_JSON =
-            "https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/update.json";
+            "https://jei-stock-radar.vercel.app/remote/update.json";
 
     public RiskWorker(Context context, WorkerParameters params) {
         super(context, params);
@@ -56,7 +56,7 @@ public class RiskWorker extends Worker {
         HttpURLConnection c = (HttpURLConnection)new URL(url + sep + "bg=" + System.currentTimeMillis()).openConnection();
         c.setConnectTimeout(9000);
         c.setReadTimeout(12000);
-        c.setRequestProperty("User-Agent", "JEIStockRadar-Background/3.2");
+        c.setRequestProperty("User-Agent", "JEIStockRadar-Background/3.7.1");
         int status = c.getResponseCode();
         InputStream in = status >= 200 && status < 300 ? c.getInputStream() : c.getErrorStream();
         if (in == null) throw new Exception("HTTP " + status);
