@@ -86,7 +86,7 @@
   <section id="flow" class="section"><h2>🌊 資金流向</h2><div id="flowList" class="panel"></div></section><section id="sector" class="section"><h2>🌡 族群熱度與資金主線</h2><div id="sectorList" class="panel"></div></section>
   <section id="backtest" class="section"><h2>📊 JEI 命中率與回測</h2><div id="backtestBox" class="panel"><div class="empty">等待歷史資料累積</div></div></section>
   <section id="chat" class="section"><h2>💬 JEI AI 對話中心</h2><div class="panel chatWrap"><div class="sub">JEI 快速模式直接讀你的即時/收盤資料；雲端模式可由 ChatGPT、Gemini、Claude、Grok 獨立分析，再由 JEI 彙整。</div><div class="aiModes"><button id="modeLocal" class="aiMode active" onclick="setAiMode('local')">JEI 快速</button><button id="modeSingle" class="aiMode" onclick="setAiMode('single')">單一 AI</button><button id="modePanel" class="aiMode" onclick="setAiMode('panel')">🧠 多 AI 會診</button></div><div id="aiProviders" class="aiProviders"><button class="aiProvider on" data-provider="openai" onclick="toggleProvider(this)"><span class="pDot"></span>ChatGPT</button><button class="aiProvider on" data-provider="gemini" onclick="toggleProvider(this)"><span class="pDot"></span>Gemini</button><button class="aiProvider on" data-provider="anthropic" onclick="toggleProvider(this)"><span class="pDot"></span>Claude</button><button class="aiProvider on" data-provider="xai" onclick="toggleProvider(this)"><span class="pDot"></span>Grok</button></div><div id="aiCloudHint" class="sub">JEI 快速模式不使用雲端 AI 額度。</div><div id="aiStatusBar" class="aiStatusBar"><span class="chip">AI 雲端檢查中</span></div><div class="quickAsk"><button onclick="askQuick('現在大盤風險？')">大盤風險</button><button onclick="askQuick('明日妖股前三名')">明日妖股</button><button onclick="askQuick('未來妖股前三名')">未來妖股</button><button onclick="askQuick('網路推薦前三名')">網路推薦</button><button onclick="askQuick('我的持股哪檔風險最高？')">持股風險</button><button onclick="askQuick('幫我把目前持股分成續抱、警戒、優先減碼')">持股分級</button></div><div class="chatTools"><button onclick="testAiCloud(false)">測試 AI</button><button onclick="clearChat()">清除對話</button></div><div id="chatLog" class="chatLog"></div><div class="chatInput"><input id="chatBox" placeholder="直接問：漢磊明天怎麼看？永擎該停利嗎？" onkeydown="if(event.key==='Enter')sendChat()"><button id="chatSendBtn" onclick="sendChat()">送出</button></div></div></section>
-  <section id="settings" class="section"><h2>⚙ 更新系統與連線</h2><div class="panel"><div class="panelTitle">系統狀態</div><div id="sysStatus" class="small mut">檢查中...</div><div class="statusline"><span class="chip" id="appVer">APP --</span><span class="chip" id="uiVer">UI --</span><span class="chip">遠端UI：已啟用</span></div><div class="actions" style="grid-template-columns:1fr 1fr;margin-top:10px"><button class="btn primary" onclick="refreshRemoteUI()">更新介面</button><button class="btn" onclick="checkUpdate()">檢查APP版本</button></div></div><div class="panel"><div class="panelTitle">🧠 多 AI 雲端</div><div class="aiSetup"><input id="aiBackendUrl" placeholder="AI 雲端網址"><input id="aiBackendToken" type="password" placeholder="JEI 私人存取碼（只存這支手機）"><div class="actions" style="grid-template-columns:1fr 1fr;margin:0"><button class="btn primary" onclick="saveAiCloud()">儲存設定</button><button class="btn" onclick="testAiCloud(false)">測試 AI 連線</button></div><div id="aiCloudStatus" class="sub">檢查中。供應商 API Key 不會放在 APP；JEI 優先使用安全的 Vercel AI Gateway。</div><div class="sub">多 AI 會診會同時呼叫多個模型並再做一次綜合判讀，額度消耗會比單一 AI 高。</div></div></div><div class="panel"><div class="panelTitle">資料連結</div><div class="small mut">行情：台灣證交所 MIS 公開行情接口<br>JEI 排名 / 風險：GitHub 遠端 feed（交易時段每15分鐘排程更新）<br>持股：本機私有儲存<br>介面：每次啟動自動抓最新版本，離線時使用內建版。</div></div></section>
+  <section id="settings" class="section"><h2>⚙ 更新系統與連線</h2><div class="panel"><div class="panelTitle">系統狀態</div><div id="sysStatus" class="small mut">檢查中...</div><div class="statusline"><span class="chip" id="appVer">APP --</span><span class="chip" id="uiVer">UI --</span><span class="chip">遠端UI：已啟用</span></div><div class="actions" style="grid-template-columns:1fr 1fr;margin-top:10px"><button class="btn primary" onclick="refreshRemoteUI()">更新介面</button><button class="btn" onclick="checkUpdate()">檢查APP版本</button></div></div><div class="panel"><div class="panelTitle">🧠 多 AI 雲端</div><div class="aiSetup"><input id="aiBackendUrl" placeholder="AI 雲端網址"><input id="aiBackendToken" type="password" placeholder="JEI 私人存取碼（只存這支手機）"><div class="actions" style="grid-template-columns:1fr 1fr;margin:0"><button class="btn primary" onclick="saveAiCloud()">儲存設定</button><button class="btn" onclick="testAiCloud(false)">測試 AI 連線</button></div><div id="aiCloudStatus" class="sub">檢查中。供應商 API Key 不會放在 APP；JEI 優先使用安全的 Vercel AI Gateway。若顯示「尚未啟用計費」，只要到 Vercel Team Settings → Billing 新增付款方式即可。</div><div class="sub">多 AI 會診會同時呼叫多個模型並再做一次綜合判讀，額度消耗會比單一 AI 高。</div></div></div><div class="panel"><div class="panelTitle">資料連結</div><div class="small mut">行情：台灣證交所 MIS 公開行情接口<br>JEI 排名 / 風險：GitHub 遠端 feed（交易時段每15分鐘排程更新）<br>持股：本機私有儲存<br>介面：每次啟動自動抓最新版本，離線時使用內建版。</div></div></section>
 </div>
 <div id="toast" class="toast"></div>
 <div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="chat"><b>💬</b>聊天</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
@@ -264,8 +264,9 @@ function renderAiHealth(j){
  chips.unshift('<span class="chip '+(j.gateway?'ok':'warn')+'">'+gate+'</span>');
  $('aiStatusBar').innerHTML=chips.join('');
  const available=Object.values(aiProviderStatus).filter(x=>x&&x.available).length;
+ const billingRequired=Object.values(aiProviderStatus).some(x=>x&&x.billing_required);
  const tokenState=j.tokenRequired?(settingGet('ai_backend_token')?'私人存取碼 ✓':'需要私人存取碼'):'免存取碼';
- if($('aiCloudStatus'))$('aiCloudStatus').textContent=available?('JEI AI 雲端已連線｜可用 '+available+' 家 AI｜'+tokenState):'JEI AI 雲端可連線，但目前沒有可用模型';
+ if($('aiCloudStatus'))$('aiCloudStatus').textContent=billingRequired?'Vercel AI Gateway 已連線，但尚未啟用計費｜請到 Vercel Team Settings → Billing 新增付款方式':(available?('JEI AI 雲端已連線｜可用 '+available+' 家 AI｜'+tokenState):'JEI AI 雲端可連線，但目前沒有可用模型');
 }
 function testAiCloud(silent=true){
  const u=settingGet('ai_backend_url')||'https://jei-stock-radar.vercel.app/api/consult';
@@ -311,8 +312,10 @@ function renderAiConsultResult(raw){
  if(answers.length)answers.forEach(x=>chatSay('bot',`【${x.label||x.provider}｜${x.model||'AI'}】\n${x.text||'無回覆'}`));
  if(j.consensus)chatSay('bot',`【JEI 多 AI 綜合結論】\n${j.consensus}`);
  const failed=j.failed||[];
- if(failed.length)chatSay('bot','部分 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,90)+'）').join('、'));
- const skipped=(j.skipped||[]).map(x=>x.label||x.provider);
+ const billingRequired=!!j.billing_required||failed.some(x=>/valid credit card|credit card on file|payment method|payment source|billing/i.test(String(x.error||'')))||(j.skipped||[]).some(x=>x&&x.billing_required);
+ if(billingRequired)chatSay('bot','AI Gateway 已經接通，但 Vercel 帳戶目前沒有可用的付款方式／AI 額度。請先到 Vercel → Team Settings → Billing 新增有效付款方式，完成後回來按「測試 AI」，不用重裝 APP。');
+ else if(failed.length)chatSay('bot','部分 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,90)+'）').join('、'));
+ const skipped=(j.skipped||[]).filter(x=>!x.billing_required).map(x=>x.label||x.provider);
  if(skipped.length)chatSay('bot','目前未啟用：'+skipped.join('、'));
 }
 function sendAiConsult(q){
@@ -322,7 +325,11 @@ function sendAiConsult(q){
  if(!token){chatSay('bot','雲端 AI 已準備好，但需要 JEI 私人存取碼。請到「更新 → 多 AI 雲端」輸入一次即可。');return}
  let providers=aiSelectedProviders().filter(p=>!aiHealthLoaded||aiProviderStatus[p]?.available!==false);
  if(aiMode==='single')providers=providers.slice(0,1);
- if(!providers.length){chatSay('bot','目前沒有選到可用的 AI。請按「測試 AI」確認連線狀態。');return}
+ if(!providers.length){
+  if(Object.values(aiProviderStatus).some(x=>x&&x.billing_required))chatSay('bot','AI Gateway 已連線，但 Vercel 尚未啟用計費。請到 Vercel → Team Settings → Billing 新增有效付款方式，之後回來按「測試 AI」。');
+  else chatSay('bot','目前沒有選到可用的 AI。請按「測試 AI」確認連線狀態。');
+  return
+ }
  const hist=chatHistory.slice(0,-1).slice(-10).map(x=>({role:x.who==='me'?'user':'assistant',content:x.text}));
  const payload={question:q,mode:aiMode,providers,context:aiContext(q),history:hist};
  aiPending=true;if($('chatSendBtn'))$('chatSendBtn').disabled=true;
