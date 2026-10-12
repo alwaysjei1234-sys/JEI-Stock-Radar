@@ -15,6 +15,7 @@ TWSE_DAILY="https://www.twse.com.tw/exchangeReport/MI_INDEX"
 TPEX_INST="https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading"
 OUT=Path("remote/system.json")
 HISTORY=Path("remote/history.json")
+DAILY_PRICES=Path("remote/daily_prices.json")
 TZ=ZoneInfo("Asia/Taipei")
 
 SECTOR_BASKETS={
@@ -832,6 +833,23 @@ def main():
     for code, position in (out.get("holdings") or {}).items():
         if isinstance(position,dict) and forbidden.intersection(position):
             raise RuntimeError("Privacy check failed: sensitive portfolio field")
+    # Preserve official same-day post-close quotes across subsequent runs. No stale
+    # or intraday quote is treated as an official daily close.
+    if source_is_today and not market_open and now.hour >= 13:
+        try:
+            archive=json.loads(DAILY_PRICES.read_text(encoding="utf-8")) if DAILY_PRICES.exists() else {}
+            days=archive.get("days",{}) if isinstance(archive,dict) else {}
+            if not isinstance(days,dict):days={}
+            quotes={x["code"]:round(float(x["close"]),4) for x in stocks
+                    if re.fullmatch(r"[1-9][0-9]{3}",x["code"])
+                    and x.get("close") and float(x["close"])>0}
+            if len(quotes)>=500:
+                days[today_iso]=quotes
+                days=dict(sorted(days.items())[-65:])
+                DAILY_PRICES.write_text(json.dumps({"schema":1,"kind":"official_daily_close",
+                    "days":days},ensure_ascii=False,separators=(",",":")),encoding="utf-8")
+        except Exception as e:
+            errors.append("每日收盤存檔:"+str(e))
     OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps({"updated_at":out["updated_at"],"risk":risk,"stocks":len(stocks),"live_count":live_count,"sectors":len(sectors),"errors":errors},ensure_ascii=False))
 
