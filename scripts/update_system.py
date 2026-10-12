@@ -17,22 +17,6 @@ OUT=Path("remote/system.json")
 HISTORY=Path("remote/history.json")
 TZ=ZoneInfo("Asia/Taipei")
 
-PORTFOLIO = [
-    {"code":"1711","name":"永光","cost":52.674,"shares":1000},
-    {"code":"2478","name":"大毅","cost":127.681,"shares":1000},
-    {"code":"2609","name":"陽明","cost":63.69,"shares":1000},
-    {"code":"2748","name":"雲品","cost":99.341,"shares":1000},
-    {"code":"3162","name":"精確","cost":85.621,"shares":1000},
-    {"code":"3289","name":"宜特","cost":141.701,"shares":1000},
-    {"code":"3707","name":"漢磊","cost":73.104,"shares":1000},
-    {"code":"5347","name":"世界","cost":123.175,"shares":1000},
-    {"code":"5425","name":"台半","cost":102.145,"shares":1000},
-    {"code":"6150","name":"撼訊","cost":77.51,"shares":2000},
-    {"code":"7711","name":"永擎","cost":257.8665,"shares":2000},
-    {"code":"8070","name":"長華*","cost":58.383,"shares":1000},
-    {"code":"00937B","name":"群益ESG投等債20+","cost":15.6283,"shares":44000},
-]
-
 SECTOR_BASKETS={
     "AI伺服器/散熱":["2345","2382","3231","6669","3017","3324","3653","2059"],
     "PCB/載板":["3037","3189","8046","2368","2383","6274","6213","1815","8039"],
@@ -588,7 +572,7 @@ def main():
     # a newer/manual composite alert that includes foreign futures, margin leverage,
     # high-beta behavior and US/SOX external risk unless those inputs are also present.
     # This prevents a partial refresh from overwriting an orange/red composite warning.
-    previous_risk = (old.get("risk") or {}) if isinstance(old, dict) else {}
+    previous_risk = (json.loads(OUT.read_text(encoding="utf-8")).get("risk") or {}) if OUT.exists() else {}
     previous_score = int(previous_risk.get("score") or 0)
     previous_level = str(previous_risk.get("level") or "").lower()
     composite_fields = ("foreign_cash_billion","foreign_futures_net","margin_balance","external_risk")
@@ -821,7 +805,7 @@ def main():
 
     out={
         "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,"source_data_date":source_data_date,
-        "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 持股成本與移動風控；避免只看單日漲幅。",
+        "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
         "risk":{"level":level,"label":label,"score":risk,"cash":cash,"reasons":reasons,
                 "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down,
                 "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000),
