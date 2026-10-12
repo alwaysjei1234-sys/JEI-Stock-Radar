@@ -11,3 +11,6 @@ const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].ma
 check('Trading hours use Asia/Taipei timezone',()=>assert.match(html,/function tradingWindow\(\).*timeZone:'Asia\/Taipei'/));
 check('Screener updates freshness label',()=>assert.match(html,/function renderAttackScreener\(\)\{updateFeedFreshness\(\)/));
 check('Private sections are hidden without removal',()=>assert.match(html,/querySelectorAll\('#hold,#rotate'\)\.forEach\(el=>\{el\.style\.display='none'/));
+
+check('WebView external links open outside app',()=>assert.ok(activity.includes('shouldOverrideUrlLoading')&&activity.includes('Intent.ACTION_VIEW')));
+check('Mixed content blocked',()=>assert.ok(activity.includes('MIXED_CONTENT_NEVER_ALLOW')));
