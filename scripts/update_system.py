@@ -825,6 +825,13 @@ def main():
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
+    # Public feed must never expose personal portfolio positions or valuations.
+    if out.get("holdings"):
+        raise RuntimeError("Privacy check failed: public holdings must be empty")
+    forbidden={"cost","shares","pnl","pnl_pct","market_value","avg_cost"}
+    for code, position in (out.get("holdings") or {}).items():
+        if isinstance(position,dict) and forbidden.intersection(position):
+            raise RuntimeError("Privacy check failed: sensitive portfolio field")
     OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps({"updated_at":out["updated_at"],"risk":risk,"stocks":len(stocks),"live_count":live_count,"sectors":len(sectors),"errors":errors},ensure_ascii=False))
 
