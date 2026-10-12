@@ -65,3 +65,10 @@ check('Paper PnL charges both-side fees and sell-side tax',()=>{
 
 check('Paper scanner is read-only and halts on insufficient market coverage',()=>{assert.ok(paper.includes("fetch('./system.json?ts='"));assert.ok(paper.includes("halted=feed.market?.mode==='盤中資料不足'"));assert.ok(paper.includes("if(halted||!valid)return"));assert.doesNotMatch(paper,/JEINative\.|\/api\/orders|placeOrder\(/)});
 check('Paper open positions are isolated from realized trades',()=>{assert.ok(paper.includes("jei-paper-open-positions-v1"));assert.ok(paper.includes("function loadPositions()"));assert.ok(paper.includes("function renderPositions()"));assert.ok(paper.includes("const list=load(),p=list.map(calc)"))});
+
+
+const cash=fs.readFileSync('remote/cash.html','utf8');
+check('Cash simulation JavaScript parses',()=>{const script=cash.match(/<script>([\\s\\S]*?)<\\/script>/);assert.ok(script);new vm.Script(script[1])});
+check('Cash and day-trading local records remain separate',()=>{assert.ok(cash.includes('jei-cash-trades-v1'));assert.ok(cash.includes('jei-cash-open-positions-v1'));assert.ok(cash.includes('jei-cash-auto-watch-v1'));assert.ok(!paper.includes('jei-cash-trades-v1'))});
+check('Cash simulation uses standard 0.3 percent stock sell tax',()=>{assert.ok(cash.includes('現股交易稅率（賣出）'));assert.ok(cash.includes('value="0.003"'))});
+check('Cash simulation enforces capital and per-position limit',()=>{assert.ok(cash.includes('function cashMetrics()'));assert.ok(cash.includes('cost>m.cfg.limit||cost>m.available'));assert.ok(cash.includes('jei-cash-account-config-v1'))});
