@@ -62,3 +62,6 @@ check('Paper PnL charges both-side fees and sell-side tax',()=>{
  const p=ctx.testCalc(t);assert.equal(p.gross,10000);assert.ok(Math.abs(p.fees-299.25)<1e-8);assert.equal(p.tax,165);assert.ok(Math.abs(p.net-9535.75)<1e-8);
  const short=ctx.testCalc({...t,side:'short'});assert.equal(short.gross,-10000);assert.equal(short.tax,150);
 });
+
+check('Paper scanner is read-only and halts on insufficient market coverage',()=>{assert.ok(paper.includes("fetch('./system.json?ts='"));assert.ok(paper.includes("halted=feed.market?.mode==='盤中資料不足'"));assert.ok(paper.includes("if(halted||!valid)return"));assert.doesNotMatch(paper,/JEINative\.|\/api\/orders|placeOrder\(/)});
+check('Paper open positions are isolated from realized trades',()=>{assert.ok(paper.includes("jei-paper-open-positions-v1"));assert.ok(paper.includes("function loadPositions()"));assert.ok(paper.includes("function renderPositions()"));assert.ok(paper.includes("const list=load(),p=list.map(calc)"))});
