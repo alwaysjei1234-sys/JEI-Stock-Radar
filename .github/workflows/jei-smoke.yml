@@ -21,3 +21,9 @@ jobs:
         run: node tests/smoke.cjs
       - name: Python generator syntax
         run: python -m py_compile scripts/update_system.py
+      - name: Record test result
+        if: always()
+        run: |
+          echo '## JEI smoke test status' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Frontend regression checks and Python generator syntax are executed above.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'See step logs for the exact pass count and any failed assertions.' >> "$GITHUB_STEP_SUMMARY"
