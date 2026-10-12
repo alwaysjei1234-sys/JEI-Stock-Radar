@@ -94,10 +94,18 @@
 const UI_VERSION='3.9.0-free-ai';
 const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],tomorrow_monster:[],future_monster:[],rotate:[],flow:[],sectors:[],stock_sectors:{},universe:[]}, updateManifest=null, refreshTimer=null, systemTimer=null, lastMarketAt='',liveScanReceived=0;
+// Privacy boundary: public web browsers never load or render a personal portfolio.
+const JEI_PRIVATE_APP = typeof JEINative !== 'undefined';
+if(!JEI_PRIVATE_APP){
+ document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('[data-go="hold"],[data-go="rotate"],[onclick*="go(\'hold\')"]').forEach(el=>el.style.display='none');
+  document.querySelectorAll('#hold,#rotate').forEach(el=>el.remove());
+ });
+}
 const $=id=>document.getElementById(id); const money=n=>Number.isFinite(n)?Math.round(n).toLocaleString('zh-TW'):'--'; const nativeOk=()=>typeof JEINative!=='undefined';
 function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
-function loadHoldings(){try{const s=nativeOk()?JEINative.loadHoldings():localStorage.getItem('holdings');holdings=s?JSON.parse(s):DEFAULT_HOLDINGS.map(x=>({code:x[0],name:x[1],cost:x[2],shares:x[3]}));if(!s)persistHoldings()}catch(e){holdings=DEFAULT_HOLDINGS.map(x=>({code:x[0],name:x[1],cost:x[2],shares:x[3]}))}renderHoldings()}
-function persistHoldings(){const s=JSON.stringify(holdings);if(nativeOk())JEINative.saveHoldings(s);else localStorage.setItem('holdings',s)}
+function loadHoldings(){if(!JEI_PRIVATE_APP){holdings=[];return;}try{const s=nativeOk()?JEINative.loadHoldings():localStorage.getItem('holdings');holdings=s?JSON.parse(s):DEFAULT_HOLDINGS.map(x=>({code:x[0],name:x[1],cost:x[2],shares:x[3]}));if(!s)persistHoldings()}catch(e){holdings=DEFAULT_HOLDINGS.map(x=>({code:x[0],name:x[1],cost:x[2],shares:x[3]}))}renderHoldings()}
+function persistHoldings(){if(!JEI_PRIVATE_APP)return;const s=JSON.stringify(holdings);if(nativeOk())JEINative.saveHoldings(s);else localStorage.setItem('holdings',s)}
 function go(id){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('[data-go]').forEach(x=>x.classList.toggle('active',x.dataset.go===id));window.scrollTo({top:0,behavior:'smooth'})}
 document.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>go(x.dataset.go));
 function riskEmoji(l){return l==='red'?'🔴':l==='orange'?'🟠':l==='yellow'?'🟡':'🟢'}
