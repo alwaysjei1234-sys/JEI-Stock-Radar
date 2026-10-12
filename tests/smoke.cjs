@@ -37,6 +37,8 @@ check('Taiwan trading hours are timezone-independent at runtime',()=>{
  assert.equal(ctx.testTrading(),true,'Tuesday 09:00 Taipei must be trading');
  ctx.Date=class extends Date{constructor(){super('2026-10-13T07:00:00Z')}};
  assert.equal(ctx.testTrading(),false,'Tuesday 15:00 Taipei must be closed');
+ ctx.Date=class extends Date{constructor(){super('2026-10-17T01:00:00Z')}};
+ assert.equal(ctx.testTrading(),false,'Saturday 09:00 Taipei must be closed');
 });
 
 check('Stock screener filters score, sector and stale market at runtime',()=>{
