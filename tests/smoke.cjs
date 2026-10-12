@@ -1,4 +1,4 @@
-const fs=require('node:fs');const assert=require('node:assert/strict');const html=fs.readFileSync('remote/index.html','utf8');const py=fs.readFileSync('scripts/update_system.py','utf8');const manifest=fs.readFileSync('app/src/main/AndroidManifest.xml','utf8');const activity=fs.readFileSync('app/src/main/java/com/jei/stockradar/MainActivity.java','utf8');
+const fs=require('node:fs');const assert=require('node:assert/strict');const html=fs.readFileSync('remote/index.html','utf8');const paper=fs.readFileSync('remote/paper.html','utf8');const py=fs.readFileSync('scripts/update_system.py','utf8');const manifest=fs.readFileSync('app/src/main/AndroidManifest.xml','utf8');const activity=fs.readFileSync('app/src/main/java/com/jei/stockradar/MainActivity.java','utf8');
 let passed=0,failed=0;
 function check(label,fn){try{fn();passed++;console.log('PASS',label)}catch(e){failed++;console.error('FAIL',label,e.stack||e.message);process.exitCode=1}}
 check('Public page guards private routes',()=>{assert.match(html,/function go\(id\)\{if\(!JEI_PRIVATE_APP/);assert.match(html,/function loadHoldings\(\)\{if\(!JEI_PRIVATE_APP/)});
@@ -52,3 +52,13 @@ check('Stock screener filters score, sector and stale market at runtime',()=>{
 
 console.log(`JEI smoke summary: ${passed}/${passed+failed} passed (${Math.round(100*passed/(passed+failed))}%)`);
 if(passed+failed<18){console.error('FAIL expected at least 18 independent checks');process.exitCode=1;}
+
+check('Paper trading is linked and has no broker order submission',()=>{assert.ok(html.includes('href="./paper.html"'));assert.ok(paper.includes('jei-paper-trades-v1'));assert.doesNotMatch(paper,/JEINative\.|fetch\(|XMLHttpRequest|WebSocket/)});
+check('Paper ledger JavaScript syntax',()=>{for(const match of paper.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1])});
+check('Paper PnL charges both-side fees and sell-side tax',()=>{
+ const line=paper.split('\n').find(x=>x.startsWith('function calc('));assert.ok(line);
+ const ctx={};vm.runInNewContext(line+';globalThis.testCalc=calc;',ctx);
+ const t={side:'long',entry:100,exit:110,qty:1000,fee:0.001425,tax:0.0015};
+ const p=ctx.testCalc(t);assert.equal(p.gross,10000);assert.ok(Math.abs(p.fees-299.25)<1e-8);assert.equal(p.tax,165);assert.ok(Math.abs(p.net-9535.75)<1e-8);
+ const short=ctx.testCalc({...t,side:'short'});assert.equal(short.gross,-10000);assert.equal(short.tax,150);
+});
