@@ -20,3 +20,21 @@ check('Sector dropdown is wired into stock screening',()=>assert.ok(html.include
 check('Ranking cards escape untrusted market fields',()=>assert.ok(html.includes('function escapeMarketText(value)')&&html.includes('safe(x.name)')&&html.includes('safe(x.reason||x.status)')));
 
 check('Feed date uses timezone-safe calendar parts',()=>assert.ok(html.includes('function updateFeedFreshness()')&&html.includes('formatToParts(now)')&&html.includes('dp.year')));
+
+check('Market text escaping blocks HTML injection at runtime',()=>{
+ const line=html.split('\n').find(x=>x.startsWith('function escapeMarketText('));
+ assert.ok(line,'escape helper missing');
+ const ctx={};vm.runInNewContext(line+';globalThis.testEscape=escapeMarketText;',ctx);
+ assert.equal(ctx.testEscape('<img src=x onerror="alert(1)">'),'&lt;img src=x onerror=&quot;alert(1)&quot;&gt;');
+ assert.equal(ctx.testEscape('A&B'), 'A&amp;B');
+ assert.equal(ctx.testEscape(null),'');
+});
+check('Taiwan trading hours are timezone-independent at runtime',()=>{
+ const line=html.split('\n').find(x=>x.startsWith('function tradingWindow('));
+ assert.ok(line,'trading window helper missing');
+ const ctx={Date:class extends Date{constructor(){super('2026-10-13T01:00:00Z')}} ,Intl};
+ vm.runInNewContext(line+';globalThis.testTrading=tradingWindow;',ctx);
+ assert.equal(ctx.testTrading(),true,'Tuesday 09:00 Taipei must be trading');
+ ctx.Date=class extends Date{constructor(){super('2026-10-13T07:00:00Z')}};
+ assert.equal(ctx.testTrading(),false,'Tuesday 15:00 Taipei must be closed');
+});
