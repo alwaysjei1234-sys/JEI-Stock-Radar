@@ -20,6 +20,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebResourceRequest;
 import android.widget.Toast;
 
 import androidx.work.Constraints;
@@ -75,6 +76,8 @@ public class MainActivity extends Activity {
         s.setAllowFileAccessFromFileURLs(false);
         s.setAllowUniversalAccessFromFileURLs(false);
         s.setJavaScriptCanOpenWindowsAutomatically(false);
+        s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) s.setSafeBrowsingEnabled(true);
         s.setAllowContentAccess(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
         s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.7.1");
@@ -82,6 +85,21 @@ public class MainActivity extends Activity {
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
             private boolean bootstrapped = false;
+            @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                if (!request.isForMainFrame()) return false;
+                Uri uri = request.getUrl();
+                String scheme = uri.getScheme();
+                String host = uri.getHost();
+                boolean localAsset = "file".equalsIgnoreCase(scheme) && "android_asset".equals(uri.getPathSegments().isEmpty() ? "" : uri.getPathSegments().get(0));
+                boolean trustedRemote = "https".equalsIgnoreCase(scheme) && "jei-stock-radar.vercel.app".equalsIgnoreCase(host);
+                if (localAsset || trustedRemote) return false;
+                try {
+                    if ("https".equalsIgnoreCase(scheme) || "http".equalsIgnoreCase(scheme)) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    }
+                } catch (Exception ignored) { }
+                return true;
+            }
             @Override public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 if (!bootstrapped && url != null && url.startsWith("file:///android_asset/")) {
