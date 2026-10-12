@@ -75,3 +75,7 @@ check('Cash simulation enforces capital and per-position limit',()=>{assert.ok(c
 
 check('Cash paper close records only confirmed realized trades',()=>{assert.ok(cash.includes("id=\"closeTrade\""));assert.ok(cash.includes("function renderClose()"));assert.ok(cash.includes("reason:"));assert.ok(cash.includes("savePositions(positions)"));assert.ok(cash.includes("oldHistory=localStorage.getItem(KEY)"))});
 check('Cash paper performance uses realized net of fees and tax',()=>{assert.ok(cash.includes("100*m.closed/m.cfg.capital"));assert.ok(cash.includes("closed.filter(t=>calc(t).net>0)"));assert.ok(cash.includes("tax:0.003"))});
+
+
+check('Cash momentum strategy archive sync is independent of current radar',()=>{assert.ok(cash.includes("daily_prices.json?ts="));assert.ok(cash.includes("async function syncDailyPrices()"));assert.ok(cash.includes("if(day<=t.day||day<=t.lastDay)continue"));assert.ok(cash.includes("if(t.strategies)strategyAdvance(t,price,day)"))});
+check('Four cash exit strategies are present',()=>{assert.ok(cash.includes("id:'fixed5'"));assert.ok(cash.includes("id:'fixed7'"));assert.ok(cash.includes("id:'fixed10'"));assert.ok(cash.includes("id:'trailing'"))});
