@@ -18,3 +18,5 @@ check('Mixed content blocked',()=>assert.ok(activity.includes('MIXED_CONTENT_NEV
 check('Sector dropdown is wired into stock screening',()=>assert.ok(html.includes('id="screenSector"')&&html.includes('function syncScreenSectors()')&&html.includes("'screenSector','screenOrder'")));
 
 check('Ranking cards escape untrusted market fields',()=>assert.ok(html.includes('function escapeMarketText(value)')&&html.includes('safe(x.name)')&&html.includes('safe(x.reason||x.status)')));
+
+check('Feed date uses timezone-safe calendar parts',()=>assert.ok(html.includes('function updateFeedFreshness()')&&html.includes('formatToParts(now)')&&html.includes('dp.year')));
