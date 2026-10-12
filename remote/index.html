@@ -181,7 +181,7 @@ function liveCodes(){
  if(u.length>500)return u.map(x=>String(x.code||'')).filter(Boolean);
  const s=new Set(holdings.map(x=>x.code));['attack','next','monster','tomorrow_monster','future_monster','rotate'].forEach(k=>(system[k]||[]).forEach(x=>x&&x.code&&s.add(String(x.code))));return [...s]
 }
-function tradingWindow(){const d=new Date(),w=d.getDay(),mins=d.getHours()*60+d.getMinutes();return w>=1&&w<=5&&mins>=525&&mins<=850}
+function tradingWindow(){const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));const mins=Number(p.hour)*60+Number(p.minute);return ['Mon','Tue','Wed','Thu','Fri'].includes(p.weekday)&&mins>=525&&mins<=850}
 function seedMarketFromSystem(){const hs=system.holdings||{};Object.entries(hs).forEach(([code,x])=>{const p=+x.price,ch=+x.change_pct;if(!Number.isFinite(p)||p<=0)return;const prev=Number.isFinite(ch)&&ch>-99?p/(1+ch/100):p,old=market[code]||{};market[code]={...old,price:p,prev,name:x.name||old.name||code,time:x.quote_time||system.updated_at||''}});renderHoldings()}
 function showFeedStatus(){const m=system.market||{},c=Number.isFinite(+m.close_count)?+m.close_count:(Array.isArray(system.universe)?system.universe.length:0);if(!tradingWindow()){$('netDot').classList.remove('off');$('netText').textContent=m.stale?'資料待更新':`已收盤 ${c}檔`}}
 function refreshMarket(){if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}if(nativeOk()){liveScanReceived=0;JEINative.refreshMarketData(JSON.stringify(liveCodes()))}}
