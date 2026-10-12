@@ -38,3 +38,11 @@ check('Taiwan trading hours are timezone-independent at runtime',()=>{
  ctx.Date=class extends Date{constructor(){super('2026-10-13T07:00:00Z')}};
  assert.equal(ctx.testTrading(),false,'Tuesday 15:00 Taipei must be closed');
 });
+
+check('Stock screener filters score, sector and stale market at runtime',()=>{
+ const line=html.split('\n').find(x=>x.startsWith('function renderAttackScreener('));assert.ok(line);
+ const els={screenScore:{value:'75'},screenQuery:{value:''},screenSector:{value:'AI'},screenOrder:{value:'score'},screenCount:{textContent:''}};
+ let captured=[];const ctx={system:{attack:[{code:'1111',score:90,sector:'AI'},{code:'2222',score:60,sector:'AI'},{code:'3333',score:95,sector:'航運'}],market:{mode:'收盤'},data_date:'2026-10-13'},$:id=>els[id],renderRank:(_id,arr)=>{captured=arr},updateFeedFreshness:()=>{},syncScreenSectors:()=>{}};
+ vm.runInNewContext(line+';globalThis.testScreen=renderAttackScreener;',ctx);ctx.testScreen();assert.equal(captured.length,1);assert.equal(captured[0].code,'1111');
+ ctx.system.market.mode='盤中資料不足';ctx.testScreen();assert.equal(captured.length,0);
+});
