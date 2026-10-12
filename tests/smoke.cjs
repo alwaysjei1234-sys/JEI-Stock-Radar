@@ -1,5 +1,6 @@
 const fs=require('node:fs');const assert=require('node:assert/strict');const html=fs.readFileSync('remote/index.html','utf8');const py=fs.readFileSync('scripts/update_system.py','utf8');const manifest=fs.readFileSync('app/src/main/AndroidManifest.xml','utf8');const activity=fs.readFileSync('app/src/main/java/com/jei/stockradar/MainActivity.java','utf8');
-function check(label,fn){try{fn();console.log('PASS',label)}catch(e){console.error('FAIL',label,e.message);process.exitCode=1}}
+let passed=0,failed=0;
+function check(label,fn){try{fn();passed++;console.log('PASS',label)}catch(e){failed++;console.error('FAIL',label,e.stack||e.message);process.exitCode=1}}
 check('Public page guards private routes',()=>{assert.match(html,/function go\(id\)\{if\(!JEI_PRIVATE_APP/);assert.match(html,/function loadHoldings\(\)\{if\(!JEI_PRIVATE_APP/)});
 check('No public portfolio nodes removed (prevents JS null dereference)',()=>assert.doesNotMatch(html,/querySelectorAll\('#hold,#rotate'\)\.forEach\(el=>el\.remove\(\)\)/));
 check('Public feed strips private positions',()=>{assert.match(py,/if out\.get\("holdings"\):/);assert.match(html,/system\.holdings=JEI_PRIVATE_APP\?/)});
@@ -48,3 +49,6 @@ check('Stock screener filters score, sector and stale market at runtime',()=>{
  vm.runInNewContext(line+';globalThis.testScreen=renderAttackScreener;',ctx);ctx.testScreen();assert.equal(captured.length,1);assert.equal(captured[0].code,'1111');
  ctx.system.market.mode='盤中資料不足';ctx.testScreen();assert.equal(captured.length,0);
 });
+
+console.log(`JEI smoke summary: ${passed}/${passed+failed} passed (${Math.round(100*passed/(passed+failed))}%)`);
+if(passed+failed<18){console.error('FAIL expected at least 18 independent checks');process.exitCode=1;}
