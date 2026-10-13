@@ -114,7 +114,7 @@ check('Cash strategy net figures include both fees and sell tax',()=>{
  assert.equal(ctx.net(0,106),null);
 });
 check('Cash risk stale feed cannot qualify as fresh intraday',()=>{
- const line=cash.split('\n').find(l=>l.startsWith('function signalFeedMode('));
+ const line=cash.match(/function signalFeedMode\(feed\)\{[\s\S]*?\n\}/)?.[0];
  assert.ok(line);
  const ctx={twDay:()=> '2026-10-13'};
  vm.runInNewContext(line+';globalThis.mode=signalFeedMode;',ctx);
