@@ -35,7 +35,7 @@ assert(cash.includes("const KEY='jei-cash-trades-v1'"));
 assert(paper.includes("const KEY='jei-paper-trades-v1'"));
 console.log('PASS cash/day-trading isolation and native feed bridge');
 const java=read('app/src/main/java/com/jei/stockradar/MainActivity.java');
-for(const token of ['private void loadRemotePage(', 'private void fetchStaticJson(', 'private void jsStatic(', 'private boolean validStatic(', 'private String getRemoteStatic(', '"daily_prices.json"', '"/remote/cash.html"', '"/remote/paper.html"']) {
+for(const token of ['private void loadRemotePage(', 'private void fetchStaticJson(', 'private void jsStatic(', 'private boolean validStatic(', 'private String getRemoteStatic(', '"/remote/daily_prices.json"', '"/remote/cash.html"', '"/remote/paper.html"']) {
  assert(java.includes(token),'Android bridge missing '+token);
 }
 const feed=JSON.parse(read('remote/system.json')),days=JSON.parse(read('remote/daily_prices.json')),manifest=JSON.parse(read('remote/update.json'));
