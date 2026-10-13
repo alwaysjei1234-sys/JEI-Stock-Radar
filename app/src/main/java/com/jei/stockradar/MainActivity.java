@@ -52,6 +52,9 @@ public class MainActivity extends Activity {
     private static final String REMOTE_UI = "https://jei-stock-radar.vercel.app/remote/index.html";
     private static final String SYSTEM_JSON = "https://jei-stock-radar.vercel.app/remote/system.json";
     private static final String UPDATE_JSON = "https://jei-stock-radar.vercel.app/remote/update.json";
+    private static final String DAILY_JSON = "https://jei-stock-radar.vercel.app/remote/daily_prices.json";
+    private static final String CASH_UI = "https://jei-stock-radar.vercel.app/remote/cash.html";
+    private static final String PAPER_UI = "https://jei-stock-radar.vercel.app/remote/paper.html";
     private static final String PREFS = "jei_private";
 
     private WebView webView;
@@ -80,7 +83,7 @@ public class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) s.setSafeBrowsingEnabled(true);
         s.setAllowContentAccess(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.7.1");
+        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/" + BuildConfig.VERSION_NAME);
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
@@ -92,6 +95,12 @@ public class MainActivity extends Activity {
                 String host = uri.getHost();
                 boolean localAsset = "file".equalsIgnoreCase(scheme) && "android_asset".equals(uri.getPathSegments().isEmpty() ? "" : uri.getPathSegments().get(0));
                 boolean trustedRemote = "https".equalsIgnoreCase(scheme) && "jei-stock-radar.vercel.app".equalsIgnoreCase(host);
+                if (trustedRemote) {
+                    String path = uri.getPath();
+                    if ("/remote/cash.html".equals(path)) { loadRemotePage(CASH_UI, true); return true; }
+                    if ("/remote/paper.html".equals(path)) { loadRemotePage(PAPER_UI, true); return true; }
+                    if ("/remote/index.html".equals(path)) { refreshRemoteUI(true); return true; }
+                }
                 if (localAsset || trustedRemote) return false;
                 try {
                     if ("https".equalsIgnoreCase(scheme) || "http".equalsIgnoreCase(scheme)) {
@@ -234,28 +243,43 @@ public class MainActivity extends Activity {
         return sb.toString();
     }
 
-    // Vercel may require SSO; use the public repository for non-private static UI/feed only.
+    // The repository fallback carries only public UI, market data and version metadata.
+    private boolean validStatic(String sourceUrl, String content) {
+        if (content == null || content.length() < 10) return false;
+        try {
+            if (REMOTE_UI.equals(sourceUrl))
+                return content.contains("JEI_REMOTE_UI_V2") || content.contains("JEI_REMOTE_UI_V3");
+            if (CASH_UI.equals(sourceUrl))
+                return content.contains("<title>JEI 現股模擬交易</title>");
+            if (PAPER_UI.equals(sourceUrl))
+                return content.contains("<title>JEI 當沖模擬交易</title>");
+            JSONObject j = new JSONObject(content);
+            if (SYSTEM_JSON.equals(sourceUrl)) return j.has("market") && j.has("data_date");
+            if (UPDATE_JSON.equals(sourceUrl)) return j.has("versionCode") && j.has("url");
+            if (DAILY_JSON.equals(sourceUrl))
+                return j.optInt("schema", 0) == 1
+                        && "official_daily_close".equals(j.optString("kind", ""))
+                        && j.optJSONObject("days") != null;
+        } catch (Exception ignored) { }
+        return false;
+    }
+
     private String getRemoteStatic(String primaryUrl) throws Exception {
         if (!primaryUrl.equals(REMOTE_UI) && !primaryUrl.equals(SYSTEM_JSON)
-                && !primaryUrl.equals(UPDATE_JSON)) throw new IllegalArgumentException("not a static JEI resource");
+                && !primaryUrl.equals(UPDATE_JSON) && !primaryUrl.equals(DAILY_JSON)
+                && !primaryUrl.equals(CASH_UI) && !primaryUrl.equals(PAPER_UI))
+            throw new IllegalArgumentException("not a static JEI resource");
         String query = "?ts=" + System.currentTimeMillis();
         try {
             String result = httpGet(primaryUrl + query);
-            if (primaryUrl.equals(REMOTE_UI)) {
-                if (!result.contains("JEI_REMOTE_UI_V2") && !result.contains("JEI_REMOTE_UI_V3"))
-                    throw new Exception("remote UI returned a non-JEI page");
-            } else {
-                JSONObject data = new JSONObject(result);
-                if (primaryUrl.equals(SYSTEM_JSON) && !data.has("market"))
-                    throw new Exception("remote market feed is not JEI JSON");
-                if (primaryUrl.equals(UPDATE_JSON) && !data.has("versionCode"))
-                    throw new Exception("remote update feed is not JEI JSON");
-            }
+            if (!validStatic(primaryUrl, result)) throw new Exception("Vercel returned non-JEI content");
             return result;
         } catch (Exception primaryFailure) {
             String fileName = primaryUrl.substring(primaryUrl.lastIndexOf('/') + 1);
-            return httpGet("https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/"
+            String result = httpGet("https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/"
                     + fileName + query);
+            if (!validStatic(primaryUrl, result)) throw new Exception("GitHub fallback returned non-JEI content");
+            return result;
         }
     }
 
@@ -297,23 +321,48 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void refreshRemoteUI(boolean userTriggered) {
+    private void loadRemotePage(String pageUrl, boolean userTriggered) {
         io.execute(() -> {
             try {
-                String html = getRemoteStatic(REMOTE_UI);
-                if (!html.contains("JEI_REMOTE_UI_V2") && !html.contains("JEI_REMOTE_UI_V3")) throw new Exception("remote ui signature missing");
-                File f = new File(getFilesDir(), "jei_remote_index.html");
-                try (FileOutputStream o = new FileOutputStream(f)) {
-                    o.write(html.getBytes(StandardCharsets.UTF_8));
+                String html = getRemoteStatic(pageUrl);
+                if (REMOTE_UI.equals(pageUrl)) {
+                    File f = new File(getFilesDir(), "jei_remote_index.html");
+                    try (FileOutputStream o = new FileOutputStream(f)) {
+                        o.write(html.getBytes(StandardCharsets.UTF_8));
+                    }
                 }
                 runOnUiThread(() -> webView.loadDataWithBaseURL(
                         "https://jei-stock-radar.vercel.app/remote/",
                         html, "text/html", "UTF-8", null));
             } catch (Exception e) {
                 if (userTriggered) runOnUiThread(() ->
-                        Toast.makeText(this, "介面更新失敗，使用目前版本", Toast.LENGTH_SHORT).show());
+                        Toast.makeText(this, "頁面連線失敗，保留目前畫面", Toast.LENGTH_SHORT).show());
             }
         });
+    }
+
+    private void refreshRemoteUI(boolean userTriggered) {
+        loadRemotePage(REMOTE_UI, userTriggered);
+    }
+
+    private void fetchStaticJson(String kind) {
+        final String sourceUrl;
+        if ("system".equals(kind)) sourceUrl = SYSTEM_JSON;
+        else if ("daily".equals(kind)) sourceUrl = DAILY_JSON;
+        else return;
+        io.execute(() -> {
+            try {
+                jsStatic("onData", kind, getRemoteStatic(sourceUrl));
+            } catch (Exception e) {
+                jsStatic("onError", kind, e.getMessage() == null ? "連線失敗" : e.getMessage());
+            }
+        });
+    }
+
+    private void jsStatic(String callback, String kind, String payload) {
+        String script = "window.JEI_STATIC && window.JEI_STATIC." + callback
+                + "(" + JSONObject.quote(kind) + "," + JSONObject.quote(payload) + ");";
+        runOnUiThread(() -> webView.evaluateJavascript(script, null));
     }
 
     private void jsCall(String function, String payload) {
@@ -413,6 +462,7 @@ public class MainActivity extends Activity {
         @JavascriptInterface public boolean isOnline() { return MainActivity.this.isOnline(); }
         @JavascriptInterface public void refreshRemoteUI() { MainActivity.this.refreshRemoteUI(true); }
         @JavascriptInterface public void refreshSystem() { MainActivity.this.fetchSystem(); }
+        @JavascriptInterface public void fetchStaticJson(String kind) { MainActivity.this.fetchStaticJson(kind); }
         @JavascriptInterface public void checkForUpdates() { MainActivity.this.checkUpdate(); }
         @JavascriptInterface public void refreshMarketData(String codesJson) { MainActivity.this.fetchMarket(codesJson); }
         @JavascriptInterface public void consultAI(String url, String payload, String token) {
