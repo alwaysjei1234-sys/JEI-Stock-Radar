@@ -240,7 +240,18 @@ public class MainActivity extends Activity {
                 && !primaryUrl.equals(UPDATE_JSON)) throw new IllegalArgumentException("not a static JEI resource");
         String query = "?ts=" + System.currentTimeMillis();
         try {
-            return httpGet(primaryUrl + query);
+            String result = httpGet(primaryUrl + query);
+            if (primaryUrl.equals(REMOTE_UI)) {
+                if (!result.contains("JEI_REMOTE_UI_V2") && !result.contains("JEI_REMOTE_UI_V3"))
+                    throw new Exception("remote UI returned a non-JEI page");
+            } else {
+                JSONObject data = new JSONObject(result);
+                if (primaryUrl.equals(SYSTEM_JSON) && !data.has("market"))
+                    throw new Exception("remote market feed is not JEI JSON");
+                if (primaryUrl.equals(UPDATE_JSON) && !data.has("versionCode"))
+                    throw new Exception("remote update feed is not JEI JSON");
+            }
+            return result;
         } catch (Exception primaryFailure) {
             String fileName = primaryUrl.substring(primaryUrl.lastIndexOf('/') + 1);
             return httpGet("https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/"
