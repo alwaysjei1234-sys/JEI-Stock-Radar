@@ -207,7 +207,13 @@ def main():
     feed = json.loads(SYSTEM.read_text(encoding="utf-8"))
     archive = json.loads(DAILY.read_text(encoding="utf-8"))
     state = json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else initial_state()
-    updated = advance(feed, archive, state, day)
+    try:
+        updated = advance(feed, archive, state, day)
+    except ValueError as e:
+        # Holidays or a late official feed are an explicit SKIP, never a fake session.
+        print(json.dumps({"day": day, "updated": False, "skipped": True,
+                          "reason": str(e)}, ensure_ascii=False))
+        return
     if updated:
         OUT.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({
