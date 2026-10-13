@@ -84,7 +84,7 @@ function friendlyError(e){
   if(/401|403|api key|unauthorized|forbidden|invalid key/i.test(s)) return "免費 API Key 無效或尚未啟用";
   return s.slice(0,500);
 }
-async function fetchJson(url,opts,timeout=45000){
+async function fetchJson(url,opts,timeout=28000){
   const ctrl=new AbortController();
   const timer=setTimeout(()=>ctrl.abort(),timeout);
   try{
@@ -122,7 +122,7 @@ ${history||"無"}
 請根據上述資料做判斷。若問題需要未提供的即時新聞或行情，請直接說目前資料不足，不要自行編造。`;
 }
 
-async function askGemini(body){
+async function askGemini(body,timeout=28000){
   const key=requestKey(body,"gemini");
   if(!key) return null;
   const model=PROVIDERS.gemini_free.model;
@@ -134,10 +134,10 @@ async function askGemini(body){
       contents:[{role:"user",parts:[{text:userPrompt(body)}]}],
       generationConfig:{temperature:0.25,maxOutputTokens:900}
     })
-  });
+  },timeout);
   return extractGemini(j)||"無有效回覆";
 }
-async function askGroq(body,provider){
+async function askGroq(body,provider,timeout=28000){
   const key=requestKey(body,"groq");
   if(!key) return null;
   const model=PROVIDERS[provider].model;
@@ -148,10 +148,10 @@ async function askGroq(body,provider){
       model,temperature:0.25,max_tokens:900,
       messages:[{role:"system",content:SYSTEM},{role:"user",content:userPrompt(body)}]
     })
-  });
+  },timeout);
   return extractChat(j)||"無有效回覆";
 }
-async function askOpenRouter(body){
+async function askOpenRouter(body,timeout=28000){
   const key=requestKey(body,"openrouter");
   if(!key) return null;
   const j=await fetchJson("https://openrouter.ai/api/v1/chat/completions",{
@@ -167,15 +167,15 @@ async function askOpenRouter(body){
       temperature:0.25,max_tokens:900,
       messages:[{role:"system",content:SYSTEM},{role:"user",content:userPrompt(body)}]
     })
-  });
+  },timeout);
   return extractChat(j)||"無有效回覆";
 }
 
 const CALLERS = {
-  gemini_free: body=>askGemini(body),
-  groq_oss: body=>askGroq(body,"groq_oss"),
-  groq_qwen: body=>askGroq(body,"groq_qwen"),
-  openrouter_free: body=>askOpenRouter(body)
+  gemini_free: (body,timeout)=>askGemini(body,timeout),
+  groq_oss: (body,timeout)=>askGroq(body,"groq_oss",timeout),
+  groq_qwen: (body,timeout)=>askGroq(body,"groq_qwen",timeout),
+  openrouter_free: (body,timeout)=>askOpenRouter(body,timeout)
 };
 
 async function synthesize(body,answers){
@@ -189,16 +189,17 @@ async function synthesize(body,answers){
 不可用多數決取代判斷，也不要新增未提供的市場事實。
 
 ${compact}`};
+  // Vercel functions have a 60s hard limit. Never loop through more models
+  // sequentially for synthesis after the parallel independent opinions.
   const order=["gemini_free","groq_oss","groq_qwen","openrouter_free"];
-  for(const provider of order){
-    const st=providerStatus(provider,body);
-    if(!st.available) continue;
+  const chosen=order.find(p=>providerStatus(p,body).available);
+  if(chosen){
     try{
-      const out=await CALLERS[provider](synthBody);
+      const out=await CALLERS[chosen](synthBody,12000);
       if(out) return out;
     }catch(e){}
   }
-  return "各免費 AI 已完成回覆；綜合模型暫時受免費額度限制，請優先參考各家共同風險與失效條件。";
+  return "免費 AI 已提供各自的獨立回覆，但綜合模型未在時限內完成。請直接比較以上各家結論、分歧與風險，不會重試付費模型。";
 }
 
 module.exports=async function handler(req,res){
