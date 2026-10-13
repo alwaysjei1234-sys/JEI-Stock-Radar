@@ -40,6 +40,12 @@ const java=read('app/src/main/java/com/jei/stockradar/MainActivity.java');
 for(const token of ['private void loadRemotePage(', 'private void fetchStaticJson(', 'private void jsStatic(', 'private boolean validStatic(', 'private String getRemoteStatic(', '/remote/daily_prices.json', '"/remote/cash.html"', '"/remote/paper.html"']) {
  assert(java.includes(token),'Android bridge missing '+token);
 }
+const cloud=JSON.parse(read('remote/strategy_performance.json'));
+assert(cloud.schema===1&&cloud.mode==='official_daily_close_paper_observation');
+assert(Object.keys(cloud.strategies).length===4);
+assert(cloud.capital_per_strategy===1000000&&cloud.position_limit===100000);
+assert(java.includes('/remote/strategy_performance.json'));
+console.log('PASS public cloud paper performance report and Android bridge');
 const feed=JSON.parse(read('remote/system.json')),days=JSON.parse(read('remote/daily_prices.json')),manifest=JSON.parse(read('remote/update.json'));
 assert(feed.market && typeof feed.data_date==='string');
 assert(days.schema===1&&days.kind==='official_daily_close'&&typeof days.days==='object');
