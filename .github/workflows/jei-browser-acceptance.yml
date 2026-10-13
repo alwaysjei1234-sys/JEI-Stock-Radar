@@ -1,0 +1,30 @@
+name: JEI Mobile Browser Acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/mobile_browser.cjs'
+      - 'remote/index.html'
+      - 'remote/cash.html'
+      - 'remote/paper.html'
+      - '.github/workflows/jei-browser-acceptance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright browser
+        run: |
+          npm install --no-save --no-package-lock playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Test mobile dashboard, chat, cloud paper and intraday
+        run: node tests/mobile_browser.cjs
