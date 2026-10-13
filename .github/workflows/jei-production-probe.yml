@@ -1,0 +1,29 @@
+name: JEI Production Reachability
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/probe_production.py'
+      - '.github/workflows/jei-production-probe.yml'
+permissions:
+  contents: read
+jobs:
+  verify-public:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe public AI/market/home endpoints without secrets
+        run: python3 scripts/probe_production.py
+      - name: Publish anonymous reachability details
+        if: always()
+        run: |
+          echo '## JEI production reachability (no credentials)' >> "$GITHUB_STEP_SUMMARY"
+          if [ -f /tmp/jei_public_health.json ]; then
+            python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          for r in json.load(open('/tmp/jei_public_health.json',encoding='utf-8')):
+              print(f"- **{r['endpoint']}**: {'publicly reachable' if r['available'] else 'blocked or invalid'} (HTTP {r['http']})")
+          PY
+          fi
