@@ -21,6 +21,8 @@ jobs:
         run: node tests/smoke.cjs
       - name: Python generator syntax
         run: python -m py_compile scripts/update_system.py
+      - name: Public quote generator integration
+        run: python tests/feed_smoke.py
       - name: Record test result
         if: always()
         run: |

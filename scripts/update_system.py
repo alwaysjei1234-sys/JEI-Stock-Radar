@@ -297,6 +297,22 @@ def norm_tpex(r):
             "volume":num(pick(r,"TradingShares","TradeVolume")) or 0,"value":num(pick(r,"TransactionAmount","TradeValue","TradingValue")) or 0,
             "market":"TPEX"}
 
+def public_quotes(rows):
+    """Exchange quotes for every security, never private positions or costs."""
+    result={}
+    for x in rows:
+        price=x.get("close")
+        if not price or not math.isfinite(price) or price<=0:continue
+        date=re.sub(r"[^0-9]","",str(x.get("date","")))
+        if len(date)==7:date=str(int(date[:3])+1911)+date[3:]
+        if len(date)==8:date=f"{date[:4]}-{date[4:6]}-{date[6:]}"
+        quote_time=x.get("quote_time","")
+        if x.get("live") and len(quote_time)>=10:date=quote_time[:10]
+        result[x["code"]]={"name":x["name"],"price":price,
+            "change_pct":x.get("pct"),"data_date":date,"quote_time":quote_time,
+            "kind":"intraday" if x.get("live") else "daily_close"}
+    return result
+
 def clamp(x,lo,hi):return max(lo,min(hi,x))
 
 def position(s):
@@ -816,6 +832,7 @@ def main():
                   "brief":f"{'盤中即時' if live_valid else ('資料過期' if stale_source else ('盤中資料不足' if market_open else '今日收盤'))}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
         "sectors":sectors,"stock_sectors":stock_sector,
         "universe":[{"code":x["code"],"name":x["name"],"market":x["market"]} for x in stocks if re.fullmatch(r"[1-9][0-9]{3}",x["code"])],
+        "quotes":public_quotes(rows),
         "institutional":institutional,
         "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
         "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"tomorrow_monster":tomorrow_monster,"future_monster":future_monster,"rotate":rotate,"flow":flow,
@@ -830,8 +847,8 @@ def main():
     if out.get("holdings"):
         raise RuntimeError("Privacy check failed: public holdings must be empty")
     forbidden={"cost","shares","pnl","pnl_pct","market_value","avg_cost"}
-    for code, position in (out.get("holdings") or {}).items():
-        if isinstance(position,dict) and forbidden.intersection(position):
+    for code, private_position in (out.get("holdings") or {}).items():
+        if isinstance(private_position,dict) and forbidden.intersection(private_position):
             raise RuntimeError("Privacy check failed: sensitive portfolio field")
     # Preserve official same-day post-close quotes across subsequent runs. No stale
     # or intraday quote is treated as an official daily close.
