@@ -68,7 +68,7 @@ check('Paper open positions are isolated from realized trades',()=>{assert.ok(pa
 
 
 const cash=fs.readFileSync('remote/cash.html','utf8');
-check('Cash simulation JavaScript parses',()=>{const script=cash.match(/<script>([\\s\\S]*?)<\\/script>/);assert.ok(script);new vm.Script(script[1])});
+check('Cash simulation JavaScript parses',()=>{const script=cash.match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/);assert.ok(script);new vm.Script(script[1])});
 check('Cash and day-trading local records remain separate',()=>{assert.ok(cash.includes('jei-cash-trades-v1'));assert.ok(cash.includes('jei-cash-open-positions-v1'));assert.ok(cash.includes('jei-cash-auto-watch-v1'));assert.ok(!paper.includes('jei-cash-trades-v1'))});
 check('Cash simulation uses standard 0.3 percent stock sell tax',()=>{assert.ok(cash.includes('現股交易稅率（賣出）'));assert.ok(cash.includes('value="0.003"'))});
 check('Cash simulation enforces capital and per-position limit',()=>{assert.ok(cash.includes('function cashMetrics()'));assert.ok(cash.includes('cost>m.cfg.limit||cost>m.available'));assert.ok(cash.includes('jei-cash-account-config-v1'))});
