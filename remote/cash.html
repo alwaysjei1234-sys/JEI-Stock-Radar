@@ -11,6 +11,8 @@
 <section><h2>新增模擬成交</h2><div class="grid"><label>股票代號<input id="code" inputmode="numeric" maxlength="6" placeholder="2330"></label><label>交易日期<input id="day" type="date"></label><label>方向<select id="side"><option value="long">先買後賣</option></select></label><label>股數<input id="qty" type="number" min="1" step="1" value="1000"></label><label>進場成交價<input id="entry" type="number" min="0.01" step="0.01"></label><label>出場成交價<input id="exit" type="number" min="0.01" step="0.01"></label><label>手續費率（單邊）<input id="fee" type="number" min="0" max="0.1" step="0.000001" value="0.001425"></label><label>現股交易稅率（賣出）<input id="tax" type="number" min="0" max="0.1" step="0.0001" value="0.003"></label></div><p class="mut">預設費率僅供估算；未套用個人折扣、最低手續費及其他可能費用。請依實際券商與交易規則調整。</p><button id="save">記錄這筆已完成的現股模擬交易</button><p id="notice" role="status"></p></section>
 <section><h2>🚀 飆股自動模擬觀察</h2><p class="mut">自動讀取 JEI 當日主攻／妖股候選，記錄當下的收盤參考價並追蹤後續收盤報酬。這是「收盤訊號追蹤」，不是現股成交回測；沒有盤中逐筆資料就不會虛構進出場。</p><div class="grid"><label>目標報酬率 %<input id="autoTarget" type="number" min="0.1" max="100" step="0.1" value="5"></label><label>觀察停損率 %<input id="autoStop" type="number" min="0.1" max="100" step="0.1" value="3"></label><label>單次追蹤上限<select id="autoLimit"><option value="3">3 檔</option><option value="5">5 檔</option><option value="10">10 檔</option></select></label><label>訊號來源<select id="autoSource"><option value="attack">今日主攻</option><option value="monster">突然妖股</option><option value="combined">主攻＋妖股</option></select></label></div><button id="autoScan">自動掃描並記錄新訊號</button><p class="mut">開啟本頁及回到前景時會掃描，保持頁面開啟時每15分鐘重新檢查。只接受台灣今日已驗證盤中資料或正式收盤資料；收盤價僅作觀察基準，隔日表現才計入後續追蹤，不代表能以收盤價成交。每日每檔最多記錄一次；關閉 App 不會在背景執行瀏覽器追蹤。</p><p id="autoStatus" role="status" class="mut">等待行情</p><div class="metrics"><div class="metric">追蹤訊號<strong id="autoCount">0</strong></div><div class="metric">達標筆數<strong id="autoHits">0</strong></div><div class="metric">平均觀察報酬<strong id="autoAvg">--</strong></div></div><div class="scroll"><table><thead><tr><th>訊號日</th><th>股票</th><th>起始價</th><th>最新價／日期</th><th>報酬</th><th>狀態</th></tr></thead><tbody id="autoHistory"></tbody></table></div><p class="warn">報酬為收盤價變化，不含交易成本、滑價及未成交風險，不可當成現股實際績效。</p></section>
 <section><h2>🧪 四策略同步追蹤比較</h2><p class="mut">同一批飆股訊號同步比較固定 +5%、+7%、+10%，以及 +5% 啟動、從最高收盤價回落 2% 的移動停利；共同停損 −3%。僅以後續有效「每日收盤價」判斷首次觸發，盤中行情不會提前觸發；扣費報酬採買賣各0.1425%手續費及賣出0.3%交易稅估算，未含滑價、最低手續費及無法成交風險，並非可實際成交績效。</p><div class="scroll"><table><thead><tr><th>策略</th><th>已觸發</th><th>觀察中</th><th>平均已觸發報酬</th><th>扣費估算淨報酬</th><th>估算淨勝率</th></tr></thead><tbody id="strategyRows"></tbody></table></div><p class="mut" id="strategyStatus"></p></section>
+<section><h2>☁️ 雲端每日四策略績效</h2><p class="mut">GitHub 每個台股交易日收盤後，獨立記錄飆股訊號並比較四種策略，每套初始模擬資金 100 萬元，單檔上限 10 萬元。訊號日不進場；下一交易日收盤假設進場，再從後續官方收盤價計算停利停損。與本裝置個人持股、手動模擬及當沖帳本完全分離。</p>
+<button id="cloudRefresh">重新讀取雲端績效</button><p id="cloudStatus" class="mut" role="status">正在確認雲端紀錄…</p><div class="scroll"><table><thead><tr><th>策略</th><th>模擬平倉</th><th>持倉</th><th>已實現淨損益</th><th>淨勝率</th><th>估算總資產</th></tr></thead><tbody id="cloudRows"></tbody></table></div><p class="warn">所有進出場都只是官方收盤價假設，並非交易所成交回報。已估計手續費與證交稅，未計入滑價、最低費用及無法成交；無法取得有效收盤價時不會虛構績效。</p></section>
 <section><h2>💼 現股模擬資金與部位績效</h2><p class="mut">本機現股模擬帳戶；預設資金100萬元，單檔投入上限10萬元。以記錄的模擬買入價計算持倉成本；尚未成交的行情訊號不列入。</p><div class="grid"><label>初始模擬資金（元）<input id="cashCapital" type="number" min="10000" step="10000" value="1000000"></label><label>每檔投入上限（元）<input id="cashLimit" type="number" min="1000" step="1000" value="100000"></label></div><button id="saveCashSettings">儲存模擬資金設定</button><div class="metrics" style="margin-top:12px"><div class="metric">可用模擬資金<strong id="cashAvailable">--</strong></div><div class="metric">持倉成本<strong id="cashInvested">--</strong></div><div class="metric">模擬總資產（成本基礎）<strong id="cashEquity">--</strong></div></div><p id="cashStatus" class="mut"></p></section>
 <section><h2>📡 JEI 行情候選訊號（觀察模式）</h2><p class="mut">從公開 JEI feed 讀取候選名單。這不是即時逐筆行情，不會自動成交；只有具備有效資料日與價格時才顯示參考價。模擬績效不會以此價格自動入帳。</p><button id="scan">讀取最新候選訊號</button><p id="scanStatus" role="status" class="mut">尚未載入</p><div class="scroll"><table><thead><tr><th>代號</th><th>名稱</th><th>分數</th><th>參考價</th><th>操作</th></tr></thead><tbody id="candidates"></tbody></table></div></section>
 <section><h2>📈 模擬未平倉部位</h2><p class="mut">未平倉部位不計入已實現績效；未取得有效最新報價時，不估算浮動損益。</p><div class="grid"><label>模擬代號<input id="openCode" inputmode="numeric" placeholder="2330"></label><label>方向<select id="openSide"><option value="long">先買後賣</option></select></label><label>進場價<input id="openPrice" type="number" min="0.01" step="0.01"></label><label>股數<input id="openQty" type="number" min="1" step="1" value="1000"></label></div><button id="openPosition">建立模擬未平倉部位</button><p id="positionNotice" role="status"></p><div class="scroll"><table><thead><tr><th>代號</th><th>方向</th><th>進場價</th><th>股數</th><th>操作</th></tr></thead><tbody id="positions"></tbody></table></div><p class="warn">本版不會自動平倉。請定期核對未平倉部位；模擬倉位與真實券商無關。</p></section>
@@ -34,7 +36,7 @@ window.JEI_STATIC={
  }
 };
 async function readJeiStatic(kind){
- if(kind!=='system'&&kind!=='daily')throw Error('資料類型不允許');
+ if(!['system','daily','performance'].includes(kind))throw Error('資料類型不允許');
  if(typeof JEINative!=='undefined'&&typeof JEINative.fetchStaticJson==='function'){
   return new Promise((resolve,reject)=>{
    const pending=JEI_STATIC_PENDING[kind]||[],first=pending.length===0;
@@ -48,12 +50,13 @@ async function readJeiStatic(kind){
    if(first)JEINative.fetchStaticJson(kind);
   });
  }
- const file=kind==='system'?'system.json':'daily_prices.json';
+ const file=kind==='system'?'system.json':kind==='daily'?'daily_prices.json':'strategy_performance.json';
  const response=await fetch('./'+file+'?ts='+Date.now(),{cache:'no-store'});
  if(!response.ok)throw Error('HTTP '+response.status);
  const data=await response.json();
  if(kind==='system'&&!data.market)throw Error('市場資料格式錯誤');
  if(kind==='daily'&&(!data.days||data.kind!=='official_daily_close'))throw Error('歷史資料格式錯誤');
+ if(kind==='performance'&&(data.schema!==1||!data.strategies||data.mode!=='official_daily_close_paper_observation'))throw Error('雲端模擬資料格式錯誤');
  return data;
 }
 
@@ -111,6 +114,24 @@ function signalFeedMode(feed){
 function validFeedDate(feed){return Boolean(signalFeedMode(feed))}
 async function syncDailyPrices(){const archive=await readJeiStatic('daily');if(archive.schema!==1||archive.kind!=='official_daily_close'||!archive.days||typeof archive.days!=='object')throw Error('收盤資料格式不正確');const tracked=autoLoad();let count=0;const dates=Object.keys(archive.days).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&d<=twDay()).sort();for(const t of tracked){for(const day of dates){if(day<=t.day||day<=t.lastDay)continue;const price=Number(archive.days[day]?.[t.code]);if(!Number.isFinite(price)||price<=0)continue;if(t.strategies)strategyAdvance(t,price,day);else {t.lastDay=day;t.lastPrice=price;const pct=(price/t.startPrice-1)*100;if(t.status==='觀察中'){if(pct>=t.target)t.status='目標達成';else if(pct<=-t.stop)t.status='觸及停損'}}count++}}if(count)localStorage.setItem(AUTO_KEY,JSON.stringify(tracked));autoRender();return {count,days:dates.length}}
 async function autoScan(){const status=$('autoStatus');status.textContent='掃描中…';let syncNote='';try{const synced=await syncDailyPrices();syncNote='歷史收盤更新 '+synced.count+' 筆｜';}catch(e){syncNote='歷史收盤尚未可用（'+e.message+'）｜'}try{const feed=await readJeiStatic('system'),day=String(feed.data_date||'');if(!validFeedDate(feed)){status.textContent=syncNote+'暫停新增：資料不是今日有效盤中或正式收盤行情（'+(day||'無日期')+'）。不使用舊價格建立觀察訊號。';autoRender();return}const source=$('autoSource').value;const pool=source==='combined'?[...(feed.attack||[]),...(feed.monster||[])]:Array.isArray(feed[source])?feed[source]:[];const limit=Number($('autoLimit').value)||3,target=Number($('autoTarget').value),stop=Number($('autoStop').value);if(!Number.isFinite(target)||target<=0||target>100||!Number.isFinite(stop)||stop<=0||stop>100){status.textContent='請設定有效的目標及停損百分比';return}const old=autoLoad();let added=0;for(const x of pool){const code=String(x.code||''),price=Number(x.price);if(!/^\d{4,6}$/.test(code)||!Number.isFinite(price)||price<=0)continue;if(added>=limit||old.some(t=>t.code===code&&t.day===day))continue;old.push(strategyInit({day,code,name:String(x.name||'').slice(0,40),startPrice:price,lastDay:day,lastPrice:price,target,stop,status:'觀察中'}));added++}localStorage.setItem(AUTO_KEY,JSON.stringify(old));autoRender();status.textContent=syncNote+'資料日 '+day+'｜'+signalFeedMode(feed)+'｜新增 '+added+' 檔｜既有策略僅由官方收盤歷史更新｜非模擬實際成交'}catch(e){status.textContent=syncNote+'掃描失敗：'+e.message}}
+
+async function loadCloudPerformance(){
+ const status=$('cloudStatus'),body=$('cloudRows');body.replaceChildren();status.textContent='正在讀取 GitHub 每日策略紀錄…';
+ try{
+  const data=await readJeiStatic('performance'),d=String(data.last_processed_day||'');
+  status.textContent='已更新交易日 '+(d||'未知')+'｜當日紀錄 '+(Number(data.latest_signal_count)||0)+' 檔訊號｜每策略模擬本金 '+money(data.capital_per_strategy||1000000)+(d!==twDay()?'｜非今日行情（休市日可能正常）':'');
+  for(const [id,label] of [['fixed5','固定 +5%'],['fixed7','固定 +7%'],['fixed10','固定 +10%'],['trailing','移動停利']]){
+   const s=data.strategies[id]?.summary||{},tr=document.createElement('tr');
+   const win=s.win_rate_pct==null?'--':Number(s.win_rate_pct).toFixed(1)+'%';
+   const equity=s.estimated_liquidation_equity_ntd==null?'資料不足':money(s.estimated_liquidation_equity_ntd);
+   [label,String(s.closed??0),String(s.open_positions??0),money(Number(s.realized_net_ntd)||0),win,equity].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});
+   body.appendChild(tr);
+  }
+ }catch(e){status.textContent='尚未取得雲端模擬資料：'+String(e?.message||e)}
+}
+$('cloudRefresh').onclick=loadCloudPerformance;
+loadCloudPerformance();
+
 $('autoScan').onclick=autoScan;
 autoRender();
 autoScan();
