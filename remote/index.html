@@ -288,7 +288,7 @@ function applyLiveRanks(){
  renderRank('attackList',system.attack,'今日尚未產生主攻名單');renderRank('nextList',system.next,'今日尚未產生下一棒名單');renderRank('monsterList',system.monster,'目前沒有符合條件的突然妖股');renderRank('tomorrowMonsterList',system.tomorrow_monster,'目前沒有符合條件的明日妖股候選');renderRank('futureMonsterList',system.future_monster,'目前沒有符合條件的未來妖股候選');renderRank('rotateList',system.rotate,'目前沒有明確換股訊號');
 }
 
-let aiMode='local',aiPending=false,aiProviderStatus={},aiHealthLoaded=false;
+let aiMode='local',aiPending=false,aiProviderStatus={},aiHealthLoaded=false,aiWatchdog=null,aiAbort=null;
 const AI_LABELS={gemini_free:'Gemini Free',groq_oss:'GPT-OSS 120B',groq_qwen:'Qwen 3.8',openrouter_free:'OpenRouter Free'};
 function settingGet(k){try{return nativeOk()?JEINative.loadSetting(k):(localStorage.getItem('s_'+k)||'')}catch(e){return ''}}
 function settingSet(k,v){try{if(nativeOk())JEINative.saveSetting(k,v);else localStorage.setItem('s_'+k,v)}catch(e){}}
@@ -396,9 +396,23 @@ function aiContext(q){
   holdings:holdings.map(x=>({code:x.code,name:x.name,cost:x.cost,shares:x.shares,quote:(market[x.code]||((system.holdings||{})[x.code])||null)})).slice(0,25)
  }
 }
+function finishAiConsult(){
+ aiPending=false;
+ if(aiWatchdog!==null){clearTimeout(aiWatchdog);aiWatchdog=null}
+ if($('chatSendBtn'))$('chatSendBtn').disabled=false;
+ aiAbort=null;
+}
+function failAiConsult(error){
+ if(!aiPending)return;
+ const msg=String(error?.message||error||'連線失敗');
+ finishAiConsult();
+ if(/HTTP\s*(401|403)|Authentication Required|Vercel Authentication|SSO/i.test(msg))chatSay('bot','AI 雲端存取遭拒：請檢查 JEI 私人連線碼及 Vercel 部署登入保護。');
+ else chatSay('bot','AI 會診連線失敗：'+msg.slice(0,240));
+}
 function renderAiConsultResult(raw){
- let j;try{j=JSON.parse(raw)}catch(e){aiPending=false;chatSay('bot','AI 會診回傳格式錯誤');return}
- aiPending=false;if($('chatSendBtn'))$('chatSendBtn').disabled=false;
+ if(!aiPending)return;
+ let j;try{j=JSON.parse(raw)}catch(e){failAiConsult('伺服器回傳不是有效的 AI JSON（可能是登入頁面）');return}
+ finishAiConsult();
  const answers=j.answers||[];
  if(answers.length)answers.forEach(x=>chatSay('bot',`【${x.label||x.provider}｜${x.model||'AI'}】\n${x.text||'無回覆'}`));
  if(j.consensus)chatSay('bot',`【JEI 多 AI 綜合結論】\n${j.consensus}`);
@@ -418,12 +432,18 @@ function sendAiConsult(q){
  const hist=chatHistory.slice(0,-1).slice(-10).map(x=>({role:x.who==='me'?'user':'assistant',content:x.text}));
  const payload={question:q,mode:aiMode,providers,free_keys:freeAiKeys(),context:aiContext(q),history:hist};
  aiPending=true;if($('chatSendBtn'))$('chatSendBtn').disabled=true;
+ aiWatchdog=setTimeout(()=>{if(aiAbort)aiAbort.abort();failAiConsult('等候 AI 回覆超過 120 秒，已恢復輸入。請檢查網路及免費額度。')},120000);
  chatSay('bot',aiMode==='panel'?'🧠 免費多 AI 會診中：'+providers.map(p=>AI_LABELS[p]).join('＋')+'…':'正在詢問 '+AI_LABELS[providers[0]]+'…');
- if(nativeOk()&&typeof JEINative.consultAI==='function')JEINative.consultAI(url,JSON.stringify(payload),token);
- else fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-JEI-Token':token},body:JSON.stringify(payload)})
-  .then(r=>r.text().then(raw=>{if(!r.ok){let m=raw;try{m=JSON.parse(raw).error||raw}catch(e){}throw new Error(m)}return raw}))
-  .then(renderAiConsultResult)
-  .catch(e=>{aiPending=false;if($('chatSendBtn'))$('chatSendBtn').disabled=false;chatSay('bot','AI 會診連線失敗：'+e.message)})
+ try{
+  if(nativeOk()&&typeof JEINative.consultAI==='function')JEINative.consultAI(url,JSON.stringify(payload),token);
+  else{
+   aiAbort=new AbortController();
+   fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-JEI-Token':token},body:JSON.stringify(payload),signal:aiAbort.signal})
+    .then(r=>r.text().then(raw=>{if(!r.ok){let m=raw;try{m=JSON.parse(raw).error||raw}catch(e){}throw new Error(String(m).slice(0,240))}return raw}))
+    .then(renderAiConsultResult)
+    .catch(failAiConsult);
+  }
+ }catch(e){failAiConsult(e)}
 }
 let chatHistory=[],chatLastCode='';
 function chatSay(who,text){
@@ -436,7 +456,7 @@ function chatSay(who,text){
 function initChat(){
  try{const h=JSON.parse(localStorage.getItem('jei_chat_history')||'[]');if(Array.isArray(h))chatHistory=h.slice(-24)}catch(e){}
  const log=$('chatLog');if(!log)return;log.innerHTML='';
- if(!chatHistory.length){chatSay('bot','我是 JEI AI 對話中心。你可以直接問持股該留還是賣、明日妖股、族群主線、法人資金、大盤風險；切到雲端模式後可讓 ChatGPT、Gemini、Claude、Grok 交叉會診。')}
+ if(!chatHistory.length){chatSay('bot','我是 JEI AI 對話中心。你可以直接問持股該留還是賣、明日妖股、族群主線、法人資金、大盤風險；切到雲端模式後可使用已設定的 Gemini、Groq 或 OpenRouter 免費模型交叉會診。')}
  else{const copy=[...chatHistory];chatHistory=[];copy.forEach(x=>chatSay(x.who,x.text))}
 }
 function clearChat(){chatHistory=[];chatLastCode='';try{localStorage.removeItem('jei_chat_history')}catch(e){}const log=$('chatLog');if(log)log.innerHTML='';chatSay('bot','對話已清除。直接輸入股票名稱、代號或你想判斷的問題即可。')}
@@ -537,7 +557,7 @@ window.JEI_NATIVE={
  onUpdateManifest(raw){try{updateManifest=JSON.parse(raw);const local=nativeOk()?JEINative.getAppVersionCode():12,remote=+updateManifest.versionCode||0;if(remote>local){$('updateBanner').classList.add('show');$('updateText').textContent=`APP 新版 ${updateManifest.versionName||''} 可更新`}else $('updateBanner').classList.remove('show')}catch(e){}},
  onUpdateError(e){},
  onAIConsultResult(raw){renderAiConsultResult(raw)},
- onAIConsultError(e){aiPending=false;chatSay('bot','AI 會診連線失敗：'+e)}
+ onAIConsultError(e){failAiConsult(e)}
 };
 function init(){loadScreenPrefs();importAiSetupFromHash();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible')refreshMarket()},120000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshAll(false)});init();
