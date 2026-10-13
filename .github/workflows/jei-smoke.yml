@@ -19,6 +19,8 @@ jobs:
           node-version: '22'
       - name: Frontend and privacy smoke checks
         run: node tests/smoke.cjs
+      - name: Dashboard and Android bridge smoke checks
+        run: node scripts/jei-smoke.mjs
       - name: Python generator syntax
         run: python -m py_compile scripts/update_system.py
       - name: Record test result
