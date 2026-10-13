@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "mode": "official_daily_close_paper_observation",
+  "notes": "訊號日僅觀察，下一個有效交易日收盤才假設進場；再下一日才判斷出場。非實際成交，未計滑價或無法成交。",
+  "capital_per_strategy": 1000000.0,
+  "position_limit": 100000.0,
+  "buy_fee_rate": 0.001425,
+  "sell_fee_rate": 0.001425,
+  "sell_tax_rate": 0.003,
+  "last_processed_day": "2026-10-13",
+  "signals": [
+    {
+      "id": "2026-10-13:3406",
+      "day": "2026-10-13",
+      "code": "3406",
+      "name": "玉晶光",
+      "score": 93,
+      "source": "monster",
+      "signal_close": 1175.0
+    },
+    {
+      "id": "2026-10-13:6217",
+      "day": "2026-10-13",
+      "code": "6217",
+      "name": "中探針",
+      "score": 93,
+      "source": "monster",
+      "signal_close": 197.0
+    },
+    {
+      "id": "2026-10-13:1569",
+      "day": "2026-10-13",
+      "code": "1569",
+      "name": "濱川",
+      "score": 92,
+      "source": "monster",
+      "signal_close": 81.0
+    },
+    {
+      "id": "2026-10-13:1312",
+      "day": "2026-10-13",
+      "code": "1312",
+      "name": "國喬",
+      "score": 91,
+      "source": "monster",
+      "signal_close": 17.65
+    },
+    {
+      "id": "2026-10-13:6505",
+      "day": "2026-10-13",
+      "code": "6505",
+      "name": "台塑化",
+      "score": 90,
+      "source": "monster",
+      "signal_close": 119.0
+    }
+  ],
+  "strategies": {
+    "fixed5": {
+      "name": "固定 +5%",
+      "cash": 1000000.0,
+      "positions": [],
+      "closed": [],
+      "equity_history": [
+        {
+          "day": "2026-10-13",
+          "equity": 1000000.0
+        }
+      ],
+      "summary": {
+        "closed": 0,
+        "wins": 0,
+        "win_rate_pct": null,
+        "realized_net_ntd": 0,
+        "realized_return_pct_of_initial": 0.0,
+        "open_positions": 0,
+        "cash_ntd": 1000000.0,
+        "estimated_liquidation_equity_ntd": 1000000.0,
+        "official_close_coverage": "0/0",
+        "max_drawdown_pct": 0.0
+      }
+    },
+    "fixed7": {
+      "name": "固定 +7%",
+      "cash": 1000000.0,
+      "positions": [],
+      "closed": [],
+      "equity_history": [
+        {
+          "day": "2026-10-13",
+          "equity": 1000000.0
+        }
+      ],
+      "summary": {
+        "closed": 0,
+        "wins": 0,
+        "win_rate_pct": null,
+        "realized_net_ntd": 0,
+        "realized_return_pct_of_initial": 0.0,
+        "open_positions": 0,
+        "cash_ntd": 1000000.0,
+        "estimated_liquidation_equity_ntd": 1000000.0,
+        "official_close_coverage": "0/0",
+        "max_drawdown_pct": 0.0
+      }
+    },
+    "fixed10": {
+      "name": "固定 +10%",
+      "cash": 1000000.0,
+      "positions": [],
+      "closed": [],
+      "equity_history": [
+        {
+          "day": "2026-10-13",
+          "equity": 1000000.0
+        }
+      ],
+      "summary": {
+        "closed": 0,
+        "wins": 0,
+        "win_rate_pct": null,
+        "realized_net_ntd": 0,
+        "realized_return_pct_of_initial": 0.0,
+        "open_positions": 0,
+        "cash_ntd": 1000000.0,
+        "estimated_liquidation_equity_ntd": 1000000.0,
+        "official_close_coverage": "0/0",
+        "max_drawdown_pct": 0.0
+      }
+    },
+    "trailing": {
+      "name": "上漲5%啟動／高點回落2%",
+      "cash": 1000000.0,
+      "positions": [],
+      "closed": [],
+      "equity_history": [
+        {
+          "day": "2026-10-13",
+          "equity": 1000000.0
+        }
+      ],
+      "summary": {
+        "closed": 0,
+        "wins": 0,
+        "win_rate_pct": null,
+        "realized_net_ntd": 0,
+        "realized_return_pct_of_initial": 0.0,
+        "open_positions": 0,
+        "cash_ntd": 1000000.0,
+        "estimated_liquidation_equity_ntd": 1000000.0,
+        "official_close_coverage": "0/0",
+        "max_drawdown_pct": 0.0
+      }
+    }
+  },
+  "updated_at": "2026-10-13 22:26",
+  "latest_signal_count": 5
+}
