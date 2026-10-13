@@ -765,7 +765,11 @@ def main():
     live_coverage=live_count/max(1,len(stocks))
     live_valid=live_count>=500 and live_coverage>=.35
     stale_source=not source_is_today
-    # Intraday MIS quotes are not an official post-close dataset. A sufficiently\n    # populated live snapshot may power intraday screens only during trading hours.\n    if live_valid and market_open:\n        raw_date=today_iso\n        stale_source=False
+    # Intraday MIS quotes are not an official post-close dataset. A sufficiently
+    # populated live snapshot may power intraday screens only during trading hours.
+    if live_valid and market_open:
+        raw_date=today_iso
+        stale_source=False
     elif stale_source:
         # Safety invariant applies all day, including after close: stale official
         # daily data must never be presented as today's attack/next/monster radar.
@@ -828,8 +832,8 @@ def main():
     if out.get("holdings"):
         raise RuntimeError("Privacy check failed: public holdings must be empty")
     forbidden={"cost","shares","pnl","pnl_pct","market_value","avg_cost"}
-    for code, position in (out.get("holdings") or {}).items():
-        if isinstance(position,dict) and forbidden.intersection(position):
+    for code, holding_row in (out.get("holdings") or {}).items():
+        if isinstance(holding_row,dict) and forbidden.intersection(holding_row):
             raise RuntimeError("Privacy check failed: sensitive portfolio field")
     # Preserve official same-day post-close quotes across subsequent runs. No stale
     # or intraday quote is treated as an official daily close.
