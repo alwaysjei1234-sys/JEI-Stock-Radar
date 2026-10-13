@@ -806,6 +806,12 @@ def main():
     except Exception:
         pass
 
+    # A successful network consensus must have candidates; never label an empty board "ok".
+    if not old_web_recommendations and old_web_status.get("ok"):
+        old_web_status=dict(old_web_status)
+        old_web_status["ok"]=False
+        old_web_status["summary"]="網路推薦名單為空；等待下一輪外部資料交叉驗證，不提供虛構候選"
+
     out={
         "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,"source_data_date":source_data_date,
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
