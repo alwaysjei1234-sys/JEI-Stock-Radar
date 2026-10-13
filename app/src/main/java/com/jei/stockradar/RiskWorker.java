@@ -74,7 +74,13 @@ public class RiskWorker extends Worker {
         if (!primaryUrl.equals(SYSTEM_JSON) && !primaryUrl.equals(UPDATE_JSON))
             throw new IllegalArgumentException("not a static JEI feed");
         try {
-            return get(primaryUrl);
+            String result = get(primaryUrl);
+            JSONObject data = new JSONObject(result);
+            if (primaryUrl.equals(SYSTEM_JSON) && !data.has("market"))
+                throw new Exception("market feed unavailable");
+            if (primaryUrl.equals(UPDATE_JSON) && !data.has("versionCode"))
+                throw new Exception("update feed unavailable");
+            return result;
         } catch (Exception primaryFailure) {
             String fileName = primaryUrl.substring(primaryUrl.lastIndexOf('/') + 1);
             return get("https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/"
