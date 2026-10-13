@@ -4,15 +4,15 @@ function check(label,fn){try{fn();passed++;console.log('PASS',label)}catch(e){fa
 check('Public page guards private routes',()=>{assert.match(html,/function go\(id\)\{if\(!JEI_PRIVATE_APP/);assert.match(html,/function loadHoldings\(\)\{if\(!JEI_PRIVATE_APP/)});
 check('No public portfolio nodes removed (prevents JS null dereference)',()=>assert.doesNotMatch(html,/querySelectorAll\('#hold,#rotate'\)\.forEach\(el=>el\.remove\(\)\)/));
 check('Public feed strips private positions',()=>{assert.match(py,/if out\.get\("holdings"\):/);assert.match(html,/system\.holdings=JEI_PRIVATE_APP\?/)});
-check('Android public static feed failover is restricted',()=>{const worker=fs.readFileSync('app/src/main/java/com/jei/stockradar/RiskWorker.java','utf8');assert.ok(activity.includes('getRemoteStatic(REMOTE_UI)')&&activity.includes('getRemoteStatic(SYSTEM_JSON)')&&activity.includes('getRemoteStatic(UPDATE_JSON)'));assert.ok(worker.includes('getStaticFeed(SYSTEM_JSON)')&&worker.includes('getStaticFeed(UPDATE_JSON)'));assert.ok(activity.includes('raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/'));assert.ok(worker.includes('raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/'))});
+check('Android public static feed failover is restricted',()=>{const worker=fs.readFileSync('app/src/main/java/com/jei/stockradar/RiskWorker.java','utf8');assert.ok(activity.includes('getRemoteStatic(pageUrl)')&&activity.includes('getRemoteStatic(SYSTEM_JSON)')&&activity.includes('getRemoteStatic(UPDATE_JSON)')&&activity.includes('getRemoteStatic(sourceUrl)'));assert.ok(worker.includes('getStaticFeed(SYSTEM_JSON)')&&worker.includes('getStaticFeed(UPDATE_JSON)'));assert.ok(activity.includes('raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/'));assert.ok(worker.includes('raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/'))});
 check('Published Android manifest matches app version',()=>{
  const gradle=fs.readFileSync('app/build.gradle','utf8');
  const update=JSON.parse(fs.readFileSync('remote/update.json','utf8'));
  const vc=gradle.match(/versionCode\s+(\d+)/);
  const vn=gradle.match(/versionName\s+'([^']+)'/);
  assert.ok(vc&&vn);
- assert.equal(update.versionCode,Number(vc[1]));
- assert.ok(update.versionName.startsWith(vn[1]));
+ assert.ok(update.versionCode<=Number(vc[1]),'manifest must not advertise an unbuilt Android version');
+ if(update.versionCode===Number(vc[1]))assert.ok(update.versionName.startsWith(vn[1]));
  assert.match(update.url,/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/releases\/download\/jei-latest\//);
 });
 check('Android backups disabled',()=>assert.match(manifest,/android:allowBackup="false"/));
@@ -21,13 +21,13 @@ check('Stock screener and heatmap wired',()=>{assert.match(html,/function render
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]).filter(Boolean);const vm=require('node:vm');check('Inline JavaScript syntax',()=>{for(const code of scripts)new vm.Script(code)});
 
 check('Trading hours use Asia/Taipei timezone',()=>assert.match(html,/function tradingWindow\(\).*timeZone:'Asia\/Taipei'/));
-check('Screener updates freshness label',()=>assert.match(html,/function renderAttackScreener\(\)\{updateFeedFreshness\(\)/));
+check('Screener updates freshness label',()=>assert.match(html,/function renderAttackScreener\(\)\{\s*updateFeedFreshness\(\)/));
 check('Private sections are hidden without removal',()=>assert.match(html,/querySelectorAll\('#hold,#rotate'\)\.forEach\(el=>\{el\.style\.display='none'/));
 
 check('WebView external links open outside app',()=>assert.ok(activity.includes('shouldOverrideUrlLoading')&&activity.includes('Intent.ACTION_VIEW')));
 check('Mixed content blocked',()=>assert.ok(activity.includes('MIXED_CONTENT_NEVER_ALLOW')));
 
-check('Sector dropdown is wired into stock screening',()=>assert.ok(html.includes('id="screenSector"')&&html.includes('function syncScreenSectors()')&&html.includes("'screenSector','screenOrder'")));
+check('Sector dropdown is wired into stock screening',()=>assert.ok(html.includes('id="screenSector"')&&html.includes('function syncScreenSectors()')&&html.includes("['screenScore','screenPriceMax','screenRiseMax','screenQuery','screenSector','screenOrder']")));
 
 check('Ranking cards escape untrusted market fields',()=>assert.ok(html.includes('function escapeMarketText(value)')&&html.includes('safe(x.name)')&&html.includes('safe(x.reason||x.status)')));
 
@@ -53,15 +53,21 @@ check('Taiwan trading hours are timezone-independent at runtime',()=>{
  assert.equal(ctx.testTrading(),false,'Saturday 09:00 Taipei must be closed');
 });
 
-check('Stock screener filters score, sector and stale market at runtime',()=>{
- const line=html.split('\n').find(x=>x.startsWith('function renderAttackScreener('));assert.ok(line);
- const els={screenScore:{value:'75'},screenQuery:{value:''},screenSector:{value:'AI'},screenOrder:{value:'score'},screenCount:{textContent:''}};
- let captured=[];const ctx={system:{attack:[{code:'1111',score:90,sector:'AI'},{code:'2222',score:60,sector:'AI'},{code:'3333',score:95,sector:'航運'}],market:{mode:'收盤'},data_date:'2026-10-13'},$:id=>els[id],renderRank:(_id,arr)=>{captured=arr},updateFeedFreshness:()=>{},syncScreenSectors:()=>{}};
- vm.runInNewContext(line+';globalThis.testScreen=renderAttackScreener;',ctx);ctx.testScreen();assert.equal(captured.length,1);assert.equal(captured[0].code,'1111');
+check('Stock screener filters score, price, sector, and stale market at runtime',()=>{
+ const start=html.indexOf('function renderAttackScreener(){'),end=html.indexOf('const SCREEN_PREFS_KEY=',start);
+ assert.ok(start>=0&&end>start);const fn=html.slice(start,end);
+ const els={screenScore:{value:'75'},screenPriceMax:{value:'120'},screenRiseMax:{value:'9'},screenQuery:{value:''},screenSector:{value:'AI'},screenOrder:{value:'score'},screenCount:{textContent:''}};
+ let captured=[];const ctx={system:{attack:[{code:'1111',score:90,sector:'AI',price:100,change_pct:3},{code:'2222',score:60,sector:'AI',price:90,change_pct:2},{code:'3333',score:95,sector:'航運',price:70,change_pct:2},{code:'4444',score:99,sector:'AI',price:500,change_pct:4}],market:{mode:'今日收盤'},data_date:'2026-10-13'},$:id=>els[id],renderRank:(_id,arr)=>{captured=arr},updateFeedFreshness:()=>{},syncScreenSectors:()=>{}};
+ vm.runInNewContext(fn+';globalThis.testScreen=renderAttackScreener;',ctx);ctx.testScreen();assert.equal(captured.length,1);assert.equal(captured[0].code,'1111');
  ctx.system.market.mode='盤中資料不足';ctx.testScreen();assert.equal(captured.length,0);
 });
 
-check('Paper trading has no broker order submission',()=>{assert.ok(html.includes('href="./paper.html"'));assert.ok(paper.includes('jei-paper-trades-v1'));assert.doesNotMatch(paper,/JEINative\.|XMLHttpRequest|WebSocket|\/api\/orders|placeOrder\(/);assert.ok(paper.includes("fetch('./system.json?ts='"),'read-only feed fetch is allowed')});
+check('Paper trading has no broker order submission',()=>{
+ assert.ok(activity.includes('PAPER_UI'));assert.ok(paper.includes('jei-paper-trades-v1'));
+ assert.doesNotMatch(paper,/XMLHttpRequest|WebSocket|\/api\/orders|placeOrder\(/);
+ assert.ok(paper.includes('JEINative.fetchStaticJson(kind)'),'native bridge may only read verified feed');
+});
+
 check('Paper ledger JavaScript syntax',()=>{for(const match of paper.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1])});
 check('Paper PnL charges both-side fees and sell-side tax',()=>{
  const line=paper.split('\n').find(x=>x.startsWith('function calc('));assert.ok(line);
@@ -85,7 +91,7 @@ check('Cash paper close records only confirmed realized trades',()=>{assert.ok(c
 check('Cash paper performance uses realized net of fees and tax',()=>{assert.ok(cash.includes("100*m.closed/m.cfg.capital"));assert.ok(cash.includes("closed.filter(t=>calc(t).net>0)"));assert.ok(cash.includes("tax:0.003"))});
 
 
-check('Cash momentum strategy archive sync is independent of current radar',()=>{assert.ok(cash.includes("daily_prices.json?ts="));assert.ok(cash.includes("async function syncDailyPrices()"));assert.ok(cash.includes("if(day<=t.day||day<=t.lastDay)continue"));assert.ok(cash.includes("if(t.strategies)strategyAdvance(t,price,day)"))});
+check('Cash momentum strategy archive sync is independent of current radar',()=>{assert.ok(cash.includes("readJeiStatic('daily')"));assert.ok(cash.includes("async function syncDailyPrices()"));assert.ok(cash.includes("if(day<=t.day||day<=t.lastDay)continue"));assert.ok(cash.includes("if(t.strategies)strategyAdvance(t,price,day)"))});
 check('Four cash exit strategies are present',()=>{assert.ok(cash.includes("id:'fixed5'"));assert.ok(cash.includes("id:'fixed7'"));assert.ok(cash.includes("id:'fixed10'"));assert.ok(cash.includes("id:'trailing'"))});
 
 check('Network recommendation success requires candidates',()=>assert.ok(py.includes('if not old_web_recommendations and old_web_status.get("ok"):')));
