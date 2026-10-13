@@ -5,6 +5,16 @@ check('Public page guards private routes',()=>{assert.match(html,/function go\(i
 check('No public portfolio nodes removed (prevents JS null dereference)',()=>assert.doesNotMatch(html,/querySelectorAll\('#hold,#rotate'\)\.forEach\(el=>el\.remove\(\)\)/));
 check('Public feed strips private positions',()=>{assert.match(py,/if out\.get\("holdings"\):/);assert.match(html,/system\.holdings=JEI_PRIVATE_APP\?/)});
 check('Android public static feed failover is restricted',()=>{const worker=fs.readFileSync('app/src/main/java/com/jei/stockradar/RiskWorker.java','utf8');assert.ok(activity.includes('getRemoteStatic(REMOTE_UI)')&&activity.includes('getRemoteStatic(SYSTEM_JSON)')&&activity.includes('getRemoteStatic(UPDATE_JSON)'));assert.ok(worker.includes('getStaticFeed(SYSTEM_JSON)')&&worker.includes('getStaticFeed(UPDATE_JSON)'));assert.ok(activity.includes('raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/'));assert.ok(worker.includes('raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/'))});
+check('Published Android manifest matches app version',()=>{
+ const gradle=fs.readFileSync('app/build.gradle','utf8');
+ const update=JSON.parse(fs.readFileSync('remote/update.json','utf8'));
+ const vc=gradle.match(/versionCode\s+(\d+)/);
+ const vn=gradle.match(/versionName\s+'([^']+)'/);
+ assert.ok(vc&&vn);
+ assert.equal(update.versionCode,Number(vc[1]));
+ assert.ok(update.versionName.startsWith(vn[1]));
+ assert.match(update.url,/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/releases\/download\/jei-latest\//);
+});
 check('Android backups disabled',()=>assert.match(manifest,/android:allowBackup="false"/));
 check('WebView file-origin crossing disabled',()=>{assert.match(activity,/setAllowFileAccessFromFileURLs\(false\)/);assert.match(activity,/setAllowUniversalAccessFromFileURLs\(false\)/)});
 check('Stock screener and heatmap wired',()=>{assert.match(html,/function renderAttackScreener\(/);assert.match(html,/function renderSectorHeatmap\(/);assert.match(html,/renderSectors\(\);renderSectorHeatmap\(\)/)});
