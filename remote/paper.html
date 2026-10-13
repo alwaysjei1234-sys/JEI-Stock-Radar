@@ -17,6 +17,42 @@
 'use strict';
 const KEY='jei-paper-trades-v1';
 const $=id=>document.getElementById(id);
+const JEI_STATIC_PENDING={};
+window.JEI_STATIC={
+ onData(kind,raw){
+  const waiting=JEI_STATIC_PENDING[kind]||[];delete JEI_STATIC_PENDING[kind];
+  try{const data=JSON.parse(raw);waiting.forEach(x=>x.resolve(data));}
+  catch(e){waiting.forEach(x=>x.reject(Error('JEI feed 格式錯誤')))}
+ },
+ onError(kind,error){
+  const waiting=JEI_STATIC_PENDING[kind]||[];delete JEI_STATIC_PENDING[kind];
+  waiting.forEach(x=>x.reject(Error(String(error||'連線失敗'))));
+ }
+};
+async function readJeiStatic(kind){
+ if(kind!=='system'&&kind!=='daily')throw Error('資料類型不允許');
+ if(typeof JEINative!=='undefined'&&typeof JEINative.fetchStaticJson==='function'){
+  return new Promise((resolve,reject)=>{
+   const pending=JEI_STATIC_PENDING[kind]||[],first=pending.length===0;
+   const item={resolve:v=>{clearTimeout(timer);resolve(v)},reject:e=>{clearTimeout(timer);reject(e)}};
+   const timer=setTimeout(()=>{
+    const q=JEI_STATIC_PENDING[kind]||[];
+    JEI_STATIC_PENDING[kind]=q.filter(x=>x!==item);
+    reject(Error('JEI 原生資料連線逾時'));
+   },25000);
+   pending.push(item);JEI_STATIC_PENDING[kind]=pending;
+   if(first)JEINative.fetchStaticJson(kind);
+  });
+ }
+ const file=kind==='system'?'system.json':'daily_prices.json';
+ const response=await fetch('./'+file+'?ts='+Date.now(),{cache:'no-store'});
+ if(!response.ok)throw Error('HTTP '+response.status);
+ const data=await response.json();
+ if(kind==='system'&&!data.market)throw Error('市場資料格式錯誤');
+ if(kind==='daily'&&(!data.days||data.kind!=='official_daily_close'))throw Error('歷史資料格式錯誤');
+ return data;
+}
+
 const twDay=()=>{const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day};
 $('day').value=twDay();
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v:[]}catch{return []}}
@@ -32,14 +68,14 @@ function loadPositions(){try{const v=JSON.parse(localStorage.getItem(POS_KEY)||'
 function savePositions(a){localStorage.setItem(POS_KEY,JSON.stringify(a))}
 function renderPositions(){const el=$('positions');el.replaceChildren();loadPositions().forEach((p,i)=>{const tr=document.createElement('tr');[p.code,p.side==='short'?'先賣後買':'先買後賣',String(p.entry),String(p.qty)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});const td=document.createElement('td'),b=document.createElement('button');b.textContent='取消模擬倉位';b.onclick=()=>{if(!confirm('確認移除未平倉模擬部位？不會產生已實現損益。'))return;const a=loadPositions();a.splice(i,1);savePositions(a);renderPositions()};td.appendChild(b);tr.appendChild(td);el.appendChild(tr)})}
 $('openPosition').onclick=()=>{const p={code:$('openCode').value.trim(),side:$('openSide').value,entry:Number($('openPrice').value),qty:Number($('openQty').value),day:twDay()};if(!/^\\d{4,6}$/.test(p.code)||!Number.isFinite(p.entry)||p.entry<=0||!Number.isInteger(p.qty)||p.qty<=0){$('positionNotice').textContent='請輸入有效的股票代號、進場價與整數股數';return}const a=loadPositions();a.push(p);try{savePositions(a);renderPositions();$('positionNotice').textContent='已建立模擬倉位（尚未平倉）'}catch{$('positionNotice').textContent='儲存失敗'}};
-$('scan').onclick=async()=>{const status=$('scanStatus'),body=$('candidates');status.textContent='正在讀取 JEI 公開候選資料…';body.replaceChildren();try{const response=await fetch('./system.json?ts='+Date.now(),{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);const feed=await response.json();const rows=Array.isArray(feed.attack)?feed.attack:[];const day=String(feed.data_date||'');const valid=/^\\d{4}-\\d{2}-\\d{2}$/.test(day);const halted=feed.market?.mode==='盤中資料不足';status.textContent='資料日期：'+(day||'未知')+'｜'+(halted?'行情不足，暫停候選訊號':rows.length+' 檔候選｜非即時成交訊號');if(halted||!valid)return;rows.slice(0,20).forEach(x=>{const tr=document.createElement('tr');const price=Number(x.price),hasPrice=Number.isFinite(price)&&price>0;[String(x.code||''),String(x.name||''),String(x.score??'--'),hasPrice?String(price):'無有效價格'].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});const td=document.createElement('td'),b=document.createElement('button');b.textContent='帶入代號';b.onclick=()=>{$('openCode').value=String(x.code||'');if(hasPrice)$('openPrice').value=String(price);$('openCode').focus()};td.appendChild(b);tr.appendChild(td);body.appendChild(tr)})}catch(e){status.textContent='讀取失敗：'+e.message}};
+$('scan').onclick=async()=>{const status=$('scanStatus'),body=$('candidates');status.textContent='正在讀取 JEI 公開候選資料…';body.replaceChildren();try{const feed=await readJeiStatic('system');const rows=Array.isArray(feed.attack)?feed.attack:[];const day=String(feed.data_date||'');const valid=/^\\d{4}-\\d{2}-\\d{2}$/.test(day);const halted=feed.market?.mode==='盤中資料不足';status.textContent='資料日期：'+(day||'未知')+'｜'+(halted?'行情不足，暫停候選訊號':rows.length+' 檔候選｜非即時成交訊號');if(halted||!valid)return;rows.slice(0,20).forEach(x=>{const tr=document.createElement('tr');const price=Number(x.price),hasPrice=Number.isFinite(price)&&price>0;[String(x.code||''),String(x.name||''),String(x.score??'--'),hasPrice?String(price):'無有效價格'].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});const td=document.createElement('td'),b=document.createElement('button');b.textContent='帶入代號';b.onclick=()=>{$('openCode').value=String(x.code||'');if(hasPrice)$('openPrice').value=String(price);$('openCode').focus()};td.appendChild(b);tr.appendChild(td);body.appendChild(tr)})}catch(e){status.textContent='讀取失敗：'+e.message}};
 renderPositions();
 
 const AUTO_KEY='jei-paper-auto-watch-v1';
 function autoLoad(){try{const a=JSON.parse(localStorage.getItem(AUTO_KEY)||'[]');return Array.isArray(a)?a:[]}catch{return []}}
 function autoRender(){const a=autoLoad(),body=$('autoHistory');body.replaceChildren();$('autoCount').textContent=String(a.length);$('autoHits').textContent=String(a.filter(x=>x.status==='目標達成').length);const observed=a.filter(x=>x.lastDay>x.day&&Number.isFinite(x.lastPrice)&&x.lastPrice>0);$('autoAvg').textContent=observed.length?(observed.reduce((v,x)=>v+(x.lastPrice/x.startPrice-1)*100,0)/observed.length).toFixed(2)+'%':'--';a.slice().reverse().slice(0,100).forEach(x=>{const tr=document.createElement('tr');const pct=x.lastDay>x.day?((x.lastPrice/x.startPrice-1)*100).toFixed(2)+'%':'--';[x.day,x.code+' '+x.name,String(x.startPrice),x.lastDay>x.day?x.lastPrice+' / '+x.lastDay:'待下一交易日',pct,x.status||'觀察中'].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});body.appendChild(tr)})}
 function validFeedDate(feed){const day=String(feed.data_date||'');return /^\\d{4}-\\d{2}-\\d{2}$/.test(day)&&day===twDay()&&feed.market?.stale===false&&feed.market?.mode!=='盤中資料不足'&&feed.market?.live_valid!==false&&feed.market?.mode!=='今日收盤'}
-async function autoScan(){const status=$('autoStatus');status.textContent='掃描中…';try{const response=await fetch('./system.json?ts='+Date.now(),{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);const feed=await response.json(),day=String(feed.data_date||'');if(!validFeedDate(feed)){status.textContent='暫停新增：資料非今日有效盤中行情（'+(day||'無日期')+'）。不會使用舊價格建立模擬進場。';autoRender();return}const source=$('autoSource').value;const pool=source==='combined'?[...(feed.attack||[]),...(feed.monster||[])]:Array.isArray(feed[source])?feed[source]:[];const limit=Number($('autoLimit').value)||3,target=Number($('autoTarget').value),stop=Number($('autoStop').value);if(!Number.isFinite(target)||target<=0||target>100||!Number.isFinite(stop)||stop<=0||stop>100){status.textContent='請設定有效的目標及停損百分比';return}const old=autoLoad();let added=0,updated=0;for(const x of pool){const code=String(x.code||''),price=Number(x.price);if(!/^\\d{4,6}$/.test(code)||!Number.isFinite(price)||price<=0)continue;for(const t of old){if(t.code!==code||day<=t.day||day<=t.lastDay)continue;t.lastDay=day;t.lastPrice=price;const pct=(price/t.startPrice-1)*100;if(t.status==='觀察中'){if(pct>=t.target)t.status='目標達成';else if(pct<=-t.stop)t.status='觸及停損'}updated++}if(added>=limit||old.some(t=>t.code===code&&t.day===day))continue;old.push({day,code,name:String(x.name||'').slice(0,40),startPrice:price,lastDay:day,lastPrice:price,target,stop,status:'觀察中'});added++}localStorage.setItem(AUTO_KEY,JSON.stringify(old));autoRender();status.textContent='資料日 '+day+'｜新增 '+added+' 檔｜更新 '+updated+' 筆｜訊號不等於實際成交'}catch(e){status.textContent='掃描失敗：'+e.message}}
+async function autoScan(){const status=$('autoStatus');status.textContent='掃描中…';try{const feed=await readJeiStatic('system'),day=String(feed.data_date||'');if(!validFeedDate(feed)){status.textContent='暫停新增：資料非今日有效盤中行情（'+(day||'無日期')+'）。不會使用舊價格建立模擬進場。';autoRender();return}const source=$('autoSource').value;const pool=source==='combined'?[...(feed.attack||[]),...(feed.monster||[])]:Array.isArray(feed[source])?feed[source]:[];const limit=Number($('autoLimit').value)||3,target=Number($('autoTarget').value),stop=Number($('autoStop').value);if(!Number.isFinite(target)||target<=0||target>100||!Number.isFinite(stop)||stop<=0||stop>100){status.textContent='請設定有效的目標及停損百分比';return}const old=autoLoad();let added=0,updated=0;for(const x of pool){const code=String(x.code||''),price=Number(x.price);if(!/^\\d{4,6}$/.test(code)||!Number.isFinite(price)||price<=0)continue;for(const t of old){if(t.code!==code||day<=t.day||day<=t.lastDay)continue;t.lastDay=day;t.lastPrice=price;const pct=(price/t.startPrice-1)*100;if(t.status==='觀察中'){if(pct>=t.target)t.status='目標達成';else if(pct<=-t.stop)t.status='觸及停損'}updated++}if(added>=limit||old.some(t=>t.code===code&&t.day===day))continue;old.push({day,code,name:String(x.name||'').slice(0,40),startPrice:price,lastDay:day,lastPrice:price,target,stop,status:'觀察中'});added++}localStorage.setItem(AUTO_KEY,JSON.stringify(old));autoRender();status.textContent='資料日 '+day+'｜新增 '+added+' 檔｜更新 '+updated+' 筆｜訊號不等於實際成交'}catch(e){status.textContent='掃描失敗：'+e.message}}
 $('autoScan').onclick=autoScan;
 autoRender();
 autoScan();
