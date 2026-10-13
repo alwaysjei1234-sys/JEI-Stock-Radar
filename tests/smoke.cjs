@@ -50,10 +50,7 @@ check('Stock screener filters score, sector and stale market at runtime',()=>{
  ctx.system.market.mode='盤中資料不足';ctx.testScreen();assert.equal(captured.length,0);
 });
 
-console.log(`JEI smoke summary: ${passed}/${passed+failed} passed (${Math.round(100*passed/(passed+failed))}%)`);
-if(passed+failed<18){console.error('FAIL expected at least 18 independent checks');process.exitCode=1;}
-
-check('Paper trading is linked and has no broker order submission',()=>{assert.ok(html.includes('href="./paper.html"'));assert.ok(paper.includes('jei-paper-trades-v1'));assert.doesNotMatch(paper,/JEINative\.|fetch\(|XMLHttpRequest|WebSocket/)});
+check('Paper trading has no broker order submission',()=>{assert.ok(html.includes('href="./paper.html"'));assert.ok(paper.includes('jei-paper-trades-v1'));assert.doesNotMatch(paper,/JEINative\.|XMLHttpRequest|WebSocket|\/api\/orders|placeOrder\(/);assert.ok(paper.includes("fetch('./system.json?ts='"),'read-only feed fetch is allowed')});
 check('Paper ledger JavaScript syntax',()=>{for(const match of paper.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1])});
 check('Paper PnL charges both-side fees and sell-side tax',()=>{
  const line=paper.split('\n').find(x=>x.startsWith('function calc('));assert.ok(line);
@@ -81,3 +78,6 @@ check('Cash momentum strategy archive sync is independent of current radar',()=>
 check('Four cash exit strategies are present',()=>{assert.ok(cash.includes("id:'fixed5'"));assert.ok(cash.includes("id:'fixed7'"));assert.ok(cash.includes("id:'fixed10'"));assert.ok(cash.includes("id:'trailing'"))});
 
 check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=twse_today and tpex_today'));assert.ok(py.includes('if source_is_today and not market_open and now.hour >= 13:'))});
+
+if(passed+failed<30){console.error('FAIL expected at least 30 independent checks');process.exitCode=1;}
+console.log(`JEI smoke summary: ${passed}/${passed+failed} passed (${Math.round(100*passed/(passed+failed))}%)`);
