@@ -234,6 +234,20 @@ public class MainActivity extends Activity {
         return sb.toString();
     }
 
+    // Vercel may require SSO; use the public repository for non-private static UI/feed only.
+    private String getRemoteStatic(String primaryUrl) throws Exception {
+        if (!primaryUrl.equals(REMOTE_UI) && !primaryUrl.equals(SYSTEM_JSON)
+                && !primaryUrl.equals(UPDATE_JSON)) throw new IllegalArgumentException("not a static JEI resource");
+        String query = "?ts=" + System.currentTimeMillis();
+        try {
+            return httpGet(primaryUrl + query);
+        } catch (Exception primaryFailure) {
+            String fileName = primaryUrl.substring(primaryUrl.lastIndexOf('/') + 1);
+            return httpGet("https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/"
+                    + fileName + query);
+        }
+    }
+
     private String httpPostJson(String url, String body, String token) throws Exception {
         Uri u = Uri.parse(url);
         if (!"https".equalsIgnoreCase(u.getScheme())) throw new Exception("AI endpoint 必須使用 HTTPS");
@@ -275,7 +289,7 @@ public class MainActivity extends Activity {
     private void refreshRemoteUI(boolean userTriggered) {
         io.execute(() -> {
             try {
-                String html = httpGet(REMOTE_UI + "?ts=" + System.currentTimeMillis());
+                String html = getRemoteStatic(REMOTE_UI);
                 if (!html.contains("JEI_REMOTE_UI_V2") && !html.contains("JEI_REMOTE_UI_V3")) throw new Exception("remote ui signature missing");
                 File f = new File(getFilesDir(), "jei_remote_index.html");
                 try (FileOutputStream o = new FileOutputStream(f)) {
@@ -299,7 +313,7 @@ public class MainActivity extends Activity {
     private void fetchSystem() {
         io.execute(() -> {
             try {
-                jsCall("onSystemData", httpGet(SYSTEM_JSON + "?ts=" + System.currentTimeMillis()));
+                jsCall("onSystemData", getRemoteStatic(SYSTEM_JSON));
             } catch (Exception e) {
                 jsCall("onSystemError", e.getMessage() == null ? "系統資料更新失敗" : e.getMessage());
             }
@@ -309,7 +323,7 @@ public class MainActivity extends Activity {
     private void checkUpdate() {
         io.execute(() -> {
             try {
-                jsCall("onUpdateManifest", httpGet(UPDATE_JSON + "?ts=" + System.currentTimeMillis()));
+                jsCall("onUpdateManifest", getRemoteStatic(UPDATE_JSON));
             } catch (Exception e) {
                 jsCall("onUpdateError", e.getMessage() == null ? "版本檢查失敗" : e.getMessage());
             }
