@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) s.setSafeBrowsingEnabled(true);
         s.setAllowContentAccess(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.7.1");
+        s.setUserAgentString(s.getUserAgentString() + " JEI-Stock-Radar/3.7.2");
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
@@ -102,7 +102,8 @@ public class MainActivity extends Activity {
             }
             @Override public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                if (!bootstrapped && url != null && url.startsWith("file:///android_asset/")) {
+                if (!bootstrapped && url != null && (url.startsWith("file:///android_asset/")
+                        || url.startsWith("https://jei-stock-radar.vercel.app/remote/"))) {
                     bootstrapped = true;
                     if (isOnline()) refreshRemoteUI(false);
                 }
@@ -110,7 +111,20 @@ public class MainActivity extends Activity {
         });
         webView.addJavascriptInterface(new NativeBridge(), "JEINative");
 
-        webView.loadUrl("file:///android_asset/index.html");
+        try {
+            File cached = new File(getFilesDir(), "jei_remote_index.html");
+            StringBuilder html = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    new java.io.FileInputStream(cached), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) html.append(line).append('\n');
+            }
+            if (!html.toString().contains("JEI_REMOTE_UI_V3")) throw new Exception("invalid cached UI");
+            webView.loadDataWithBaseURL("https://jei-stock-radar.vercel.app/remote/",
+                    html.toString(), "text/html", "UTF-8", null);
+        } catch (Exception ignored) {
+            webView.loadUrl("file:///android_asset/index.html");
+        }
     }
 
     private boolean handleImportIntent(Intent intent, boolean notifyUi) {
