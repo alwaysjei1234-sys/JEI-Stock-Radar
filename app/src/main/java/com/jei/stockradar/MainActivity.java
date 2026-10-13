@@ -53,6 +53,7 @@ public class MainActivity extends Activity {
     private static final String SYSTEM_JSON = "https://jei-stock-radar.vercel.app/remote/system.json";
     private static final String UPDATE_JSON = "https://jei-stock-radar.vercel.app/remote/update.json";
     private static final String DAILY_JSON = "https://jei-stock-radar.vercel.app/remote/daily_prices.json";
+    private static final String PERFORMANCE_JSON = "https://jei-stock-radar.vercel.app/remote/strategy_performance.json";
     private static final String CASH_UI = "https://jei-stock-radar.vercel.app/remote/cash.html";
     private static final String PAPER_UI = "https://jei-stock-radar.vercel.app/remote/paper.html";
     private static final String PREFS = "jei_private";
@@ -260,6 +261,10 @@ public class MainActivity extends Activity {
                 return j.optInt("schema", 0) == 1
                         && "official_daily_close".equals(j.optString("kind", ""))
                         && j.optJSONObject("days") != null;
+            if (PERFORMANCE_JSON.equals(sourceUrl))
+                return j.optInt("schema", 0) == 1
+                        && "official_daily_close_paper_observation".equals(j.optString("mode", ""))
+                        && j.optJSONObject("strategies") != null;
         } catch (Exception ignored) { }
         return false;
     }
@@ -267,7 +272,7 @@ public class MainActivity extends Activity {
     private String getRemoteStatic(String primaryUrl) throws Exception {
         if (!primaryUrl.equals(REMOTE_UI) && !primaryUrl.equals(SYSTEM_JSON)
                 && !primaryUrl.equals(UPDATE_JSON) && !primaryUrl.equals(DAILY_JSON)
-                && !primaryUrl.equals(CASH_UI) && !primaryUrl.equals(PAPER_UI))
+                && !primaryUrl.equals(PERFORMANCE_JSON) && !primaryUrl.equals(CASH_UI) && !primaryUrl.equals(PAPER_UI))
             throw new IllegalArgumentException("not a static JEI resource");
         String query = "?ts=" + System.currentTimeMillis();
         try {
@@ -349,6 +354,7 @@ public class MainActivity extends Activity {
         final String sourceUrl;
         if ("system".equals(kind)) sourceUrl = SYSTEM_JSON;
         else if ("daily".equals(kind)) sourceUrl = DAILY_JSON;
+        else if ("performance".equals(kind)) sourceUrl = PERFORMANCE_JSON;
         else return;
         io.execute(() -> {
             try {
