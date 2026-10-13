@@ -765,9 +765,7 @@ def main():
     live_coverage=live_count/max(1,len(stocks))
     live_valid=live_count>=500 and live_coverage>=.35
     stale_source=not source_is_today
-    if live_valid:
-        raw_date=today_iso
-        stale_source=False
+    # Intraday MIS quotes are not an official post-close dataset. A sufficiently\n    # populated live snapshot may power intraday screens only during trading hours.\n    if live_valid and market_open:\n        raw_date=today_iso\n        stale_source=False
     elif stale_source:
         # Safety invariant applies all day, including after close: stale official
         # daily data must never be presented as today's attack/next/monster radar.
