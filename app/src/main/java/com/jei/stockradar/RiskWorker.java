@@ -69,8 +69,21 @@ public class RiskWorker extends Worker {
         return sb.toString();
     }
 
+    // Only static public JEI files may use GitHub Raw as a read-only failover.
+    private String getStaticFeed(String primaryUrl) throws Exception {
+        if (!primaryUrl.equals(SYSTEM_JSON) && !primaryUrl.equals(UPDATE_JSON))
+            throw new IllegalArgumentException("not a static JEI feed");
+        try {
+            return get(primaryUrl);
+        } catch (Exception primaryFailure) {
+            String fileName = primaryUrl.substring(primaryUrl.lastIndexOf('/') + 1);
+            return get("https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/"
+                    + fileName);
+        }
+    }
+
     private void checkRisk() throws Exception {
-        JSONObject root = new JSONObject(get(SYSTEM_JSON));
+        JSONObject root = new JSONObject(getStaticFeed(SYSTEM_JSON));
         JSONObject risk = root.optJSONObject("risk");
         if (risk == null) return;
 
@@ -136,7 +149,7 @@ public class RiskWorker extends Worker {
         JSONArray rows = market.optJSONArray("msgArray");
         if (rows == null || rows.length() == 0) return;
 
-        JSONObject sys = new JSONObject(get(SYSTEM_JSON));
+        JSONObject sys = new JSONObject(getStaticFeed(SYSTEM_JSON));
         JSONObject stockSectors = sys.optJSONObject("stock_sectors");
         JSONArray sectorRows = sys.optJSONArray("sectors");
 
@@ -261,7 +274,7 @@ public class RiskWorker extends Worker {
     }
 
     private void checkAppUpdate() throws Exception {
-        JSONObject j = new JSONObject(get(UPDATE_JSON));
+        JSONObject j = new JSONObject(getStaticFeed(UPDATE_JSON));
         int remote = j.optInt("versionCode", 0);
         if (remote <= BuildConfig.VERSION_CODE) return;
 
