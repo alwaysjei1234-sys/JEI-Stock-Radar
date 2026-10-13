@@ -28,6 +28,8 @@ for(const html of [cash,paper]){
  assert(html.includes("JEINative.fetchStaticJson(kind)"));
 }
 assert(cash.includes("readJeiStatic('daily')"));
+assert(cash.includes("readJeiStatic('performance')"));
+assert(cash.includes('id="cloudRows"'));
 assert(cash.includes("mode==='今日收盤'"));
 assert(cash.includes('jei-cash-auto-watch-v1'));
 assert(paper.includes('jei-paper-auto-watch-v1'));
