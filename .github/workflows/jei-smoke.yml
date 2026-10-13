@@ -23,6 +23,10 @@ jobs:
         run: node scripts/jei-smoke.mjs
       - name: Python generator syntax
         run: python -m py_compile scripts/update_system.py
+      - name: Official-close simulated strategy tests
+        run: |
+          python -m py_compile scripts/update_paper_performance.py
+          python -m unittest discover -s tests -p 'test_paper_performance.py' -v
       - name: Record test result
         if: always()
         run: |
