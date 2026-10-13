@@ -1,0 +1,58 @@
+name: JEI Daily Paper Strategy Benchmark
+on:
+  schedule:
+    # 20:25 Taipei time, weekdays; official daily closes must already be available.
+    - cron: '25 12 * * 1-5'
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'scripts/update_paper_performance.py'
+      - '.github/workflows/update-paper-performance.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jei-paper-strategy-benchmark
+  cancel-in-progress: true
+
+jobs:
+  daily-paper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test no-look-ahead and cost assumptions
+        run: python -m unittest discover -s tests -p 'test_paper_performance.py' -v
+      - name: Generate daily public paper-only benchmark
+        run: python scripts/update_paper_performance.py
+      - name: Publish observation ledger
+        run: |
+          if [ ! -f remote/strategy_performance.json ] || git diff --quiet -- remote/strategy_performance.json; then
+            if [ -f remote/strategy_performance.json ] && ! git ls-files --error-unmatch remote/strategy_performance.json >/dev/null 2>&1; then
+              echo "New ledger is untracked, publishing"
+            else
+              echo "No paper benchmark change"
+              exit 0
+            fi
+          fi
+          git config user.name "JEI Paper Strategy Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add remote/strategy_performance.json
+          git commit -m "Auto-update four-strategy paper observation ledger"
+          for i in 1 2 3; do
+            if git push; then exit 0; fi
+            echo "Push raced with other data writers: $i"
+            git fetch origin main
+            git rebase origin/main
+            sleep 3
+          done
+          echo "Paper strategy publish failed"
+          exit 1
