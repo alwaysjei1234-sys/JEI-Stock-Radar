@@ -94,6 +94,36 @@ check('Cash paper performance uses realized net of fees and tax',()=>{assert.ok(
 check('Cash momentum strategy archive sync is independent of current radar',()=>{assert.ok(cash.includes("readJeiStatic('daily')"));assert.ok(cash.includes("async function syncDailyPrices()"));assert.ok(cash.includes("if(day<=t.day||day<=t.lastDay)continue"));assert.ok(cash.includes("if(t.strategies)strategyAdvance(t,price,day)"))});
 check('Four cash exit strategies are present',()=>{assert.ok(cash.includes("id:'fixed5'"));assert.ok(cash.includes("id:'fixed7'"));assert.ok(cash.includes("id:'fixed10'"));assert.ok(cash.includes("id:'trailing'"))});
 
+check('Cash auto scanner never closes strategies using intraday quotes',()=>{
+ const scan=cash.split('\n').find(l=>l.startsWith('async function autoScan('));
+ const archive=cash.split('\n').find(l=>l.startsWith('async function syncDailyPrices('));
+ assert.ok(scan&&archive,'cash scanner and official archive updater must exist');
+ assert.doesNotMatch(scan,/strategyAdvance\s*\(/);
+ assert.match(archive,/if\(t\.strategies\)strategyAdvance\(t,price,day\)/);
+});
+check('Cash strategy net figures include both fees and sell tax',()=>{
+ const defs=cash.split('\n').filter(l=>/^(const STRATEGIES=|function strategyAdvance\(|function strategyInit\(|function strategyNetPct\()/.test(l));
+ assert.equal(defs.length,4);
+ const ctx={};vm.runInNewContext(defs.join('\n')+';globalThis.step=strategyAdvance;globalThis.init=strategyInit;globalThis.net=strategyNetPct;',ctx);
+ const t=ctx.init({day:'2026-10-13',startPrice:100,lastDay:'2026-10-13',lastPrice:100});
+ ctx.step(t,110,'2026-10-13');assert.equal(t.strategies.fixed5.status,'觀察中','same-day close cannot trigger');
+ ctx.step(t,106,'2026-10-14');assert.equal(t.strategies.fixed5.status,'收盤停利');assert.equal(t.strategies.fixed7.status,'觀察中');
+ ctx.step(t,103,'2026-10-15');assert.equal(t.strategies.trailing.status,'移動停利觸發');assert.equal(t.strategies.fixed5.exitPrice,106);
+ const net=ctx.net(100,106);
+ assert.ok(net>5&&net<6,'net is below gross 6% after fees and tax');
+ assert.equal(ctx.net(0,106),null);
+});
+check('Cash risk stale feed cannot qualify as fresh intraday',()=>{
+ const line=cash.split('\n').find(l=>l.startsWith('function signalFeedMode('));
+ assert.ok(line);
+ const ctx={twDay:()=> '2026-10-13'};
+ vm.runInNewContext(line+';globalThis.mode=signalFeedMode;',ctx);
+ const make=mode=>({data_date:'2026-10-13',market:{stale:false,mode,live_valid:true}});
+ assert.equal(ctx.mode(make('資料過期')),'');
+ assert.equal(ctx.mode(make('盤中即時')),'已驗證盤中觀察');
+ assert.equal(ctx.mode({...make('盤中即時'),data_date:'2026-10-12'}),'');
+});
+
 check('Network recommendation success requires candidates',()=>assert.ok(py.includes('if not old_web_recommendations and old_web_status.get("ok"):')));
 
 check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=twse_today and tpex_today'));assert.ok(py.includes('if source_is_today and not market_open and now.hour >= 13:'))});
