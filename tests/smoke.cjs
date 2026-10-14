@@ -116,7 +116,32 @@ check('Paper PnL charges both-side fees and sell-side tax',()=>{
  const short=ctx.testCalc({...t,side:'short'});assert.equal(short.gross,-10000);assert.equal(short.tax,150);
 });
 
-check('Paper scanner is read-only and halts on insufficient market coverage',()=>{assert.ok(paper.includes("readJeiStatic('system')"));assert.ok(paper.includes("halted=feed.market?.mode==='盤中資料不足'"));assert.ok(paper.includes("if(halted||!valid)return"));assert.doesNotMatch(paper,/\/api\/orders|placeOrder\(/);assert.ok(paper.includes('JEINative.fetchStaticJson(kind)'))});
+check('Paper scanner is read-only and halts on insufficient market coverage',()=>{assert.ok(paper.includes("readJeiStatic('system')"));assert.ok(paper.includes("const valid=validFeedDate(feed)"));assert.ok(paper.includes("if(halted||!valid)return"));assert.doesNotMatch(paper,/\/api\/orders|placeOrder\(/);assert.ok(paper.includes('JEINative.fetchStaticJson(kind)'))});
+
+check('Day-trade legacy scanner accepts valid dated prices and refuses stale signals',()=>{
+ const mode=paper.match(/function signalFeedMode\(feed,now=new Date\(\)\)\{[\s\S]*?(?=\nfunction validFeedDate)/)?.[0];
+ const validator=paper.match(/^function validFeedDate\(feed,now=new Date\(\)\).*$/m)?.[0];
+ assert.ok(mode&&validator,'verified feed validator must exist');
+ const ctx={twDay:()=> '2026-10-14'};
+ vm.runInNewContext(mode+'\n'+validator+';globalThis.verify=validFeedDate;',ctx);
+ const at=new Date('2026-10-14T02:00:00Z');
+ const live={data_date:'2026-10-14',updated_at:'2026-10-14 10:00',market:{mode:'盤中即時',stale:false,live_valid:true,live_count:1959}};
+ const close={data_date:'2026-10-14',market:{mode:'今日收盤',stale:false,live_valid:false,close_count:1959}};
+ assert.equal(ctx.verify(live,at),true,'current validated live feed');
+ assert.equal(ctx.verify(close,at),true,'today official close even when live_valid is false');
+ assert.equal(ctx.verify({...close,market:{...close.market,close_count:3}},at),false,'insufficient close coverage');
+ assert.equal(ctx.verify({...live,updated_at:'2026-10-14 09:00'},at),false,'old intraday snapshot');
+ assert.equal(ctx.verify({...live,updated_at:'2026-10-14 10:05'},at),false,'future timestamp');
+ assert.equal(ctx.verify({...live,market:{...live.market,stale:true}},at),false,'stale flag');
+ assert.equal(ctx.verify({...live,market:{...live.market,live_valid:false}},at),false,'unverified live');
+ assert.equal(ctx.verify({...live,data_date:'2026-10-13'},at),false,'prior day');
+ assert.ok(!paper.includes(String.raw`\\d`),'double-escaped digit regex blocks all real stock codes');
+ assert.ok(paper.includes(String.raw`/^\d{4,6}$/.test(p.code)`));
+ assert.ok(paper.includes(String.raw`/^\d{4,6}$/.test(code)`));
+ assert.ok(paper.includes("const valid=validFeedDate(feed)"));
+ assert.ok(paper.includes("if(!valid)return"),'candidate list must gate on trusted feed');
+});
+
 check('Paper open positions are isolated from realized trades',()=>{assert.ok(paper.includes("jei-paper-open-positions-v1"));assert.ok(paper.includes("function loadPositions()"));assert.ok(paper.includes("function renderPositions()"));assert.ok(paper.includes("const list=load(),p=list.map(calc)"))});
 
 
