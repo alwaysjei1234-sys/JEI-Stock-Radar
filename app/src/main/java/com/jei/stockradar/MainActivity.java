@@ -238,8 +238,7 @@ public class MainActivity extends Activity {
         BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         StringBuilder sb = new StringBuilder();
         String line;
-        while ((line = r.readLine()) != null) sb.append(line).append('
-');
+        while ((line = r.readLine()) != null) sb.append(line).append('\n');
         r.close();
         if (status < 200 || status >= 300) throw new Exception("HTTP " + status + ": " + sb);
         return sb.toString();
@@ -309,8 +308,7 @@ public class MainActivity extends Activity {
         BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         StringBuilder sb = new StringBuilder();
         String line;
-        while ((line = r.readLine()) != null) sb.append(line).append('
-');
+        while ((line = r.readLine()) != null) sb.append(line).append('\n');
         r.close();
         if (status < 200 || status >= 300) throw new Exception("HTTP " + status + ": " + sb);
         return sb.toString();
