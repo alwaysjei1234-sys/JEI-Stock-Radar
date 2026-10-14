@@ -195,6 +195,51 @@ check('Cloud return and drawdown reporting is explicit',()=>{
  assert.ok(cash.includes('Number(s.estimated_liquidation_equity_ntd)/basis-1'));
 });
 
+
+check('Private portfolio triage requires fresh dated exchange prices',()=>{
+ assert.ok(html.includes('id="holdTriage"')&&html.includes('id="privateRotate"'));
+ const fn=html.match(/function holdingTriageCategory\(h,m,quote,advice,ret,ch,trusted=isTrustedFeed\(\),now=new Date\(\)\)\{[\s\S]*?(?=\nfunction buildPrivatePortfolioTriage)/)?.[0];
+ assert.ok(fn,'triage classifier present');
+ const ctx={taipeiDateParts:()=>({year:'2026',month:'10',day:'14'}),isTrustedFeed:()=>true};
+ vm.runInNewContext(fn+';globalThis.classify=holdingTriageCategory;',ctx);
+ const h={code:'1234'},m={price:88,quoteDay:'20261014'},q={valid:true};
+ const call=(advice,ret=0,ch=0,feed=true,quote=q,data=m)=>ctx.classify(h,data,quote,advice,ret,ch,feed,new Date('2026-10-14T02:15:00Z'));
+ assert.equal(call({score:31,sectorScore:36,action:'續抱觀察'},-20,-2).id,'defense');
+ assert.equal(call({score:55,sectorScore:54,action:'移動停利'},20,-2).id,'profit');
+ assert.equal(call({score:40,sectorScore:40,action:'一般'},-2,-1).id,'rotation');
+ assert.equal(call({score:80,sectorScore:75,action:'續抱偏多'},10,1).id,'hold');
+ assert.equal(call({score:55,sectorScore:50,action:'中性'},1,0).id,'watch');
+ assert.equal(call({score:30,sectorScore:40,action:'風控優先'},-20,-5,false).id,'pending');
+ assert.equal(call({score:30,sectorScore:40,action:'風控優先'},-20,-5,true,q,{price:88,quoteDay:'20261013'}).id,'pending');
+ assert.equal(call({score:'--',sectorScore:40,action:'風控優先'},-20,-5).id,'pending');
+});
+check('Rotation candidates exclude held names and stale feed',()=>{
+ assert.ok(html.includes('!holdings.some(h=>h.code===String(x.code))'));
+ assert.ok(html.includes("Number(x.score)>=70"));
+ assert.ok(html.includes('Number(system.risk?.score)>=70'));
+ assert.ok(html.includes("if(!JEI_PRIVATE_APP)return;"));
+});
+check('Four-strategy leaderboard needs matched sufficient closes',()=>{
+ const cash=fs.readFileSync('remote/cash.html','utf8');
+ const fn=cash.match(/function strategyComparison\(data\)\{[\s\S]*?(?=\nfunction renderStrategyComparison)/)?.[0];
+ assert.ok(fn,'comparison helper present');
+ const ctx={};vm.runInNewContext(fn+';globalThis.compare=strategyComparison;',ctx);
+ const keys=['fixed5','fixed7','fixed10','trailing'];
+ const make=(closed=2,days=4,coverage='2/2')=>({capital_per_strategy:1000000,strategies:Object.fromEntries(keys.map((k,i)=>[k,{summary:{closed,open_positions:2,estimated_liquidation_equity_ntd:1000000+(i+1)*1000,max_drawdown_pct:i+1,official_close_coverage:coverage},equity_history:Array.from({length:days},(_,j)=>({day:'2026-10-'+String(1+j).padStart(2,'0'),equity:1000000}))}]))});
+ assert.equal(ctx.compare(make()).ready,false,'2 trades cannot be ranked');
+ assert.equal(ctx.compare(make(12,11,'1/2')).ready,false,'missing official closes invalidate ranking');
+ const good=ctx.compare(make(12,11,'2/2'));
+ assert.equal(good.ready,true);
+ assert.equal(good.ranked[0].id,'trailing','ranks by net portfolio return when comparable');
+ assert.equal(ctx.compare(make(12,2,'2/2')).ready,false,'too-short observation period cannot qualify');
+ assert.equal(ctx.compare({...make(12,11,'2/2'),capital_per_strategy:0}).ready,false);
+});
+check('Manual cash candidate browsing rejects stale feeds',()=>{
+ const cash=fs.readFileSync('remote/cash.html','utf8');
+ assert.ok(cash.includes('const valid=validFeedDate(feed)'));
+ assert.ok(cash.includes('行情過期或未驗證，暫停候選訊號'));
+});
+
 check('Network recommendation success requires candidates',()=>assert.ok(py.includes('if not old_web_recommendations and old_web_status.get("ok"):')));
 
 check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=twse_today and tpex_today'));assert.ok(py.includes('if source_is_today and not market_open and now.hour >= 13:'))});

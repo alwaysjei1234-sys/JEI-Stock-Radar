@@ -40,6 +40,8 @@ async function run(){
   assert.match(await page.locator('#quickRisk').innerText(),/大盤/);
   assert.match(await page.locator('#quickHold').innerText(),/Android App/);
   assert.match(await page.locator('#quickAttack').innerText(),/主攻/);
+  assert.equal(await page.locator('#holdTriage').isVisible(),false,'private triage never shown on public browser');
+  assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>document.querySelector('#sysStatus').textContent.includes('feed 已連線'),{timeout:15000});
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
   await page.locator('[data-go="attack"]').first().click();
@@ -56,6 +58,7 @@ async function run(){
   await page.locator('#cloudRows tr').first().waitFor({state:'attached',timeout:15000});
   assert.equal(await page.locator('#cloudRows tr').count(),4);
   assert.equal(await page.locator('#cloudRows tr').first().locator('td').count(),8,'cloud scorecard reports return and drawdown');
+  assert.match(await page.locator('#cloudCompare').innerText(),/暫不排名|四策略比較/,'cloud status must state if sample is sufficient');
   assert.match(await page.locator('#cloudStatus').innerText(),/2026-10-13|更新交易日/);
   await page.locator('#scan').click();
   await page.waitForFunction(()=>!document.querySelector('#scanStatus').textContent.includes('尚未載入'));
