@@ -330,6 +330,56 @@ check('Watchlist alerts never promise closed-app notifications or real orders',(
  assert.ok(html.includes('最高價是 App 觀察期間紀錄'));
 });
 
+
+check('Institutional rows are dated to their own source not intraday feed day',()=>{
+ const source=html.match(/function institutionSnapshotDate\(inst,feed=system\)\{[\s\S]*?(?=\nfunction holdingMarketPressure)/)?.[0];
+ assert.ok(source,'institutional source-date auditor exists');
+ const ctx={isTrustedFeed:()=>true,system:{}};
+ vm.runInNewContext(source+';globalThis.snapshot=institutionSnapshotDate;',ctx);
+ const feed={source_data_date:'TWSE:1151013 / TPEx:1151014',data_date:'2026-10-14'};
+ const tw=ctx.snapshot({source:'TWSE T86'},feed),tpex=ctx.snapshot({source:'TPEx institutional'},feed);
+ assert.equal(tw.date,'2026-10-13');assert.equal(tw.fresh,false,'yesterday TWSE trades cannot be called today's selling');
+ assert.equal(tpex.date,'2026-10-14');assert.equal(tpex.fresh,true,'same-day confirmed TPEx dataset can qualify');
+ assert.equal(ctx.snapshot({source:'TWSE T86'}, {...feed,source_data_date:'TWSE:1150230'}).fresh,false,'calendar-invalid day rejected');
+ assert.equal(ctx.snapshot({source:'unknown'},feed).fresh,false);
+ ctx.isTrustedFeed=()=>false;assert.equal(ctx.snapshot({source:'TPEx institutional'},feed).fresh,false);
+});
+check('Market/sector/near-low risk ranking uses only verified current trade evidence',()=>{
+ const source=html.match(/function holdingMarketPressure\(h,m,quality,feed,now=new Date\(\),verified=isTrustedFeed\(feed,now\)\)\{[\s\S]*?(?=\nfunction renderHoldingPressure)/)?.[0];
+ assert.ok(source,'pure risk evidence evaluator exists');
+ const ctx={taipeiDateParts:()=>({year:'2026',month:'10',day:'14'}),tradingWindowAt:()=>true,isTrustedFeed:()=>true};
+ vm.runInNewContext(source+';globalThis.detect=holdingMarketPressure;',ctx);
+ const h={code:'2330',name:'測試'},m={price:90,prev:100,high:107,low:89,quoteDay:'20261014',quoteKind:'last_trade'},q={valid:true};
+ const feed={market:{mode:'盤中即時'},data_date:'2026-10-14',risk:{score:85},stock_sectors:{'2330':'AI族群'},sectors:[{name:'AI族群',score:35}]},now=new Date('2026-10-14T03:50:00Z');
+ const run=(quote=m,qv=q,fd=feed,valid=true)=>ctx.detect(h,quote,qv,fd,now,valid);
+ let risk=run();
+ assert.equal(risk.eligible,true);assert.equal(risk.reasons.length,3);
+ assert.equal(risk.priority,7);
+ assert.equal(risk.reasons[0].kind,'near_low');
+ assert.equal(risk.reasons[1].kind,'sector_weak');
+ assert.equal(risk.reasons[2].kind,'market_confluence');
+ assert.equal(run({...m,quoteKind:'official_close'}).eligible,false);
+ assert.equal(run({...m,quoteDay:'20261013'}).eligible,false);
+ assert.equal(run(m,{valid:false}).eligible,false);
+ assert.equal(run(m,q,feed,false).eligible,false);
+ ctx.tradingWindowAt=()=>false;assert.equal(run().eligible,false);ctx.tradingWindowAt=()=>true;
+ assert.equal(run({...m,price:90,high:NaN,low:NaN}).reasons.length,2,'missing daily range cannot invent near-low selling pressure');
+ assert.equal(run(m,q,{...feed,stock_sectors:{},sectors:[]}).reasons.length,2,'unknown industry must not be called weak');
+ assert.equal(run(m,q,{...feed,risk:{score:20},stock_sectors:{},sectors:[]}).reasons.length,1);
+ assert.equal(run({...m,price:105},q,feed).reasons.length,0,'up stock is not marked as heavy selling');
+ assert.equal(run(m,q,{...feed,market:{mode:'今日收盤'}}).eligible,false);
+});
+check('Intraday dashboard evidence and AI reject unsupported institutional exits',()=>{
+ assert.ok(html.includes('id="pressurePanel"')&&html.includes('id="pressureList"')&&html.includes('id="quickPressure"'));
+ assert.ok(html.includes('renderHoldingPressure(rows)'));
+ assert.ok(html.includes('非逐筆即時資金流'));
+ assert.ok(html.includes('法人資料截至 '));
+ assert.ok(html.includes("const rawInst=(system.institutional||{})[h.code]||null"));
+ assert.ok(html.includes("const code=stock.code,rawInst=(system.institutional||{})[code]||null"));
+ assert.ok(html.includes("m?.quoteKind!=='last_trade'"));
+ assert.ok(html.includes("m?.quoteKind==='official_close'&&(tradingWindow()||String(m.quoteDay)!==_today)"));
+});
+
 check('Network recommendation success requires candidates',()=>assert.ok(py.includes('if not old_web_recommendations and old_web_status.get("ok"):')));
 
 check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=twse_today and tpex_today'));assert.ok(py.includes('if source_is_today and not market_open and now.hour >= 13:'))});
