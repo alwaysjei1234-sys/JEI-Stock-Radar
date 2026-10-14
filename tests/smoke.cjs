@@ -159,7 +159,7 @@ check('Holdings only use confirmed executed exchange trades',()=>{
  const funcs=basic+'\n'+quality;
  const ctx={Intl};vm.runInNewContext(funcs+';globalThis.inspect=holdingQuoteQuality;',ctx);
  const during=new Date('2026-10-14T02:10:00Z'),post=new Date('2026-10-14T05:35:00Z');
- const mk=(minute=605,received='2026-10-14T02:07:00Z')=>({quoteDay:'20261014',quoteKind:'last_trade',quoteMinute:minute,receivedAt:Date.parse(received)});
+ const mk=(minute=605,received='2026-10-14T02:07:00Z')=>({price:920,quoteDay:'20261014',quoteKind:'last_trade',quoteMinute:minute,receivedAt:Date.parse(received)});
  assert.equal(ctx.inspect(mk(605),during).valid,true,'recent executed trade qualifies');
  assert.equal(ctx.inspect(mk(590),during).valid,false,'old exchange trade time rejected even if freshly downloaded');
  assert.equal(ctx.inspect({...mk(605),quoteKind:'bid_ask'},during).valid,false);
