@@ -1,6 +1,13 @@
 name: JEI Mobile Browser Acceptance
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'tests/mobile_browser.cjs'
+      - 'remote/index.html'
+      - 'remote/cash.html'
+      - 'remote/paper.html'
+      - '.github/workflows/jei-browser-acceptance.yml'
   push:
     branches: [main]
     paths:

@@ -20,7 +20,7 @@ check('WebView file-origin crossing disabled',()=>{assert.match(activity,/setAll
 check('Stock screener and heatmap wired',()=>{assert.match(html,/function renderAttackScreener\(/);assert.match(html,/function renderSectorHeatmap\(/);assert.match(html,/renderSectors\(\);renderSectorHeatmap\(\)/)});
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]).filter(Boolean);const vm=require('node:vm');check('Inline JavaScript syntax',()=>{for(const code of scripts)new vm.Script(code)});
 
-check('Trading hours use Asia/Taipei timezone',()=>assert.match(html,/function tradingWindow\(\).*timeZone:'Asia\/Taipei'/));
+check('Trading hours use Asia/Taipei timezone',()=>assert.match(html,/function taipeiDateParts\(.*timeZone:'Asia\/Taipei'/));
 check('Screener updates freshness label',()=>assert.match(html,/function renderAttackScreener\(\)\{\s*updateFeedFreshness\(\)/));
 check('Private sections are hidden without removal',()=>assert.match(html,/querySelectorAll\('#hold,#rotate'\)\.forEach\(el=>\{el\.style\.display='none'/));
 
@@ -42,15 +42,13 @@ check('Market text escaping blocks HTML injection at runtime',()=>{
  assert.equal(ctx.testEscape(null),'');
 });
 check('Taiwan trading hours are timezone-independent at runtime',()=>{
- const line=html.split('\n').find(x=>x.startsWith('function tradingWindow('));
- assert.ok(line,'trading window helper missing');
- const ctx={Date:class extends Date{constructor(){super('2026-10-13T01:00:00Z')}} ,Intl};
- vm.runInNewContext(line+';globalThis.testTrading=tradingWindow;',ctx);
- assert.equal(ctx.testTrading(),true,'Tuesday 09:00 Taipei must be trading');
- ctx.Date=class extends Date{constructor(){super('2026-10-13T07:00:00Z')}};
- assert.equal(ctx.testTrading(),false,'Tuesday 15:00 Taipei must be closed');
- ctx.Date=class extends Date{constructor(){super('2026-10-17T01:00:00Z')}};
- assert.equal(ctx.testTrading(),false,'Saturday 09:00 Taipei must be closed');
+ const src=html.split('\n').filter(x=>/^(function taipeiDateParts\(|function tradingWindowAt\(|function tradingWindow\()/.test(x)).join('\n');
+ const ctx={Intl};vm.runInNewContext(src+';globalThis.testTrading=tradingWindowAt;',ctx);
+ assert.equal(ctx.testTrading(new Date('2026-10-13T01:00:00Z')),true,'Tuesday 09:00 Taipei must be trading');
+ assert.equal(ctx.testTrading(new Date('2026-10-13T05:29:00Z')),true,'Tuesday 13:29 Taipei still trades');
+ assert.equal(ctx.testTrading(new Date('2026-10-13T05:30:00Z')),false,'Tuesday 13:30 Taipei market closed');
+ assert.equal(ctx.testTrading(new Date('2026-10-13T07:00:00Z')),false,'Tuesday 15:00 Taipei must be closed');
+ assert.equal(ctx.testTrading(new Date('2026-10-17T01:00:00Z')),false,'Saturday 09:00 Taipei must be closed');
 });
 
 check('Stock screener filters score, price, sector, and stale market at runtime',()=>{
@@ -138,14 +136,63 @@ check('Cash strategy net figures include both fees and sell tax',()=>{
  assert.equal(ctx.net(0,106),null);
 });
 check('Cash risk stale feed cannot qualify as fresh intraday',()=>{
- const line=cash.match(/function signalFeedMode\(feed\)\{[\s\S]*?\n\}/)?.[0];
+ const line=cash.match(/function signalFeedMode\(feed,now=new Date\(\)\)\{[\s\S]*?\n\}/)?.[0];
  assert.ok(line);
  const ctx={twDay:()=> '2026-10-13'};
  vm.runInNewContext(line+';globalThis.mode=signalFeedMode;',ctx);
- const make=mode=>({data_date:'2026-10-13',market:{stale:false,mode,live_valid:true}});
- assert.equal(ctx.mode(make('資料過期')),'');
- assert.equal(ctx.mode(make('盤中即時')),'已驗證盤中觀察');
- assert.equal(ctx.mode({...make('盤中即時'),data_date:'2026-10-12'}),'');
+ const now=new Date('2026-10-13T02:15:00Z');
+ const make=mode=>({data_date:'2026-10-13',updated_at:'2026-10-13 10:00',market:{stale:false,mode,live_valid:true}});
+ assert.equal(ctx.mode(make('資料過期'),now),'');
+ assert.equal(ctx.mode(make('盤中即時'),now),'已驗證盤中觀察');
+ assert.equal(ctx.mode({...make('盤中即時'),updated_at:'2026-10-13 09:00'},now),'','stale today intraday signal rejected');
+ assert.equal(ctx.mode({...make('盤中即時'),data_date:'2026-10-12'},now),'');
+});
+check('Holdings only use confirmed executed exchange trades',()=>{
+ assert.ok(html.includes("quoteKind:'last_trade'"));
+ assert.ok(html.includes("price=Number(x?.z)"));
+ const code=html.match(/function ingestMarket\(j\)\{[\s\S]*?(?=\nfunction liveItem)/)?.[0]||'';
+ assert.ok(code.includes("date!==expected")&&code.includes("price<=0"));
+ assert.doesNotMatch(code,/\(bid\+ask\)\/2|x\.b\)|x\.a\)/);
+ const basic=html.split('\n').filter(x=>/^(function taipeiDateParts\(|function tradingWindowAt\(|function tradingWindow\()/.test(x)).join('\n');
+ const quality=html.match(/function holdingQuoteQuality\(m,now=new Date\(\)\)\{[\s\S]*?(?=\nfunction seedMarketFromSystem)/)?.[0];
+ assert.ok(quality,'quote quality function is loadable');
+ const funcs=basic+'\n'+quality;
+ const ctx={Intl};vm.runInNewContext(funcs+';globalThis.inspect=holdingQuoteQuality;',ctx);
+ const during=new Date('2026-10-14T02:10:00Z'),post=new Date('2026-10-14T05:35:00Z');
+ const mk=(minute=605,received='2026-10-14T02:07:00Z')=>({price:920,quoteDay:'20261014',quoteKind:'last_trade',quoteMinute:minute,receivedAt:Date.parse(received)});
+ assert.equal(ctx.inspect(mk(605),during).valid,true,'recent executed trade qualifies');
+ assert.equal(ctx.inspect(mk(590),during).valid,false,'old exchange trade time rejected even if freshly downloaded');
+ assert.equal(ctx.inspect({...mk(605),quoteKind:'bid_ask'},during).valid,false);
+ assert.equal(ctx.inspect({...mk(605),quoteDay:'20261013'},during).valid,false);
+ assert.equal(ctx.inspect(mk(805,'2026-10-14T05:31:00Z'),post).valid,true,'end-session trade allowed as reference');
+ assert.equal(ctx.inspect(mk(600,'2026-10-14T05:31:00Z'),post).valid,false,'midday price cannot become a closing reference');
+});
+check('Compact home and private holdings protect stale decisions',()=>{
+ assert.ok(html.includes('id="homeQuick"')&&html.includes('id="quickRisk"')&&html.includes('id="quickHold"')&&html.includes('id="quickAttack"'));
+ assert.ok(html.includes('function renderHomeQuick()')&&html.includes('function holdingQuoteQuality('));
+ assert.ok(html.includes("if(!isTrustedFeed())return{score:'--'"));
+ assert.ok(html.includes('safe(h.name)')&&html.includes('safe(d.instText)'),'portfolio-derived HTML must be escaped');
+});
+check('Private portfolios use date-stamped official closes after market hours',()=>{
+ const source=html.match(/function applyOfficialCloseArchive\(data\)\{[\s\S]*?(?=\nfunction refreshOfficialCloses)/)?.[0];
+ assert.ok(source,'official close bridge is present');
+ assert.ok(html.includes("JEINative.fetchStaticJson('daily')"),'Android bridge reads public daily close without sending holdings');
+ assert.ok(html.includes('window.JEI_STATIC={'));
+ const ctx={JEI_PRIVATE_APP:true,holdings:[{code:'2330',name:'測試'}],market:{},renderHoldings:()=>{},
+  holdingQuoteQuality:()=>({valid:false}),taipeiDateParts:()=>({year:'2026',month:'10',day:'14'}),
+  Date:class extends Date{constructor(...args){super(...(args.length?args:['2026-10-14T02:20:00Z']))}}};
+ vm.runInNewContext(source+';globalThis.apply=applyOfficialCloseArchive;',ctx);
+ const data={schema:1,kind:'official_daily_close',days:{'2026-10-13':{'2330':900}}};
+ assert.equal(ctx.apply(data),true);
+ assert.equal(ctx.market['2330'].price,900);
+ assert.equal(ctx.market['2330'].quoteDay,'20261013');
+ assert.equal(ctx.market['2330'].quoteKind,'official_close');
+ assert.equal(ctx.apply({...data,kind:'intraday_prices'}),false);
+});
+check('Cloud return and drawdown reporting is explicit',()=>{
+ assert.ok(cash.includes('<th>估算總報酬</th><th>最大回撤</th>'));
+ assert.ok(cash.includes('s.max_drawdown_pct'));
+ assert.ok(cash.includes('Number(s.estimated_liquidation_equity_ntd)/basis-1'));
 });
 
 check('Network recommendation success requires candidates',()=>assert.ok(py.includes('if not old_web_recommendations and old_web_status.get("ok"):')));
