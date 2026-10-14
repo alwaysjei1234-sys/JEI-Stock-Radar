@@ -32,6 +32,16 @@ async function main(){
   r=await invoke('POST',{'x-jei-token':'test-secret-not-real'},{question:''});
   assert.equal(r.code,400);
   assert.equal(externalCalls,0);
+  // Token validation is free, private and must never reach AI providers.
+  r=await invoke('POST',{'x-jei-token':'wrong'},{action:'verify_token'});
+  assert.equal(r.code,401);
+  r=await invoke('POST',{'x-jei-token':'test-secret-not-real'},{action:'verify_token'});
+  assert.equal(r.code,200);
+  assert.equal(r.json.verified,true);
+  assert.equal(r.json.free_only,true);
+  assert.equal(r.json.paid_gateway,false);
+  assert.equal(externalCalls,0);
+  assert(!JSON.stringify(r.json).includes('test-secret-not-real'),'never expose private token');
 
   global.fetch=async (url,options)=>{
     assert.match(url,/^https:\/\/api\.groq\.com\/openai\/v1\/chat\/completions$/);
