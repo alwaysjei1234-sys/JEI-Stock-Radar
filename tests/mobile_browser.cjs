@@ -50,6 +50,8 @@ async function run(){
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
   await page.locator('[data-go="patterns"]').first().click();
   await page.locator('#patterns').waitFor({state:'visible'});
+  // Force a deterministic unpublished snapshot; the real daily feed may already be ready.
+  await page.evaluate(()=>{system.patterns={status:'insufficient',data_date:system.data_date,signals:{}};renderPatternRadar()});
   assert.match(await page.locator('#patternStatus').innerText(),/尚未可用/,'unpublished strategy feed must not invent candidates');
   await page.evaluate(()=>{
    const d=taipeiDateParts(),today=d.year+'-'+d.month+'-'+d.day;
