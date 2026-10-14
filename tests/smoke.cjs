@@ -323,7 +323,7 @@ check('Private alert settings guard thresholds and persist only on the user devi
  assert.ok(html.includes("home.hidden=false")&&html.includes("renderHoldAlerts(rows)"));
 });
 check('Watchlist alerts never promise closed-app notifications or real orders',()=>{
- assert.ok(html.includes('關閉 App 不會自動持續偵測或發送推播'));
+ assert.ok(html.includes('Android 3.9.9 起支援作業系統定期背景風險通知'));
  assert.ok(html.includes('不是券商條件單'));
  assert.ok(html.includes("m?.quoteKind!=='last_trade'"));
  assert.ok(html.includes("!tradingWindowAt(now)"));
@@ -379,6 +379,44 @@ check('Intraday dashboard evidence and AI reject unsupported institutional exits
  assert.ok(html.includes("const code=stock.code,rawInst=(system.institutional||{})[code]||null"));
  assert.ok(html.includes("m?.quoteKind!=='last_trade'"));
  assert.ok(html.includes("m?.quoteKind==='official_close'&&(tradingWindow()||String(m.quoteDay)!==_today)"));
+});
+
+
+check('Android 3.9.9 native background worker rejects stale feeds, quote substitutions and weekends',()=>{
+ const fs=require('fs');
+ const worker=fs.readFileSync('app/src/main/java/com/jei/stockradar/RiskWorker.java','utf8');
+ const activity=fs.readFileSync('app/src/main/java/com/jei/stockradar/MainActivity.java','utf8');
+ const gradle=fs.readFileSync('app/build.gradle','utf8');
+ assert.ok(worker.includes('trustedLiveFeed(root, now)'));
+ assert.ok(worker.includes('trustedExecutedTrade(quote, now)'));
+ assert.ok(worker.includes('market.optBoolean("stale", true)'));
+ assert.ok(worker.includes('"盤中即時".equals(market.optString("mode", ""))'));
+ assert.ok(worker.includes('lag <= 35L * 60L * 1000L'));
+ assert.ok(worker.includes('lag <= 8L * 60L * 1000L'));
+ assert.ok(worker.includes('Calendar.SATURDAY')&&worker.includes('Calendar.SUNDAY'));
+ assert.ok(worker.includes('TimeZone.getTimeZone("Asia/Taipei")'));
+ assert.ok(!worker.includes('(bid + ask) / 2.0'),'bid/ask midpoint cannot become last-execution price');
+ assert.ok(!worker.includes('price = prev'),'previous close cannot become background alert price');
+ assert.ok(worker.includes('prefs.getBoolean("bg_risk_enabled", true)'));
+ assert.ok(worker.includes('"bg_hold_" + day + "_" + code'),'per-day per-stock deduping');
+ assert.ok(worker.includes('new HashSet<>()'),'market exchange duplicates removed');
+ assert.ok(worker.includes('recordRiskEvent(prefs, "holding"'));
+ assert.ok(worker.includes('recordRiskEvent(prefs, "market"'));
+ assert.ok(activity.includes('public String loadRiskEvents()'));
+ assert.ok(activity.includes('public void setRiskNotificationEnabled(boolean enabled)'));
+ assert.ok(gradle.includes('versionCode 33'));
+ assert.ok(gradle.includes("versionName '3.9.9'"));
+});
+check('Native history UI escapes risk titles and syncs opt-out with Android Worker',()=>{
+ assert.ok(html.includes('id="nativeAlertHistory"'));
+ assert.ok(html.includes('function renderNativeAlertHistory()'));
+ assert.ok(html.includes("typeof JEINative.loadRiskEvents!=='function'"));
+ assert.ok(html.includes("typeof JEINative.setRiskNotificationEnabled==='function'"));
+ assert.ok(html.includes('row.append(stamp,title,detail)'));
+ assert.ok(html.includes('title.textContent=String(x.title'));
+ assert.ok(html.includes('detail.textContent=String(x.detail'));
+ assert.ok(html.includes('renderNativeAlertHistory();'));
+ assert.ok(html.includes('依工作排程與手機省電政策執行'));
 });
 
 check('Network recommendation success requires candidates',()=>assert.ok(py.includes('if not old_web_recommendations and old_web_status.get("ok"):')));
