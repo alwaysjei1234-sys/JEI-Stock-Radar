@@ -15,6 +15,23 @@ check('Published Android manifest matches app version',()=>{
  if(update.versionCode===Number(vc[1]))assert.ok(update.versionName.startsWith(vn[1]));
  assert.match(update.url,/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/releases\/download\/jei-latest\//);
 });
+check('Packaged Android offline fallback includes current risk and privacy gates',()=>{
+ const fallback=fs.readFileSync('app/src/main/assets/index.html','utf8');
+ const version=fallback.match(/const UI_VERSION='([^']+)'/)?.[1];
+ assert.ok(version&&version!=='3.9.0-free-ai','stale APK emergency UI was not replaced');
+ for(const required of [
+  'function isTrustedFeed(','function holdingQuoteQuality(','function renderHoldAlerts(',
+  'function renderNativeAlertHistory(','function holdingMarketPressure(',
+  'function taipeiDateParts(','function tradingWindowAt(',
+  'JEI_PRIVATE_APP','window.JEI_NATIVE=','window.JEI_STATIC='
+ ])assert.ok(fallback.includes(required),'missing offline safeguard: '+required);
+ assert.match(fallback,/function loadHoldings\(\)\{if\(!JEI_PRIVATE_APP/);
+ assert.match(fallback,/\|\|!q\.valid\|\|String\(m\.quoteDay\)!==today/);
+ assert.ok(fallback.includes('暫不提供賣出排序'),'offline local AI cannot bypass stale quote gate');
+ const scripts=[...fallback.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)];
+ assert.ok(scripts.length,'emergency UI needs inline JS');
+ for(const [,code] of scripts) new (require('node:vm').Script)(code);
+});
 check('Android backups disabled',()=>assert.match(manifest,/android:allowBackup="false"/));
 check('WebView file-origin crossing disabled',()=>{assert.match(activity,/setAllowFileAccessFromFileURLs\(false\)/);assert.match(activity,/setAllowUniversalAccessFromFileURLs\(false\)/)});
 check('Stock screener and heatmap wired',()=>{assert.match(html,/function renderAttackScreener\(/);assert.match(html,/function renderSectorHeatmap\(/);assert.match(html,/renderSectors\(\);renderSectorHeatmap\(\)/)});
@@ -445,8 +462,8 @@ check('Android 3.9.9 native background worker rejects stale feeds, quote substit
  assert.ok(worker.includes('recordRiskEvent(prefs, "market"'));
  assert.ok(activity.includes('public String loadRiskEvents()'));
  assert.ok(activity.includes('public void setRiskNotificationEnabled(boolean enabled)'));
- assert.ok(gradle.includes('versionCode 33'));
- assert.ok(gradle.includes("versionName '3.9.9'"));
+ assert.ok(gradle.includes('versionCode 34'));
+ assert.ok(gradle.includes("versionName '3.9.10'"));
 });
 check('Native history UI escapes risk titles and syncs opt-out with Android Worker',()=>{
  assert.ok(html.includes('id="nativeAlertHistory"'));
