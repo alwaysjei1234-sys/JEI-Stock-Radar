@@ -662,15 +662,16 @@ function listText(arr,n=3){
  return arr.slice(0,n).map((x,i)=>`${i+1}. ${x.code} ${x.name}｜${x.score??'--'}分｜${x.reason||''}`).join('\n')
 }
 function chatHolding(stock){
- const h=holdings.find(x=>x.code===stock.code);if(!h)return null;
- const m=market[h.code]||{},sys=(system.holdings||{})[h.code]||{};
- const p=Number.isFinite(+m.price)?+m.price:(Number.isFinite(+sys.price)?+sys.price:NaN);
- const ch=Number.isFinite(+m.prev)&&+m.prev>0&&Number.isFinite(p)?(p-(+m.prev))/(+m.prev)*100:(Number.isFinite(+sys.change_pct)?+sys.change_pct:NaN);
- const pnl=Number.isFinite(p)?(p-h.cost)*h.shares:NaN,ret=Number.isFinite(pnl)?pnl/(h.cost*h.shares)*100:NaN,a=holdingAdvice(h,m,p,ret,ch),d=holdingDiagnosis(h,m,p,ret,ch,a);
+ const h=holdings.find(x=>x.code===stock.code);if(!h||!JEI_PRIVATE_APP)return null;
+ const m=market[h.code]||{},q=holdingQuoteQuality(m),p=q.valid?Number(m.price):NaN,prev=q.valid?Number(m.prev):NaN;
+ const ch=Number.isFinite(prev)&&prev>0&&Number.isFinite(p)?(p/prev-1)*100:NaN;
+ const pnl=Number.isFinite(p)?(p-h.cost)*h.shares:NaN,ret=Number.isFinite(pnl)&&h.cost>0&&h.shares>0?pnl/(h.cost*h.shares)*100:NaN,a=holdingAdvice(h,m,p,ret,ch),d=holdingDiagnosis(h,m,p,ret,ch,a);
  const priceTxt=Number.isFinite(p)?p:'--',retTxt=Number.isFinite(ret)?(ret>=0?'+':'')+ret.toFixed(1)+'%':'--';
- return `${h.code} ${h.name}｜現價 ${priceTxt}｜成本 ${h.cost}｜報酬 ${retTxt}\nJEI：${a.action}｜${a.reason}\n下跌/籌碼診斷：${d.tag}（可信度 ${d.conf}%）｜${d.why}\n${d.instText}\n防守 ${a.defense}｜目標1 ${a.target1}｜目標2 ${a.target2}`
+ return h.code+' '+h.name+'｜價格參考 '+priceTxt+'（'+q.label+'）｜含費用成本 '+h.cost+'｜報酬 '+retTxt+
+ '\nJEI：'+a.action+'｜'+a.reason+'\n下跌／籌碼觀察：'+d.tag+'｜'+d.why+'\n'+d.instText+'\n防守參考 '+a.defense+'｜目標1 '+a.target1+'｜目標2 '+a.target2;
 }
 function chatStockInfo(stock){
+ if(!isTrustedFeed())return String(stock.code)+' '+String(stock.name||'')+'｜今日有效行情尚未驗證，暫停候選排序與籌碼買賣判斷。';
  const code=stock.code,inst=(system.institutional||{})[code]||null;
  const buckets=[['明日妖股',system.tomorrow_monster],['未來妖股',system.future_monster],['突然妖股',system.monster],['今日主攻',system.attack],['網路推薦',system.web_recommendations]];
  const found=buckets.map(([k,a])=>[k,(a||[]).find(x=>x.code===code)]).filter(x=>x[1]);
@@ -685,6 +686,7 @@ function chatStockInfo(stock){
 }
 function answerChat(q){
  q=String(q||'').trim();if(!q)return '';
+ if(!isTrustedFeed()&&!holdings.some(h=>q.includes(h.name)||q.includes(h.code)))return '行情或市場資訊未經今日有效驗證，暫停即時風險判斷、選股榜單及賣出排序。可先查看附日期的官方收盤參考價；待資料刷新後再分析。';
  const stock=findChatStock(q);
  if(stock){
   const htxt=chatHolding(stock);
