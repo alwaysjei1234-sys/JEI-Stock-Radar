@@ -286,6 +286,50 @@ check('Mobile paper scorecard surfaces qualification before leaderboard',()=>{
  assert.ok(cash.includes("$('cloudKpiStatus').textContent='資料失敗'"));
 });
 
+
+check('Private holding alert engine uses fresh executed intraday trades only',()=>{
+ const source=html.match(/function holdingAlertSignal\(h,m,quality,prefs,observed,now=new Date\(\),feedOk=false\)\{[\s\S]*?(?=\nfunction renderHoldAlerts)/)?.[0];
+ assert.ok(source,'pure private watch alert evaluator is available');
+ const ctx={taipeiDateParts:()=>({year:'2026',month:'10',day:'14'}),tradingWindowAt:()=>true};
+ vm.runInNewContext(source+';globalThis.evaluate=holdingAlertSignal;',ctx);
+ const h={code:'2330',cost:100,shares:1000},m={price:91,quoteKind:'last_trade',quoteDay:'20261014'},q={valid:true},prefs={enabled:true,lossPct:8,gainPct:12,retracePct:5},now=new Date('2026-10-14T02:10:00Z');
+ const run=(price=91,old=null,overrides={},valid=q,feed=true)=>ctx.evaluate(h,{...m,price,...overrides},valid,prefs,old,now,feed);
+ assert.equal(run().signal.type,'loss','verified 9% drawdown must flag risk');
+ assert.equal(run(93).signal,null,'within loss tolerance is not a signal');
+ assert.equal(run(117).signal,null,'gains without pullback must not alert');
+ const observed=run(121).peak;
+ assert.equal(run(114,observed).signal.type,'retrace','observed peak pullback with profit qualification');
+ assert.equal(run(120,observed).signal,null,'small pullback does not trigger');
+ assert.equal(run(91,null,{quoteKind:'official_close'}).eligible,false);
+ assert.equal(run(91,null,{quoteDay:'20261013'}).eligible,false);
+ assert.equal(run(91,null,{}, {valid:false}).eligible,false);
+ assert.equal(run(91,null,{}, q,false).eligible,false,'stale system feed blocks alert');
+ ctx.tradingWindowAt=()=>false;assert.equal(run().eligible,false,'after hours blocks intraday notifications');
+ ctx.tradingWindowAt=()=>true;assert.equal(ctx.evaluate({...h,cost:130},{...m,price:126},q,prefs,observed,now,true).signal,null,'changing cost resets stored peak');
+ const disabled={...prefs,enabled:false};assert.equal(ctx.evaluate(h,m,q,disabled,null,now,true).eligible,false);
+});
+check('Private alert settings guard thresholds and persist only on the user device',()=>{
+ const settings=html.match(/function normalizeHoldAlertPrefs\(input\)\{[\s\S]*?(?=\nfunction loadHoldAlertSettings)/)?.[0];
+ const numeric=html.match(/function alertNumber\(x,min,max,fallback\)\{[^\n]+/)?.[0];
+ assert.ok(settings&&numeric);
+ const ctx={};vm.runInNewContext(numeric+'\n'+settings+';globalThis.normal=normalizeHoldAlertPrefs;',ctx);
+ const invalid=ctx.normal({lossPct:-100,gainPct:999,retracePct:0,enabled:false});
+ assert.equal(invalid.lossPct,8);assert.equal(invalid.gainPct,12);assert.equal(invalid.retracePct,5);assert.equal(invalid.enabled,false);
+ assert.ok(html.includes("const HOLD_ALERT_SETTINGS_KEY='jei_hold_alert_prefs_v1'"));
+ assert.ok(html.includes("const HOLD_ALERT_PEAKS_KEY='jei_hold_alert_peaks_v1'"));
+ assert.ok(html.includes('if(!JEI_PRIVATE_APP)return;'));
+ assert.ok(html.includes('holdAlertNotified[key]'),'alert toast throttled to one event per day/symbol/type');
+ assert.ok(html.includes('id="alertLoss"')&&html.includes('id="alertGain"')&&html.includes('id="alertRetrace"'));
+ assert.ok(html.includes("home.hidden=false")&&html.includes("renderHoldAlerts(rows)"));
+});
+check('Watchlist alerts never promise closed-app notifications or real orders',()=>{
+ assert.ok(html.includes('關閉 App 不會自動持續偵測或發送推播'));
+ assert.ok(html.includes('不是券商條件單'));
+ assert.ok(html.includes("m?.quoteKind!=='last_trade'"));
+ assert.ok(html.includes("!tradingWindowAt(now)"));
+ assert.ok(html.includes('最高價是 App 觀察期間紀錄'));
+});
+
 check('Network recommendation success requires candidates',()=>assert.ok(py.includes('if not old_web_recommendations and old_web_status.get("ok"):')));
 
 check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=twse_today and tpex_today'));assert.ok(py.includes('if source_is_today and not market_open and now.hour >= 13:'))});
