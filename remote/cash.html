@@ -127,7 +127,7 @@ function strategyComparison(data){
    coverage=String(s.official_close_coverage||'');
   const equityOk=equity!=null&&Number.isFinite(Number(equity))&&Number.isFinite(basis)&&basis>0,dd=s.max_drawdown_pct;
   const ret=equityOk?(Number(equity)/basis-1)*100:null,drawdown=dd==null||!Number.isFinite(Number(dd))?null:Number(dd);
-  const eligible=Number.isFinite(closed)&&closed>=10&&days>=10&&ret!==null&&drawdown!==null&&(/^\\d+\\/\\d+$/.test(coverage)&&coverage.split('/')[0]===coverage.split('/')[1]);
+  const eligible=Number.isFinite(closed)&&closed>=10&&days>=10&&ret!==null&&drawdown!==null&&(/^\d+\/\d+$/.test(coverage)&&coverage.split('/')[0]===coverage.split('/')[1]);
   return {id,label,closed:Number.isFinite(closed)?closed:0,open:Number.isFinite(open)?open:0,days,ret,drawdown,eligible,coverage};
  });
  // No "best strategy" badge when some strategies have insufficient closed samples or missing close-price coverage.
