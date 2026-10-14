@@ -48,6 +48,26 @@ async function run(){
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>document.querySelector('#sysStatus').textContent.includes('feed 已連線'),{timeout:15000});
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
+  await page.locator('[data-go="patterns"]').first().click();
+  await page.locator('#patterns').waitFor({state:'visible'});
+  assert.match(await page.locator('#patternStatus').innerText(),/尚未可用/,'unpublished strategy feed must not invent candidates');
+  await page.evaluate(()=>{
+   const d=taipeiDateParts(),today=d.year+'-'+d.month+'-'+d.day;
+   system.data_date=today;
+   system.market={mode:'今日收盤',stale:false,close_count:1950};
+   system.patterns={data_date:today,status:'ready',coverage:1300,signals:{
+    breakout:[{code:'2305',name:'測試個股',score:82,price:25,change_pct:2,sector:'測試',reason:'突破測試'}],
+    bollinger:[],vcp:[],sector:[]
+   }};
+   renderPatternRadar();
+  });
+  assert.match(await page.locator('#patternResults').innerText(),/2305 測試個股/);
+  await page.locator('[data-pattern="vcp"]').click();
+  assert.match(await page.locator('#patternResults').innerText(),/沒有達標候選/);
+  await page.evaluate(()=>{system.market.stale=true;renderPatternRadar()});
+  assert.doesNotMatch(await page.locator('#patternResults').innerText(),/2305 測試個股/,'stale feed suppresses strategy results');
+  assert.match(await page.locator('#patternStatus').innerText(),/尚未可用/);
+  console.log('PASS dated four-strategy radar, switching, no-result and stale suppression');
   await page.locator('[data-go="attack"]').first().click();
   await page.locator('#attack').waitFor({state:'visible'});
   await page.locator('[data-go="chat"]').last().click();
