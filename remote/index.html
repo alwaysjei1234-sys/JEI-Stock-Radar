@@ -241,7 +241,7 @@ function holdingMarketPressure(h,m,quality,feed,now=new Date(),verified=isTruste
    reasons.push({kind:'near_low',rank:3,label:'跌幅擴大且接近日低',detail:'較昨收 '+change.toFixed(2)+'%；價格位於當日高低區間下緣 '+(position*100).toFixed(0)+'%（不能據此判定大戶賣出）'});
  }
  const sector=String(feed?.stock_sectors?.[h.code]||''),group=Array.isArray(feed?.sectors)?feed.sectors.find(x=>x.name===sector):null;
- const score=group?Number(group.score):NaN;
+ const score=group&&group.score!=null&&group.score!==''?Number(group.score):NaN;
  if(sector&&Number.isFinite(score)&&score<=42&&change<=-1.5)
   reasons.push({kind:'sector_weak',rank:2,label:'族群同步偏弱',detail:sector+' 熱度 '+score+' 分；個股較昨收 '+change.toFixed(2)+'%'});
  const risk=Number(feed?.risk?.score);
