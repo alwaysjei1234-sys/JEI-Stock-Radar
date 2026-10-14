@@ -271,6 +271,22 @@ check('Holdings row filters and PnL sorts work independently of risk category',(
  assert.equal(ctx.sortRows(rows,'all','pnlAsc')[2].h.code,'1003','unpriced holdings sort last');
  assert.equal(ctx.sortRows(rows,'all','name')[2].h.code,'1003');
 });
+check('Sector and backtest feeds are escaped before DOM insertion',()=>{
+ const sector=html.match(/function renderSectors\(\)\{[\s\S]*?(?=\nfunction renderBacktest)/)?.[0];
+ const backtest=html.match(/function renderBacktest\(\)\{[^\n]+/)?.[0];
+ const escape=html.match(/^function escapeMarketText\(.*$/m)?.[0];
+ assert.ok(sector&&backtest&&escape);
+ const els={sectorList:{innerHTML:''},sectorTop:{innerHTML:''},backtestBox:{innerHTML:''}};
+ const evil='<img src=x onerror=alert(1)>';
+ const ctx={isTrustedFeed:()=>true,system:{sectors:[{name:evil,score:85,avg_pct:4,breadth:90,value_billion:10,leaders:[{code:'2330',name:evil,pct:5}]}],backtest:{hit3:evil,hit5:50,hit10:20,samples:2}},$:id=>els[id]};
+ vm.runInNewContext(escape+'\n'+sector+'\n'+backtest+';globalThis.render=[renderSectors,renderBacktest];',ctx);
+ ctx.render[0]();ctx.render[1]();
+ assert.doesNotMatch(els.sectorList.innerHTML,/<img/i);
+ assert.doesNotMatch(els.sectorTop.innerHTML,/<img/i);
+ assert.doesNotMatch(els.backtestBox.innerHTML,/<img/i);
+ assert.match(els.sectorList.innerHTML,/&lt;img/);
+ assert.match(els.backtestBox.innerHTML,/&lt;img/);
+});
 check('Quick AI holding answers require trusted per-stock quotes',()=>{
  const source=html.match(/function chatHolding\(stock\)\{[\s\S]*?(?=\nfunction chatStockInfo)/)?.[0];
  assert.ok(source);
