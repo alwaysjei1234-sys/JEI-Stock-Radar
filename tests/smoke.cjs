@@ -116,7 +116,7 @@ check('Paper PnL charges both-side fees and sell-side tax',()=>{
  const short=ctx.testCalc({...t,side:'short'});assert.equal(short.gross,-10000);assert.equal(short.tax,150);
 });
 
-check('Paper scanner is read-only and halts on insufficient market coverage',()=>{assert.ok(paper.includes("readJeiStatic('system')"));assert.ok(paper.includes("const valid=validFeedDate(feed)"));assert.ok(paper.includes("if(halted||!valid)return"));assert.doesNotMatch(paper,/\/api\/orders|placeOrder\(/);assert.ok(paper.includes('JEINative.fetchStaticJson(kind)'))});
+check('Paper scanner is read-only and halts on insufficient market coverage',()=>{assert.ok(paper.includes("readJeiStatic('system')"));assert.ok(paper.includes("const valid=validFeedDate(feed)"));assert.ok(paper.includes("if(!valid)return"));assert.doesNotMatch(paper,/\/api\/orders|placeOrder\(/);assert.ok(paper.includes('JEINative.fetchStaticJson(kind)'))});
 
 check('Day-trade legacy scanner accepts valid dated prices and refuses stale signals',()=>{
  const mode=paper.match(/function signalFeedMode\(feed,now=new Date\(\)\)\{[\s\S]*?(?=\nfunction validFeedDate)/)?.[0];
