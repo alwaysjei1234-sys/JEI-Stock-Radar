@@ -15,7 +15,8 @@ for (const id of ['marketState','cashLevel','totalPnl','portfolioRisk','riskReas
  assert(main.includes('id="'+id+'"'),'missing UI ID '+id);
 }
 assert(main.includes('function toggleRiskDetails()'));
-assert(main.includes("const UI_VERSION='3.9.2-mobile-brief'"));
+const expectedUiVersion=JSON.parse(read('remote/update.json')).uiVersion;
+assert(main.includes("const UI_VERSION='"+expectedUiVersion+"'"),'UI version and remote update manifest differ');
 assert(main.includes("const DEFAULT_HOLDINGS=[]"),'public portfolio leak regression');
 assert(main.includes('function renderAttackScreener()'));
 assert(main.includes('function renderWebReco()'));

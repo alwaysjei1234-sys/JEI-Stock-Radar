@@ -57,9 +57,33 @@ check('Stock screener filters score, price, sector, and stale market at runtime'
  const start=html.indexOf('function renderAttackScreener(){'),end=html.indexOf('const SCREEN_PREFS_KEY=',start);
  assert.ok(start>=0&&end>start);const fn=html.slice(start,end);
  const els={screenScore:{value:'75'},screenPriceMax:{value:'120'},screenRiseMax:{value:'9'},screenQuery:{value:''},screenSector:{value:'AI'},screenOrder:{value:'score'},screenCount:{textContent:''}};
- let captured=[];const ctx={system:{attack:[{code:'1111',score:90,sector:'AI',price:100,change_pct:3},{code:'2222',score:60,sector:'AI',price:90,change_pct:2},{code:'3333',score:95,sector:'航運',price:70,change_pct:2},{code:'4444',score:99,sector:'AI',price:500,change_pct:4}],market:{mode:'今日收盤'},data_date:'2026-10-13'},$:id=>els[id],renderRank:(_id,arr)=>{captured=arr},updateFeedFreshness:()=>{},syncScreenSectors:()=>{}};
+ let captured=[],trusted=true;const ctx={isTrustedFeed:()=>trusted,system:{attack:[{code:'1111',score:90,sector:'AI',price:100,change_pct:3},{code:'2222',score:60,sector:'AI',price:90,change_pct:2},{code:'3333',score:95,sector:'航運',price:70,change_pct:2},{code:'4444',score:99,sector:'AI',price:500,change_pct:4}],market:{mode:'今日收盤'},data_date:'2026-10-13'},$:id=>els[id],renderRank:(_id,arr)=>{captured=arr},updateFeedFreshness:()=>{},syncScreenSectors:()=>{}};
  vm.runInNewContext(fn+';globalThis.testScreen=renderAttackScreener;',ctx);ctx.testScreen();assert.equal(captured.length,1);assert.equal(captured[0].code,'1111');
- ctx.system.market.mode='盤中資料不足';ctx.testScreen();assert.equal(captured.length,0);
+ ctx.system.market.mode='盤中資料不足';trusted=false;ctx.testScreen();assert.equal(captured.length,0);
+});
+
+check('Feed freshness rejects old, stale, or mislabeled intraday quotes',()=>{
+ const line=html.match(/^function isTrustedFeed\(.*$/m)?.[0];assert.ok(line);
+ const ctx={};vm.runInNewContext(line+';globalThis.verify=isTrustedFeed;',ctx);
+ const day=new Date('2026-10-14T02:00:00Z');
+ const ok={updated_at:'2026-10-14 10:00',data_date:'2026-10-14',market:{mode:'盤中即時',stale:false,live_valid:true,close_count:1900}};
+ assert.equal(ctx.verify(ok,day),true);
+ assert.equal(ctx.verify({...ok,data_date:'2026-10-13'},day),false);
+ assert.equal(ctx.verify({...ok,market:{...ok.market,stale:true}},day),false);
+ assert.equal(ctx.verify({...ok,market:{...ok.market,mode:'資料過期'}},day),false);
+ assert.equal(ctx.verify({...ok,market:{...ok.market,live_valid:false}},day),false);
+ assert.equal(ctx.verify({...ok,market:{...ok.market,mode:'今日收盤',live_valid:false}},day),true);
+ assert.equal(ctx.verify({...ok,market:{...ok.market,mode:'今日收盤',close_count:0}},day),false);
+ assert.equal(ctx.verify({...ok,updated_at:'2026-10-14 09:00'},day),false,'old but same-day intraday feed must fail');
+ assert.equal(ctx.verify({...ok,updated_at:'2026-10-14 10:05'},day),false,'future feed timestamp must fail');
+});
+check('Exchange quote dates and 13:30 close boundary are enforced',()=>{
+ assert.ok(py.includes('if quote_day!=expected_day:continue'));
+ assert.ok(py.includes('540<=minutes<810'));
+ assert.ok(py.includes('live_valid=market_open and live_count>=500'));
+ assert.ok(py.includes('market_mode="資料過期" if stale_source'));
+ assert.ok(html.includes('liveBad=!isTrustedFeed()'));
+ assert.ok(html.includes("arr=[];empty='今日有效行情未驗證"),'all radar lists must halt on stale data');
 });
 
 check('Paper trading has no broker order submission',()=>{
