@@ -338,7 +338,7 @@ check('Institutional rows are dated to their own source not intraday feed day',(
  vm.runInNewContext(source+';globalThis.snapshot=institutionSnapshotDate;',ctx);
  const feed={source_data_date:'TWSE:1151013 / TPEx:1151014',data_date:'2026-10-14'};
  const tw=ctx.snapshot({source:'TWSE T86'},feed),tpex=ctx.snapshot({source:'TPEx institutional'},feed);
- assert.equal(tw.date,'2026-10-13');assert.equal(tw.fresh,false,'yesterday TWSE trades cannot be called today's selling');
+ assert.equal(tw.date,'2026-10-13');assert.equal(tw.fresh,false,"previous TWSE trades must not be presented as same-day selling");
  assert.equal(tpex.date,'2026-10-14');assert.equal(tpex.fresh,true,'same-day confirmed TPEx dataset can qualify');
  assert.equal(ctx.snapshot({source:'TWSE T86'}, {...feed,source_data_date:'TWSE:1150230'}).fresh,false,'calendar-invalid day rejected');
  assert.equal(ctx.snapshot({source:'unknown'},feed).fresh,false);
