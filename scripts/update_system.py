@@ -5,6 +5,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
+try:
+    from scripts.pattern_signals import build_pattern_signals
+except ModuleNotFoundError as exc:
+    if exc.name not in ("scripts", "scripts.pattern_signals"):
+        raise
+    from pattern_signals import build_pattern_signals
 
 TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
@@ -798,6 +804,11 @@ def main():
     date_key=now.strftime("%Y-%m-%d")
     history=hist_for_heat
     history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],{"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
+    if source_is_today and market_mode == "今日收盤" and now.hour >= 13:
+        patterns=build_pattern_signals(history,by_code,stock_sector,sectors,asof=today_iso)
+    else:
+        patterns=build_pattern_signals([],{}, {}, [],asof=today_iso)
+        patterns["status"]="not_official_close"
     HISTORY.parent.mkdir(parents=True,exist_ok=True)
     HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
     backtest=calc_backtest(history,{x["code"]:x["close"] for x in stocks})
@@ -834,6 +845,7 @@ def main():
         "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
         "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"tomorrow_monster":tomorrow_monster,"future_monster":future_monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
+        "patterns":patterns,
         "web_recommendations":old_web_recommendations,
         "web_recommendations_updated_at":old_web_updated_at,
         "web_recommendations_status":old_web_status,
