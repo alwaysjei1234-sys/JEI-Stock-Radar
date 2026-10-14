@@ -55,6 +55,10 @@ async function run(){
   assert.match(await page.locator('#patternStatus').innerText(),/尚未可用/,'unpublished strategy feed must not invent candidates');
   await page.evaluate(()=>{
    const d=taipeiDateParts(),today=d.year+'-'+d.month+'-'+d.day;
+   // Presentation fixture is deliberately independent of the real current clock;
+   // the exchange-close and coverage guard is exercised by deterministic smoke cases.
+   window.__trustedFeedBeforeFixture=isTrustedFeed;
+   window.isTrustedFeed=feed=>feed?.market?.stale===false&&feed?.market?.mode==='今日收盤'&&Number(feed.market.close_count)>=500;
    system.data_date=today;
    system.market={mode:'今日收盤',stale:false,close_count:1950};
    system.patterns={data_date:today,status:'ready',coverage:1300,signals:{
@@ -69,6 +73,7 @@ async function run(){
   await page.evaluate(()=>{system.market.stale=true;renderPatternRadar()});
   assert.doesNotMatch(await page.locator('#patternResults').innerText(),/2305 測試個股/,'stale feed suppresses strategy results');
   assert.match(await page.locator('#patternStatus').innerText(),/尚未可用/);
+  await page.evaluate(()=>{window.isTrustedFeed=window.__trustedFeedBeforeFixture});
   console.log('PASS dated four-strategy radar, switching, no-result and stale suppression');
   await page.locator('[data-go="attack"]').first().click();
   await page.locator('#attack').waitFor({state:'visible'});
