@@ -105,13 +105,14 @@ function renderStrategies(){const body=$('strategyRows');body.replaceChildren();
 function autoLoad(){try{const a=JSON.parse(localStorage.getItem(AUTO_KEY)||'[]');return Array.isArray(a)?a:[]}catch{return []}}
 function autoRender(){renderStrategies();const a=autoLoad(),body=$('autoHistory');body.replaceChildren();$('autoCount').textContent=String(a.length);$('autoHits').textContent=String(a.filter(x=>x.status==='目標達成').length);const observed=a.filter(x=>x.lastDay>x.day&&Number.isFinite(x.lastPrice)&&x.lastPrice>0);$('autoAvg').textContent=observed.length?(observed.reduce((v,x)=>v+(x.lastPrice/x.startPrice-1)*100,0)/observed.length).toFixed(2)+'%':'--';a.slice().reverse().slice(0,100).forEach(x=>{const tr=document.createElement('tr');const pct=x.lastDay>x.day?((x.lastPrice/x.startPrice-1)*100).toFixed(2)+'%':'--';[x.day,x.code+' '+x.name,String(x.startPrice),x.lastDay>x.day?x.lastPrice+' / '+x.lastDay:'待下一交易日',pct,x.status||'觀察中'].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});body.appendChild(tr)})}
 function signalFeedMode(feed,now=new Date()){
- const day=String(feed?.data_date||'');
- if(!/^\d{4}-\d{2}-\d{2}$/.test(day)||day!==twDay()||feed?.market?.stale!==false)return '';
- if(feed.market.mode==='今日收盤'&&Number(feed.market.close_count)>0)return '今日正式收盤觀察';
- if(feed.market.mode==='盤中即時'&&feed.market.live_valid===true){
-  const stamp=Date.parse(String(feed.updated_at||'').replace(' ','T')+'+08:00'),age=now.getTime()-stamp;
-  if(Number.isFinite(stamp)&&age>=-120000&&age<=35*60000)return '已驗證盤中觀察';
- }
+ const day=String(feed?.data_date||''),stamp=Date.parse(String(feed?.updated_at||'').replace(' ','T')+'+08:00'),age=now.getTime()-stamp;
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(day)||day!==twDay()||feed?.market?.stale!==false||!Number.isFinite(stamp)||age< -120000)return '';
+ const m=feed.market;
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(now);
+ const dp=Object.fromEntries(parts.map(p=>[p.type,p.value])),minute=Number(dp.hour)*60+Number(dp.minute);
+ if(!['Mon','Tue','Wed','Thu','Fri'].includes(dp.weekday))return '';
+ if(m.mode==='今日收盤'&&minute>=810&&Number(m.close_count)>=500&&stamp>=Date.parse(day+'T13:30:00+08:00'))return '今日正式收盤觀察';
+ if(m.mode==='盤中即時'&&minute>=540&&minute<810&&m.live_valid===true&&Number(m.live_count)>=500&&age<=35*60000)return '已驗證盤中觀察';
  return '';
 }
 function validFeedDate(feed){return Boolean(signalFeedMode(feed))}
