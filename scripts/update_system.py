@@ -5,7 +5,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
-from pattern_signals import build_pattern_signals
+try:
+    from scripts.pattern_signals import build_pattern_signals
+except ModuleNotFoundError as exc:
+    if exc.name not in ("scripts", "scripts.pattern_signals"):
+        raise
+    from pattern_signals import build_pattern_signals
 
 TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
