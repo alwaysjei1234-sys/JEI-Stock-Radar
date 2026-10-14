@@ -269,7 +269,7 @@ function holdingQuoteQuality(m,now=new Date()){
  if(!Number.isFinite(price)||price<=0)return {valid:false,label:'缺少有效價格'};
  if(kind==='official_close'){
   const y=qday.slice(0,4),mo=qday.slice(4,6),d=qday.slice(6,8),stamp=Date.parse(y+'-'+mo+'-'+d+'T00:00:00+08:00'),days=(now.getTime()-stamp)/86400000;
-  const valid=/^\\d{8}$/.test(qday)&&Number.isFinite(stamp)&&days>=0&&days<=30;
+  const valid=/^\d{8}$/.test(qday)&&Number.isFinite(stamp)&&days>=0&&days<=30;
   return {valid,label:valid?y+'-'+mo+'-'+d+' 官方收盤・非即時':'官方收盤日期過期'};
  }
  const age=now.getTime()-Number(m?.receivedAt),sameDay=qday===date&&kind==='last_trade',validAge=Number.isFinite(age)&&age>=-120000,session=tradingWindowAt(now),quoteMinute=Number(m?.quoteMinute),nowMinute=Number(p.hour)*60+Number(p.minute);
@@ -281,7 +281,7 @@ let lastOfficialFetchAt=0;
 function applyOfficialCloseArchive(data){
  if(!JEI_PRIVATE_APP||data?.schema!==1||data?.kind!=='official_daily_close'||!data?.days||typeof data.days!=='object')return false;
  const now=new Date(),p=taipeiDateParts(now),today=p.year+'-'+p.month+'-'+p.day;
- const days=Object.keys(data.days).filter(day=>/^\\d{4}-\\d{2}-\\d{2}$/.test(day)&&day<=today&&data.days[day]&&typeof data.days[day]==='object').sort();
+ const days=Object.keys(data.days).filter(day=>/^\d{4}-\d{2}-\d{2}$/.test(day)&&day<=today&&data.days[day]&&typeof data.days[day]==='object').sort();
  const last=days.at(-1),prev=days.at(-2);if(!last)return false;
  const stamp=Date.parse(last+'T00:00:00+08:00');if(!Number.isFinite(stamp)||now.getTime()-stamp>30*86400000)return false;
  let imported=0;
