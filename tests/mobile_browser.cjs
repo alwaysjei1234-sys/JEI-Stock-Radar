@@ -23,6 +23,7 @@ function close(){return new Promise(resolve=>server.close(resolve))}
 async function run(){
   const port=await listen(),base='http://127.0.0.1:'+port+'/remote/';
   const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+  try{
   const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
   const page=await context.newPage(),errors=[];
   page.on('pageerror',error=>errors.push(error.message));
@@ -74,6 +75,6 @@ async function run(){
   assert.match(await page.locator('h1').innerText(),/當沖/);
   console.log('PASS mobile day-trading simulation page is separate');
   assert.deepEqual(errors,[],'uncaught browser JavaScript errors');
-  await browser.close();
+  }finally{await browser.close()}
 }
 run().catch(e=>{console.error(e);process.exitCode=1}).finally(async()=>{await close()});
