@@ -240,6 +240,52 @@ check('Manual cash candidate browsing rejects stale feeds',()=>{
  assert.ok(cash.includes('行情過期或未驗證，暫停候選訊號'));
 });
 
+
+check('Premium mobile watchlist has verified-feed strip and expandable private holdings',()=>{
+ assert.ok(html.includes('id="feedGate"')&&html.includes('function updateFeedGate()'));
+ assert.ok(html.includes('id="holdFilter"')&&html.includes('id="holdSort"')&&html.includes('id="holdShown"'));
+ assert.ok(html.includes('class="watchDetails"')&&html.includes('function setHoldView('));
+ assert.ok(html.includes('const openCodes=new Set('),'expanded details must survive refresh');
+ assert.ok(html.includes('safe(h.name)')&&html.includes('safe(d.instText)'));
+ const updater=html.match(/function updateFeedGate\(\)\{[\s\S]*?(?=\nfunction renderUpdateStamp)/)?.[0];
+ assert.ok(updater,'freshness status renderer present');
+ const el={className:'',textContent:''},ctx={$:id=>id==='feedGate'?el:null,system:{market:{mode:'盤中即時'}},isTrustedFeed:()=>false};
+ vm.runInNewContext(updater+';globalThis.update=updateFeedGate;',ctx);
+ ctx.update();assert.match(el.textContent,/行情資料未通過/);assert.match(el.className,/stale/);
+ ctx.isTrustedFeed=()=>true;ctx.update();assert.match(el.textContent,/今日盤中已驗證/);
+});
+check('Holdings row filters and PnL sorts work independently of risk category',()=>{
+ const src=html.match(/function sortedHoldingRows\(rows,filter=holdViewFilter,order=holdViewOrder\)\{[\s\S]*?(?=\nfunction renderHoldings)/)?.[0];
+ assert.ok(src);
+ const ctx={holdViewFilter:'all',holdViewOrder:'priority'};
+ vm.runInNewContext(src+';globalThis.sortRows=sortedHoldingRows;',ctx);
+ const rows=[
+  {h:{code:'1001',cost:50,shares:100},price:40,category:{id:'defense',rank:0},advice:{score:25}},
+  {h:{code:'1002',cost:60,shares:100},price:80,category:{id:'hold',rank:3},advice:{score:80}},
+  {h:{code:'1003',cost:30,shares:100},price:NaN,category:{id:'pending',rank:5},advice:{score:'--'}}
+ ];
+ assert.equal(ctx.sortRows(rows,'all','priority')[0].h.code,'1001');
+ assert.equal(ctx.sortRows(rows,'hold','priority').length,1);
+ assert.equal(ctx.sortRows(rows,'all','pnlDesc')[0].h.code,'1002');
+ assert.equal(ctx.sortRows(rows,'all','pnlAsc')[0].h.code,'1001');
+ assert.equal(ctx.sortRows(rows,'all','pnlAsc')[2].h.code,'1003','unpriced holdings sort last');
+ assert.equal(ctx.sortRows(rows,'all','name')[2].h.code,'1003');
+});
+check('Quick AI chat never labels stale quotes as live and never ranks stale alerts',()=>{
+ const src=html.match(/function chatHolding\(stock\)\{[\s\S]*?(?=\nfunction chatStockInfo)/)?.[0];
+ assert.ok(src);
+ assert.ok(src.includes('holdingQuoteQuality(m)'),'private quotes must be verified before AI holding figures');
+ assert.ok(src.includes('價格參考')&&!src.includes('現價'));
+ assert.ok(html.includes('if(!isTrustedFeed())return String(stock.code)'));
+ assert.ok(html.includes('行情或市場資訊未經今日有效驗證'));
+});
+check('Mobile paper scorecard surfaces qualification before leaderboard',()=>{
+ const cash=fs.readFileSync('remote/cash.html','utf8');
+ assert.ok(cash.includes('id="cloudKpiStatus"')&&cash.includes('id="cloudKpiLeader"')&&cash.includes('id="cloudKpiDate"'));
+ assert.ok(cash.includes('result.ready?result.ranked[0].label'));
+ assert.ok(cash.includes("$('cloudKpiStatus').textContent='資料失敗'"));
+});
+
 check('Network recommendation success requires candidates',()=>assert.ok(py.includes('if not old_web_recommendations and old_web_status.get("ok"):')));
 
 check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=twse_today and tpex_today'));assert.ok(py.includes('if source_is_today and not market_open and now.hour >= 13:'))});
