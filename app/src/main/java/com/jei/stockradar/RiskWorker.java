@@ -25,6 +25,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.util.HashSet;
 import java.util.Locale;
 
 public class RiskWorker extends Worker {
@@ -39,15 +42,104 @@ public class RiskWorker extends Worker {
 
     @Override
     public Result doWork() {
+        ensureChannels();
         try {
-            ensureChannels();
-            checkRisk();
-            SharedPreferences p = getApplicationContext().getSharedPreferences("jei_private", Context.MODE_PRIVATE);
-            checkHoldings(p.getInt("bg_risk_score", 0));
-            checkAppUpdate();
-            return Result.success();
+            JSONObject root = new JSONObject(getStaticFeed(SYSTEM_JSON));
+            long now = System.currentTimeMillis();
+            SharedPreferences prefs = getApplicationContext().getSharedPreferences("jei_private", Context.MODE_PRIVATE);
+            if (prefs.getBoolean("bg_risk_enabled", true) && trustedLiveFeed(root, now)) {
+                String day = taipeiFormat("yyyyMMdd", now);
+                checkRisk(root, prefs, day, now);
+                checkHoldings(root, prefs, day, now);
+            }
+        } catch (Exception ignored) {
+            // An unavailable/unverified feed must fail closed, never emit stale market warnings.
+        }
+        try { checkAppUpdate(); } catch (Exception ignored) {
+            // Update notification checks must not reuse an invalid risk feed.
+        }
+        return Result.success();
+    }
+
+    private static SimpleDateFormat taipeiParser(String pattern) {
+        SimpleDateFormat date = new SimpleDateFormat(pattern, Locale.US);
+        date.setTimeZone(TimeZone.getTimeZone("Asia/Taipei"));
+        date.setLenient(false);
+        return date;
+    }
+
+    private static String taipeiFormat(String pattern, long millis) {
+        return taipeiParser(pattern).format(new Date(millis));
+    }
+
+    static boolean taipeiMarketOpen(long millis) {
+        Calendar clock = Calendar.getInstance(TimeZone.getTimeZone("Asia/Taipei"), Locale.US);
+        clock.setTimeInMillis(millis);
+        int day = clock.get(Calendar.DAY_OF_WEEK);
+        int minute = clock.get(Calendar.HOUR_OF_DAY) * 60 + clock.get(Calendar.MINUTE);
+        return day != Calendar.SATURDAY && day != Calendar.SUNDAY && minute >= 540 && minute < 810;
+    }
+
+    static boolean trustedLiveFeed(JSONObject root, long now) {
+        if (!taipeiMarketOpen(now) || root == null) return false;
+        JSONObject market = root.optJSONObject("market");
+        if (market == null || market.optBoolean("stale", true) || !market.optBoolean("live_valid", false)
+                || !"盤中即時".equals(market.optString("mode", ""))) return false;
+        String today = taipeiFormat("yyyy-MM-dd", now);
+        if (!today.equals(root.optString("data_date", ""))) return false;
+        String updated = root.optString("updated_at", "");
+        try {
+            Date stamp = taipeiParser("yyyy-MM-dd HH:mm").parse(updated);
+            if (stamp == null) return false;
+            long lag = now - stamp.getTime();
+            return lag >= -120000L && lag <= 35L * 60L * 1000L;
         } catch (Exception e) {
-            return Result.retry();
+            return false;
+        }
+    }
+
+    static boolean trustedExecutedTrade(JSONObject row, long now) {
+        if (row == null || !taipeiMarketOpen(now)) return false;
+        if (!taipeiFormat("yyyyMMdd", now).equals(row.optString("d", ""))) return false;
+        if (!(toDouble(row.optString("z", "")) > 0) || !(toDouble(row.optString("y", "")) > 0)) return false;
+        String clock = row.optString("t", "");
+        if (!clock.matches("\\d{1,2}:\\d{2}(?::\\d{2})?")) return false;
+        try {
+            String fullTime = clock.length() == 5 ? clock + ":00" : clock;
+            Date executed = taipeiParser("yyyyMMdd HH:mm:ss")
+                    .parse(taipeiFormat("yyyyMMdd", now) + " " + fullTime);
+            if (executed == null) return false;
+            long lag = now - executed.getTime();
+            return lag >= -120000L && lag <= 8L * 60L * 1000L;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean canPostNotifications() {
+        Context ctx = getApplicationContext();
+        if (Build.VERSION.SDK_INT >= 33
+                && ctx.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) return false;
+        NotificationManager manager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        return manager != null && manager.areNotificationsEnabled();
+    }
+
+    private void recordRiskEvent(SharedPreferences prefs, String type, String headline, String detail, long now) {
+        try {
+            JSONArray existing = new JSONArray(prefs.getString("bg_alert_events", "[]"));
+            JSONObject event = new JSONObject();
+            event.put("at", taipeiFormat("yyyy-MM-dd HH:mm", now));
+            event.put("type", type);
+            event.put("title", headline);
+            event.put("detail", detail);
+            JSONArray history = new JSONArray();
+            for (int i = Math.max(0, existing.length() - 39); i < existing.length(); i++)
+                history.put(existing.opt(i));
+            history.put(event);
+            prefs.edit().putString("bg_alert_events", history.toString()).apply();
+        } catch (Exception ignored) {
+            // The alert must still work even if local history cannot be written.
         }
     }
 
@@ -88,163 +180,132 @@ public class RiskWorker extends Worker {
         }
     }
 
-    private void checkRisk() throws Exception {
-        JSONObject root = new JSONObject(getStaticFeed(SYSTEM_JSON));
+    private void checkRisk(JSONObject root, SharedPreferences prefs, String day, long now) throws Exception {
         JSONObject risk = root.optJSONObject("risk");
         if (risk == null) return;
-
         String level = risk.optString("level", "green");
         int score = risk.optInt("score", 0);
-        String label = risk.optString("label", "市場風險");
-        String updated = root.optString("updated_at", "");
-
-        SharedPreferences p = getApplicationContext().getSharedPreferences("jei_private", Context.MODE_PRIVATE);
-        int oldScore = p.getInt("bg_risk_score", 0);
-        String oldLevel = p.getString("bg_risk_level", "green");
-        String oldStamp = p.getString("bg_risk_stamp", "");
-
-        int severity = severity(level), oldSeverity = severity(oldLevel);
-        boolean important = severity >= 2 || score >= 55;
-        boolean worsened = severity > oldSeverity || score >= oldScore + 10;
-        boolean fresh = !updated.equals(oldStamp);
-
-        if (important && fresh && (worsened || severity >= 3)) {
+        if (score < 0 || score > 100) return;
+        int severity = severity(level);
+        int oldScore = prefs.getInt("bg_risk_score", 0);
+        int oldSeverity = severity(prefs.getString("bg_risk_level", "green"));
+        boolean firstCriticalToday = severity >= 3 && !day.equals(prefs.getString("bg_risk_day", ""));
+        boolean worsened = severity > oldSeverity || score >= oldScore + 10 || firstCriticalToday;
+        if (canPostNotifications() && (severity >= 2 || score >= 55) && worsened) {
             JSONArray reasons = risk.optJSONArray("reasons");
-            String body = "風險 " + score + "/100";
+            String body = "今日有效盤中資料｜市場風險 " + score + "/100";
             if (reasons != null && reasons.length() > 0) {
                 body += "｜" + reasons.optString(0, "");
                 if (reasons.length() > 1) body += "｜" + reasons.optString(1, "");
             }
-            notify("jei_risk", 7301,
-                    severity >= 3 ? "🔴 JEI 大逃殺警報：" + label :
-                    severity == 2 ? "🟠 JEI 市場風險升高：" + label :
-                    "🟡 JEI 市場轉弱：" + label,
-                    body, Notification.PRIORITY_HIGH);
+            String title = severity >= 3 ? "🔴 JEI 市場風險紅燈"
+                    : severity == 2 ? "🟠 JEI 市場風險升高" : "🟡 JEI 市場轉弱";
+            notify("jei_risk", 7301, title, body, Notification.PRIORITY_HIGH);
+            recordRiskEvent(prefs, "market", title, body, now);
         }
-
-        p.edit()
-                .putInt("bg_risk_score", score)
+        // Never update alert baselines from stale or out-of-session feeds.
+        prefs.edit().putInt("bg_risk_score", score)
                 .putString("bg_risk_level", level)
-                .putString("bg_risk_stamp", updated)
+                .putString("bg_risk_day", day)
+                .putString("bg_risk_stamp", root.optString("updated_at", ""))
                 .apply();
     }
 
-
-    private void checkHoldings(int riskScore) throws Exception {
-        SharedPreferences p = getApplicationContext().getSharedPreferences("jei_private", Context.MODE_PRIVATE);
-        String raw = p.getString("holdings", "");
+    private void checkHoldings(JSONObject sys, SharedPreferences prefs, String day, long now) throws Exception {
+        if (!canPostNotifications()) return;
+        String raw = prefs.getString("holdings", "");
         if (raw == null || raw.trim().isEmpty()) return;
-
         JSONArray hs = new JSONArray(raw);
         if (hs.length() == 0) return;
 
-        StringBuilder q = new StringBuilder();
+        StringBuilder query = new StringBuilder();
         for (int i = 0; i < hs.length(); i++) {
-            JSONObject h = hs.optJSONObject(i);
-            if (h == null) continue;
-            String code = h.optString("code", "").trim();
-            if (!code.matches("[0-9A-Za-z]{2,8}")) continue;
-            if (q.length() > 0) q.append("|");
-            q.append("tse_").append(code).append(".tw|otc_").append(code).append(".tw");
+            JSONObject holding = hs.optJSONObject(i);
+            if (holding == null) continue;
+            String code = holding.optString("code", "").trim();
+            if (!code.matches("[0-9]{4,6}")) continue;
+            if (query.length() > 0) query.append("|");
+            query.append("tse_").append(code).append(".tw|otc_").append(code).append(".tw");
         }
-        if (q.length() == 0) return;
+        if (query.length() == 0) return;
 
         String url = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch="
-                + q + "&json=1&delay=0&_=" + System.currentTimeMillis();
-        JSONObject market = new JSONObject(get(url));
-        JSONArray rows = market.optJSONArray("msgArray");
-        if (rows == null || rows.length() == 0) return;
+                + query + "&json=1&delay=0&_=" + System.currentTimeMillis();
+        JSONArray quotes = new JSONObject(get(url)).optJSONArray("msgArray");
+        if (quotes == null || quotes.length() == 0) return;
 
-        JSONObject sys = new JSONObject(getStaticFeed(SYSTEM_JSON));
         JSONObject stockSectors = sys.optJSONObject("stock_sectors");
         JSONArray sectorRows = sys.optJSONArray("sectors");
-
-        String day = new SimpleDateFormat("yyyyMMdd", Locale.US).format(new Date());
+        JSONObject risk = sys.optJSONObject("risk");
+        int riskScore = risk == null ? 0 : risk.optInt("score", 0);
         JSONArray alerts = new JSONArray();
+        HashSet<String> checked = new HashSet<>();
 
-        for (int i = 0; i < rows.length(); i++) {
-            JSONObject m = rows.optJSONObject(i);
-            if (m == null) continue;
-            String code = m.optString("c", "");
-            String name = m.optString("n", code);
-            if (code.isEmpty() || name.isEmpty()) continue;
+        for (int i = 0; i < quotes.length(); i++) {
+            JSONObject quote = quotes.optJSONObject(i);
+            if (!trustedExecutedTrade(quote, now)) continue;
+            String code = quote.optString("c", "").trim();
+            if (!code.matches("[0-9]{4,6}") || !checked.add(code)) continue;
+            JSONObject holding = findHolding(hs, code);
+            if (holding == null) continue;
+            double cost = holding.optDouble("cost", 0);
+            long shares = holding.optLong("shares", 0);
+            if (!(cost > 0) || shares <= 0) continue;
 
-            double price = toDouble(m.optString("z", ""));
-            double prev = toDouble(m.optString("y", ""));
-            if (!(price > 0)) {
-                double bid = firstQuote(m.optString("b", ""));
-                double ask = firstQuote(m.optString("a", ""));
-                if (bid > 0 && ask > 0) price = (bid + ask) / 2.0;
-                else if (bid > 0) price = bid;
-                else if (ask > 0) price = ask;
-                else price = prev;
-            }
-            if (!(price > 0) || !(prev > 0)) continue;
-
-            JSONObject h = findHolding(hs, code);
-            if (h == null) continue;
-            double cost = h.optDouble("cost", 0);
-            if (!(cost > 0)) continue;
-
+            // A valid last execution (z) is required. Never substitute bid/ask or yesterday's close.
+            double price = toDouble(quote.optString("z", ""));
+            double prev = toDouble(quote.optString("y", ""));
             double ch = (price - prev) / prev * 100.0;
             double ret = (price - cost) / cost * 100.0;
             String sector = stockSectors == null ? "其他" : stockSectors.optString(code, "其他");
             int sectorScore = findSectorScore(sectorRows, sector);
-
             int severity = 0;
-            String action = "";
-            if ((riskScore >= 80 && ch < 0) || ch <= -7.0 || ret <= -15.0) {
+            String reason = "";
+            if ((riskScore >= 80 && ch < 0) || ch <= -7 || ret <= -15) {
                 severity = 3;
-                action = riskScore >= 80 ? "市場紅燈降部位" : "風控優先";
-            } else if (ret >= 25.0 && (ch <= -3.0 || sectorScore < 45)) {
+                reason = riskScore >= 80 && ch < 0 ? "大盤高風險共振" : "個股跌幅／成本風險";
+            } else if (ret >= 25 && (ch <= -3 || sectorScore < 45)) {
                 severity = 2;
-                action = "移動停利";
-            } else if (ch <= -5.0 || ret <= -12.0 || (riskScore >= 65 && ch <= -3.0)) {
+                reason = "獲利保護觀察";
+            } else if (ch <= -5 || ret <= -12 || (riskScore >= 65 && ch <= -3)) {
                 severity = 2;
-                action = "減碼防守";
-            } else if ((ret >= 12.0 && ch <= -3.0) || (sectorScore < 40 && ch <= -2.0)) {
+                reason = "個股弱勢防守";
+            } else if ((ret >= 12 && ch <= -3) || (sectorScore < 40 && ch <= -2)) {
                 severity = 1;
-                action = ret >= 12.0 ? "鎖利觀察" : "族群轉弱";
+                reason = ret >= 12 ? "獲利回吐觀察" : "族群弱勢觀察";
             }
-
+            if (severity == 0) continue;
             String key = "bg_hold_" + day + "_" + code;
-            int old = p.getInt(key, 0);
-            if (severity > old) {
-                JSONObject a = new JSONObject();
-                a.put("code", code);
-                a.put("name", name);
-                a.put("change", ch);
-                a.put("return", ret);
-                a.put("action", action);
-                a.put("sector", sector);
-                a.put("sectorScore", sectorScore);
-                a.put("severity", severity);
-                alerts.put(a);
-                p.edit().putInt(key, severity).apply();
-            }
+            int old = prefs.getInt(key, 0);
+            if (severity <= old) continue;
+            JSONObject alert = new JSONObject();
+            alert.put("code", code);
+            alert.put("name", holding.optString("name", code));
+            alert.put("change", ch);
+            alert.put("return", ret);
+            alert.put("reason", reason);
+            alert.put("severity", severity);
+            alerts.put(alert);
+            prefs.edit().putInt(key, severity).apply();
         }
 
-        if (alerts.length() > 0) {
-            StringBuilder body = new StringBuilder();
-            int max = Math.min(3, alerts.length());
-            for (int i = 0; i < max; i++) {
-                JSONObject a = alerts.optJSONObject(i);
-                if (i > 0) body.append("｜");
-                body.append(a.optString("code")).append(" ")
-                        .append(a.optString("name")).append(" ")
-                        .append(String.format(Locale.US, "%.1f%%", a.optDouble("change")))
-                        .append("／成本 ")
-                        .append(String.format(Locale.US, "%+.1f%%", a.optDouble("return")))
-                        .append(" ")
-                        .append(a.optString("action"))
-                        .append(" [").append(a.optString("sector")).append(" ")
-                        .append(a.optInt("sectorScore", 50)).append("分]");
-            }
-            if (alerts.length() > max) body.append("｜另 ").append(alerts.length() - max).append(" 檔");
-            notify("jei_risk", 7303,
-                    "⚠ JEI 持股風控警示（" + alerts.length() + " 檔）",
-                    body.toString(), Notification.PRIORITY_HIGH);
+        if (alerts.length() == 0) return;
+        StringBuilder body = new StringBuilder();
+        for (int i = 0; i < Math.min(3, alerts.length()); i++) {
+            JSONObject a = alerts.optJSONObject(i);
+            if (a == null) continue;
+            if (i > 0) body.append("｜");
+            body.append(a.optString("code")).append(" ")
+                    .append(a.optString("name")).append(" 較昨收 ")
+                    .append(String.format(Locale.US, "%+.1f%%", a.optDouble("change")))
+                    .append("／成本 ")
+                    .append(String.format(Locale.US, "%+.1f%%", a.optDouble("return")))
+                    .append("｜").append(a.optString("reason"));
         }
+        if (alerts.length() > 3) body.append("｜另 ").append(alerts.length() - 3).append(" 檔");
+        String title = "⚠ JEI 持股盤中風險（" + alerts.length() + " 檔）";
+        notify("jei_risk", 7303, title, body.toString(), Notification.PRIORITY_HIGH);
+        recordRiskEvent(prefs, "holding", title, body.toString(), now);
     }
 
     private int findSectorScore(JSONArray sectors, String name) {
@@ -264,17 +325,7 @@ public class RiskWorker extends Worker {
         return null;
     }
 
-    private double firstQuote(String levels) {
-        if (levels == null || levels.isEmpty() || "-".equals(levels)) return 0;
-        String[] parts = levels.split("_");
-        for (String part : parts) {
-            double v = toDouble(part);
-            if (v > 0) return v;
-        }
-        return 0;
-    }
-
-    private double toDouble(String s) {
+    private static double toDouble(String s) {
         try { return Double.parseDouble(s); }
         catch (Exception e) { return Double.NaN; }
     }
