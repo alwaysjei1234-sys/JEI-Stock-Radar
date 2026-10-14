@@ -238,7 +238,8 @@ public class MainActivity extends Activity {
         BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         StringBuilder sb = new StringBuilder();
         String line;
-        while ((line = r.readLine()) != null) sb.append(line).append('\n');
+        while ((line = r.readLine()) != null) sb.append(line).append('
+');
         r.close();
         if (status < 200 || status >= 300) throw new Exception("HTTP " + status + ": " + sb);
         return sb.toString();
@@ -308,7 +309,8 @@ public class MainActivity extends Activity {
         BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         StringBuilder sb = new StringBuilder();
         String line;
-        while ((line = r.readLine()) != null) sb.append(line).append('\n');
+        while ((line = r.readLine()) != null) sb.append(line).append('
+');
         r.close();
         if (status < 200 || status >= 300) throw new Exception("HTTP " + status + ": " + sb);
         return sb.toString();
@@ -479,6 +481,9 @@ public class MainActivity extends Activity {
         }
         @JavascriptInterface public String loadHoldings() {
             return prefs.getString("holdings", "");
+        }
+        @JavascriptInterface public String loadRiskEvents() {
+            return prefs.getString("bg_alert_events", "[]");
         }
         @JavascriptInterface public void saveSetting(String key, String value) {
             if (key != null && key.matches("[a-zA-Z0-9_]{1,32}"))
