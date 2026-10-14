@@ -365,6 +365,7 @@ check('Market/sector/near-low risk ranking uses only verified current trade evid
  ctx.tradingWindowAt=()=>false;assert.equal(run().eligible,false);ctx.tradingWindowAt=()=>true;
  assert.equal(run({...m,price:90,high:NaN,low:NaN}).reasons.length,2,'missing daily range cannot invent near-low selling pressure');
  assert.equal(run(m,q,{...feed,stock_sectors:{},sectors:[]}).reasons.length,2,'unknown industry must not be called weak');
+ assert.equal(run(m,q,{...feed,sectors:[{name:'AI族群',score:null}]}).reasons.length,2,'missing industry score cannot masquerade as a zero-score selloff');
  assert.equal(run(m,q,{...feed,risk:{score:20},stock_sectors:{},sectors:[]}).reasons.length,1);
  assert.equal(run({...m,price:105},q,feed).reasons.length,0,'up stock is not marked as heavy selling');
  assert.equal(run(m,q,{...feed,market:{mode:'今日收盤'}}).eligible,false);
