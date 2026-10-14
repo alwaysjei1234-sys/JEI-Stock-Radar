@@ -271,6 +271,47 @@ check('Holdings row filters and PnL sorts work independently of risk category',(
  assert.equal(ctx.sortRows(rows,'all','pnlAsc')[2].h.code,'1003','unpriced holdings sort last');
  assert.equal(ctx.sortRows(rows,'all','name')[2].h.code,'1003');
 });
+check('Sector and backtest feeds are escaped before DOM insertion',()=>{
+ const sector=html.match(/function renderSectors\(\)\{[\s\S]*?(?=\nfunction renderBacktest)/)?.[0];
+ const backtest=html.match(/function renderBacktest\(\)\{[^\n]+/)?.[0];
+ const escape=html.match(/^function escapeMarketText\(.*$/m)?.[0];
+ assert.ok(sector&&backtest&&escape);
+ const els={sectorList:{innerHTML:''},sectorTop:{innerHTML:''},backtestBox:{innerHTML:''}};
+ const evil='<img src=x onerror=alert(1)>';
+ const ctx={isTrustedFeed:()=>true,system:{sectors:[{name:evil,score:85,avg_pct:4,breadth:90,value_billion:10,leaders:[{code:'2330',name:evil,pct:5}]}],backtest:{hit3:evil,hit5:50,hit10:20,samples:2}},$:id=>els[id]};
+ vm.runInNewContext(escape+'\n'+sector+'\n'+backtest+';globalThis.render=[renderSectors,renderBacktest];',ctx);
+ ctx.render[0]();ctx.render[1]();
+ assert.doesNotMatch(els.sectorList.innerHTML,/<img/i);
+ assert.doesNotMatch(els.sectorTop.innerHTML,/<img/i);
+ assert.doesNotMatch(els.backtestBox.innerHTML,/<img/i);
+ assert.match(els.sectorList.innerHTML,/&lt;img/);
+ assert.match(els.backtestBox.innerHTML,/&lt;img/);
+});
+check('Quick AI holding answers require trusted per-stock quotes',()=>{
+ const source=html.match(/function chatHolding\(stock\)\{[\s\S]*?(?=\nfunction chatStockInfo)/)?.[0];
+ assert.ok(source);
+ const state={trusted:false,quoteDay:'20261013',valid:true};
+ const ctx={JEI_PRIVATE_APP:true,holdings:[{code:'2330',name:'測試股',cost:100,shares:1000}],market:{2330:{price:90,quoteDay:state.quoteDay}},holdingQuoteQuality:()=>({valid:state.valid,label:'官方收盤・非即時'}),taipeiDateParts:()=>({year:'2026',month:'10',day:'14'}),isTrustedFeed:()=>state.trusted,holdingAdvice:()=>({action:'測試賣出',reason:'不應顯示',defense:80,target1:110,target2:120}),holdingDiagnosis:()=>({tag:'測試',why:'測試',instText:'測試'})};
+ vm.runInNewContext(source+';globalThis.answer=chatHolding;',ctx);
+ const stock={code:'2330',name:'測試股'};
+ assert.match(ctx.answer(stock),/暫不提供賣出排序/);
+ assert.doesNotMatch(ctx.answer(stock),/測試賣出|目標1/);
+ state.trusted=true;
+ assert.match(ctx.answer(stock),/暫不提供賣出排序/,'stale individual quote blocks advice even with fresh market feed');
+ state.quoteDay='20261014';ctx.market['2330'].quoteDay=state.quoteDay;
+ assert.match(ctx.answer(stock),/測試賣出/,'verified same-day quote permits labelled reference guidance');
+ state.valid=false;
+ assert.match(ctx.answer(stock),/暫不提供賣出排序/,'unverified price must be blocked');
+});
+check('Quick AI market gate runs before generic advice and requires verified triage',()=>{
+ const source=html.match(/function answerChat\(q\)\{[\s\S]*?(?=\nfunction sendChat)/)?.[0];
+ assert.ok(source);
+ const ctx={findChatStock:()=>null,isTrustedFeed:()=>false,holdings:[{name:'測試股',code:'2330'}],system:{risk:{score:12,cash:'低'}},JEI_PRIVATE_APP:true};
+ vm.runInNewContext(source+';globalThis.answer=answerChat;',ctx);
+ assert.match(ctx.answer('測試股怎麼辦'),/暫停即時風險判斷/);
+ assert.match(ctx.answer('我的持股哪檔該賣'),/暫停即時風險判斷/);
+ assert.ok(source.includes("buildPrivatePortfolioTriage().filter(x=>x.category.id!=='pending')"),'pending holdings cannot be ranked');
+});
 check('Quick AI chat never labels stale quotes as live and never ranks stale alerts',()=>{
  const src=html.match(/function chatHolding\(stock\)\{[\s\S]*?(?=\nfunction chatStockInfo)/)?.[0];
  assert.ok(src);

@@ -212,8 +212,24 @@ function renderWebReco(){
 function renderFlow(){const a=isTrustedFeed()?system.flow:[],safe=escapeMarketText;if(!Array.isArray(a)||!a.length){$('flowList').innerHTML='<div class="empty">今日行情未驗證，暫停資金流判讀</div>';return}$('flowList').innerHTML=a.map(x=>`<div class="listRow"><div class="rank">${safe(x.icon||'•')}</div><div><div class="rName">${safe(x.name)}</div><div class="rSub">${safe(x.note)}</div></div><div class="score">${safe(x.score??'')}</div></div>`).join('')}
 function renderSectorHeatmap(){const el=$('sectorHeatmap');if(!el)return;el.replaceChildren();const sectors=isTrustedFeed()&&Array.isArray(system.sectors)?system.sectors:[];if(!sectors.length){el.textContent='等待族群資料';return;}const mode=$('heatSort')?.value||'score';const ordered=[...sectors].sort((a,b)=>{const key=mode==='gain'||mode==='loss'?'avg_pct':mode==='breadth'?'breadth':'score';const av=Number(a[key]),bv=Number(b[key]);return (mode==='loss'?1:-1)*((Number.isFinite(av)?av:-999)-(Number.isFinite(bv)?bv:-999));});ordered.slice(0,24).forEach(x=>{const pct=Number(x.avg_pct),tile=document.createElement('button');tile.type='button';tile.className='heatTile '+(!Number.isFinite(pct)||Math.abs(pct)<0.05?'flat':pct>0?'up':'down');const title=document.createElement('b');title.textContent=String(x.name||'未分類');const change=document.createElement('span');change.textContent=Number.isFinite(pct)?(pct>0?'+':'')+pct.toFixed(2)+'%':'--';const info=document.createElement('small');info.textContent='熱度 '+(Number.isFinite(+x.score)?x.score:'--')+'｜上漲比 '+(Number.isFinite(+x.breadth)?x.breadth+'%':'--');tile.append(title,change,info);tile.addEventListener('click',()=>{const target=$('sectorList');if(target)target.scrollIntoView({behavior:'smooth',block:'start'});toast(String(x.name||'族群')+'｜熱度 '+(x.score??'--'));});el.appendChild(tile);});}
 document.getElementById('heatSort')?.addEventListener('change',renderSectorHeatmap);
-function renderSectors(){const a=isTrustedFeed()?(system.sectors||[]):[];if(!Array.isArray(a)||!a.length){$('sectorList').innerHTML='<div class="empty">等待族群熱度資料</div>';if($('sectorTop'))$('sectorTop').textContent='等待族群資料...';return}const rows=a.map((x,i)=>{const leaders=(x.leaders||[]).map(z=>z.code+' '+z.name+' '+(z.pct>=0?'+':'')+z.pct+'%').join('、');return `<div class="listRow"><div class="rank">#${i+1}</div><div><div class="rName">${x.name}</div><div class="rSub">平均 ${x.avg_pct>=0?'+':''}${x.avg_pct}%｜上漲比 ${x.breadth}%｜成交值 ${x.value_billion}億</div><div class="rSub">${leaders}</div></div><div class="score ${x.score>=70?'greenTxt':x.score<45?'yellowTxt':'cyanTxt'}">${x.score}</div></div>`}).join('');$('sectorList').innerHTML=rows;if($('sectorTop'))$('sectorTop').innerHTML=a.slice(0,3).map((x,i)=>`<b>#${i+1} ${x.name}</b> ${x.score}分｜平均 ${x.avg_pct>=0?'+':''}${x.avg_pct}%｜上漲比 ${x.breadth}%`).join('<br>')}
-function renderBacktest(){const b=system.backtest||{};$('backtestBox').innerHTML=`<div class="metrics"><div class="metric"><div class="k">3日命中</div><div class="v">${b.hit3??'--'}${b.hit3!=null?'%':''}</div></div><div class="metric"><div class="k">5日命中</div><div class="v">${b.hit5??'--'}${b.hit5!=null?'%':''}</div></div><div class="metric"><div class="k">10日命中</div><div class="v">${b.hit10??'--'}${b.hit10!=null?'%':''}</div></div><div class="metric"><div class="k">樣本數</div><div class="v">${b.samples??'--'}</div></div></div>`}
+function renderSectors(){
+ const a=isTrustedFeed()?(system.sectors||[]):[],safe=escapeMarketText;
+ if(!Array.isArray(a)||!a.length){
+  $('sectorList').innerHTML='<div class="empty">等待族群熱度資料</div>';
+  if($('sectorTop'))$('sectorTop').textContent='等待族群資料...';
+  return;
+ }
+ const num=v=>v==null||v===''||!Number.isFinite(Number(v))?'--':String(Number(v));
+ const signPct=v=>v==null||v===''||!Number.isFinite(Number(v))?'--':(Number(v)>=0?'+':'')+num(v)+'%';
+ const rows=a.map((x,i)=>{
+  const leaders=(Array.isArray(x.leaders)?x.leaders:[]).map(z=>safe(z.code)+' '+safe(z.name)+' '+signPct(z.pct)).join('、');
+  const score=Number(x.score);
+  return '<div class="listRow"><div class="rank">#'+(i+1)+'</div><div><div class="rName">'+safe(x.name)+'</div><div class="rSub">平均 '+signPct(x.avg_pct)+'｜上漲比 '+num(x.breadth)+'%｜成交值 '+num(x.value_billion)+'億</div><div class="rSub">'+leaders+'</div></div><div class="score '+(score>=70?'greenTxt':score<45?'yellowTxt':'cyanTxt')+'">'+num(x.score)+'</div></div>';
+ });
+ $('sectorList').innerHTML=rows.join('');
+ if($('sectorTop'))$('sectorTop').innerHTML=a.slice(0,3).map((x,i)=>'<b>#'+(i+1)+' '+safe(x.name)+'</b> '+num(x.score)+'分｜平均 '+signPct(x.avg_pct)+'｜上漲比 '+num(x.breadth)+'%').join('<br>');
+}
+function renderBacktest(){const safe=escapeMarketText;const b=system.backtest||{};$('backtestBox').innerHTML=`<div class="metrics"><div class="metric"><div class="k">3日命中</div><div class="v">${safe(b.hit3??'--')}${b.hit3!=null?'%':''}</div></div><div class="metric"><div class="k">5日命中</div><div class="v">${safe(b.hit5??'--')}${b.hit5!=null?'%':''}</div></div><div class="metric"><div class="k">10日命中</div><div class="v">${safe(b.hit10??'--')}${b.hit10!=null?'%':''}</div></div><div class="metric"><div class="k">樣本數</div><div class="v">${safe(b.samples??'--')}</div></div></div>`}
 function renderPriority(){const a=isTrustedFeed()?(system.priority||[]):[],safe=escapeMarketText,el=$('priorityList');el.className=a.length?'':'empty';el.innerHTML=a.length?a.map((x,i)=>`<div class="listRow"><div class="rank">${i+1}</div><div><div class="rName">${safe(x.title)}</div><div class="rSub">${safe(x.note)}</div></div><div class="score">${safe(x.action)}</div></div>`).join(''):'今日有效行情未驗證，暫停顯示優先買進訊號。'}
 function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
 function updateFeedGate(){
@@ -868,6 +884,9 @@ function listText(arr,n=3){
 function chatHolding(stock){
  const h=holdings.find(x=>x.code===stock.code);if(!h||!JEI_PRIVATE_APP)return null;
  const m=market[h.code]||{},q=holdingQuoteQuality(m),p=q.valid?Number(m.price):NaN,prev=q.valid?Number(m.prev):NaN;
+ const dp=taipeiDateParts(),today=dp.year+dp.month+dp.day;
+ if(!isTrustedFeed()||!q.valid||String(m.quoteDay)!==today)
+  return h.code+' '+h.name+'｜含費用成本 '+h.cost+'｜價格參考 '+(q.valid?p:'--')+'（'+q.label+'）\n個股今日可信行情不足，暫不提供賣出排序、防守價或目標價。';
  const ch=Number.isFinite(prev)&&prev>0&&Number.isFinite(p)?(p/prev-1)*100:NaN;
  const pnl=Number.isFinite(p)?(p-h.cost)*h.shares:NaN,ret=Number.isFinite(pnl)&&h.cost>0&&h.shares>0?pnl/(h.cost*h.shares)*100:NaN,a=holdingAdvice(h,m,p,ret,ch),d=holdingDiagnosis(h,m,p,ret,ch,a);
  const priceTxt=Number.isFinite(p)?p:'--',retTxt=Number.isFinite(ret)?(ret>=0?'+':'')+ret.toFixed(1)+'%':'--';
@@ -891,13 +910,13 @@ function chatStockInfo(stock){
 }
 function answerChat(q){
  q=String(q||'').trim();if(!q)return '';
- if(!isTrustedFeed()&&!holdings.some(h=>q.includes(h.name)||q.includes(h.code)))return '行情或市場資訊未經今日有效驗證，暫停即時風險判斷、選股榜單及賣出排序。可先查看附日期的官方收盤參考價；待資料刷新後再分析。';
  const stock=findChatStock(q);
  if(stock){
   const htxt=chatHolding(stock);
   if(htxt)return htxt;
   return chatStockInfo(stock)
  }
+ if(!isTrustedFeed())return '行情或市場資訊未經今日有效驗證，暫停即時風險判斷、選股榜單及賣出排序。可先查看附日期的官方收盤參考價；待資料刷新後再分析。';
  if(/大盤|風險|現金|逃殺/.test(q)){
   const r=system.risk||{},m=system.market||{};
   return `目前市場：${m.status||'--'}｜大逃殺風險 ${r.score??'--'}/100｜建議現金 ${r.cash||'--'}\n${(r.reasons||[]).slice(0,5).join('｜')}`;
@@ -908,9 +927,11 @@ function answerChat(q){
  if(/主攻|今天.*買|今日.*推薦/.test(q))return '今日主攻：\n'+listText(system.attack,5);
  if(/網路推薦|投顧|老師|網友|網路共識/.test(q))return '網路共識推薦：\n'+listText(system.web_recommendations,5);
  if(/持股.*風險|哪檔.*弱|哪檔.*賣/.test(q)){
-  const scored=holdings.map(h=>{const m=market[h.code]||{},sys=(system.holdings||{})[h.code]||{},p=Number.isFinite(+m.price)?+m.price:+sys.price,ret=Number.isFinite(p)?(p/h.cost-1)*100:0,a=holdingAdvice(h,m,p,ret,Number.isFinite(+sys.change_pct)?+sys.change_pct:0);return{h,risk:100-(+a.score||50),a,ret}}).sort((a,b)=>b.risk-a.risk);
-  if(!scored.length)return '目前沒有持股資料。';
-  return '目前較需要優先檢查的持股：\n'+scored.slice(0,3).map((x,i)=>`${i+1}. ${x.h.code} ${x.h.name}｜${x.a.action}｜報酬 ${x.ret>=0?'+':''}${x.ret.toFixed(1)}%`).join('\n');
+  if(!JEI_PRIVATE_APP)return '私人持股僅限 Android APP 本機查看。';
+  if(!holdings.length)return '目前沒有持股資料。';
+  const scored=buildPrivatePortfolioTriage().filter(x=>x.category.id!=='pending');
+  if(!scored.length)return '目前持股尚無今日可信個股行情，暫停賣出排序；請核對各檔資料日期。';
+  return '目前較需要優先檢查的持股：\n'+scored.slice(0,3).map((x,i)=>`${i+1}. ${x.h.code} ${x.h.name}｜${x.advice.action}｜報酬 ${Number.isFinite(x.ret)?(x.ret>=0?'+':'')+x.ret.toFixed(1)+'%':'--'}`).join('\n');
  }
  if(/換股/.test(q))return '持股換股候選：\n'+listText(system.rotate,5);
  return '你可以直接問股票名稱或代號，例如「永光怎麼辦」、「漢磊明天怎麼看」、「明日妖股前三名」、「我的持股哪檔優先減碼」。JEI 快速模式會讀取目前行情、法人、族群與你的成本；需要更完整推理時可切到單一 AI 或多 AI 會診。';
@@ -939,7 +960,7 @@ function refreshAll(manual=false){refreshSystem();refreshOfficialCloses();if(tra
 function openUpdate(){if(updateManifest&&updateManifest.url&&nativeOk())JEINative.openUrl(updateManifest.url)}
 window.JEI_NATIVE={
  onMarketBatch(raw){try{ingestMarket(JSON.parse(raw))}catch(e){}},
- onMarketData(raw){try{ingestMarket(JSON.parse(raw));$('netText').textContent=`全市場掃描完成 ${Object.keys(market).length}檔`}catch(e){toast('行情資料解析失敗')}},
+ onMarketData(raw){try{ingestMarket(JSON.parse(raw))}catch(e){toast('行情資料解析失敗')}},
  onMarketError(e){if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}$('netDot').classList.add('off');$('netText').textContent='行情離線';toast('行情連線失敗')},
  onSystemData(raw){try{system=JSON.parse(raw);system.holdings=system.holdings||{};seedMarketFromSystem();renderSystem();if(tradingWindow())refreshMarket();else showFeedStatus();$('sysStatus').textContent='JEI 遠端 feed 已連線｜'+(system.updated_at||'無時間')}catch(e){$('sysStatus').textContent='JEI feed 格式錯誤'}},
  onSystemError(e){$('sysStatus').textContent='JEI feed 暫時無法連線｜'+e},
