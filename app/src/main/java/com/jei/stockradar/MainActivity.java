@@ -485,6 +485,12 @@ public class MainActivity extends Activity {
         @JavascriptInterface public String loadRiskEvents() {
             return prefs.getString("bg_alert_events", "[]");
         }
+        @JavascriptInterface public boolean getRiskNotificationEnabled() {
+            return prefs.getBoolean("bg_risk_enabled", true);
+        }
+        @JavascriptInterface public void setRiskNotificationEnabled(boolean enabled) {
+            prefs.edit().putBoolean("bg_risk_enabled", enabled).apply();
+        }
         @JavascriptInterface public void saveSetting(String key, String value) {
             if (key != null && key.matches("[a-zA-Z0-9_]{1,32}"))
                 prefs.edit().putString("s_" + key, value).apply();
