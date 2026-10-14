@@ -66,7 +66,7 @@ check('Feed freshness rejects old, stale, or mislabeled intraday quotes',()=>{
  const line=html.match(/^function isTrustedFeed\(.*$/m)?.[0];assert.ok(line);
  const ctx={};vm.runInNewContext(line+';globalThis.verify=isTrustedFeed;',ctx);
  const day=new Date('2026-10-14T02:00:00Z');
- const ok={data_date:'2026-10-14',market:{mode:'盤中即時',stale:false,live_valid:true,close_count:1900}};
+ const ok={updated_at:'2026-10-14 10:00',data_date:'2026-10-14',market:{mode:'盤中即時',stale:false,live_valid:true,close_count:1900}};
  assert.equal(ctx.verify(ok,day),true);
  assert.equal(ctx.verify({...ok,data_date:'2026-10-13'},day),false);
  assert.equal(ctx.verify({...ok,market:{...ok.market,stale:true}},day),false);
@@ -74,6 +74,8 @@ check('Feed freshness rejects old, stale, or mislabeled intraday quotes',()=>{
  assert.equal(ctx.verify({...ok,market:{...ok.market,live_valid:false}},day),false);
  assert.equal(ctx.verify({...ok,market:{...ok.market,mode:'今日收盤',live_valid:false}},day),true);
  assert.equal(ctx.verify({...ok,market:{...ok.market,mode:'今日收盤',close_count:0}},day),false);
+ assert.equal(ctx.verify({...ok,updated_at:'2026-10-14 09:00'},day),false,'old but same-day intraday feed must fail');
+ assert.equal(ctx.verify({...ok,updated_at:'2026-10-14 10:05'},day),false,'future feed timestamp must fail');
 });
 check('Exchange quote dates and 13:30 close boundary are enforced',()=>{
  assert.ok(py.includes('if quote_day!=expected_day:continue'));
@@ -81,6 +83,7 @@ check('Exchange quote dates and 13:30 close boundary are enforced',()=>{
  assert.ok(py.includes('live_valid=market_open and live_count>=500'));
  assert.ok(py.includes('market_mode="資料過期" if stale_source'));
  assert.ok(html.includes('liveBad=!isTrustedFeed()'));
+ assert.ok(html.includes("arr=[];empty='今日有效行情未驗證"),'all radar lists must halt on stale data');
 });
 
 check('Paper trading has no broker order submission',()=>{
