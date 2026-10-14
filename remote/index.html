@@ -181,7 +181,7 @@ function isRecentCloseObservation(feed=system,now=new Date()){
  const age=now.getTime()-closeAt;
  return Number.isFinite(closeAt)&&Number.isFinite(stamp)&&stamp>=closeAt&&age>=0&&age<=7*86400000;
 }
-function updateFeedFreshness(){const el=$('feedFreshness');if(!el)return;const date=String(system.data_date||''),now=new Date(),parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now),dp=Object.fromEntries(parts.map(p=>[p.type,p.value])),tw=`${dp.year}-${dp.month}-${dp.day}`,valid=isTrustedFeed(system,now),m=system.market||{},status=valid?(m.mode==='盤中即時'?'已驗證盤中行情':'今日官方收盤'):'未驗證／暫停選股';el.textContent='資料日 '+(date||'未知')+'｜'+status+(date&&date!==tw?'｜非今日資料':'');el.style.color=valid?'':'#f4b968';}
+function updateFeedFreshness(){const el=$('feedFreshness');if(!el)return;const date=String(system.data_date||''),now=new Date(),parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now),dp=Object.fromEntries(parts.map(p=>[p.type,p.value])),tw=`${dp.year}-${dp.month}-${dp.day}`,valid=isTrustedFeed(system,now),m=system.market||{},historical=!valid&&isRecentCloseObservation(system,now),status=valid?(m.mode==='盤中即時'?'已驗證盤中行情':'今日官方收盤'):historical?'前次收盤觀察（非即時）':'未驗證／暫停選股';el.textContent='資料日 '+(date||'未知')+'｜'+status+(date&&date!==tw?'｜非今日資料':'');el.style.color=valid?'':'#f4b968';}
 function syncScreenSectors(){const el=$('screenSector');if(!el)return;let selected=el.value;const names=[...new Set((Array.isArray(system.attack)?system.attack:[]).map(x=>String(x.sector||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'zh-Hant'));if(!selected&&names.length){try{selected=JSON.parse(localStorage.getItem(SCREEN_PREFS_KEY)||'null')?.sector||''}catch(e){}}el.replaceChildren(new Option('全部族群',''),...names.map(x=>new Option(x,x)));if(names.includes(selected))el.value=selected;}
 function renderAttackScreener(){
  updateFeedFreshness();syncScreenSectors();
@@ -279,7 +279,7 @@ function updateFeedGate(){
  const el=$('feedGate');if(!el)return;
  const m=system.market||{},ok=isTrustedFeed();
  el.className='feedGate '+(ok?'valid':'stale');
- el.textContent=ok?(m.mode==='盤中即時'?'● 今日盤中已驗證｜仍需注意個股成交時效':'● 今日官方收盤已驗證｜非即時行情'):'● 行情資料未通過日期／時效檢查｜買賣分級暫停';
+ el.textContent=ok?(m.mode==='盤中即時'?'● 今日盤中已驗證｜仍需注意個股成交時效':'● 今日官方收盤已驗證｜非即時行情'):isRecentCloseObservation()?'◷ 前次官方收盤 '+system.data_date+'｜僅可歷史研究；今日買賣分級暫停':'● 行情資料未通過日期／時效檢查｜買賣分級暫停';
 }
 function renderUpdateStamp(){const a=[];if(system.updated_at)a.push('JEI '+system.updated_at);if(lastMarketAt)a.push('行情 '+lastMarketAt);$('updatedAgo').textContent=a.length?a.join('｜'):'等待更新'}
 function institutionSnapshotDate(inst,feed=system){
@@ -667,7 +667,7 @@ window.JEI_STATIC={
  onData(kind,raw){if(kind!=='daily')return;try{applyOfficialCloseArchive(JSON.parse(raw))}catch(e){lastOfficialFetchAt=0}},
  onError(kind){if(kind==='daily')lastOfficialFetchAt=0}
 };
-function showFeedStatus(){const m=system.market||{},c=Number.isFinite(+m.close_count)?+m.close_count:(Array.isArray(system.universe)?system.universe.length:0);if(!tradingWindow()){$('netDot').classList.remove('off');$('netText').textContent=m.stale?'資料待更新':`已收盤 ${c}檔`}}
+function showFeedStatus(){const m=system.market||{},c=Number.isFinite(+m.close_count)?+m.close_count:(Array.isArray(system.universe)?system.universe.length:0);if(!tradingWindow()){const verified=isTrustedFeed(),historical=isRecentCloseObservation();$('netDot').classList.toggle('off',!verified&&!historical);$('netText').textContent=verified?'今日已收盤 '+c+'檔':historical?'前次收盤 '+String(system.data_date||''):'行情待更新';}}
 function refreshMarket(){if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}if(nativeOk()){liveScanReceived=0;JEINative.refreshMarketData(JSON.stringify(liveCodes()))}}
 function ingestMarket(j){
  const today=taipeiDateParts(),expected=today.year+today.month+today.day,received=Date.now();
