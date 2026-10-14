@@ -153,7 +153,10 @@ check('Holdings only use confirmed executed exchange trades',()=>{
  const code=html.match(/function ingestMarket\(j\)\{[\s\S]*?(?=\nfunction liveItem)/)?.[0]||'';
  assert.ok(code.includes("date!==expected")&&code.includes("price<=0"));
  assert.doesNotMatch(code,/\(bid\+ask\)\/2|x\.b\)|x\.a\)/);
- const funcs=html.split('\n').filter(x=>/^(function taipeiDateParts\(|function tradingWindowAt\(|function tradingWindow\(|function holdingQuoteQuality\()/.test(x)).join('\n');
+ const basic=html.split('\n').filter(x=>/^(function taipeiDateParts\(|function tradingWindowAt\(|function tradingWindow\()/.test(x)).join('\n');
+ const quality=html.match(/function holdingQuoteQuality\(m,now=new Date\(\)\)\{[\s\S]*?(?=\nfunction seedMarketFromSystem)/)?.[0];
+ assert.ok(quality,'quote quality function is loadable');
+ const funcs=basic+'\n'+quality;
  const ctx={Intl};vm.runInNewContext(funcs+';globalThis.inspect=holdingQuoteQuality;',ctx);
  const during=new Date('2026-10-14T02:10:00Z'),post=new Date('2026-10-14T05:35:00Z');
  const mk=(minute=605,received='2026-10-14T02:07:00Z')=>({quoteDay:'20261014',quoteKind:'last_trade',quoteMinute:minute,receivedAt:Date.parse(received)});
@@ -169,6 +172,22 @@ check('Compact home and private holdings protect stale decisions',()=>{
  assert.ok(html.includes('function renderHomeQuick()')&&html.includes('function holdingQuoteQuality('));
  assert.ok(html.includes("if(!isTrustedFeed())return{score:'--'"));
  assert.ok(html.includes('safe(h.name)')&&html.includes('safe(d.instText)'),'portfolio-derived HTML must be escaped');
+});
+check('Private portfolios use date-stamped official closes after market hours',()=>{
+ const source=html.match(/function applyOfficialCloseArchive\(data\)\{[\s\S]*?(?=\nfunction refreshOfficialCloses)/)?.[0];
+ assert.ok(source,'official close bridge is present');
+ assert.ok(html.includes("JEINative.fetchStaticJson('daily')"),'Android bridge reads public daily close without sending holdings');
+ assert.ok(html.includes('window.JEI_STATIC={'));
+ const ctx={JEI_PRIVATE_APP:true,holdings:[{code:'2330',name:'測試'}],market:{},renderHoldings:()=>{},
+  holdingQuoteQuality:()=>({valid:false}),taipeiDateParts:()=>({year:'2026',month:'10',day:'14'}),
+  Date:class extends Date{constructor(...args){super(...(args.length?args:['2026-10-14T02:20:00Z']))}}};
+ vm.runInNewContext(source+';globalThis.apply=applyOfficialCloseArchive;',ctx);
+ const data={schema:1,kind:'official_daily_close',days:{'2026-10-13':{'2330':900}}};
+ assert.equal(ctx.apply(data),true);
+ assert.equal(ctx.market['2330'].price,900);
+ assert.equal(ctx.market['2330'].quoteDay,'20261013');
+ assert.equal(ctx.market['2330'].quoteKind,'official_close');
+ assert.equal(ctx.apply({...data,kind:'intraday_prices'}),false);
 });
 check('Cloud return and drawdown reporting is explicit',()=>{
  assert.ok(cash.includes('<th>估算總報酬</th><th>最大回撤</th>'));
