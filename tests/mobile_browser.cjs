@@ -27,7 +27,9 @@ async function run(){
   const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
   const page=await context.newPage(),errors=[];
   page.on('pageerror',error=>errors.push(error.message));
-  await page.route('https://jei-stock-radar.vercel.app/api/consult**',route=>route.fulfill({
+  await page.route('https://jei-stock-radar.vercel.app/api/consult**',route=>route.request().method()==='POST'?
+    route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:true,verified:true,free_only:true})}):
+    route.fulfill({
     status:200,contentType:'application/json',
     body:JSON.stringify({ok:true,free_only:true,paid_gateway:false,providers:{
       groq_oss:{label:'GPT-OSS 120B',server_key:true,model:'test-free'},
@@ -48,6 +50,15 @@ async function run(){
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>document.querySelector('#sysStatus').textContent.includes('feed 已連線'),{timeout:15000});
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
+  // The credential form must be usable on phones; verify without any real model call.
+  await page.locator('[data-go="settings"]').first().click();
+  await page.locator('#settings').waitFor({state:'visible'});
+  await page.locator('#aiBackendToken').fill('ci-only-private-token');
+  await page.getByRole('button',{name:'儲存連線碼'}).click();
+  await page.getByRole('button',{name:'測試連線碼'}).click();
+  await page.waitForFunction(()=>document.querySelector('#aiTokenStatus').textContent.includes('已驗證'));
+  assert.match(await page.locator('#aiTokenStatus').innerText(),/已驗證/);
+  console.log('PASS usable JEI private AI token settings and model-free authorization');
   await page.locator('[data-go="patterns"]').first().click();
   await page.locator('#patterns').waitFor({state:'visible'});
   // Force a deterministic unpublished snapshot; the real daily feed may already be ready.

@@ -72,7 +72,7 @@ check('Stock screener filters score, price, sector, and stale market at runtime'
  const start=html.indexOf('function renderAttackScreener(){'),end=html.indexOf('const SCREEN_PREFS_KEY=',start);
  assert.ok(start>=0&&end>start);const fn=html.slice(start,end);
  const els={screenScore:{value:'75'},screenPriceMax:{value:'120'},screenRiseMax:{value:'9'},screenQuery:{value:''},screenSector:{value:'AI'},screenOrder:{value:'score'},screenCount:{textContent:''}};
- let captured=[],trusted=true;const ctx={isTrustedFeed:()=>trusted,system:{attack:[{code:'1111',score:90,sector:'AI',price:100,change_pct:3},{code:'2222',score:60,sector:'AI',price:90,change_pct:2},{code:'3333',score:95,sector:'航運',price:70,change_pct:2},{code:'4444',score:99,sector:'AI',price:500,change_pct:4}],market:{mode:'今日收盤'},data_date:'2026-10-13'},$:id=>els[id],renderRank:(_id,arr)=>{captured=arr},updateFeedFreshness:()=>{},syncScreenSectors:()=>{}};
+ let captured=[],trusted=true;const ctx={isTrustedFeed:()=>trusted,isRecentCloseObservation:()=>false,system:{attack:[{code:'1111',score:90,sector:'AI',price:100,change_pct:3},{code:'2222',score:60,sector:'AI',price:90,change_pct:2},{code:'3333',score:95,sector:'航運',price:70,change_pct:2},{code:'4444',score:99,sector:'AI',price:500,change_pct:4}],market:{mode:'今日收盤'},data_date:'2026-10-13'},$:id=>els[id],renderRank:(_id,arr)=>{captured=arr},updateFeedFreshness:()=>{},syncScreenSectors:()=>{}};
  vm.runInNewContext(fn+';globalThis.testScreen=renderAttackScreener;',ctx);ctx.testScreen();assert.equal(captured.length,1);assert.equal(captured[0].code,'1111');
  ctx.system.market.mode='盤中資料不足';trusted=false;ctx.testScreen();assert.equal(captured.length,0);
 });
@@ -99,13 +99,39 @@ check('Feed freshness rejects old, stale, or mislabeled intraday quotes',()=>{
  assert.equal(ctx.verify({...ok,updated_at:'2026-10-14 09:00'},day),false,'old but same-day intraday feed must fail');
  assert.equal(ctx.verify({...ok,updated_at:'2026-10-14 10:05'},day),false,'future feed timestamp must fail');
 });
+check('Off-hours official close observation is readable but never trusted as live',()=>{
+ const source=html.match(/function isRecentCloseObservation\(feed=system,now=new Date\(\)\)\{[\s\S]*?\n\}/)?.[0];
+ assert.ok(source,'explicit dated historical-read-only boundary');
+ const ctx={};vm.runInNewContext(source+';globalThis.recent=isRecentCloseObservation;',ctx);
+ const now=new Date('2026-10-15T01:30:00Z');
+ const close={data_date:'2026-10-14',updated_at:'2026-10-14 21:09',market:{mode:'今日收盤',stale:false,close_count:1959}};
+ assert.equal(ctx.recent(close,now),true,'last official close usable before open');
+ assert.equal(ctx.recent({...close,market:{...close.market,stale:true}},now),false);
+ assert.equal(ctx.recent({...close,updated_at:'2026-10-14 10:00'},now),false,'pre-close stamp invalid');
+ assert.equal(ctx.recent({...close,market:{...close.market,close_count:499}},now),false,'thin archive invalid');
+ assert.equal(ctx.recent({...close,data_date:'2026-10-02',updated_at:'2026-10-02 21:09'},now),false,'old snapshot invalid');
+ assert.ok(html.includes('!archive&&x.entry_low!=null'),'historical watchlists hide entry/target price plans');
+ assert.ok(html.includes('歷史收盤觀察榜'));
+ assert.ok(html.includes('const historical=!trusted&&isRecentCloseObservation(system,now)'));
+});
+check('Private AI token setup is reachable and does not consume model quota',()=>{
+ assert.ok(html.includes('id="aiBackendToken" type="password"'),'private token field must be visible');
+ assert.ok(html.includes('id="aiTokenStatus"'));
+ assert.ok(html.includes('onclick="verifyAiToken()"'));
+ assert.ok(html.includes("action:'verify_token'"));
+ const api=fs.readFileSync('api/consult.js','utf8');
+ assert.ok(api.includes('if(body.action==="verify_token")'),'auth-only ping must exist on server');
+ assert.ok(api.indexOf('if(got!==expected)')<api.indexOf('if(body.action==="verify_token")'),'authorization before ping');
+ assert.ok(html.includes('更新 → 免費多 AI 設定'),'missing-token guidance must name visible screen');
+});
+
 check('Exchange quote dates and 13:30 close boundary are enforced',()=>{
  assert.ok(py.includes('if quote_day!=expected_day:continue'));
  assert.ok(py.includes('540<=minutes<810'));
  assert.ok(py.includes('live_valid=market_open and live_count>=500'));
  assert.ok(py.includes('market_mode="資料過期" if stale_source'));
  assert.ok(html.includes('liveBad=!isTrustedFeed()'));
- assert.ok(html.includes("arr=[];empty='今日有效行情未驗證"),'all radar lists must halt on stale data');
+ assert.ok(html.includes("arr=[];empty='有效行情尚未驗證"),'untrusted radar lists must halt without recent official close');
 });
 
 check('Paper trading has no broker order submission',()=>{
@@ -309,7 +335,7 @@ check('Premium mobile watchlist has verified-feed strip and expandable private h
  assert.ok(html.includes('safe(h.name)')&&html.includes('safe(d.instText)'));
  const updater=html.match(/function updateFeedGate\(\)\{[\s\S]*?(?=\nfunction renderUpdateStamp)/)?.[0];
  assert.ok(updater,'freshness status renderer present');
- const el={className:'',textContent:''},ctx={$:id=>id==='feedGate'?el:null,system:{market:{mode:'盤中即時'}},isTrustedFeed:()=>false};
+ const el={className:'',textContent:''},ctx={$:id=>id==='feedGate'?el:null,system:{market:{mode:'盤中即時'}},isTrustedFeed:()=>false,isRecentCloseObservation:()=>false};
  vm.runInNewContext(updater+';globalThis.update=updateFeedGate;',ctx);
  ctx.update();assert.match(el.textContent,/行情資料未通過/);assert.match(el.className,/stale/);
  ctx.isTrustedFeed=()=>true;ctx.update();assert.match(el.textContent,/今日盤中已驗證/);

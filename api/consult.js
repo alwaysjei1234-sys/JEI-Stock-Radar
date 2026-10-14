@@ -234,6 +234,8 @@ module.exports=async function handler(req,res){
     try{body=JSON.parse(body)}catch{return json(res,400,{error:"Invalid JSON"})}
   }
   body=body||{};
+  // Verify the private token without invoking any AI provider or using model quota.
+  if(body.action==="verify_token") return json(res,200,{ok:true,verified:true,free_only:true,paid_gateway:false});
   if(!String(body.question||"").trim()) return json(res,400,{error:"question required"});
 
   const requested=Array.isArray(body.providers)&&body.providers.length?body.providers:Object.keys(PROVIDERS);
