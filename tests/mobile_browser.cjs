@@ -58,6 +58,38 @@ async function run(){
   assert.equal(await page.locator('#chatSendBtn').isEnabled(),true);
   console.log('PASS mobile dashboard, public privacy, screener and local AI chat');
 
+  // Android-WebView-like private fixture: file origin + native bridge, no public portfolio upload.
+  const privateContext=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  const privatePage=await privateContext.newPage(),privateErrors=[];
+  privatePage.on('pageerror',error=>privateErrors.push(error.message));
+  await privatePage.addInitScript(()=>{
+   window.JEINative={
+    loadHoldings:()=>JSON.stringify([{code:'2330',name:'測試持股',cost:100,shares:1000}]),
+    saveHoldings:()=>{},loadSetting:()=>'',saveSetting:()=>{},getAppVersion:()=>'test',
+    getAppVersionCode:()=>32,isOnline:()=>true,refreshSystem:()=>{},refreshMarketData:()=>{},
+    fetchStaticJson:()=>{},checkForUpdates:()=>{},refreshRemoteUI:()=>{},consultAI:()=>{},openUrl:()=>{}
+   };
+  });
+  await privatePage.goto('file://'+path.join(ROOT,'remote','index.html'),{waitUntil:'domcontentloaded'});
+  await privatePage.evaluate(()=>{go('hold')});
+  await privatePage.locator('#holdAlertPanel').waitFor({state:'visible'});
+  assert.equal(await privatePage.locator('#alertLoss').inputValue(),'8','native watch alert defaults to 8% loss');
+  assert.equal(await privatePage.locator('#alertGain').inputValue(),'12');
+  await privatePage.evaluate(()=>{
+   window.isTrustedFeed=()=>true;window.tradingWindowAt=()=>true;
+   window.holdingQuoteQuality=()=>({valid:true,label:'測試有效成交'});
+   const p=taipeiDateParts(),day=p.year+p.month+p.day;
+   market['2330']={price:91,prev:99,quoteDay:day,quoteKind:'last_trade',quoteMinute:700,receivedAt:Date.now()};
+   renderHoldings();
+  });
+  assert.match(await privatePage.locator('#holdAlertList').innerText(),/虧損警戒/);
+  assert.match(await privatePage.locator('#quickAlert').innerText(),/盤中警戒 1 檔/);
+  await privatePage.evaluate(()=>{market['2330'].quoteKind='official_close';renderHoldings()});
+  assert.doesNotMatch(await privatePage.locator('#holdAlertList').innerText(),/虧損警戒/,'archive close may not trigger in-app alerts');
+  assert.deepEqual(privateErrors,[],'native watchlist fixture has no uncaught JavaScript errors');
+  await privateContext.close();
+  console.log('PASS private Android-like portfolio alerts and official-close suppression');
+
   await page.goto(base+'cash.html',{waitUntil:'domcontentloaded'});
   await page.locator('#cloudRows tr').first().waitFor({state:'attached',timeout:15000});
   assert.equal(await page.locator('#cloudRows tr').count(),4);

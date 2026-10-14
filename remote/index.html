@@ -74,6 +74,8 @@
 .holdingsGrid{display:block}.watchDetails{border:1px solid #1c435e;background:#0b2031;border-radius:14px;margin:7px 0;overflow:hidden}.watchDetails[open]{border-color:#3986ae}.watchDetails summary{cursor:pointer;list-style:none;padding:12px 10px;outline-offset:2px}.watchDetails summary::-webkit-details-marker{display:none}.watchDetails summary:focus-visible{outline:2px solid #78c8ff}.watchRow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.83fr) minmax(0,1.04fr);align-items:center;gap:6px}.watchRow>span{min-width:0}.watchName{font-size:14px;font-weight:900;overflow-wrap:anywhere}.watchCode{font-size:11px;color:#8facbf;font-weight:650}.watchTag{display:block;font-size:10px;font-weight:700;color:#accfe7;margin-top:3px}.watchPrice{text-align:right;font-size:16px;font-weight:850;font-variant-numeric:tabular-nums}.watchPct{display:block;font-size:11px;margin-top:3px}.watchPnl{text-align:right;font-size:13px;font-weight:850;font-variant-numeric:tabular-nums}.watchReturn{display:block;font-size:11px;color:#9ebad0;margin-top:3px}.watchHint{margin:6px 2px 0;text-align:right;font-size:10px;color:#8eafc5}.watchDetails .stockCard{margin:0;border-radius:0;border:0;border-top:1px solid #25506d;background:#071b2a}.watchDetails .decision{margin-top:7px}
 @media(min-width:760px){.holdingsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.watchDetails{margin:0}}
 @media(max-width:759px){.risk{padding:12px!important;margin:9px 0!important}.riskTitle{font-size:16px!important}.riskScore{font-size:21px!important}.riskReasons{font-size:12px!important;line-height:1.45!important}.metrics.dashboard-metrics{gap:6px}.dashboard-metrics .metric{padding:9px;min-height:56px}.dashboard-metrics .metric .k{font-size:10px}.dashboard-metrics .metric .v{font-size:15px;margin-top:4px}.bottom .btab{min-height:51px;padding-top:4px}.quickline{padding:8px 0}.watchName{font-size:13px}.watchPrice{font-size:15px}.watchPnl{font-size:12px}}
+.alertList{margin:8px 0}.alertRow{border:1px solid #805b39;background:#302414;color:#ffe0a1;border-radius:11px;padding:10px;margin-top:6px;font-size:12px;line-height:1.45}.alertRow strong{font-size:13px}.alertEmpty{font-size:12px;color:#a6c0d2;padding:8px 0}.alertSettings{border-top:1px solid #234a62;padding-top:9px;margin-top:9px}.alertSettings summary{cursor:pointer;font-weight:800;color:#8fcfff;padding:6px 0;font-size:12px}.alertFields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}.alertFields label{font-size:11px;color:#bdd6e7}.alertFields input{display:block;width:100%;min-height:42px;margin-top:4px;background:#081928;border:1px solid #315977;color:white;border-radius:9px;padding:8px;font:inherit}.alertToggle{display:flex;align-items:center;gap:7px;margin:10px 0;font-size:12px;color:#e1eff8}.alertToggle input{width:18px;height:18px}.alertSettings>.btn{min-height:42px}.alertSettings .sub{margin-top:10px}
+@media(max-width:480px){.alertFields{grid-template-columns:repeat(2,minmax(0,1fr))}.alertFields label:last-child{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -87,11 +89,25 @@
   <div class="metrics dashboard-metrics"><div class="metric"><div class="k">市場訊號</div><div id="marketState" class="v cyanTxt">同步中</div></div><div class="metric"><div class="k">建議現金</div><div id="cashLevel" class="v">--</div></div><div class="metric"><div class="k">持股損益</div><div id="totalPnl" class="v">--</div></div><div class="metric"><div class="k">持股風險</div><div id="portfolioRisk" class="v">--</div></div></div><div id="updatedAgo" class="data-age">資料更新：等待同步</div><div id="feedGate" class="feedGate" role="status" aria-live="polite">行情檢查中｜未驗證訊號不作為買賣依據</div>
   <div class="tabs"><div class="tab active" data-go="home">總覽</div><div class="tab" data-go="hold">我的持股</div><div class="tab" data-go="attack">今日主攻</div><div class="tab" data-go="monster">突然妖股</div><div class="tab" data-go="tomorrowMonster">明日妖股</div><div class="tab" data-go="futureMonster">未來妖股</div><div class="tab" data-go="webReco">網路推薦</div><div class="tab" data-go="rotate">持股換股</div><div class="tab" data-go="flow">資金流</div><div class="tab" data-go="sector">族群熱度</div><div class="tab" data-go="backtest">回測</div><div class="tab" data-go="settings">更新系統</div></div>
   <section id="home" class="section active">
-    <h2>今日重點</h2><div id="homeQuick" class="panel" aria-live="polite"><div class="panelTitle">⚡ 今日三件事</div><div id="quickRisk" class="quickline">大盤：等待有效行情</div><div id="quickHold" class="quickline">持股：等待手機行情</div><div id="quickAttack" class="quickline">主攻：等待有效名單</div></div><details class="panel home-extra"><summary>展開市場解讀依據</summary><div class="panel" style="margin-top:9px"><div class="panelTitle">先風控・再選股</div><div id="homeSummary" class="small mut">市場風險 → 持股處理 → 今日主攻 → 明日觀察</div></div>
+    <h2>今日重點</h2><div id="homeQuick" class="panel" aria-live="polite"><div class="panelTitle">⚡ 今日三件事</div><div id="quickRisk" class="quickline">大盤：等待有效行情</div><div id="quickHold" class="quickline">持股：等待手機行情</div><div id="quickAlert" class="quickline" hidden>警戒：等待手機行情</div><div id="quickAttack" class="quickline">主攻：等待有效名單</div></div><details class="panel home-extra"><summary>展開市場解讀依據</summary><div class="panel" style="margin-top:9px"><div class="panelTitle">先風控・再選股</div><div id="homeSummary" class="small mut">市場風險 → 持股處理 → 今日主攻 → 明日觀察</div></div>
     <div class="panel"><div class="panelTitle">市場資金摘要</div><div id="marketBrief" class="small mut">等待 JEI 系統資料...</div></div></details>
     <div class="panel"><div class="panelTitle">優先處理</div><div id="priorityList" class="empty">資料同步後顯示今天最需要處理的持股與候選股。</div></div><div class="panel"><div class="panelTitle">最強族群 TOP 3</div><div id="sectorTop" class="small mut">等待族群資料...</div></div>
   </section>
-  <section id="hold" class="section"><h2>💰 我的持股｜風控優先</h2><div class="panel"><div class="panelTitle">今日持股決策分組</div><div id="holdTriage" aria-live="polite" class="triage-summary">正在核對本機持股與行情…</div><div class="sub">防守順序是模型觀察清單，不是交易指令。比較成本、價格、族群與大盤條件；資料過期即停止分級。</div></div><div class="holdToolbar" id="holdToolbar"><label for="holdFilter">分類 <select id="holdFilter" onchange="setHoldView(this.value,null)"><option value="all">全部持股</option><option value="defense">防守優先</option><option value="profit">獲利保護</option><option value="rotation">換股觀察</option><option value="hold">可續抱</option><option value="watch">一般觀察</option><option value="pending">待確認</option></select></label><label for="holdSort">排序 <select id="holdSort" onchange="setHoldView(null,this.value)"><option value="priority">處理優先</option><option value="pnlAsc">損益低優先</option><option value="pnlDesc">損益高優先</option><option value="name">股票代號</option></select></label></div><div id="holdShown" class="sub" aria-live="polite"></div><div id="holdingsGrid" class="holdingsGrid"></div><div class="panel"><div class="panelTitle">JEI 私人持股一次匯入</div><textarea id="importHoldings" rows="4" style="width:100%;resize:vertical;background:#081928;border:1px solid #24506e;border-radius:11px;color:white;padding:10px" placeholder="貼上 JEI 持股匯入碼"></textarea><div class="formRow" style="margin-top:8px"><button onclick="importHoldingsData()">一次匯入並儲存在手機</button><button onclick="exportHoldingsData()" style="background:#345b78">複製持股備份碼</button></div><div class="sub">匯入碼只在這支手機解析與儲存，不會上傳到 JEI 公開遠端資料。</div></div><div class="panel"><div class="panelTitle">新增 / 修改持股（只存手機）</div><div class="formRow"><input id="editCode" placeholder="代號"><input id="editName" placeholder="名稱"></div><div class="holdEdit"><input id="editCost" type="number" step="0.001" placeholder="成本"><input id="editShares" type="number" step="1" placeholder="股數"></div><div class="formRow" style="margin-top:8px"><button onclick="saveHolding()">儲存持股</button><button onclick="removeHolding()" style="background:#9d3442">刪除代號</button></div><div class="sub">持股成本與張數儲存在這支手機，不會寫入 JEI 公開遠端資料。</div></div></section>
+  <section id="hold" class="section"><h2>💰 我的持股｜風控優先</h2>
+  <div class="panel" id="holdAlertPanel">
+    <div class="panelTitle">🔔 個人化持股風險提醒（僅 App 開啟期間）</div>
+    <div id="alertState" class="sub" role="status" aria-live="polite">核對今日有效成交資料中…</div>
+    <div id="holdAlertList" class="alertList" aria-live="polite"></div>
+    <details class="alertSettings" id="alertSettings"><summary>調整警戒條件 ▾</summary>
+      <div class="alertFields"><label>虧損警戒（成本下方 %）<input id="alertLoss" type="number" inputmode="decimal" min="1" max="40" step="1" value="8"></label>
+      <label>獲利保護啟動（成本上方 %）<input id="alertGain" type="number" inputmode="decimal" min="5" max="100" step="1" value="12"></label>
+      <label>自觀察最高價回落（%）<input id="alertRetrace" type="number" inputmode="decimal" min="1" max="25" step="1" value="5"></label></div>
+      <label class="alertToggle"><input id="alertEnabled" type="checkbox" checked> 啟用本機畫面風險提醒</label>
+      <button class="btn primary" type="button" onclick="saveHoldAlertSettings()">儲存本機警戒設定</button>
+      <div class="sub">僅由本機觀察到的有效盤中成交價評估；收盤價、買賣報價或過期行情不觸發。最高價是 App 觀察期間紀錄，不代表歷史實際最高。不是券商條件單，關閉 App 不會自動持續偵測或發送推播。</div>
+    </details>
+  </div>
+  <div class="panel"><div class="panelTitle">今日持股決策分組</div><div id="holdTriage" aria-live="polite" class="triage-summary">正在核對本機持股與行情…</div><div class="sub">防守順序是模型觀察清單，不是交易指令。比較成本、價格、族群與大盤條件；資料過期即停止分級。</div></div><div class="holdToolbar" id="holdToolbar"><label for="holdFilter">分類 <select id="holdFilter" onchange="setHoldView(this.value,null)"><option value="all">全部持股</option><option value="defense">防守優先</option><option value="profit">獲利保護</option><option value="rotation">換股觀察</option><option value="hold">可續抱</option><option value="watch">一般觀察</option><option value="pending">待確認</option></select></label><label for="holdSort">排序 <select id="holdSort" onchange="setHoldView(null,this.value)"><option value="priority">處理優先</option><option value="pnlAsc">損益低優先</option><option value="pnlDesc">損益高優先</option><option value="name">股票代號</option></select></label></div><div id="holdShown" class="sub" aria-live="polite"></div><div id="holdingsGrid" class="holdingsGrid"></div><div class="panel"><div class="panelTitle">JEI 私人持股一次匯入</div><textarea id="importHoldings" rows="4" style="width:100%;resize:vertical;background:#081928;border:1px solid #24506e;border-radius:11px;color:white;padding:10px" placeholder="貼上 JEI 持股匯入碼"></textarea><div class="formRow" style="margin-top:8px"><button onclick="importHoldingsData()">一次匯入並儲存在手機</button><button onclick="exportHoldingsData()" style="background:#345b78">複製持股備份碼</button></div><div class="sub">匯入碼只在這支手機解析與儲存，不會上傳到 JEI 公開遠端資料。</div></div><div class="panel"><div class="panelTitle">新增 / 修改持股（只存手機）</div><div class="formRow"><input id="editCode" placeholder="代號"><input id="editName" placeholder="名稱"></div><div class="holdEdit"><input id="editCost" type="number" step="0.001" placeholder="成本"><input id="editShares" type="number" step="1" placeholder="股數"></div><div class="formRow" style="margin-top:8px"><button onclick="saveHolding()">儲存持股</button><button onclick="removeHolding()" style="background:#9d3442">刪除代號</button></div><div class="sub">持股成本與張數儲存在這支手機，不會寫入 JEI 公開遠端資料。</div></div></section>
   <section id="attack" class="section"><h2>🔥 今日主攻 TOP</h2><div class="panel"><div class="panelTitle">🔎 多條件選股篩選</div><div class="sub">僅篩選當次 JEI 主攻候選名單，不重新計算分數；盤中資料不足時不顯示舊榜單。</div><div class="screener"><label>快速篩選（參考成熟選股器）<select id="screenPreset"><option value="custom">自訂條件</option><option value="affordable">親民潛力｜120元以下、漲幅≤6%</option><option value="momentum">強勢觀察｜評分≥75、漲幅≤9%</option><option value="defensive">防守觀察｜150元以下、漲幅≤4%</option><option value="all">全部主攻候選</option></select></label><label>最低評分<input id="screenScore" type="number" min="0" max="100" value="75"></label><label>最高參考股價（元）<input id="screenPriceMax" type="number" min="1" step="1" placeholder="不限"></label><label>當日最大漲幅（%）<input id="screenRiseMax" type="number" min="0" max="100" step="0.5" placeholder="不限"></label><label>關鍵字<input id="screenQuery" type="search" placeholder="代號、名稱、族群"></label><label>族群<select id="screenSector"><option value="">全部族群</option></select></label><label>排序<select id="screenOrder"><option value="score">評分最高</option><option value="change">當日漲幅</option><option value="price">股價低優先</option><option value="code">股票代號</option></select></label></div><div id="feedFreshness" class="sub"></div><div id="screenCount" class="sub" aria-live="polite"></div><div class="sub" style="margin-top:7px">提醒：評分屬模型排序，不代表上漲機率或保證獲利。</div></div><div id="attackList" class="panel"></div></section>
   <section id="next" class="section"><h2>🎯 下一棒 TOP</h2><div id="nextList" class="panel"></div></section>
   <section id="monster" class="section"><h2>🚀 突然妖股雷達</h2><div id="monsterList" class="panel"></div></section>
@@ -107,7 +123,7 @@
 <div id="toast" class="toast"></div>
 <div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="chat"><b>💬</b>聊天</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
 <script>
-const UI_VERSION='3.9.6-mobile-watchlist';
+const UI_VERSION='3.9.7-private-risk-alerts';
 const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],tomorrow_monster:[],future_monster:[],rotate:[],flow:[],sectors:[],stock_sectors:{},universe:[]}, updateManifest=null, refreshTimer=null, systemTimer=null, lastMarketAt='',liveScanReceived=0;
 // Privacy boundary: public web browsers never load or render a personal portfolio.
@@ -275,6 +291,102 @@ function renderPortfolioTriage(){
  signals.textContent=!isTrustedFeed()?'今日資料待驗證，暫停換股比較':Number(system.risk?.score)>=70?'大盤警戒偏高，優先控管曝險而非追強':!weak.length?'持股未出現明確弱勢替換需求':!candidate.length?'目前沒有分數達標且未持有的輪動候選':'強勢候選僅供比較：'+candidate.map(x=>String(x.code)+' '+String(x.name||'')+'（'+Number(x.score)+'分）').join('、');
  rotate.appendChild(signals);
 }
+// Private on-device watch alerts. Never persist or transmit positions in the public feed.
+const HOLD_ALERT_SETTINGS_KEY='jei_hold_alert_prefs_v1';
+const HOLD_ALERT_PEAKS_KEY='jei_hold_alert_peaks_v1';
+const HOLD_ALERT_NOTIFIED_KEY='jei_hold_alert_notified_v1';
+const DEFAULT_HOLD_ALERT_PREFS=Object.freeze({enabled:true,lossPct:8,gainPct:12,retracePct:5});
+let holdAlertPrefs={...DEFAULT_HOLD_ALERT_PREFS},holdAlertPeaks={},holdAlertNotified={};
+function alertNumber(x,min,max,fallback){const n=Number(x);return Number.isFinite(n)&&n>=min&&n<=max?n:fallback}
+function normalizeHoldAlertPrefs(input){
+ const p=input&&typeof input==='object'?input:{};
+ return {enabled:p.enabled===false?false:true,
+  lossPct:alertNumber(p.lossPct,1,40,8),
+  gainPct:alertNumber(p.gainPct,5,100,12),
+  retracePct:alertNumber(p.retracePct,1,25,5)};
+}
+function loadHoldAlertSettings(){
+ if(!JEI_PRIVATE_APP)return;
+ try{holdAlertPrefs=normalizeHoldAlertPrefs(JSON.parse(localStorage.getItem(HOLD_ALERT_SETTINGS_KEY)||'null'))}catch(e){holdAlertPrefs={...DEFAULT_HOLD_ALERT_PREFS}}
+ try{const p=JSON.parse(localStorage.getItem(HOLD_ALERT_PEAKS_KEY)||'{}');holdAlertPeaks=p&&typeof p==='object'&&!Array.isArray(p)?p:{}}catch(e){holdAlertPeaks={}}
+ try{const p=JSON.parse(localStorage.getItem(HOLD_ALERT_NOTIFIED_KEY)||'{}');holdAlertNotified=p&&typeof p==='object'&&!Array.isArray(p)?p:{}}catch(e){holdAlertNotified={}}
+ const set=(id,v)=>{const el=$(id);if(el)el.value=String(v)};
+ set('alertLoss',holdAlertPrefs.lossPct);set('alertGain',holdAlertPrefs.gainPct);set('alertRetrace',holdAlertPrefs.retracePct);
+ if($('alertEnabled'))$('alertEnabled').checked=holdAlertPrefs.enabled;
+}
+function saveHoldAlertSettings(){
+ if(!JEI_PRIVATE_APP)return;
+ const loss=Number($('alertLoss').value),gain=Number($('alertGain').value),retrace=Number($('alertRetrace').value);
+ if(!Number.isFinite(loss)||loss<1||loss>40||!Number.isFinite(gain)||gain<5||gain>100||!Number.isFinite(retrace)||retrace<1||retrace>25){toast('警戒設定超出範圍，未儲存');return}
+ holdAlertPrefs={enabled:$('alertEnabled').checked,lossPct:loss,gainPct:gain,retracePct:retrace};
+ try{localStorage.setItem(HOLD_ALERT_SETTINGS_KEY,JSON.stringify(holdAlertPrefs))}catch(e){toast('本機設定儲存失敗');return}
+ renderHoldings();toast('本機警戒條件已更新');
+}
+function holdingAlertSignal(h,m,quality,prefs,observed,now=new Date(),feedOk=false){
+ const empty={eligible:false,peak:null,signal:null},p=taipeiDateParts(now),day=p.year+p.month+p.day;
+ // Strict session-only executed trades: archival official closes, yesterday or stale exchange snapshots can never trigger.
+ if(!prefs.enabled||!feedOk||!tradingWindowAt(now)||!quality?.valid||m?.quoteKind!=='last_trade'||String(m.quoteDay)!==day)return empty;
+ const px=Number(m.price),cost=Number(h.cost),qty=Number(h.shares),code=String(h.code||'');
+ if(!/^\d{4,6}$/.test(code)||!Number.isFinite(px)||px<=0||!Number.isFinite(cost)||cost<=0||!Number.isFinite(qty)||qty<=0)return empty;
+ const basisKey=code+':'+cost+':'+qty,old=observed&&observed.basisKey===basisKey?Number(observed.peak):NaN;
+ const peak=Math.max(cost,px,Number.isFinite(old)&&old>0?old:0),profit=(px/cost-1)*100,retracement=peak>0?(peak-px)/peak*100:0;
+ let signal=null;
+ if(profit<=-prefs.lossPct)signal={type:'loss',title:'虧損警戒',detail:'相對成本 '+profit.toFixed(2)+'%（設定 -'+prefs.lossPct+'%）'};
+ else if(peak>=cost*(1+prefs.gainPct/100)&&retracement>=prefs.retracePct)
+  signal={type:'retrace',title:'獲利回吐警戒',detail:'自本機觀察高點 '+peak.toFixed(2)+' 回落 '+retracement.toFixed(2)+'%（設定 '+prefs.retracePct+'%）'};
+ return {eligible:true,peak:{basisKey,peak},signal};
+}
+function renderHoldAlerts(rows=buildPrivatePortfolioTriage(),now=new Date()){
+ if(!JEI_PRIVATE_APP)return;
+ const list=$('holdAlertList'),state=$('alertState'),home=$('quickAlert');
+ if(!list||!state||!home)return;
+ home.hidden=false;
+ const ok=isTrustedFeed(system,now),byDay=taipeiDateParts(now),day=byDay.year+byDay.month+byDay.day,alerts=[];
+ let eligible=0,changed=false;
+ const active=new Set(rows.map(x=>String(x.h.code)));
+ Object.keys(holdAlertPeaks).forEach(code=>{if(!active.has(code)){delete holdAlertPeaks[code];changed=true}});
+ for(const x of rows){
+  const result=holdingAlertSignal(x.h,market[x.h.code]||{},x.quote,holdAlertPrefs,holdAlertPeaks[x.h.code],now,ok);
+  if(!result.eligible)continue;eligible++;
+  const before=holdAlertPeaks[x.h.code];
+  if(!before||before.basisKey!==result.peak.basisKey||before.peak!==result.peak.peak){holdAlertPeaks[x.h.code]=result.peak;changed=true}
+  if(result.signal)alerts.push({h:x.h,price:x.price,signal:result.signal});
+ }
+ if(changed){try{localStorage.setItem(HOLD_ALERT_PEAKS_KEY,JSON.stringify(holdAlertPeaks))}catch(e){}}
+ list.replaceChildren();
+ if(!rows.length)state.textContent='尚未匯入私人持股';
+ else if(!holdAlertPrefs.enabled)state.textContent='提醒已關閉｜設定只存在本機';
+ else if(!ok||!tradingWindowAt(now))state.textContent='非有效盤中檢查時段｜僅保留既有觀察紀錄，不觸發即時警報';
+ else state.textContent='已核對 '+eligible+' / '+rows.length+' 檔有效盤中成交｜目前觸發 '+alerts.length+' 檔';
+ if(alerts.length){
+  for(const x of alerts){
+   const el=document.createElement('div');el.className='alertRow';
+   const head=document.createElement('strong');head.textContent=x.h.name+' '+x.h.code+'｜'+x.signal.title;
+   const detail=document.createElement('div');detail.textContent=x.signal.detail+'｜成交參考 '+x.price;
+   el.append(head,detail);list.appendChild(el);
+  }
+ }else{
+  const msg=document.createElement('div');msg.className='alertEmpty';
+  msg.textContent=!holdAlertPrefs.enabled?'本機提醒已停用':eligible?'目前沒有持股觸及設定門檻':'等待今日有效盤中成交價，沒有確認的即時提醒';
+  list.appendChild(msg);
+ }
+ home.textContent=alerts.length?'🔔 盤中警戒 '+alerts.length+' 檔：'+alerts.slice(0,2).map(x=>x.h.name).join('、'):!holdAlertPrefs.enabled?'🔕 本機持股警戒已關閉':'🔔 持股警戒：'+(eligible?'目前無觸發':'等待有效盤中價格');
+ // Toast only on newly observed day+symbol+rule; no system/background notification claims.
+ if(alerts.length){
+  let notifyChange=false;
+  for(const x of alerts){
+   const key=day+':'+x.h.code+':'+x.signal.type;
+   if(!holdAlertNotified[key]){holdAlertNotified[key]=true;notifyChange=true}
+  }
+  if(notifyChange){
+   const trimmed=Object.fromEntries(Object.entries(holdAlertNotified).filter(([key])=>key.slice(0,8)>=day.slice(0,6)+'01').slice(-200));
+   holdAlertNotified=trimmed;
+   try{localStorage.setItem(HOLD_ALERT_NOTIFIED_KEY,JSON.stringify(holdAlertNotified))}catch(e){}
+   toast('🔔 持股風險提醒：'+alerts.length+' 檔觸及條件');
+  }
+ }
+}
+
 let holdViewFilter='all',holdViewOrder='priority';
 function setHoldView(filter=null,order=null){
  if(filter!==null&&['all','defense','profit','rotation','hold','watch','pending'].includes(filter))holdViewFilter=filter;
@@ -319,6 +431,7 @@ function renderHoldings(){
  const risk=Number(system.risk?.score),pr=riskN&&isTrustedFeed()?Math.round(clamp((riskSum/riskN)*.55+(Number.isFinite(risk)?risk:50)*.45,0,100)):null;
  $('portfolioRisk').textContent=pr===null?'--':pr+'/100';
  $('portfolioRisk').className='v '+(pr===null?'':pr>=70?'yellowTxt':pr<=40?'greenTxt':'cyanTxt');
+ renderHoldAlerts(rows);
  quick();
 }
 function renderHomeQuick(){
@@ -743,6 +856,6 @@ window.JEI_NATIVE={
  onAIConsultResult(raw){renderAiConsultResult(raw)},
  onAIConsultError(e){failAiConsult(e)}
 };
-function init(){loadScreenPrefs();importAiSetupFromHash();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible')refreshMarket()},120000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
+function init(){loadScreenPrefs();importAiSetupFromHash();loadHoldAlertSettings();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible')refreshMarket()},120000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshAll(false)});init();
 </script></body></html>
