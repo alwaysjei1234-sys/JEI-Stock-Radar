@@ -63,7 +63,7 @@ check('Stock screener filters score, price, sector, and stale market at runtime'
 });
 
 check('Feed freshness rejects old, stale, or mislabeled intraday quotes',()=>{
- const line=html.split('\\n').find(x=>x.startsWith('function isTrustedFeed('));assert.ok(line);
+ const line=html.match(/^function isTrustedFeed\(.*$/m)?.[0];assert.ok(line);
  const ctx={};vm.runInNewContext(line+';globalThis.verify=isTrustedFeed;',ctx);
  const day=new Date('2026-10-14T02:00:00Z');
  const ok={data_date:'2026-10-14',market:{mode:'盤中即時',stale:false,live_valid:true,close_count:1900}};
