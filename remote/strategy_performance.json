@@ -7,7 +7,7 @@
   "buy_fee_rate": 0.001425,
   "sell_fee_rate": 0.001425,
   "sell_tax_rate": 0.003,
-  "last_processed_day": "2026-10-13",
+  "last_processed_day": "2026-10-14",
   "signals": [
     {
       "id": "2026-10-13:3406",
@@ -53,18 +53,118 @@
       "score": 90,
       "source": "monster",
       "signal_close": 119.0
+    },
+    {
+      "id": "2026-10-14:2368",
+      "day": "2026-10-14",
+      "code": "2368",
+      "name": "金像電",
+      "score": 99,
+      "source": "attack",
+      "signal_close": 1260.0
+    },
+    {
+      "id": "2026-10-14:2478",
+      "day": "2026-10-14",
+      "code": "2478",
+      "name": "大毅",
+      "score": 99,
+      "source": "monster",
+      "signal_close": 137.5
+    },
+    {
+      "id": "2026-10-14:3035",
+      "day": "2026-10-14",
+      "code": "3035",
+      "name": "智原",
+      "score": 99,
+      "source": "monster",
+      "signal_close": 211.0
+    },
+    {
+      "id": "2026-10-14:3090",
+      "day": "2026-10-14",
+      "code": "3090",
+      "name": "日電貿",
+      "score": 99,
+      "source": "monster",
+      "signal_close": 183.5
+    },
+    {
+      "id": "2026-10-14:3265",
+      "day": "2026-10-14",
+      "code": "3265",
+      "name": "台星科",
+      "score": 99,
+      "source": "monster",
+      "signal_close": 292.5
     }
   ],
   "strategies": {
     "fixed5": {
       "name": "固定 +5%",
-      "cash": 1000000.0,
-      "positions": [],
+      "cash": 500966.1887275,
+      "positions": [
+        {
+          "code": "3406",
+          "name": "玉晶光",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 1065.0,
+          "entry_cost": 99186.139125,
+          "qty": 93,
+          "peak": 1065.0
+        },
+        {
+          "code": "6217",
+          "name": "中探針",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 216.5,
+          "entry_cost": 99948.7242625,
+          "qty": 461,
+          "peak": 216.5
+        },
+        {
+          "code": "1569",
+          "name": "濱川",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 83.9,
+          "entry_cost": 99983.273425,
+          "qty": 1190,
+          "peak": 83.9
+        },
+        {
+          "code": "1312",
+          "name": "國喬",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 18.9,
+          "entry_cost": 99990.9843975,
+          "qty": 5283,
+          "peak": 18.9
+        },
+        {
+          "code": "6505",
+          "name": "台塑化",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 119.5,
+          "entry_cost": 99924.6900625,
+          "qty": 835,
+          "peak": 119.5
+        }
+      ],
       "closed": [],
       "equity_history": [
         {
           "day": "2026-10-13",
           "equity": 1000000.0
+        },
+        {
+          "day": "2026-10-14",
+          "equity": 997084.81
         }
       ],
       "summary": {
@@ -73,22 +173,77 @@
         "win_rate_pct": null,
         "realized_net_ntd": 0,
         "realized_return_pct_of_initial": 0.0,
-        "open_positions": 0,
-        "cash_ntd": 1000000.0,
-        "estimated_liquidation_equity_ntd": 1000000.0,
-        "official_close_coverage": "0/0",
-        "max_drawdown_pct": 0.0
+        "open_positions": 5,
+        "cash_ntd": 500966.19,
+        "estimated_liquidation_equity_ntd": 997084.81,
+        "official_close_coverage": "5/5",
+        "max_drawdown_pct": 0.292
       }
     },
     "fixed7": {
       "name": "固定 +7%",
-      "cash": 1000000.0,
-      "positions": [],
+      "cash": 500966.1887275,
+      "positions": [
+        {
+          "code": "3406",
+          "name": "玉晶光",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 1065.0,
+          "entry_cost": 99186.139125,
+          "qty": 93,
+          "peak": 1065.0
+        },
+        {
+          "code": "6217",
+          "name": "中探針",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 216.5,
+          "entry_cost": 99948.7242625,
+          "qty": 461,
+          "peak": 216.5
+        },
+        {
+          "code": "1569",
+          "name": "濱川",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 83.9,
+          "entry_cost": 99983.273425,
+          "qty": 1190,
+          "peak": 83.9
+        },
+        {
+          "code": "1312",
+          "name": "國喬",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 18.9,
+          "entry_cost": 99990.9843975,
+          "qty": 5283,
+          "peak": 18.9
+        },
+        {
+          "code": "6505",
+          "name": "台塑化",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 119.5,
+          "entry_cost": 99924.6900625,
+          "qty": 835,
+          "peak": 119.5
+        }
+      ],
       "closed": [],
       "equity_history": [
         {
           "day": "2026-10-13",
           "equity": 1000000.0
+        },
+        {
+          "day": "2026-10-14",
+          "equity": 997084.81
         }
       ],
       "summary": {
@@ -97,22 +252,77 @@
         "win_rate_pct": null,
         "realized_net_ntd": 0,
         "realized_return_pct_of_initial": 0.0,
-        "open_positions": 0,
-        "cash_ntd": 1000000.0,
-        "estimated_liquidation_equity_ntd": 1000000.0,
-        "official_close_coverage": "0/0",
-        "max_drawdown_pct": 0.0
+        "open_positions": 5,
+        "cash_ntd": 500966.19,
+        "estimated_liquidation_equity_ntd": 997084.81,
+        "official_close_coverage": "5/5",
+        "max_drawdown_pct": 0.292
       }
     },
     "fixed10": {
       "name": "固定 +10%",
-      "cash": 1000000.0,
-      "positions": [],
+      "cash": 500966.1887275,
+      "positions": [
+        {
+          "code": "3406",
+          "name": "玉晶光",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 1065.0,
+          "entry_cost": 99186.139125,
+          "qty": 93,
+          "peak": 1065.0
+        },
+        {
+          "code": "6217",
+          "name": "中探針",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 216.5,
+          "entry_cost": 99948.7242625,
+          "qty": 461,
+          "peak": 216.5
+        },
+        {
+          "code": "1569",
+          "name": "濱川",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 83.9,
+          "entry_cost": 99983.273425,
+          "qty": 1190,
+          "peak": 83.9
+        },
+        {
+          "code": "1312",
+          "name": "國喬",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 18.9,
+          "entry_cost": 99990.9843975,
+          "qty": 5283,
+          "peak": 18.9
+        },
+        {
+          "code": "6505",
+          "name": "台塑化",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 119.5,
+          "entry_cost": 99924.6900625,
+          "qty": 835,
+          "peak": 119.5
+        }
+      ],
       "closed": [],
       "equity_history": [
         {
           "day": "2026-10-13",
           "equity": 1000000.0
+        },
+        {
+          "day": "2026-10-14",
+          "equity": 997084.81
         }
       ],
       "summary": {
@@ -121,22 +331,77 @@
         "win_rate_pct": null,
         "realized_net_ntd": 0,
         "realized_return_pct_of_initial": 0.0,
-        "open_positions": 0,
-        "cash_ntd": 1000000.0,
-        "estimated_liquidation_equity_ntd": 1000000.0,
-        "official_close_coverage": "0/0",
-        "max_drawdown_pct": 0.0
+        "open_positions": 5,
+        "cash_ntd": 500966.19,
+        "estimated_liquidation_equity_ntd": 997084.81,
+        "official_close_coverage": "5/5",
+        "max_drawdown_pct": 0.292
       }
     },
     "trailing": {
       "name": "上漲5%啟動／高點回落2%",
-      "cash": 1000000.0,
-      "positions": [],
+      "cash": 500966.1887275,
+      "positions": [
+        {
+          "code": "3406",
+          "name": "玉晶光",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 1065.0,
+          "entry_cost": 99186.139125,
+          "qty": 93,
+          "peak": 1065.0
+        },
+        {
+          "code": "6217",
+          "name": "中探針",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 216.5,
+          "entry_cost": 99948.7242625,
+          "qty": 461,
+          "peak": 216.5
+        },
+        {
+          "code": "1569",
+          "name": "濱川",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 83.9,
+          "entry_cost": 99983.273425,
+          "qty": 1190,
+          "peak": 83.9
+        },
+        {
+          "code": "1312",
+          "name": "國喬",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 18.9,
+          "entry_cost": 99990.9843975,
+          "qty": 5283,
+          "peak": 18.9
+        },
+        {
+          "code": "6505",
+          "name": "台塑化",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "entry_price": 119.5,
+          "entry_cost": 99924.6900625,
+          "qty": 835,
+          "peak": 119.5
+        }
+      ],
       "closed": [],
       "equity_history": [
         {
           "day": "2026-10-13",
           "equity": 1000000.0
+        },
+        {
+          "day": "2026-10-14",
+          "equity": 997084.81
         }
       ],
       "summary": {
@@ -145,14 +410,14 @@
         "win_rate_pct": null,
         "realized_net_ntd": 0,
         "realized_return_pct_of_initial": 0.0,
-        "open_positions": 0,
-        "cash_ntd": 1000000.0,
-        "estimated_liquidation_equity_ntd": 1000000.0,
-        "official_close_coverage": "0/0",
-        "max_drawdown_pct": 0.0
+        "open_positions": 5,
+        "cash_ntd": 500966.19,
+        "estimated_liquidation_equity_ntd": 997084.81,
+        "official_close_coverage": "5/5",
+        "max_drawdown_pct": 0.292
       }
     }
   },
-  "updated_at": "2026-10-13 22:26",
+  "updated_at": "2026-10-14 21:04",
   "latest_signal_count": 5
 }
