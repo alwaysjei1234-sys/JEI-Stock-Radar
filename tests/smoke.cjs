@@ -327,7 +327,7 @@ check('Watchlist alerts never promise closed-app notifications or real orders',(
  assert.ok(html.includes('不是券商條件單'));
  assert.ok(html.includes("m?.quoteKind!=='last_trade'"));
  assert.ok(html.includes("!tradingWindowAt(now)"));
- assert.ok(html.includes('最高價是 App 觀察期間紀錄'));
+ assert.ok(html.includes('最高價為 App 觀察期間紀錄'));
 });
 
 
