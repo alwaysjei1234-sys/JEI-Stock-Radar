@@ -82,6 +82,20 @@ jobs:
         with:
           gradle-version: '8.9'
 
+      - name: Package current verified dashboard as offline fallback
+        run: |
+          cp remote/index.html app/src/main/assets/index.html
+          node - <<'NODE'
+          const fs = require('fs');
+          const remote = fs.readFileSync('remote/index.html', 'utf8');
+          const offline = fs.readFileSync('app/src/main/assets/index.html', 'utf8');
+          if (remote !== offline || !offline.includes('function isTrustedFeed(') ||
+              !offline.includes('function renderHoldAlerts(') ||
+              !offline.includes('JEI_PRIVATE_APP')) process.exit(1);
+          console.log('PASS Android fallback matches current verified dashboard');
+          NODE
+          node tests/smoke.cjs
+
       - name: Build installable APK
         run: gradle :app:assembleDebug --stacktrace
 
@@ -100,7 +114,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete jei-latest --cleanup-tag --yes || true
-          gh release create jei-latest "JEI_Stock_Radar_V3.apk" \
-            --title "JEI Stock Radar latest" \
-            --notes "Latest installable JEI Android build. The app checks remote/update.json and downloads this APK when an update is available."
+          if gh release view jei-latest >/dev/null 2>&1; then
+            gh release upload jei-latest "JEI_Stock_Radar_V3.apk" --clobber
+          else
+            gh release create jei-latest "JEI_Stock_Radar_V3.apk" \
+              --title "JEI Stock Radar latest" \
+              --notes "Latest installable JEI Android build. The app checks remote/update.json and downloads this APK when an update is available."
+          fi
