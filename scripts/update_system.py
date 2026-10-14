@@ -198,7 +198,8 @@ def live_price(m):
     if a:return a
     return num(m.get("y"))
 
-def enrich_live(rows):
+def enrich_live(rows, asof=None):
+    expected_day=(asof or datetime.now(TZ)).strftime("%Y%m%d")
     by_code={x["code"]:x for x in rows}
     channels=[]
     for x in rows:
@@ -238,6 +239,10 @@ def enrich_live(rows):
         code=str(m.get("c","")).strip()
         x=by_code.get(code)
         if not x:continue
+        # MIS can return the prior session on holidays, before opening, or after outages.
+        # Never overwrite official rows or count a quote without the exchange date for today.
+        quote_day=re.sub(r"[^0-9]","",str(m.get("d","") or ""))
+        if quote_day!=expected_day:continue
         prev=num(m.get("y"));price=live_price(m)
         if price is None or price<=0 or prev is None or prev<=0:continue
         x["close"]=price;x["change"]=price-prev;x["pct"]=(price-prev)/prev*100.0
@@ -258,7 +263,7 @@ def enrich_live(rows):
     taiex=None
     try:
         idx=fetch_mis_channels(["tse_t00.tw"])
-        if idx:
+        if idx and re.sub(r"[^0-9]","",str(idx[0].get("d","") or ""))==expected_day:
             y=num(idx[0].get("y"));z=live_price(idx[0])
             if z and y and y>0:taiex=(z-y)/y*100.0
     except Exception as e:errors.append("TAIEX:"+str(e))
@@ -476,13 +481,13 @@ def main():
         except Exception as e:errors.append("TPEx當日補資料:"+str(e))
 
     live_count=0;live_errors=[];taiex_live=None
-    # Taiwan regular trading is 09:00-13:30. Keep a small post-close refresh window so the
-    # final MIS quote can replace stale daily OpenAPI data before it rolls to today's date.
-    market_open=now.weekday()<5 and ((now.hour==8 and now.minute>=45) or 9<=now.hour<14 or (now.hour==14 and now.minute<=10))
-    # After close, official daily OpenAPI may still expose the prior trading date for a while.
-    # During a bounded post-close window, use MIS final quotes to bridge that lag.
-    post_close_refresh=now.weekday()<5 and 14<=now.hour<16
-    if market_open or post_close_refresh:
+    # Session classification and quote collection are different: do not call final MIS
+    # snapshots a live trading session after 13:30, and never trust an old quote date.
+    minutes=now.hour*60+now.minute
+    market_open=now.weekday()<5 and 540<=minutes<810  # 09:00-13:29 Asia/Taipei
+    quote_refresh_window=now.weekday()<5 and 525<=minutes<960  # 08:45-15:59
+    post_close_refresh=now.weekday()<5 and 840<=minutes<960
+    if quote_refresh_window:
         try:rows,live_count,taiex_live,live_errors=enrich_live(rows)
         except Exception as e:live_errors.append(str(e))
         if live_errors and live_count<100:errors.append("MIS盤中:"+(";".join(live_errors))[:120])
@@ -763,7 +768,7 @@ def main():
         source_data_date=f"TWSE:{twse_latest} / TPEx:{tpex_latest}"
         raw_date=source_data_date
     live_coverage=live_count/max(1,len(stocks))
-    live_valid=live_count>=500 and live_coverage>=.35
+    live_valid=market_open and live_count>=500 and live_coverage>=.35
     stale_source=not source_is_today
     # Intraday MIS quotes are not an official post-close dataset. A sufficiently
     # populated live snapshot may power intraday screens only during trading hours.
@@ -789,6 +794,7 @@ def main():
         reasons=[f"行情來源日期 {source_data_date or '未知'}，不是今天；今日風險與選股訊號暫停判讀"]
         sectors=[]
         flow=[]
+    market_mode="資料過期" if stale_source else ("盤中即時" if live_valid else ("盤中資料不足" if market_open else "今日收盤"))
     date_key=now.strftime("%Y-%m-%d")
     history=hist_for_heat
     history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],{"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
@@ -819,9 +825,9 @@ def main():
                 "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down,
                 "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000),
                 "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
-        "market":{"status":market_status,"mode":("盤中即時" if live_valid else ("資料過期" if stale_source else ("盤中資料不足" if market_open else "今日收盤"))),
+        "market":{"status":market_status,"mode":market_mode,
                   "live_count":live_count,"close_count":len(stocks),"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source,"post_close_refresh":post_close_refresh,
-                  "brief":f"{'盤中即時' if live_valid else ('資料過期' if stale_source else ('盤中資料不足' if market_open else '今日收盤'))}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
+                  "brief":f"{market_mode}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
         "sectors":sectors,"stock_sectors":stock_sector,
         "universe":[{"code":x["code"],"name":x["name"],"market":x["market"]} for x in stocks if re.fullmatch(r"[1-9][0-9]{3}",x["code"])],
         "institutional":institutional,
