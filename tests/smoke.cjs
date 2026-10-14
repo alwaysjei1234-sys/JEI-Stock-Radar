@@ -335,7 +335,7 @@ check('Premium mobile watchlist has verified-feed strip and expandable private h
  assert.ok(html.includes('safe(h.name)')&&html.includes('safe(d.instText)'));
  const updater=html.match(/function updateFeedGate\(\)\{[\s\S]*?(?=\nfunction renderUpdateStamp)/)?.[0];
  assert.ok(updater,'freshness status renderer present');
- const el={className:'',textContent:''},ctx={$:id=>id==='feedGate'?el:null,system:{market:{mode:'盤中即時'}},isTrustedFeed:()=>false};
+ const el={className:'',textContent:''},ctx={$:id=>id==='feedGate'?el:null,system:{market:{mode:'盤中即時'}},isTrustedFeed:()=>false,isRecentCloseObservation:()=>false};
  vm.runInNewContext(updater+';globalThis.update=updateFeedGate;',ctx);
  ctx.update();assert.match(el.textContent,/行情資料未通過/);assert.match(el.className,/stale/);
  ctx.isTrustedFeed=()=>true;ctx.update();assert.match(el.textContent,/今日盤中已驗證/);
