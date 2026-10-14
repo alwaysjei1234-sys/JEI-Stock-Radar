@@ -206,7 +206,7 @@ function holdingDiagnosis(h,m,p,ret,ch,a){
  const instText=inst?`外資 ${lots(inst.foreign)>=0?'+':''}${lots(inst.foreign).toFixed(1)}張｜投信 ${lots(inst.trust)>=0?'+':''}${lots(inst.trust).toFixed(1)}張｜自營商 ${lots(inst.dealer)>=0?'+':''}${lots(inst.dealer).toFixed(1)}張｜合計 ${total>=0?'+':''}${total.toFixed(1)}張`:'法人資料暫無';
  return {tag,conf,why,instText,source:inst?inst.source:''};
 }
-function holdingAdvice(h,m,p,ret,ch){if(!isTrustedFeed())return{score:'--',trend:'資料待驗證',action:'暫停買賣判讀',defense:'--',target1:'--',target2:'--',reason:'市場風險資料不足；請勿依舊報價決策',sector:'--',sectorScore:'--'};const forced=(system.holdings||{})[h.code]||{};if(forced.action)return{score:forced.score??'--',trend:forced.trend||'JEI訊號',action:forced.action,defense:forced.defense??'--',target1:forced.target??'--',target2:'--',reason:forced.reason||'',sector:'--',sectorScore:50};const risk=+(system.risk&&system.risk.score)||0;if(!Number.isFinite(p))return{score:'--',trend:'等待行情',action:'等待即時行情',defense:'--',target1:'--',target2:'--',reason:'行情到位後自動判讀',sector:'--',sectorScore:50};const d=Number.isFinite(ch)?ch:0,r=Number.isFinite(ret)?ret:0,sector=(system.stock_sectors||{})[h.code]||'其他',sx=(system.sectors||[]).find(x=>x.name===sector),sectorScore=sx?+sx.score:50,hi=+m.high||p,lo=+m.low||p,pos=hi>lo?clamp((p-lo)/(hi-lo),0,1):.5;let score=Math.round(clamp(54+clamp(r,-25,35)*.72+clamp(d,-9,9)*1.8+(sectorScore-50)*.22+(pos-.5)*12-risk*.16,0,100));let trend=d>=4?'急強':d>=1.5?'轉強':d<=-5?'急弱':d<=-2?'轉弱':sectorScore>=65?'族群偏強':'震盪';let action='續抱觀察',reason='多因子尚未出現明確賣出訊號';if(risk>=80&&d<1){action='市場紅燈｜降部位';reason='大盤風險進入紅燈，先控制總曝險'}else if(r<=-15||d<=-7){action='風控優先';reason='虧損或單日跌幅跨過高風險線'}else if(r<=-10&&d<0){action='減碼防守';reason='成本下方且動能仍弱'}else if(r>=25&&(d<=-2||sectorScore<48)){action='移動停利';reason='已有大幅獲利，個股或族群轉弱'}else if(r>=12&&d<0){action='鎖利觀察';reason='仍有獲利，但短線動能轉弱'}else if(r>=10&&d>=0&&sectorScore>=55&&risk<65){action='續抱偏多';reason='獲利、個股與族群動能同向'}else if(r<0&&d>=2&&sectorScore>=55){action='反彈觀察';reason='成本下方但個股與族群同步回強'}else if(sectorScore>=68&&d>=1){action='續抱偏多';reason='位於強勢族群且個股同步走強'}const trail=r>=25?(risk>=65?.05:.065):r>=10?(risk>=65?.055:.07):(risk>=65?.06:.085),hard=h.cost*(r<=-10?.88:.90),protect=r>=10?Math.max(h.cost*(r>=25?1.03:.99),p*(1-trail)):Math.max(hard,p*(1-trail)),defense=protect.toFixed(2),target1=(p*(risk>=65?1.045:1.06)).toFixed(2),target2=(p*(risk>=65?1.08:1.11)).toFixed(2);return{score,trend,action,defense,target1,target2,reason,sector,sectorScore}}
+function holdingAdvice(h,m,p,ret,ch){if(m?.quoteKind==='official_close'&&tradingWindow())return{score:'--',trend:'等待盤中成交',action:'等待今日成交',defense:'--',target1:'--',target2:'--',reason:'目前僅有官方歷史收盤價，不以舊價產生盤中賣出指令',sector:'--',sectorScore:'--'};if(!isTrustedFeed())return{score:'--',trend:'資料待驗證',action:'暫停買賣判讀',defense:'--',target1:'--',target2:'--',reason:'市場風險資料不足；請勿依舊報價決策',sector:'--',sectorScore:'--'};const forced=(system.holdings||{})[h.code]||{};if(forced.action)return{score:forced.score??'--',trend:forced.trend||'JEI訊號',action:forced.action,defense:forced.defense??'--',target1:forced.target??'--',target2:'--',reason:forced.reason||'',sector:'--',sectorScore:50};const risk=+(system.risk&&system.risk.score)||0;if(!Number.isFinite(p))return{score:'--',trend:'等待行情',action:'等待即時行情',defense:'--',target1:'--',target2:'--',reason:'行情到位後自動判讀',sector:'--',sectorScore:50};const d=Number.isFinite(ch)?ch:0,r=Number.isFinite(ret)?ret:0,sector=(system.stock_sectors||{})[h.code]||'其他',sx=(system.sectors||[]).find(x=>x.name===sector),sectorScore=sx?+sx.score:50,hi=+m.high||p,lo=+m.low||p,pos=hi>lo?clamp((p-lo)/(hi-lo),0,1):.5;let score=Math.round(clamp(54+clamp(r,-25,35)*.72+clamp(d,-9,9)*1.8+(sectorScore-50)*.22+(pos-.5)*12-risk*.16,0,100));let trend=d>=4?'急強':d>=1.5?'轉強':d<=-5?'急弱':d<=-2?'轉弱':sectorScore>=65?'族群偏強':'震盪';let action='續抱觀察',reason='多因子尚未出現明確賣出訊號';if(risk>=80&&d<1){action='市場紅燈｜降部位';reason='大盤風險進入紅燈，先控制總曝險'}else if(r<=-15||d<=-7){action='風控優先';reason='虧損或單日跌幅跨過高風險線'}else if(r<=-10&&d<0){action='減碼防守';reason='成本下方且動能仍弱'}else if(r>=25&&(d<=-2||sectorScore<48)){action='移動停利';reason='已有大幅獲利，個股或族群轉弱'}else if(r>=12&&d<0){action='鎖利觀察';reason='仍有獲利，但短線動能轉弱'}else if(r>=10&&d>=0&&sectorScore>=55&&risk<65){action='續抱偏多';reason='獲利、個股與族群動能同向'}else if(r<0&&d>=2&&sectorScore>=55){action='反彈觀察';reason='成本下方但個股與族群同步回強'}else if(sectorScore>=68&&d>=1){action='續抱偏多';reason='位於強勢族群且個股同步走強'}const trail=r>=25?(risk>=65?.05:.065):r>=10?(risk>=65?.055:.07):(risk>=65?.06:.085),hard=h.cost*(r<=-10?.88:.90),protect=r>=10?Math.max(h.cost*(r>=25?1.03:.99),p*(1-trail)):Math.max(hard,p*(1-trail)),defense=protect.toFixed(2),target1=(p*(risk>=65?1.045:1.06)).toFixed(2),target2=(p*(risk>=65?1.08:1.11)).toFixed(2);return{score,trend,action,defense,target1,target2,reason,sector,sectorScore}}
 function renderHoldings(){
  const quick=()=>{if(typeof renderHomeQuick==='function')renderHomeQuick()};
  if(!JEI_PRIVATE_APP){$('totalPnl').textContent='手機內查看';$('portfolioRisk').textContent='不公開';quick();return}
@@ -264,8 +264,49 @@ function liveCodes(){
 function taipeiDateParts(now=new Date()){return Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(now).map(x=>[x.type,x.value]));}
 function tradingWindowAt(now=new Date()){const p=taipeiDateParts(now),mins=Number(p.hour)*60+Number(p.minute);return ['Mon','Tue','Wed','Thu','Fri'].includes(p.weekday)&&mins>=540&&mins<810}
 function tradingWindow(){return tradingWindowAt()}
-function holdingQuoteQuality(m,now=new Date()){const p=taipeiDateParts(now),date=p.year+p.month+p.day,age=now.getTime()-Number(m?.receivedAt),sameDay=m?.quoteDay===date&&m?.quoteKind==='last_trade',validAge=Number.isFinite(age)&&age>=-120000;const session=tradingWindowAt(now);const quoteMinute=Number(m?.quoteMinute),nowMinute=Number(p.hour)*60+Number(p.minute),valid=Boolean(sameDay&&validAge&&(session?(age<=8*60000&&nowMinute-quoteMinute>=-2&&nowMinute-quoteMinute<=8):(quoteMinute>=805&&quoteMinute<=810&&age<=12*3600000)));return {valid,label:valid?(session?'今日最後成交・盤中參考':'今日尾盤成交參考・非即時'):'行情日期或成交價未驗證'};}
+function holdingQuoteQuality(m,now=new Date()){
+ const p=taipeiDateParts(now),date=p.year+p.month+p.day,kind=m?.quoteKind||'',qday=String(m?.quoteDay||''),price=Number(m?.price);
+ if(!Number.isFinite(price)||price<=0)return {valid:false,label:'缺少有效價格'};
+ if(kind==='official_close'){
+  const y=qday.slice(0,4),mo=qday.slice(4,6),d=qday.slice(6,8),stamp=Date.parse(y+'-'+mo+'-'+d+'T00:00:00+08:00'),days=(now.getTime()-stamp)/86400000;
+  const valid=/^\\d{8}$/.test(qday)&&Number.isFinite(stamp)&&days>=0&&days<=30;
+  return {valid,label:valid?y+'-'+mo+'-'+d+' 官方收盤・非即時':'官方收盤日期過期'};
+ }
+ const age=now.getTime()-Number(m?.receivedAt),sameDay=qday===date&&kind==='last_trade',validAge=Number.isFinite(age)&&age>=-120000,session=tradingWindowAt(now),quoteMinute=Number(m?.quoteMinute),nowMinute=Number(p.hour)*60+Number(p.minute);
+ const valid=Boolean(sameDay&&validAge&&(session?(age<=8*60000&&nowMinute-quoteMinute>=-2&&nowMinute-quoteMinute<=8):(quoteMinute>=805&&quoteMinute<=810&&age<=12*3600000)));
+ return {valid,label:valid?(session?'今日最後成交・盤中參考':'今日尾盤成交參考・非即時'):'行情日期或成交價未驗證'};
+}
 function seedMarketFromSystem(){const hs=system.holdings||{};Object.entries(hs).forEach(([code,x])=>{const p=+x.price,ch=+x.change_pct;if(!Number.isFinite(p)||p<=0)return;const prev=Number.isFinite(ch)&&ch>-99?p/(1+ch/100):p,old=market[code]||{};market[code]={...old,price:p,prev,name:x.name||old.name||code,time:x.quote_time||system.updated_at||''}});renderHoldings()}
+let lastOfficialFetchAt=0;
+function applyOfficialCloseArchive(data){
+ if(!JEI_PRIVATE_APP||data?.schema!==1||data?.kind!=='official_daily_close'||!data?.days||typeof data.days!=='object')return false;
+ const now=new Date(),p=taipeiDateParts(now),today=p.year+'-'+p.month+'-'+p.day;
+ const days=Object.keys(data.days).filter(day=>/^\\d{4}-\\d{2}-\\d{2}$/.test(day)&&day<=today&&data.days[day]&&typeof data.days[day]==='object').sort();
+ const last=days.at(-1),prev=days.at(-2);if(!last)return false;
+ const stamp=Date.parse(last+'T00:00:00+08:00');if(!Number.isFinite(stamp)||now.getTime()-stamp>30*86400000)return false;
+ let imported=0;
+ holdings.forEach(h=>{
+  const code=String(h.code),price=Number(data.days[last]?.[code]);
+  if(!Number.isFinite(price)||price<=0)return;
+  const old=market[code]||{};
+  if(old.quoteKind==='last_trade'&&holdingQuoteQuality(old).valid)return;
+  const prior=Number(data.days[prev]?.[code]);
+  market[code]={...old,price,prev:Number.isFinite(prior)&&prior>0?prior:NaN,name:h.name,quoteDay:last.replace(/-/g,''),quoteKind:'official_close',closeDate:last,receivedAt:Date.now()};
+  imported++;
+ });
+ if(imported)renderHoldings();
+ return imported>0;
+}
+function refreshOfficialCloses(){
+ if(!JEI_PRIVATE_APP||Date.now()-lastOfficialFetchAt<15*60000)return;
+ lastOfficialFetchAt=Date.now();
+ if(nativeOk()&&typeof JEINative.fetchStaticJson==='function'){JEINative.fetchStaticJson('daily');return}
+ fetch('/remote/daily_prices.json?ts='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(applyOfficialCloseArchive).catch(()=>{lastOfficialFetchAt=0});
+}
+window.JEI_STATIC={
+ onData(kind,raw){if(kind!=='daily')return;try{applyOfficialCloseArchive(JSON.parse(raw))}catch(e){lastOfficialFetchAt=0}},
+ onError(kind){if(kind==='daily')lastOfficialFetchAt=0}
+};
 function showFeedStatus(){const m=system.market||{},c=Number.isFinite(+m.close_count)?+m.close_count:(Array.isArray(system.universe)?system.universe.length:0);if(!tradingWindow()){$('netDot').classList.remove('off');$('netText').textContent=m.stale?'資料待更新':`已收盤 ${c}檔`}}
 function refreshMarket(){if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}if(nativeOk()){liveScanReceived=0;JEINative.refreshMarketData(JSON.stringify(liveCodes()))}}
 function ingestMarket(j){
@@ -590,7 +631,7 @@ function checkUpdate(){
   .catch(()=>{})
 }
 function refreshRemoteUI(){if(nativeOk()){JEINative.refreshRemoteUI();toast('正在檢查最新介面')}}
-function refreshAll(manual=false){refreshSystem();if(tradingWindow())refreshMarket();else{seedMarketFromSystem();showFeedStatus()}checkUpdate();if(manual)toast(tradingWindow()?'正在更新 JEI、即時行情與版本':'正在更新 JEI 收盤資料與版本')}
+function refreshAll(manual=false){refreshSystem();refreshOfficialCloses();if(tradingWindow())refreshMarket();else{seedMarketFromSystem();showFeedStatus()}checkUpdate();if(manual)toast(tradingWindow()?'正在更新 JEI、即時行情與版本':'正在更新 JEI 收盤資料與版本')}
 function openUpdate(){if(updateManifest&&updateManifest.url&&nativeOk())JEINative.openUrl(updateManifest.url)}
 window.JEI_NATIVE={
  onMarketBatch(raw){try{ingestMarket(JSON.parse(raw))}catch(e){}},
