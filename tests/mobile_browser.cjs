@@ -60,20 +60,22 @@ async function run(){
 
   // Android-WebView-like private fixture: file origin + native bridge, no public portfolio upload.
   const privateContext=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  await privateContext.setOffline(true);
   const privatePage=await privateContext.newPage(),privateErrors=[];
   privatePage.on('pageerror',error=>privateErrors.push(error.message));
   await privatePage.addInitScript(()=>{
    window.JEINative={
     loadHoldings:()=>JSON.stringify([{code:'2330',name:'測試持股',cost:100,shares:1000}]),
     saveHoldings:()=>{},loadSetting:()=>'',saveSetting:()=>{},getAppVersion:()=>'test',
-    getAppVersionCode:()=>33,isOnline:()=>true,refreshSystem:()=>{},refreshMarketData:()=>{},
+    getAppVersionCode:()=>34,isOnline:()=>false,refreshSystem:()=>{},refreshMarketData:()=>{},
     loadRiskEvents:()=>JSON.stringify([{at:'2026-10-14 11:51',type:'holding',title:'JEI 持股盤中風險',detail:'測試 2330｜成交價已驗證'}]),
     getRiskNotificationEnabled:()=>window.__nativeRiskEnabled!==false,
     setRiskNotificationEnabled:(enabled)=>{window.__nativeRiskEnabled=enabled;},
     fetchStaticJson:()=>{},checkForUpdates:()=>{},refreshRemoteUI:()=>{},consultAI:()=>{},openUrl:()=>{}
    };
   });
-  await privatePage.goto('file://'+path.join(ROOT,'remote','index.html'),{waitUntil:'domcontentloaded'});
+  await privatePage.goto('file://'+path.join(ROOT,'app','src','main','assets','index.html'),{waitUntil:'domcontentloaded'});
+  assert.match(await privatePage.locator('#uiVer').innerText(),/3\.9\.9/,'offline asset includes updated dashboard');
   await privatePage.evaluate(()=>{go('hold')});
   await privatePage.locator('#holdAlertPanel').waitFor({state:'visible'});
   assert.equal(await privatePage.locator('#alertLoss').inputValue(),'8','native watch alert defaults to 8% loss');
@@ -106,7 +108,7 @@ async function run(){
   assert.doesNotMatch(await privatePage.locator('#pressureList').innerText(),/跌幅擴大且接近日低/,'archive closes cannot trigger intraday pressure');
   assert.deepEqual(privateErrors,[],'native watchlist fixture has no uncaught JavaScript errors');
   await privateContext.close();
-  console.log('PASS private Android-like portfolio alerts and official-close suppression');
+  console.log('PASS offline Android bundled UI, private risk alerts and official-close suppression');
 
   await page.goto(base+'cash.html',{waitUntil:'domcontentloaded'});
   await page.locator('#cloudRows tr').first().waitFor({state:'attached',timeout:15000});
