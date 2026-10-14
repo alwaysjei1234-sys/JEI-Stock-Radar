@@ -255,7 +255,7 @@ function renderPortfolioTriage(){
   const desc=document.createElement('div');desc.className='triage-muted';desc.textContent=group.map(x=>x.h.name+' '+x.h.code).join('、');
   line.append(head,desc);box.appendChild(line);
  }
- const weak=rows.filter(x=>x.category.id==='rotation'),candidate=isTrustedFeed()&&Array.isArray(system.rotate)?system.rotate.filter(x=>x&&/^\\d{4,6}$/.test(String(x.code||''))&&!holdings.some(h=>h.code===String(x.code))&&Number.isFinite(Number(x.score))&&Number(x.score)>=70).slice(0,3):[];
+ const weak=rows.filter(x=>x.category.id==='rotation'),candidate=isTrustedFeed()&&Array.isArray(system.rotate)?system.rotate.filter(x=>x&&/^\d{4,6}$/.test(String(x.code||''))&&!holdings.some(h=>h.code===String(x.code))&&Number.isFinite(Number(x.score))&&Number(x.score)>=70).slice(0,3):[];
  const warn=rows.filter(x=>x.category.id==='defense'||x.category.id==='profit');
  const detail=document.createElement('div');detail.className='triage-line';
  detail.textContent=weak.length?'較弱持股：'+weak.map(x=>x.h.name+'（'+x.advice.score+'分）').join('、'):warn.length?'先處理防守與保護：'+warn.map(x=>x.h.name).join('、'):'尚無可驗證的弱勢換股條件';
