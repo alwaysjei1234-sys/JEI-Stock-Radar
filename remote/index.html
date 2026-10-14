@@ -224,7 +224,7 @@ function institutionSnapshotDate(inst,feed=system){
  if(!m)return {date:'',fresh:false};
  const raw=m[1],year=Number(raw.slice(0,3))+1911,month=raw.slice(3,5),day=raw.slice(5,7);
  const iso=String(year)+'-'+month+'-'+day;
- const stamp=new Date(Date.UTC(year,Number(month)-1,Number(day));
+ const stamp=new Date(Date.UTC(year,Number(month)-1,Number(day)));
  const valid=Number.isFinite(stamp.getTime())&&stamp.toISOString().slice(0,10)===iso;
  return {date:valid?iso:'',fresh:valid&&iso===String(feed?.data_date||'')&&isTrustedFeed(feed)};
 }
