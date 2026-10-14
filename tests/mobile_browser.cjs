@@ -78,8 +78,8 @@ async function run(){
   await privatePage.locator('#holdAlertPanel').waitFor({state:'visible'});
   assert.equal(await privatePage.locator('#alertLoss').inputValue(),'8','native watch alert defaults to 8% loss');
   assert.equal(await privatePage.locator('#alertGain').inputValue(),'12');
-  assert.match(await privatePage.locator('#nativeAlertHistory').innerText(),/JEI 持股盤中風險/);
-  assert.match(await privatePage.locator('#nativeAlertHistory').innerText(),/2026-10-14 11:51/);
+  assert.match(await privatePage.locator('#nativeAlertHistory').textContent(),/JEI 持股盤中風險/);
+  assert.match(await privatePage.locator('#nativeAlertHistory').textContent(),/2026-10-14 11:51/);
   await privatePage.locator('#alertSettings').evaluate(el=>el.open=true);
   await privatePage.locator('#alertEnabled').uncheck();
   await privatePage.getByRole('button',{name:'儲存本機警戒設定'}).click();
