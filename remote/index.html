@@ -264,7 +264,7 @@ function liveCodes(){
 function taipeiDateParts(now=new Date()){return Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(now).map(x=>[x.type,x.value]));}
 function tradingWindowAt(now=new Date()){const p=taipeiDateParts(now),mins=Number(p.hour)*60+Number(p.minute);return ['Mon','Tue','Wed','Thu','Fri'].includes(p.weekday)&&mins>=540&&mins<810}
 function tradingWindow(){return tradingWindowAt()}
-function holdingQuoteQuality(m,now=new Date()){const p=taipeiDateParts(now),date=p.year+p.month+p.day,age=now.getTime()-Number(m?.receivedAt),sameDay=m?.quoteDay===date&&m?.quoteKind==='last_trade',validAge=Number.isFinite(age)&&age>=-120000;const session=tradingWindowAt(now);const valid=Boolean(sameDay&&validAge&&(session?age<=8*60000:(Number(m.quoteMinute)>=805&&Number(m.quoteMinute)<=810&&age<=12*3600000)));return {valid,label:valid?(session?'今日最後成交・盤中參考':'今日尾盤成交參考・非即時'):'行情日期或成交價未驗證'};}
+function holdingQuoteQuality(m,now=new Date()){const p=taipeiDateParts(now),date=p.year+p.month+p.day,age=now.getTime()-Number(m?.receivedAt),sameDay=m?.quoteDay===date&&m?.quoteKind==='last_trade',validAge=Number.isFinite(age)&&age>=-120000;const session=tradingWindowAt(now);const quoteMinute=Number(m?.quoteMinute),nowMinute=Number(p.hour)*60+Number(p.minute),valid=Boolean(sameDay&&validAge&&(session?(age<=8*60000&&nowMinute-quoteMinute>=-2&&nowMinute-quoteMinute<=8):(quoteMinute>=805&&quoteMinute<=810&&age<=12*3600000)));return {valid,label:valid?(session?'今日最後成交・盤中參考':'今日尾盤成交參考・非即時'):'行情日期或成交價未驗證'};}
 function seedMarketFromSystem(){const hs=system.holdings||{};Object.entries(hs).forEach(([code,x])=>{const p=+x.price,ch=+x.change_pct;if(!Number.isFinite(p)||p<=0)return;const prev=Number.isFinite(ch)&&ch>-99?p/(1+ch/100):p,old=market[code]||{};market[code]={...old,price:p,prev,name:x.name||old.name||code,time:x.quote_time||system.updated_at||''}});renderHoldings()}
 function showFeedStatus(){const m=system.market||{},c=Number.isFinite(+m.close_count)?+m.close_count:(Array.isArray(system.universe)?system.universe.length:0);if(!tradingWindow()){$('netDot').classList.remove('off');$('netText').textContent=m.stale?'資料待更新':`已收盤 ${c}檔`}}
 function refreshMarket(){if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}if(nativeOk()){liveScanReceived=0;JEINative.refreshMarketData(JSON.stringify(liveCodes()))}}
@@ -272,10 +272,10 @@ function ingestMarket(j){
  const today=taipeiDateParts(),expected=today.year+today.month+today.day,received=Date.now();
  let accepted=0;
  (j.msgArray||[]).forEach(x=>{
-  const code=String(x?.c||''),date=String(x?.d||'').replace(/\\D/g,''),price=Number(x?.z),prev=Number(x?.y),tm=String(x?.t||'');
+  const code=String(x?.c||''),date=String(x?.d||'').replace(/\D/g,''),price=Number(x?.z),prev=Number(x?.y),tm=String(x?.t||'');
   // Only exchange-dated executed last trades; never convert bid/ask midpoints or yesterday close into P&L.
-  if(!/^\\d{4,6}$/.test(code)||date!==expected||!Number.isFinite(price)||price<=0||!Number.isFinite(prev)||prev<=0)return;
-  const timeMatch=tm.match(/^(\\d{1,2}):(\\d{2})/),minute=timeMatch?(+timeMatch[1]*60+ +timeMatch[2]):-1;
+  if(!/^\d{4,6}$/.test(code)||date!==expected||!Number.isFinite(price)||price<=0||!Number.isFinite(prev)||prev<=0)return;
+  const timeMatch=tm.match(/^(\d{1,2}):(\d{2})/),minute=timeMatch?(+timeMatch[1]*60+ +timeMatch[2]):-1;
   market[code]={price,prev,name:String(x.n||code),open:Number(x.o),high:Number(x.h),low:Number(x.l),vol:Number(x.v),time:tm,quoteDay:date,quoteMinute:minute,quoteKind:'last_trade',receivedAt:received};
   accepted++;
  });
