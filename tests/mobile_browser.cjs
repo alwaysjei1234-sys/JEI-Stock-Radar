@@ -66,7 +66,10 @@ async function run(){
    window.JEINative={
     loadHoldings:()=>JSON.stringify([{code:'2330',name:'測試持股',cost:100,shares:1000}]),
     saveHoldings:()=>{},loadSetting:()=>'',saveSetting:()=>{},getAppVersion:()=>'test',
-    getAppVersionCode:()=>32,isOnline:()=>true,refreshSystem:()=>{},refreshMarketData:()=>{},
+    getAppVersionCode:()=>33,isOnline:()=>true,refreshSystem:()=>{},refreshMarketData:()=>{},
+    loadRiskEvents:()=>JSON.stringify([{at:'2026-10-14 11:51',type:'holding',title:'JEI 持股盤中風險',detail:'測試 2330｜成交價已驗證'}]),
+    getRiskNotificationEnabled:()=>window.__nativeRiskEnabled!==false,
+    setRiskNotificationEnabled:(enabled)=>{window.__nativeRiskEnabled=enabled;},
     fetchStaticJson:()=>{},checkForUpdates:()=>{},refreshRemoteUI:()=>{},consultAI:()=>{},openUrl:()=>{}
    };
   });
@@ -75,6 +78,15 @@ async function run(){
   await privatePage.locator('#holdAlertPanel').waitFor({state:'visible'});
   assert.equal(await privatePage.locator('#alertLoss').inputValue(),'8','native watch alert defaults to 8% loss');
   assert.equal(await privatePage.locator('#alertGain').inputValue(),'12');
+  assert.match(await privatePage.locator('#nativeAlertHistory').innerText(),/JEI 持股盤中風險/);
+  assert.match(await privatePage.locator('#nativeAlertHistory').innerText(),/2026-10-14 11:51/);
+  await privatePage.locator('#alertSettings').evaluate(el=>el.open=true);
+  await privatePage.locator('#alertEnabled').uncheck();
+  await privatePage.getByRole('button',{name:'儲存本機警戒設定'}).click();
+  assert.equal(await privatePage.evaluate(()=>window.__nativeRiskEnabled),false,'screen risk toggle must disable native worker');
+  await privatePage.locator('#alertEnabled').check();
+  await privatePage.getByRole('button',{name:'儲存本機警戒設定'}).click();
+  assert.equal(await privatePage.evaluate(()=>window.__nativeRiskEnabled),true,'re-enable background risk worker');
   await privatePage.evaluate(()=>{
    window.isTrustedFeed=()=>true;window.tradingWindowAt=()=>true;
    window.holdingQuoteQuality=()=>({valid:true,label:'測試有效成交'});
