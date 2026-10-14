@@ -46,8 +46,8 @@ public class RiskWorker extends Worker {
         try {
             JSONObject root = new JSONObject(getStaticFeed(SYSTEM_JSON));
             long now = System.currentTimeMillis();
-            if (trustedLiveFeed(root, now)) {
-                SharedPreferences prefs = getApplicationContext().getSharedPreferences("jei_private", Context.MODE_PRIVATE);
+            SharedPreferences prefs = getApplicationContext().getSharedPreferences("jei_private", Context.MODE_PRIVATE);
+            if (prefs.getBoolean("bg_risk_enabled", true) && trustedLiveFeed(root, now)) {
                 String day = taipeiFormat("yyyyMMdd", now);
                 checkRisk(root, prefs, day, now);
                 checkHoldings(root, prefs, day, now);
