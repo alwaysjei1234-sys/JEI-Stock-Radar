@@ -161,11 +161,23 @@ def build(edition,now,feed_path=FEED,paper_path=PAPER,output_path=OUTPUT):
     feed,paper=load(feed_path),load(paper_path)
     prior=load(output_path)
     result={"schema":1,"privacy":"公開市場摘要，不含個人持股、成本、LINE 資料或憑證",
-            "morning":prior.get("morning"),"close":prior.get("close")}
-    result[edition]=generate(edition,now,feed,paper)
+            "morning":prior.get("morning"),"close":prior.get("close"),
+            "checks":prior.get("checks") if isinstance(prior.get("checks"),dict) else {}}
+    checked=generate(edition,now,feed,paper)
+    result["checks"][edition]={
+        "date":now.date().isoformat(),
+        "checked_at":now.isoformat(timespec="minutes"),
+        "status":checked["status"],
+        "note":checked["note"]
+    }
+    previous=result.get(edition)
+    # Never overwrite a verified Friday/previous-session brief on weekends,
+    # holidays, or before today's official close is available.
+    if checked["status"]=="ready" or not isinstance(previous,dict) or previous.get("status")!="ready":
+        result[edition]=checked
     output_path.parent.mkdir(parents=True,exist_ok=True)
     output_path.write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False)+"\n",encoding="utf-8")
-    return result[edition]
+    return checked
 
 def main():
     p=argparse.ArgumentParser()
