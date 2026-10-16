@@ -37,8 +37,12 @@ function render(){
  $('content').replaceChildren();
  const data=briefData&&briefData[edition];
  if(!data){$('status').textContent='本時段報告尚未發布；盤後會待官方收盤資料驗證後更新。';return}
- $('status').textContent=(data.title||'JEI 研究報告')+'｜'+data.date+'｜'+
- (data.status==='ready'?'資料日期已確認':'資料待確認')+'｜'+data.note+'｜生成 '+data.generated_at;
+ const lastCheck=briefData&&briefData.checks&&briefData.checks[edition];
+ const unready=lastCheck&&lastCheck.status!=='ready'?
+   '｜最新檢查 '+lastCheck.date+' 尚未就緒：'+lastCheck.note+'；以下保留最近有效報告':'';
+ $('status').textContent=(data.title||'JEI 研究報告')+'｜報告資料日 '+data.date+'｜'+
+ (data.status==='ready'?'資料日期已確認':'資料待確認')+'｜'+data.note+
+ '｜生成 '+data.generated_at+unready;
  for(const block of data.blocks||[]){
   const box=make('section','');box.className='card';
   box.appendChild(make('h2',block.title||'研究摘要'));
