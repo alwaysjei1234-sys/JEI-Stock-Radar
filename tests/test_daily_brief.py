@@ -1,4 +1,7 @@
 import unittest
+import json
+import tempfile
+from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from scripts import build_daily_brief as b
@@ -47,6 +50,25 @@ class BriefTests(unittest.TestCase):
         self.assertFalse(line.can_send(report,"morning",CLOSE,"true","token",user)[0])
         self.assertTrue(line.can_send(report,"close",CLOSE,"true","token",user)[0])
         self.assertNotIn("NEVER_PUBLIC",str(line.payload(report,user)))
+
+    def test_weekend_preserves_last_verified_close(self):
+        saturday=datetime(2026,10,17,18,20,tzinfo=ZoneInfo("Asia/Taipei"))
+        friday=b.generate("close",CLOSE,FEED,PAPER)
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            feed_path=root/"system.json"
+            paper_path=root/"paper.json"
+            output=root/"brief.json"
+            feed_path.write_text(json.dumps(FEED,ensure_ascii=False),encoding="utf-8")
+            paper_path.write_text(json.dumps(PAPER,ensure_ascii=False),encoding="utf-8")
+            output.write_text(json.dumps({"schema":1,"morning":None,"close":friday},ensure_ascii=False),encoding="utf-8")
+            checked=b.build("close",saturday,feed_path,paper_path,output)
+            saved=json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(checked["status"],"pending")
+            self.assertEqual(saved["close"]["date"],"2026-10-16")
+            self.assertEqual(saved["close"]["status"],"ready")
+            self.assertEqual(saved["checks"]["close"]["date"],"2026-10-17")
+            self.assertEqual(saved["checks"]["close"]["status"],"pending")
 
     def test_quota_only_free_plan(self):
         real=line.api_get
