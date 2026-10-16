@@ -25,6 +25,8 @@ jobs:
         run: node tests/ai_chat.cjs
       - name: Free multi-AI gateway contract
         run: node tests/ai_gateway.cjs
+      - name: Optional Ollama Cloud gateway contract
+        run: node tests/ollama_gateway.cjs
       - name: Python generator syntax
         run: python -m py_compile scripts/update_system.py
       - name: Official-close simulated strategy tests
