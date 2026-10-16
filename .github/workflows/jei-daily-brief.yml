@@ -1,0 +1,85 @@
+name: JEI Daily Brief and Optional LINE
+on:
+  schedule:
+    # UTC / Taipei: 08:00, 15:30, 18:10 weekdays
+    - cron: '0 0 * * 1-5'
+    - cron: '30 7 * * 1-5'
+    - cron: '10 10 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      edition:
+        description: "morning or close"
+        type: choice
+        options: [morning, close]
+        required: true
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build_daily_brief.py'
+      - 'scripts/send_line_brief.py'
+      - 'tests/test_daily_brief.py'
+      - '.github/workflows/jei-daily-brief.yml'
+permissions:
+  contents: write
+concurrency:
+  group: jei-daily-brief
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test briefing and LINE safety
+        run: python -m unittest discover -s tests -p 'test_daily_brief.py' -v
+      - name: Select edition and LINE policy
+        id: edition
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+          SELECTED: ${{ inputs.edition }}
+        run: |
+          if [ "$SCHEDULE" = '0 0 * * 1-5' ]; then
+            echo 'name=morning' >> "$GITHUB_OUTPUT"
+            echo 'send=true' >> "$GITHUB_OUTPUT"
+          elif [ "$SCHEDULE" = '10 10 * * 1-5' ]; then
+            echo 'name=close' >> "$GITHUB_OUTPUT"
+            echo 'send=true' >> "$GITHUB_OUTPUT"
+          elif [ "$SCHEDULE" = '30 7 * * 1-5' ]; then
+            echo 'name=close' >> "$GITHUB_OUTPUT"
+            echo 'send=false' >> "$GITHUB_OUTPUT"
+          else
+            echo "name=${SELECTED:-close}" >> "$GITHUB_OUTPUT"
+            echo 'send=false' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Generate public brief using verified official close
+        run: python scripts/build_daily_brief.py --edition "${{ steps.edition.outputs.name }}"
+      - name: Publish verified report
+        run: |
+          if git diff --quiet -- remote/brief.json; then
+            echo 'Brief unchanged'
+            exit 0
+          fi
+          git config user.name 'JEI Research Brief Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add remote/brief.json
+          git commit -m 'Auto-update JEI daily research brief'
+          for i in 1 2 3; do
+            if git push; then exit 0; fi
+            git fetch origin main
+            git rebase origin/main
+            sleep 3
+          done
+          echo 'Could not publish; LINE step will not run'
+          exit 1
+      - name: Optional LINE push (no email)
+        if: steps.edition.outputs.send == 'true'
+        env:
+          JEI_LINE_ENABLED: ${{ vars.JEI_LINE_ENABLED }}
+          JEI_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.JEI_LINE_CHANNEL_ACCESS_TOKEN }}
+          JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
+        run: python scripts/send_line_brief.py --edition "${{ steps.edition.outputs.name }}"
