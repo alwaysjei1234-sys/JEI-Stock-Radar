@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 const read = p => fs.readFileSync(p,'utf8');
-const htmls = ['remote/index.html','remote/cash.html','remote/paper.html'];
+const htmls = ['remote/index.html','remote/cash.html','remote/paper.html','remote/brief.html'];
 for (const path of htmls) {
  const src=read(path),scripts=[...src.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)];
  assert(scripts.length>0,path+' has no script');

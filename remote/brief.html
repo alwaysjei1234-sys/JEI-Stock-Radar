@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JEI 投資研究室｜早報與盤後</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,"Noto Sans TC",sans-serif;--bg:#06101b;--panel:#0d2235;--line:#244761;--mut:#a3b7c6;--blue:#6dd0ff}
+*{box-sizing:border-box}body{background:var(--bg);color:#f0f8ff;margin:0;padding:16px}
+main{max-width:850px;margin:auto}a{color:var(--blue);overflow-wrap:anywhere}
+header{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+h1{font-size:24px;margin:20px 0 4px}h2{font-size:17px;margin:0 0 9px}
+.meta{color:var(--mut);font-size:13px;line-height:1.65}
+.buttons{display:flex;gap:9px;margin:18px 0}
+button{color:#fff;border:1px solid var(--line);border-radius:11px;background:#153047;padding:11px;font-weight:850}
+button[aria-pressed="true"]{background:#19699c;border-color:var(--blue)}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:15px;margin:12px 0;line-height:1.6}
+.card.warning{border-color:#96753d}ul{margin:0;padding-left:19px}li{margin:9px 0}
+.article{border-bottom:1px solid #28445b;padding:9px 0}
+.article:last-child{border-bottom:0}small{display:block;color:var(--mut)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--blue)}
+</style></head><body><main>
+<header><a href="./index.html">← 返回選股雷達</a><button id="reload">重新讀取</button></header>
+<h1>JEI 投資研究室</h1>
+<p class="meta">每日公開市場早報與盤後復盤。非盤中即時行情；不公開你的私人持股或買進成本。</p>
+<div class="buttons"><button id="morning" aria-pressed="true">☀ 開盤前早報</button><button id="close" aria-pressed="false">🌙 盤後復盤</button></div>
+<div class="card" id="status" role="status">正在載入研究摘要…</div>
+<div id="content"></div>
+<div class="card warning"><h2>閱讀提醒</h2><p class="meta">新聞標題不是投資建議；模擬績效以官方收盤價計算，不能代表實際成交與獲利。私人持股資料不會被發到公開網頁或 GitHub。LINE 未授權前也不會推播。</p></div>
+</main><script>
+'use strict';
+let briefData=null,edition='morning';
+const $=id=>document.getElementById(id);
+function make(tag,value){const node=document.createElement(tag);node.textContent=String(value??'');return node}
+function safeUrl(raw){try{const u=new URL(raw);return u.protocol==='https:'?u.href:null}catch{return null}}
+function render(){
+ $('morning').setAttribute('aria-pressed',String(edition==='morning'));
+ $('close').setAttribute('aria-pressed',String(edition==='close'));
+ $('content').replaceChildren();
+ const data=briefData&&briefData[edition];
+ if(!data){$('status').textContent='本時段報告尚未發布；盤後會待官方收盤資料驗證後更新。';return}
+ $('status').textContent=(data.title||'JEI 研究報告')+'｜'+data.date+'｜'+
+ (data.status==='ready'?'資料日期已確認':'資料待確認')+'｜'+data.note+'｜生成 '+data.generated_at;
+ for(const block of data.blocks||[]){
+  const box=make('section','');box.className='card';
+  box.appendChild(make('h2',block.title||'研究摘要'));
+  const list=make('ul','');
+  for(const item of block.items||[])list.appendChild(make('li',item));
+  box.appendChild(list);$('content').appendChild(box);
+ }
+ if(data.news&&data.news.length){
+  const box=make('section','');box.className='card';
+  box.appendChild(make('h2','財經新聞來源'));
+  for(const n of data.news){
+   const div=make('article','');div.className='article';
+   const link=safeUrl(n.url);
+   if(link){const a=make('a',n.title);a.href=link;a.rel='noopener noreferrer';a.target='_blank';div.appendChild(a)}
+   else div.appendChild(make('div',n.title));
+   div.appendChild(make('small',(n.source||'來源')+'｜'+(n.published_at||'時間未確認')));
+   box.appendChild(div);
+  }
+  $('content').appendChild(box);
+ }
+}
+async function reload(){
+ $('status').textContent='正在更新報告…';
+ try{
+  const r=await fetch('./brief.json?t='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw Error('HTTP '+r.status);
+  const x=await r.json();if(x.schema!==1)throw Error('版本格式不符');
+  briefData=x;render();
+ }catch(e){$('status').textContent='目前報告不可讀：'+String(e.message||e).slice(0,100)}
+}
+$('morning').onclick=()=>{edition='morning';render()};
+$('close').onclick=()=>{edition='close';render()};
+$('reload').onclick=reload;
+reload();
+</script></body></html>
