@@ -27,6 +27,13 @@ const PROVIDERS = {
     key: "openrouter",
     model: process.env.OPENROUTER_FREE_MODEL || "openrouter/free",
     via: "OpenRouter Free"
+  },
+  ollama_cloud: {
+    label: "Ollama Cloud（試用額度）",
+    key: "ollama",
+    model: process.env.OLLAMA_CLOUD_MODEL || "gemma4:31b",
+    via: "Ollama Cloud（會消耗 Ollama 額度）",
+    opt_in: true
   }
 };
 
@@ -34,6 +41,7 @@ function envKey(kind){
   if(kind==="gemini") return process.env.GEMINI_API_KEY || "";
   if(kind==="groq") return process.env.GROQ_API_KEY || "";
   if(kind==="openrouter") return process.env.OPENROUTER_API_KEY || "";
+  if(kind==="ollama") return process.env.OLLAMA_API_KEY || "";
   return "";
 }
 function requestKey(body,kind){
@@ -44,7 +52,7 @@ function providerStatus(provider,body={}){
   const p=PROVIDERS[provider];
   if(!p) return {available:false};
   const fromEnv=!!envKey(p.key);
-  const fromRequest=!!String(body?.free_keys?.[p.key]||"").trim();
+  const fromRequest=p.key==="ollama"?false:!!String(body?.free_keys?.[p.key]||"").trim();
   return {
     available:fromEnv||fromRequest,
     label:p.label,
@@ -171,11 +179,30 @@ async function askOpenRouter(body,timeout=28000){
   return extractChat(j)||"無有效回覆";
 }
 
+
+async function askOllamaCloud(body,timeout=28000){
+  // Only a server-owned API key is accepted; never forward a browser-supplied key.
+  const key=envKey("ollama");
+  if(!key) return null;
+  const j=await fetchJson("https://ollama.com/api/chat",{
+    method:"POST",
+    headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:PROVIDERS.ollama_cloud.model,
+      stream:false,
+      messages:[{role:"system",content:SYSTEM},{role:"user",content:userPrompt(body)}],
+      options:{temperature:0.25,num_predict:900}
+    })
+  },timeout);
+  return String(j?.message?.content||"").trim()||"無有效回覆";
+}
+
 const CALLERS = {
   gemini_free: (body,timeout)=>askGemini(body,timeout),
   groq_oss: (body,timeout)=>askGroq(body,"groq_oss",timeout),
   groq_qwen: (body,timeout)=>askGroq(body,"groq_qwen",timeout),
-  openrouter_free: (body,timeout)=>askOpenRouter(body,timeout)
+  openrouter_free: (body,timeout)=>askOpenRouter(body,timeout),
+  ollama_cloud: (body,timeout)=>askOllamaCloud(body,timeout)
 };
 
 async function synthesize(body,answers){
@@ -238,8 +265,10 @@ module.exports=async function handler(req,res){
   if(body.action==="verify_token") return json(res,200,{ok:true,verified:true,free_only:true,paid_gateway:false});
   if(!String(body.question||"").trim()) return json(res,400,{error:"question required"});
 
-  const requested=Array.isArray(body.providers)&&body.providers.length?body.providers:Object.keys(PROVIDERS);
-  const providers=[...new Set(requested.map(String))].filter(x=>CALLERS[x]).slice(0,4);
+  // An Ollama key being configured must never opt the user in automatically.
+  const requested=Array.isArray(body.providers)&&body.providers.length
+    ?body.providers:Object.keys(PROVIDERS).filter(p=>!PROVIDERS[p].opt_in);
+  const providers=[...new Set(requested.map(String))].filter(x=>CALLERS[x]).slice(0,5);
 
   const settled=await Promise.all(providers.map(async provider=>{
     const st=providerStatus(provider,body);
@@ -262,7 +291,8 @@ module.exports=async function handler(req,res){
 
   return json(res,200,{
     ok:answers.length>0,
-    free_only:true,
+    free_only:!providers.includes("ollama_cloud"),
+    ollama_credit_usage:providers.includes("ollama_cloud"),
     answers,skipped,failed,consensus,
     as_of:new Date().toISOString()
   });
