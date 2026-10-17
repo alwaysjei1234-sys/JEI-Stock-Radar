@@ -1,0 +1,45 @@
+name: JEI LINE Real Push Test
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  send-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Send one actual LINE API test push
+        env:
+          JEI_LINE_ENABLED: ${{ vars.JEI_LINE_ENABLED }}
+          JEI_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.JEI_LINE_CHANNEL_ACCESS_TOKEN }}
+          JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
+        run: |
+          python - <<'PY'
+          import os
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          from scripts.send_line_brief import can_send, push
+          now = datetime.now(ZoneInfo("Asia/Taipei"))
+          report = {
+              "title": "【JEI 股票雷達｜LINE 真實推播測試】",
+              "date": now.date().isoformat(),
+              "edition": "test",
+              "status": "ready",
+              "note": "這是透過 LINE Messaging API 真正發出的測試訊息。",
+              "blocks": [{"title": "連線確認", "items": ["若你收到此訊息，代表 JEI 已成功透過官方 LINE API 發送通知。"]}],
+              "report_url": "https://jei-stock-radar.vercel.app/remote/brief.html",
+          }
+          token = os.getenv("JEI_LINE_CHANNEL_ACCESS_TOKEN", "")
+          recipient = os.getenv("JEI_LINE_USER_ID", "")
+          ok, reason = can_send(report, "test", now, os.getenv("JEI_LINE_ENABLED", ""), token, recipient)
+          if not ok:
+              raise SystemExit("未發送：" + reason)
+          result = push(report, "test", token, recipient)
+          print(result)
+          if result != "LINE Messaging API 已接受推播請求":
+              raise SystemExit("未確認發送：" + result)
+          PY
