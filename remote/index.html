@@ -149,7 +149,7 @@
 <div id="toast" class="toast"></div>
 <div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="chat"><b>💬</b>聊天</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
 <script>
-const UI_VERSION='3.9.11-native-notification-diagnostics';
+const UI_VERSION='3.9.12-priority-quotes-etf';
 const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],tomorrow_monster:[],future_monster:[],rotate:[],flow:[],sectors:[],stock_sectors:{},universe:[]}, updateManifest=null, refreshTimer=null, systemTimer=null, lastMarketAt='',liveScanReceived=0;
 // Privacy boundary: public web browsers never load or render a personal portfolio.
@@ -628,12 +628,28 @@ function importHoldingsData(){
   holdings=a;persistHoldings();renderHoldings();refreshMarket();$('importHoldings').value='';toast('已匯入 '+a.length+' 檔持股')
  }catch(e){toast('匯入失敗，請檢查格式')}
 }
-function saveHolding(){if(!JEI_PRIVATE_APP)return;const code=$('editCode').value.trim(),name=$('editName').value.trim()||code,cost=+$('editCost').value,shares=+$('editShares').value;if(!code||!cost||!shares){toast('請填代號、成本、股數');return}const i=holdings.findIndex(x=>x.code===code),o={code,name,cost,shares};if(i>=0)holdings[i]=o;else holdings.push(o);persistHoldings();renderHoldings();refreshMarket();toast('持股已存手機')}
-function removeHolding(){if(!JEI_PRIVATE_APP)return;const c=$('editCode').value.trim();if(!c)return;holdings=holdings.filter(x=>x.code!==c);persistHoldings();renderHoldings();toast('已刪除 '+c)}
+function saveHolding(){if(!JEI_PRIVATE_APP)return;const code=$('editCode').value.trim().toUpperCase(),name=$('editName').value.trim()||code,cost=+$('editCost').value,shares=+$('editShares').value;if(!code||!cost||!shares){toast('請填代號、成本、股數');return}const i=holdings.findIndex(x=>x.code===code),o={code,name,cost,shares};if(i>=0)holdings[i]=o;else holdings.push(o);persistHoldings();renderHoldings();refreshMarket();toast('持股已存手機')}
+function removeHolding(){if(!JEI_PRIVATE_APP)return;const c=$('editCode').value.trim().toUpperCase();if(!c)return;holdings=holdings.filter(x=>x.code!==c);persistHoldings();renderHoldings();toast('已刪除 '+c)}
+let liveScanCycle=0;
 function liveCodes(){
- const u=Array.isArray(system.universe)?system.universe:[];
- if(u.length>500)return u.map(x=>String(x.code||'')).filter(Boolean);
- const s=new Set(holdings.map(x=>x.code));['attack','next','monster','tomorrow_monster','future_monster','rotate'].forEach(k=>(system[k]||[]).forEach(x=>x&&x.code&&s.add(String(x.code))));return [...s]
+ // Phone fetch is a prioritised subset, not a complete live-market scanner.
+ // The full-market lists come from the dated JEI server feed, never from this sample.
+ const cap=240,seen=new Set(),valid=/^[0-9]{4,6}[A-Z]?$/;
+ const add=raw=>{const c=String(raw||'').trim().toUpperCase();if(valid.test(c)&&seen.size<cap)seen.add(c)};
+ // Personal holdings always come first, including 00937B-style ETF tickers.
+ holdings.forEach(x=>add(x.code));
+ ['attack','next','monster','tomorrow_monster','future_monster','rotate'].forEach(k=>
+  (Array.isArray(system[k])?system[k]:[]).forEach(x=>add(x?.code)));
+ (Array.isArray(system.sectors)?system.sectors:[]).forEach(x=>
+  (Array.isArray(x.leaders)?x.leaders:[]).forEach(y=>add(y?.code)));
+ const universe=Array.isArray(system.universe)?system.universe:[];
+ const rest=[...new Set(universe.map(x=>String(x?.code||'').trim().toUpperCase()).filter(c=>valid.test(c)&&!seen.has(c)))];
+ const amount=Math.min(80,cap-seen.size,rest.length);
+ if(amount){
+  const start=(liveScanCycle++*amount)%rest.length;
+  for(let i=0;i<amount;i++)add(rest[(start+i)%rest.length]);
+ }
+ return [...seen];
 }
 function taipeiDateParts(now=new Date()){return Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(now).map(x=>[x.type,x.value]));}
 function tradingWindowAt(now=new Date()){const p=taipeiDateParts(now),mins=Number(p.hour)*60+Number(p.minute);return ['Mon','Tue','Wed','Thu','Fri'].includes(p.weekday)&&mins>=540&&mins<810}
@@ -682,21 +698,33 @@ window.JEI_STATIC={
  onError(kind){if(kind==='daily')lastOfficialFetchAt=0}
 };
 function showFeedStatus(){const m=system.market||{},c=Number.isFinite(+m.close_count)?+m.close_count:(Array.isArray(system.universe)?system.universe.length:0);if(!tradingWindow()){const verified=isTrustedFeed(),historical=isRecentCloseObservation();$('netDot').classList.toggle('off',!verified&&!historical);$('netText').textContent=verified?'今日已收盤 '+c+'檔':historical?'前次收盤 '+String(system.data_date||''):'行情待更新';}}
-function refreshMarket(){if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}if(nativeOk()){liveScanReceived=0;JEINative.refreshMarketData(JSON.stringify(liveCodes()))}}
+function refreshMarket(){
+ if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}
+ if(nativeOk()){
+  const codes=liveCodes();liveScanReceived=0;
+  if(!codes.length){$('netText').textContent='等待 JEI 股票清單';return}
+  $('netText').textContent='正在更新優先股票 '+codes.length+' 檔（非全市場逐筆掃描）';
+  JEINative.refreshMarketData(JSON.stringify(codes));
+ }else{
+  // Public browsers use the cloud market feed; don't imply direct MIS live quotes.
+  $('netText').textContent='網頁版使用 JEI 雲端行情｜非交易所逐筆即時';
+ }
+}
 function ingestMarket(j){
  const today=taipeiDateParts(),expected=today.year+today.month+today.day,received=Date.now();
  let accepted=0;
  (j.msgArray||[]).forEach(x=>{
-  const code=String(x?.c||''),date=String(x?.d||'').replace(/\D/g,''),price=Number(x?.z),prev=Number(x?.y),tm=String(x?.t||'');
+  const code=String(x?.c||'').trim().toUpperCase(),date=String(x?.d||'').replace(/\D/g,''),price=Number(x?.z),prev=Number(x?.y),tm=String(x?.t||'');
   // Only exchange-dated executed last trades; never convert bid/ask midpoints or yesterday close into P&L.
-  if(!/^\d{4,6}$/.test(code)||date!==expected||!Number.isFinite(price)||price<=0||!Number.isFinite(prev)||prev<=0)return;
+  if(!/^\d{4,6}[A-Z]?$/.test(code)||date!==expected||!Number.isFinite(price)||price<=0||!Number.isFinite(prev)||prev<=0)return;
   const timeMatch=tm.match(/^(\d{1,2}):(\d{2})/),minute=timeMatch?(+timeMatch[1]*60+ +timeMatch[2]):-1;
   market[code]={price,prev,name:String(x.n||code),open:Number(x.o),high:Number(x.h),low:Number(x.l),vol:Number(x.v),time:tm,quoteDay:date,quoteMinute:minute,quoteKind:'last_trade',receivedAt:received};
   accepted++;
  });
  liveScanReceived=Math.max(liveScanReceived,+j.jeiReceivedTotal||0);
  if(accepted)lastMarketAt=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
- scanLiveUniverse();renderHoldings();renderUpdateStamp();
+ if(accepted&&(j.jeiDone||!Object.prototype.hasOwnProperty.call(j,'jeiReceivedTotal')))applyLiveRanks();
+ renderHoldings();renderUpdateStamp();
  $('netDot').classList.toggle('off',!accepted&& !Object.keys(market).some(k=>holdingQuoteQuality(market[k]).valid));
  $('netText').textContent=accepted?'交易所有效成交 '+accepted+'檔': '尚無今日有效成交資料';
 }
@@ -1024,7 +1052,7 @@ function checkUpdate(){
   .then(j=>{if(!j)return;updateManifest=j;const remote=+j.versionCode||0;$('updateBanner').classList.toggle('show',false)})
   .catch(()=>{})
 }
-function refreshRemoteUI(){if(nativeOk()){JEINative.refreshRemoteUI();toast('正在檢查最新介面')}}
+function refreshRemoteUI(){if(nativeOk()){JEINative.refreshRemoteUI();toast('正在檢查最新介面')}else{toast('重新載入 JEI 最新介面');window.location.reload()}}
 function refreshAll(manual=false){refreshSystem();refreshOfficialCloses();if(tradingWindow())refreshMarket();else{seedMarketFromSystem();showFeedStatus()}checkUpdate();if(manual)toast(tradingWindow()?'正在更新 JEI、即時行情與版本':'正在更新 JEI 收盤資料與版本')}
 function openUpdate(){if(updateManifest&&updateManifest.url&&nativeOk())JEINative.openUrl(updateManifest.url)}
 window.JEI_NATIVE={
