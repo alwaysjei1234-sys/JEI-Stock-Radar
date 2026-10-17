@@ -387,6 +387,42 @@ def load_history():
         return h if isinstance(h,list) else []
     except Exception:return []
 
+def validated_previous_close(previous, now, max_age_days=7):
+    """Keep a verified official close available for read-only research after the session.
+
+    Preserve the ORIGINAL trading date and verification timestamp. Never re-label
+    an old snapshot as today's live market or create a fake history candle.
+    """
+    if not isinstance(previous, dict) or now.tzinfo is None:
+        return None
+    market=previous.get("market")
+    if (not isinstance(market, dict) or market.get("mode")!="今日收盤"
+            or market.get("stale") is not False
+            or isinstance(market.get("close_count"), bool)
+            or not isinstance(market.get("close_count"), (int,float))
+            or market["close_count"] < 500):
+        return None
+    if previous.get("holdings") not in (None, {}):
+        return None
+    try:
+        verified_day=datetime.strptime(previous["data_date"], "%Y-%m-%d").date()
+        stamp=datetime.strptime(previous["updated_at"], "%Y-%m-%d %H:%M").replace(tzinfo=TZ)
+    except (KeyError,TypeError,ValueError):
+        return None
+    now=now.astimezone(TZ)
+    lag_days=(now.date()-verified_day).days
+    if not 0<=lag_days<=max_age_days or stamp.date()!=verified_day:
+        return None
+    if stamp.hour*60+stamp.minute < 13*60+30 or stamp>now:
+        return None
+    if not isinstance(previous.get("attack"),list) or not isinstance(previous.get("sectors"),list):
+        return None
+    # Old snapshots are never counted as live trades on the new calendar day.
+    out=dict(previous)
+    out["market"]={**market,"historical_readonly":verified_day!=now.date(),
+                   "last_checked_at":now.strftime("%Y-%m-%d %H:%M")}
+    return out
+
 def update_history(history,date_key,stocks,signals,institutional_market=None):
     price_map={x["code"]:x["close"] for x in stocks if x.get("close")}
     snap={"date":date_key,"prices":price_map,"signals":[{"code":x["code"],"price":x["price"],"score":x["score"]} for x in signals[:8]]}
@@ -776,6 +812,22 @@ def main():
     live_coverage=live_count/max(1,len(stocks))
     live_valid=market_open and live_count>=500 and live_coverage>=.35
     stale_source=not source_is_today
+    if stale_source and not live_valid:
+        # Exchange endpoints return Friday prices on weekends and holidays. Keep
+        # the prior *audited* close for dated research, not today's trading/risk alerts.
+        try:
+            old=json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
+            retained=validated_previous_close(old, now)
+        except (OSError,ValueError):
+            retained=None
+        if retained is not None:
+            OUT.write_text(json.dumps(retained,ensure_ascii=False,indent=2),encoding="utf-8")
+            print(json.dumps({"status":"archived_close_only",
+                              "data_date":retained["data_date"],
+                              "checked_at":now.strftime("%Y-%m-%d %H:%M"),
+                              "no_live_signal":True},ensure_ascii=False))
+            return
+
     # Intraday MIS quotes are not an official post-close dataset. A sufficiently
     # populated live snapshot may power intraday screens only during trading hours.
     if live_valid and market_open:
@@ -803,15 +855,21 @@ def main():
     market_mode="資料過期" if stale_source else ("盤中即時" if live_valid else ("盤中資料不足" if market_open else "今日收盤"))
     date_key=now.strftime("%Y-%m-%d")
     history=hist_for_heat
-    history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],{"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
-    if source_is_today and market_mode == "今日收盤" and now.hour >= 13:
+    official_close_verified=(source_is_today and market_mode=="今日收盤"
+                             and not market_open and now.hour*60+now.minute>=810)
+    if official_close_verified:
+        # Only a verified exchange close may create or replace a backtest day.
+        history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],
+                               {"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
+        HISTORY.parent.mkdir(parents=True,exist_ok=True)
+        HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
         patterns=build_pattern_signals(history,by_code,stock_sector,sectors,asof=today_iso)
+        backtest=calc_backtest(history,{x["code"]:x["close"] for x in stocks})
     else:
         patterns=build_pattern_signals([],{}, {}, [],asof=today_iso)
         patterns["status"]="not_official_close"
-    HISTORY.parent.mkdir(parents=True,exist_ok=True)
-    HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
-    backtest=calc_backtest(history,{x["code"]:x["close"] for x in stocks})
+        # Partial intraday/stale prices cannot be scored as a new backtest result.
+        backtest={"hit3":None,"hit5":None,"hit10":None,"samples":0}
 
     old_web_recommendations=[]; old_web_updated_at=None; old_web_status={}
     try:
@@ -861,7 +919,7 @@ def main():
             raise RuntimeError("Privacy check failed: sensitive portfolio field")
     # Preserve official same-day post-close quotes across subsequent runs. No stale
     # or intraday quote is treated as an official daily close.
-    if source_is_today and not market_open and now.hour >= 13:
+    if official_close_verified:
         try:
             archive=json.loads(DAILY_PRICES.read_text(encoding="utf-8")) if DAILY_PRICES.exists() else {}
             days=archive.get("days",{}) if isinstance(archive,dict) else {}

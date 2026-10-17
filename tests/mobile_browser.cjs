@@ -50,6 +50,45 @@ async function run(){
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>document.querySelector('#sysStatus').textContent.includes('feed 已連線'),{timeout:15000});
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
+  // Weekend/holiday research is visible and dated, but no historical trade levels.
+  await page.locator('[data-go="attack"]').first().click();
+  await page.evaluate(()=>{
+    window.__weekendSystemBefore=system;
+    window.__weekendTrustedBefore=isTrustedFeed;
+    window.__weekendArchiveBefore=isRecentCloseObservation;
+    system={...system,
+      data_date:'2026-10-16',updated_at:'2026-10-16 17:10',
+      market:{mode:'今日收盤',stale:false,close_count:1954},
+      attack:[{code:'2344',name:'歷史範例股',sector:'測試族群',score:95,price:50,change_pct:5,
+        reason:'前次驗證收盤',entry_low:47,entry_high:50,defense:44,target1:55,target2:60}],
+      sectors:[{name:'測試族群',score:80,avg_pct:3.5,breadth:67,value_billion:20,leaders:[]}],
+      patterns:{data_date:'2026-10-16',status:'ready',coverage:1000,signals:{
+        breakout:[{code:'2344',name:'歷史範例股',score:90,price:50}],bollinger:[],vcp:[],sector:[]}}
+    };
+    if(!window.__weekendArchiveBefore(system,new Date('2026-10-17T23:29:00Z')))
+      throw Error('verified Friday close must be readable on Sunday');
+    if(window.__weekendTrustedBefore(system,new Date('2026-10-17T23:29:00Z')))
+      throw Error('Friday close must not be trusted as Sunday actionable quotes');
+    window.isTrustedFeed=()=>false;
+    window.isRecentCloseObservation=feed=>window.__weekendArchiveBefore(feed||system,new Date('2026-10-17T23:29:00Z'));
+    $('screenScore').value='0';
+    renderAttackScreener();renderSectors();renderPatternRadar();
+  });
+  assert.match(await page.locator('#attackList').innerText(),/歷史收盤觀察榜/);
+  assert.match(await page.locator('#attackList').innerText(),/2344 歷史範例股/);
+  assert.doesNotMatch(await page.locator('#attackList').innerText(),/參考區|防守 44|目標 55/);
+  assert.match(await page.locator('#sectorTop').innerText(),/2026-10-16.*歷史參考/);
+  await page.evaluate(()=>{system.market.stale=true;renderAttackScreener();});
+  assert.doesNotMatch(await page.locator('#attackList').innerText(),/歷史範例股/);
+  await page.evaluate(()=>{
+    system=window.__weekendSystemBefore;
+    window.isTrustedFeed=window.__weekendTrustedBefore;
+    window.isRecentCloseObservation=window.__weekendArchiveBefore;
+    $('screenScore').value='75';
+    renderSystem();
+  });
+  console.log('PASS weekend archive UI: historical names visible, live trade levels hidden, stale blocked');
+
   // The credential form must be usable on phones; verify without any real model call.
   await page.locator('[data-go="settings"]').first().click();
   await page.locator('#settings').waitFor({state:'visible'});
