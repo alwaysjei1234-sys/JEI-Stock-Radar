@@ -117,7 +117,7 @@
   </div>
   <details class="panel nativeEventPanel" id="nativeEventPanel"><summary>📋 Android 背景風險通知紀錄 ▾</summary>
     <div class="sub">Android 原生 WorkManager 每 15 分鐘提出週期工作要求，實際執行時間由系統與省電機制決定。需要允許系統通知；關閉 App 後不保證每一筆價格異動都能收到。</div>
-    <button class="btn" type="button" onclick="renderNativeAlertHistory()">更新通知紀錄</button>
+    <div class="actions" style="grid-template-columns:1fr 1fr;margin:9px 0 5px"><button class="btn" type="button" onclick="renderNativeAlertHistory()">更新通知紀錄</button><button class="btn primary" type="button" onclick="testNativeRiskNotification()">🔔 測試手機通知</button></div><div id="nativeTestStatus" class="sub" role="status" aria-live="polite">手機版可手動測試 Android 通知權限；不會觸發假行情或 LINE 推播。</div>
     <div id="nativeAlertHistory" class="nativeAlertHistory" aria-live="polite">讀取本機通知紀錄中…</div>
   </details>
   <div class="panel" id="pressurePanel"><div class="panelTitle">📉 今日弱勢訊號交叉驗證</div><div class="sub">優先顯示「價格貼近日低、族群同步偏弱、大盤風險共振」。僅標示可核對的價格與族群訊號；沒有賣單明細與量能基準，不推斷主力、大戶出貨。</div><div id="pressureStatus" class="sub" role="status" aria-live="polite">檢查交易所今日有效成交中…</div><div id="pressureList" class="pressureList" aria-live="polite"></div><div class="sub">資料源：交易所當日最後成交價、高低價、JEI 同日市場與族群快照；非逐筆即時資金流。</div></div>
@@ -461,6 +461,20 @@ function holdingAlertSignal(h,m,quality,prefs,observed,now=new Date(),feedOk=fal
  else if(peak>=cost*(1+prefs.gainPct/100)&&retracement>=prefs.retracePct)
   signal={type:'retrace',title:'獲利回吐警戒',detail:'自本機觀察高點 '+peak.toFixed(2)+' 回落 '+retracement.toFixed(2)+'%（設定 '+prefs.retracePct+'%）'};
  return {eligible:true,peak:{basisKey,peak},signal};
+}
+function testNativeRiskNotification(){
+ const status=$('nativeTestStatus');
+ if(!JEI_PRIVATE_APP||!nativeOk()||typeof JEINative.testRiskNotification!=='function'){
+  if(status)status.textContent='請安裝新版 JEI Android App 後使用；瀏覽器或舊版不支援原生通知測試。';
+  toast('此功能需要新版 Android App');return;
+ }
+ try{
+  const result=String(JEINative.testRiskNotification()||'Android 沒有回應').slice(0,180);
+  if(status)status.textContent=result;
+  renderNativeAlertHistory();
+ }catch(e){
+  if(status)status.textContent='Android 通知測試失敗，請確認系統通知權限';
+ }
 }
 function renderNativeAlertHistory(){
  if(!JEI_PRIVATE_APP)return;
