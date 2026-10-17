@@ -144,7 +144,7 @@ async function run(){
    window.JEINative={
     loadHoldings:()=>JSON.stringify([{code:'2330',name:'測試持股',cost:100,shares:1000}]),
     saveHoldings:()=>{},loadSetting:()=>'',saveSetting:()=>{},getAppVersion:()=>'test',
-    getAppVersionCode:()=>35,isOnline:()=>false,refreshSystem:()=>{},refreshMarketData:()=>{},
+    getAppVersionCode:()=>36,isOnline:()=>false,refreshSystem:()=>{},refreshMarketData:(codes)=>{window.__scanRequest=JSON.parse(codes);},
     loadRiskEvents:()=>JSON.stringify([{at:'2026-10-14 11:51',type:'holding',title:'JEI 持股盤中風險',detail:'測試 2330｜成交價已驗證'}]),
     testRiskNotification:()=>{window.__testedNativeNotice=true;return '已要求 Android 顯示測試通知，請查看手機通知欄';},
     getRiskNotificationEnabled:()=>window.__nativeRiskEnabled!==false,
@@ -153,7 +153,7 @@ async function run(){
    };
   });
   await privatePage.goto('file://'+path.join(ROOT,'app','src','main','assets','index.html'),{waitUntil:'domcontentloaded'});
-  assert.match(await privatePage.locator('#uiVer').innerText(),/3\.9\.11/,'offline asset includes latest notification diagnostic');
+  assert.match(await privatePage.locator('#uiVer').innerText(),/3\.9\.12/,'offline asset includes prioritised quotes and ETF support');
   await privatePage.evaluate(()=>{go('hold')});
   await privatePage.locator('#holdAlertPanel').waitFor({state:'visible'});
   assert.equal(await privatePage.locator('#alertLoss').inputValue(),'8','native watch alert defaults to 8% loss');
@@ -165,6 +165,20 @@ async function run(){
   assert.equal(await privatePage.evaluate(()=>window.__testedNativeNotice),true,'manual diagnostic reaches native bridge');
   assert.match(await privatePage.locator('#nativeTestStatus').innerText(),/已要求 Android 顯示測試通知/);
   console.log('PASS Android native notification manual diagnostic and visible feedback');
+  await privatePage.evaluate(()=>{
+    // Synthetic ETF, not any user's real private holdings.
+    holdings.push({code:'00988B',name:'合成測試債券 ETF',cost:16,shares:1000});
+    system.universe=Array.from({length:1900},(_,i)=>({code:String(1000+i)}));
+    system.attack=[{code:'2344',name:'測試候選',score:91,price:25}];
+    window.tradingWindow=()=>true;
+    refreshMarket();
+  });
+  const requested=await privatePage.evaluate(()=>window.__scanRequest);
+  assert.equal(requested[0],'2330','held shares must be prioritised');
+  assert.equal(requested[1],'00988B','held bond ETF must be prioritised');
+  assert.ok(requested.includes('2344'),'cloud selected candidates are also scanned');
+  assert.ok(requested.length<=240,'phone must not fetch all 1900 symbols');
+  console.log('PASS Android stock-first bounded quote requests preserve ETF symbol');
   await privatePage.locator('#alertSettings').evaluate(el=>el.open=true);
   await privatePage.locator('#alertEnabled').uncheck();
   await privatePage.getByRole('button',{name:'儲存本機警戒設定'}).click();
