@@ -35,12 +35,57 @@ check('Packaged Android offline fallback includes current risk and privacy gates
 check('Offline Android UI includes latest manual notification diagnostic without sharing portfolio',()=>{
  const offline=fs.readFileSync('app/src/main/assets/index.html','utf8');
  assert.ok(offline.includes('function testNativeRiskNotification()'));
- assert.ok(offline.includes('3.9.11-native-notification-diagnostics'));
+ assert.ok(offline.includes('3.9.12-priority-quotes-etf'));
  assert.ok(offline.includes('JEI_PRIVATE_APP'));
- assert.ok(html.includes('3.9.11-native-notification-diagnostics'));
+ assert.ok(html.includes('3.9.12-priority-quotes-etf'));
 });
 check('Android backups disabled',()=>assert.match(manifest,/android:allowBackup="false"/));
 check('WebView file-origin crossing disabled',()=>{assert.match(activity,/setAllowFileAccessFromFileURLs\(false\)/);assert.match(activity,/setAllowUniversalAccessFromFileURLs\(false\)/)});
+check('Private native quotes prioritise holdings and accept alphanumeric bond ETFs',()=>{
+ const {Script}=require('node:vm');
+ const src=html.match(/let liveScanCycle=0;\nfunction liveCodes\(\)\{[\s\S]*?(?=\nfunction taipeiDateParts)/)?.[0];
+ assert.ok(src,'mobile scan list must be extractable');
+ const candidates=Array.from({length:1980},(_,i)=>({code:String(1000+i)}));
+ const c={holdings:[{code:'00988B'},{code:'7711'}],system:{
+  universe:candidates,attack:[{code:'2344'},{code:'00988B'}],next:[],monster:[],
+  tomorrow_monster:[],future_monster:[],rotate:[],sectors:[{leaders:[{code:'3333'}]}]
+ }};
+ require('node:vm').runInNewContext(src+';globalThis.pick=liveCodes;',c);
+ const first=c.pick(),second=c.pick();
+ assert.equal(first[0],'00988B','ETF must be first in personal holdings scan');
+ assert.equal(first[1],'7711','ordinary shares next');
+ assert.ok(first.includes('2344')&&first.includes('3333'),'cloud attack and sector leaders are prioritised');
+ assert.ok(first.length<=240,'phone cannot request the full 1900-stock universe');
+ assert.ok(first.length>20,'limited rotating discovery still occurs');
+ assert.ok(second.some(x=>!first.includes(x)),'repeated scans rotate through further symbols');
+
+ const start=html.indexOf('function ingestMarket(j){'),end=html.indexOf('\nfunction liveItem(',start);
+ assert.ok(start>0&&end>start);
+ const ctx={market:{},liveScanReceived:0,lastMarketAt:'',taipeiDateParts:()=>({
+  year:'2026',month:'10',day:'19'
+ }),applyLiveRanks:()=>{ctx.ranksUpdated=true},renderHoldings:()=>{},renderUpdateStamp:()=>{},
+ holdingQuoteQuality:()=>({valid:true}),$:(id)=>({
+  classList:{toggle:()=>{}},set textContent(v){ctx.status=v}
+ })};
+ require('node:vm').runInNewContext(html.slice(start,end)+';globalThis.ingest=ingestMarket;',ctx);
+ ctx.ingest({msgArray:[
+  {c:'00988B',n:'測試 ETF',d:'20261019',z:'15.68',y:'15.1',t:'10:12:00'},
+  {c:'2330',n:'數字股票',d:'20261019',z:'120',y:'118',t:'10:12:00'},
+  {c:'00999B',d:'20261018',z:'20',y:'19',t:'10:12:00'}
+ ]});
+ assert.equal(ctx.market['00988B'].price,15.68);
+ assert.equal(ctx.market['00988B'].quoteKind,'last_trade');
+ assert.equal(ctx.market['2330'].price,120);
+ assert.equal(ctx.market['00999B'],undefined,'previous session ETF quote must be rejected');
+ assert.equal(ctx.ranksUpdated,true,'cloud shortlist is overlaid with fresh quotes');
+ assert.ok(!html.includes('scanLiveUniverse();renderHoldings();renderUpdateStamp()'),
+   'partial mobile sample cannot replace the broad-market cloud leaderboards');
+ const worker=fs.readFileSync('app/src/main/java/com/jei/stockradar/RiskWorker.java','utf8');
+ assert.ok(worker.includes('code.matches("[0-9]{4,6}[A-Za-z]?")'));
+ assert.ok(worker.includes('code.equalsIgnoreCase(h.optString("code", ""))'));
+ assert.ok(html.includes("window.location.reload()"),'web refresh UI must not be an inert button');
+});
+
 check('Stock screener and heatmap wired',()=>{assert.match(html,/function renderAttackScreener\(/);assert.match(html,/function renderSectorHeatmap\(/);assert.match(html,/renderSectors\(\);renderSectorHeatmap\(\)/)});
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]).filter(Boolean);const vm=require('node:vm');check('Inline JavaScript syntax',()=>{for(const code of scripts)new vm.Script(code)});
 
@@ -546,8 +591,8 @@ check('Android 3.9.9 native background worker rejects stale feeds, quote substit
  assert.ok(worker.includes('recordRiskEvent(prefs, "market"'));
  assert.ok(activity.includes('public String loadRiskEvents()'));
  assert.ok(activity.includes('public void setRiskNotificationEnabled(boolean enabled)'));
- assert.ok(gradle.includes('versionCode 35'));
- assert.ok(gradle.includes("versionName '3.9.11'"));
+ assert.ok(gradle.includes('versionCode 36'));
+ assert.ok(gradle.includes("versionName '3.9.12'"));
 });
 check('Native history UI escapes risk titles and syncs opt-out with Android Worker',()=>{
  assert.ok(html.includes('id="nativeAlertHistory"'));
