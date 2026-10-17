@@ -57,7 +57,10 @@ jobs:
         if: github.event_name == 'schedule'
         env:
           JEI_LINE_ENABLED: ${{ vars.JEI_LINE_ENABLED }}
-          JEI_LINE_ALERTS_ENABLED: ${{ vars.JEI_LINE_ALERTS_ENABLED }}
+          # The owner requested activation after the real LINE push test.
+          # Existing JEI_LINE_ENABLED remains the master explicit opt-in.
+          # Set JEI_LINE_ALERTS_ENABLED=false to disable intraday extras only.
+          JEI_LINE_ALERTS_ENABLED: ${{ vars.JEI_LINE_ENABLED == 'true' && vars.JEI_LINE_ALERTS_ENABLED != 'false' }}
           JEI_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.JEI_LINE_CHANNEL_ACCESS_TOKEN }}
           JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
         run: python -m scripts.send_line_alert
