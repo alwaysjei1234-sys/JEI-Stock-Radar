@@ -563,7 +563,7 @@ check('Native history UI escapes risk titles and syncs opt-out with Android Work
 
 check('Network recommendation success requires candidates',()=>assert.ok(py.includes('if not old_web_recommendations and old_web_status.get("ok"):')));
 
-check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=twse_today and tpex_today'));assert.ok(py.includes('if source_is_today and not market_open and now.hour >= 13:'))});
+check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=twse_today and tpex_today'));assert.ok(py.includes('if official_close_verified:')&&py.includes('and not market_open and now.hour*60+now.minute>=810'))});
 
 if(passed+failed<30){console.error('FAIL expected at least 30 independent checks');process.exitCode=1;}
 console.log(`JEI smoke summary: ${passed}/${passed+failed} passed (${Math.round(100*passed/(passed+failed))}%)`);
