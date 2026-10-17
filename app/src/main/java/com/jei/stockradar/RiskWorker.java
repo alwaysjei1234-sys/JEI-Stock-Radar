@@ -226,7 +226,7 @@ public class RiskWorker extends Worker {
             JSONObject holding = hs.optJSONObject(i);
             if (holding == null) continue;
             String code = holding.optString("code", "").trim();
-            if (!code.matches("[0-9]{4,6}")) continue;
+            if (!code.matches("[0-9]{4,6}[A-Za-z]?")) continue;
             if (query.length() > 0) query.append("|");
             query.append("tse_").append(code).append(".tw|otc_").append(code).append(".tw");
         }
@@ -248,7 +248,7 @@ public class RiskWorker extends Worker {
             JSONObject quote = quotes.optJSONObject(i);
             if (!trustedExecutedTrade(quote, now)) continue;
             String code = quote.optString("c", "").trim();
-            if (!code.matches("[0-9]{4,6}") || !checked.add(code)) continue;
+            if (!code.matches("[0-9]{4,6}[A-Za-z]?") || !checked.add(code)) continue;
             JSONObject holding = findHolding(hs, code);
             if (holding == null) continue;
             double cost = holding.optDouble("cost", 0);
@@ -323,7 +323,7 @@ public class RiskWorker extends Worker {
     private JSONObject findHolding(JSONArray hs, String code) {
         for (int i = 0; i < hs.length(); i++) {
             JSONObject h = hs.optJSONObject(i);
-            if (h != null && code.equals(h.optString("code", ""))) return h;
+            if (h != null && code.equalsIgnoreCase(h.optString("code", ""))) return h;
         }
         return null;
     }
