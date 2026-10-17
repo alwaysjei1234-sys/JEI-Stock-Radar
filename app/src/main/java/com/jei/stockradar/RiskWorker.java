@@ -85,6 +85,9 @@ public class RiskWorker extends Worker {
         JSONObject market = root.optJSONObject("market");
         if (market == null || market.optBoolean("stale", true) || !market.optBoolean("live_valid", false)
                 || !"盤中即時".equals(market.optString("mode", ""))) return false;
+        // Match the web and LINE coverage gate; sparse snapshots must not trigger background alerts.
+        Object liveCount = market.opt("live_count");
+        if (!(liveCount instanceof Number) || ((Number)liveCount).doubleValue() < 500) return false;
         String today = taipeiFormat("yyyy-MM-dd", now);
         if (!today.equals(root.optString("data_date", ""))) return false;
         String updated = root.optString("updated_at", "");
