@@ -2,6 +2,8 @@ package com.jei.stockradar;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -46,6 +48,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.ArrayList;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends Activity {
@@ -187,6 +193,55 @@ public class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 33
                 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 9103);
+        }
+    }
+
+    private String testRiskNotification() {
+        // Explicit manual diagnostic: never invent a market alert or send any LINE message.
+        try {
+            if (Build.VERSION.SDK_INT >= 33 &&
+                    checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+                return "尚未允許 Android 通知；請到手機設定開啟 JEI 通知權限";
+            NotificationManager nm = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+            if (nm == null || !nm.areNotificationsEnabled())
+                return "Android 系統通知已關閉；請到手機設定允許 JEI 通知";
+            if (Build.VERSION.SDK_INT >= 26) {
+                NotificationChannel channel = nm.getNotificationChannel("jei_risk");
+                if (channel == null || channel.getImportance() == NotificationManager.IMPORTANCE_NONE)
+                    return "JEI 風險通知頻道未開啟；請到手機設定開啟";
+            }
+            Intent launch = new Intent(this, MainActivity.class);
+            launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pi = PendingIntent.getActivity(this, 7399, launch,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            String title = "🔔 JEI Android 通知測試";
+            String detail = "這是你手動觸發的測試，不是行情異動，也不會發送 LINE 或下單。";
+            Notification notification = new Notification.Builder(this, "jei_risk")
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle(title)
+                    .setContentText(detail)
+                    .setStyle(new Notification.BigTextStyle().bigText(detail))
+                    .setContentIntent(pi)
+                    .setAutoCancel(true)
+                    .build();
+            nm.notify(7399, notification);
+            // Keep a clearly labelled local record, independent from live market alerts.
+            JSONArray prior = new JSONArray(prefs.getString("bg_alert_events", "[]"));
+            JSONArray history = new JSONArray();
+            for (int i = Math.max(0, prior.length() - 39); i < prior.length(); i++)
+                history.put(prior.opt(i));
+            SimpleDateFormat clock = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+            clock.setTimeZone(TimeZone.getTimeZone("Asia/Taipei"));
+            JSONObject entry = new JSONObject();
+            entry.put("at", clock.format(new Date()));
+            entry.put("type", "test");
+            entry.put("title", title);
+            entry.put("detail", detail);
+            history.put(entry);
+            prefs.edit().putString("bg_alert_events", history.toString()).apply();
+            return "已要求 Android 顯示測試通知，請查看手機通知欄";
+        } catch (Exception e) {
+            return "Android 通知測試失敗，請確認 APP 通知權限與系統設定";
         }
     }
 
@@ -480,6 +535,7 @@ public class MainActivity extends Activity {
         @JavascriptInterface public String loadHoldings() {
             return prefs.getString("holdings", "");
         }
+        @JavascriptInterface public String testRiskNotification() { return MainActivity.this.testRiskNotification(); }
         @JavascriptInterface public String loadRiskEvents() {
             return prefs.getString("bg_alert_events", "[]");
         }
