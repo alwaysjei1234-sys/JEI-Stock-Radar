@@ -32,6 +32,13 @@ check('Packaged Android offline fallback includes current risk and privacy gates
  assert.ok(scripts.length,'emergency UI needs inline JS');
  for(const [,code] of scripts) new (require('node:vm').Script)(code);
 });
+check('Offline Android UI includes latest manual notification diagnostic without sharing portfolio',()=>{
+ const offline=fs.readFileSync('app/src/main/assets/index.html','utf8');
+ assert.ok(offline.includes('function testNativeRiskNotification()'));
+ assert.ok(offline.includes('3.9.11-native-notification-diagnostics'));
+ assert.ok(offline.includes('JEI_PRIVATE_APP'));
+ assert.ok(html.includes('3.9.11-native-notification-diagnostics'));
+});
 check('Android backups disabled',()=>assert.match(manifest,/android:allowBackup="false"/));
 check('WebView file-origin crossing disabled',()=>{assert.match(activity,/setAllowFileAccessFromFileURLs\(false\)/);assert.match(activity,/setAllowUniversalAccessFromFileURLs\(false\)/)});
 check('Stock screener and heatmap wired',()=>{assert.match(html,/function renderAttackScreener\(/);assert.match(html,/function renderSectorHeatmap\(/);assert.match(html,/renderSectors\(\);renderSectorHeatmap\(\)/)});
@@ -517,6 +524,14 @@ check('Android 3.9.9 native background worker rejects stale feeds, quote substit
  assert.ok(worker.includes('trustedLiveFeed(root, now)'));
  assert.ok(worker.includes('trustedExecutedTrade(quote, now)'));
  assert.ok(worker.includes('market.optBoolean("stale", true)'));
+ assert.ok(worker.includes('market.opt("live_count")'),'background risk must inspect market breadth');
+ assert.ok(worker.includes('((Number)liveCount).doubleValue() < 500'),'incomplete live snapshots cannot trigger Android risk events');
+ assert.ok(activity.includes('public String testRiskNotification()'),'Android exposes a user-triggered notification diagnostic');
+ assert.ok(activity.includes('nm.areNotificationsEnabled()'),'test notification respects OS notification setting');
+ assert.ok(activity.includes('entry.put("type", "test")'),'test history never masquerades as a true stock alert');
+ assert.ok(html.includes('onclick="testNativeRiskNotification()"'),'mobile hold page has notification diagnostic control');
+ assert.ok(html.includes('id="nativeTestStatus"'),'manual notification feedback is visible');
+
  assert.ok(worker.includes('"盤中即時".equals(market.optString("mode", ""))'));
  assert.ok(worker.includes('lag <= 35L * 60L * 1000L'));
  assert.ok(worker.includes('lag <= 8L * 60L * 1000L'));
@@ -531,8 +546,8 @@ check('Android 3.9.9 native background worker rejects stale feeds, quote substit
  assert.ok(worker.includes('recordRiskEvent(prefs, "market"'));
  assert.ok(activity.includes('public String loadRiskEvents()'));
  assert.ok(activity.includes('public void setRiskNotificationEnabled(boolean enabled)'));
- assert.ok(gradle.includes('versionCode 34'));
- assert.ok(gradle.includes("versionName '3.9.10'"));
+ assert.ok(gradle.includes('versionCode 35'));
+ assert.ok(gradle.includes("versionName '3.9.11'"));
 });
 check('Native history UI escapes risk titles and syncs opt-out with Android Worker',()=>{
  assert.ok(html.includes('id="nativeAlertHistory"'));

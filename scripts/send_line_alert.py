@@ -47,14 +47,14 @@ def build_alert(feed, now):
         return None
     risk = feed.get("risk") or {}
     score = risk.get("score")
-    if isinstance(score, bool) or not isinstance(score, (int, float)):
+    if isinstance(score, bool) or not isinstance(score, (int, float)) or not 0 <= score <= 100:
         return None
     day = now.astimezone(TAIPEI).date().isoformat()
     note = "交易所盤中行情已驗證；提醒非即時下單指示，勿憑此訊息追價。"
     reasons = [str(v)[:125] for v in (risk.get("reasons") or [])[:3] if isinstance(v, str)]
     if risk.get("level") == "red" and score >= 75:
         return {
-            "date": day, "edition": "intraday", "status": "ready",
+            "date": day, "edition": "intraday_risk", "status": "ready",
             "title": "🔴 JEI 台股盤中高風險警報",
             "note": note,
             "blocks": [
@@ -80,7 +80,7 @@ def build_alert(feed, now):
     if not picks:
         return None
     return {
-        "date": day, "edition": "intraday", "status": "ready",
+        "date": day, "edition": "intraday_momentum", "status": "ready",
         "title": "🔥 JEI 盤中強勢股觀察",
         "note": note,
         "blocks": [
@@ -109,13 +109,14 @@ def main():
     if not report:
         print("盤中異動未達高可信警戒門檻，或有效盤中行情不足；沒有發送")
         return
-    ok, msg = can_send(report, "intraday", now, "true", token, recipient)
+    edition = report["edition"]
+    ok, msg = can_send(report, edition, now, "true", token, recipient)
     if not ok:
         print("發送條件不合格："+msg)
         return
-    # One deterministic LINE retry key per calendar day, even if the workflow
-    # runs every 15 minutes; higher-priority later alerts will not spam.
-    print(push(report, "intraday", token, recipient))
+    # Keep independent daily de-duplication buckets: a momentum watch must NOT
+    # silence a later crash warning. At most one of each edition per day.
+    print(push(report, edition, token, recipient))
 
 
 if __name__ == "__main__":
