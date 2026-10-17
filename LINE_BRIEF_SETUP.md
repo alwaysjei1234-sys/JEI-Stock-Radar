@@ -42,11 +42,11 @@
 - 沒有筆電也能使用本次 **雲端 GitHub＋手機網頁**，但 LINE 官方帳號與 Secret 仍須本人設定。
 
 
-## 盤中大逃殺／飆股 LINE 警報（獨立選配；預設關閉）
+## 盤中大逃殺／飆股 LINE 警報（已依使用者指示啟用）
 
 2026/10/17 新增 `scripts/send_line_alert.py`，由原本的 `Update JEI Market Feed` 排程（交易日大約每 15 分鐘）**在行情資料成功更新後**檢查。
 
-- **啟用方式：** 已完成上面的 LINE Token／User ID／總開關後，另外到 GitHub → Settings → Secrets and variables → Actions → **Variables** 新增 `JEI_LINE_ALERTS_ENABLED=true`。未新增前**完全不會**發送盤中警報。
+- **啟用方式（2026/10/18）：** 在使用者確認真實 LINE 測試成功並要求「開始」後，GitHub 正式工作流程將盤中通知與已存在的 `JEI_LINE_ENABLED=true` **總開關**連動，不必再次新增 Variables。預設仍須有已設定的官方 LINE Token、收件者與總開關，且只有可信行情與條件達標才會發出。若要**只關閉盤中額外推播**（保留早報、復盤），到 GitHub → Settings → Secrets and variables → Actions → Variables 設定 `JEI_LINE_ALERTS_ENABLED=false`；也可以將 `JEI_LINE_ENABLED=false` 關閉全部 LINE 推播。
 - **資料條件：** 台灣交易日 09:00–13:29、今日市場資料、至少 500 檔有效盤中成交、系統時間戳不超過 35 分鐘、`live_valid=true`、`stale=false`；少一個條件即停止。
 - **大逃殺警戒：** JEI 市場 `risk.level=red` 且風險分數至少 75，傳送含來源日／市場風險原因的提醒；不直接建議或執行委託。
 - **強勢股觀察：** 大盤風險分數低於 60，且已驗證的盤中「突然妖股」榜內出現評分至少 95、漲幅 4%–10%、有正價格的股票，才發送最多 3 檔研究觀察；不能理解為隔日漲停保證。
