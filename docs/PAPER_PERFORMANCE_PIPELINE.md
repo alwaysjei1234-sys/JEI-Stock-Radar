@@ -52,3 +52,9 @@ python -m scripts.paper_leaderboard --report /tmp/jei-strict-report.json --outpu
 - 來源欄位只是操作人員聲明，**不是獨立驗證**。嚴格報告預設 `verified_by_system=false`，排行榜不顯示未核實報酬。待官方行情擷取、來源校驗及調整價格程序完成後才能提供可稽核的 `verified_by_system=true`。
 - 正式排行榜以至少 10 筆成熟且有基準比較的訊號作為排名門檻；其他樣本只顯示累積數量，不作優劣宣稱。
 - 注意：此功能目前輸出 JSON，尚未整合到 `remote/cash.html` 的手機介面。
+
+## 上市／上櫃官方行情接入進度（2026-10-18）
+- 上市：`scripts/fetch_twse_history.py` 可請求 TWSE STOCK_DAY 月份 JSON；`scripts/parse_twse_stock_day.py` 解析 ROC 日期及收盤價；`scripts/merge_twse_closes.py` 合併不同月份並拒絕重複日期。
+- 上櫃：`scripts/parse_tpex_daily_close.py` 支援帶明確 `fields` 與 `aaData`／`data` 的歷史個股收盤 JSON。**尚未接入 TPEx 即時網路請求，也未用實際回應驗證格式。**
+- 以上資料均需補足證交所與櫃買中心的真實端到端抓取、來源校驗、交易日曆、除權息調整，以及可公開再利用的授權評估；不能僅憑來源字串將 `verified_by_system` 設為 true。
+- GitHub Actions 的 Python 測試由 `.github/workflows/acceptance-feed.yml` 執行。若 Vercel 因部署額度限制而失敗，這與 Python 測試結果是不同問題，必須分別排查。
