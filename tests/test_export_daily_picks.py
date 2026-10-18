@@ -18,6 +18,14 @@ class DailyPickExportTests(unittest.TestCase):
         rows=extract(feed,limit=2)["picks"]
         self.assertEqual([p["code"] for p in rows],["1","2"])
 
+    def test_skip_malformed_feed_rows(self):
+        feed={"data_date":"2026-10-16","attack":[None,42,{"code":"2330"}]}
+        self.assertEqual([p["code"] for p in extract(feed)["picks"]],["2330"])
+
+    def test_reject_boolean_limit(self):
+        with self.assertRaises(ValueError):
+            extract({"data_date":"2026-10-16"},limit=True)
+
     def test_reject_invalid_feed(self):
         with self.assertRaises(ValueError):
             extract({"data_date":"2026-10-16","monster":{}})
