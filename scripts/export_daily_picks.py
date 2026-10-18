@@ -11,7 +11,7 @@ from pathlib import Path
 FEED_COHORTS = {"attack": "momentum", "monster": "monster", "future_monster": "pre_breakout"}
 
 def extract(feed, limit=10):
-    if not isinstance(limit, int) or limit < 1:
+    if isinstance(limit,bool) or not isinstance(limit, int) or limit < 1:
         raise ValueError("limit must be positive integer")
     as_of = date.fromisoformat(feed["data_date"]).isoformat()
     picks = []
@@ -21,6 +21,8 @@ def extract(feed, limit=10):
             raise ValueError(f"{feed_key} must be a list")
         seen = set()
         for row in rows:
+            if not isinstance(row,dict):
+                continue
             code = str(row.get("code", "")).strip()
             if not code or code in seen:
                 continue
