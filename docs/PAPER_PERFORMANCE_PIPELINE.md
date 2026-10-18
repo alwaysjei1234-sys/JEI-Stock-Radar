@@ -33,3 +33,12 @@ python -m scripts.paper_report --picks /tmp/jei-picks.json --prices /path/to/ver
 - **feed.price 是當時 feed 的價格觀測，不是已經獨立查證的官方收盤價**。不應直接將它宣稱為已核實的績效行情；需要與 TWSE/TPEX 官方歷史資料對照。
 - `data/feed_closes` 僅覆蓋有出現在推薦區塊的股票，不是完整市場每日價格，因此不能單靠此檔案直接完成長期績效。
 - 已提交的定時任務不保證 GitHub Actions 已實際執行；請查閱 Actions 執行紀錄和當日快照是否產生。
+
+## 已新增離線端到端診斷
+```bash
+python -m scripts.collect_feed_closes --directory data/feed_closes --output /tmp/jei-feed-price-series.json
+python -m scripts.run_archived_paper_pipeline --picks-dir data/pick_snapshots --feed-prices-dir data/feed_closes --output /tmp/jei-diagnostic-report.json
+```
+此流程串起原始推薦快照 → feed 股價快照 → 3/7/15/30/60 日績效統計，報告包含 `data_quality.official_close_verified=false`。**此報告僅供驗證資料管線，不得宣稱為官方價格驗證的真實績效。**
+
+當 feed 未覆蓋某檔股票的某個交易日，價格序列不完整；只有另行提供完整且可信的交易日曆，才可嚴格判斷缺漏的進出場日期。正式績效報告須先接入證交所／櫃買中心官方歷史行情與指數日曆。
