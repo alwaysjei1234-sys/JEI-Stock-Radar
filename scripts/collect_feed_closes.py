@@ -5,20 +5,27 @@ These are feed observations, NOT independently verified official closes.
 import argparse
 import json
 from pathlib import Path
+from datetime import date
+from math import isfinite
 
 def collect(directory):
     series = {}
     for path in sorted(Path(directory).glob("????-??-??.json")):
         snapshot = json.loads(path.read_text(encoding="utf-8"))
-        day = snapshot["data_date"]
+        day = date.fromisoformat(snapshot["data_date"]).isoformat()
         if path.stem != day:
             raise ValueError(f"snapshot date/filename mismatch: {path}")
         if "official close not independently confirmed" not in snapshot.get("source", ""):
             raise ValueError(f"unrecognized price provenance: {path}")
+        if not isinstance(snapshot.get("prices"),dict):
+            raise ValueError(f"invalid price map: {path}")
         for code, observation in snapshot["prices"].items():
             if observation["date"] != day:
                 raise ValueError(f"price date mismatch: {path} {code}")
-            series.setdefault(code, []).append({"date": day, "close": observation["close"]})
+            close=observation["close"]
+            if isinstance(close,bool) or not isinstance(close,(int,float)) or not isfinite(close) or close<=0:
+                raise ValueError(f"invalid observed close: {path} {code}")
+            series.setdefault(code, []).append({"date": day, "close": close})
     return series
 
 def main():
