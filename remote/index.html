@@ -600,15 +600,15 @@ function renderHoldings(){
 }
 function renderHomeQuick(){
  const risk=$('quickRisk'),hold=$('quickHold'),attack=$('quickAttack');if(!risk||!hold||!attack)return;
- const trusted=isTrustedFeed(),r=system.risk||{};
- risk.textContent=trusted?'大盤：'+(r.label||'待判讀')+'｜風險 '+(r.score??'--')+'/100':'大盤：今日行情待驗證，先不採納買進訊號';
+ const trusted=isTrustedFeed(),historical=!trusted&&isRecentCloseObservation(),r=system.risk||{};
+ risk.textContent=trusted?'大盤：'+(r.label||'待判讀')+'｜風險 '+(r.score??'--')+'/100':historical?'前次收盤（'+String(system.data_date||'')+'）：'+(r.label||'待判讀')+'｜風險 '+(r.score??'--')+'/100（非即時）':'大盤：有效行情待更新，暫停即時買進訊號';
  if(!JEI_PRIVATE_APP){hold.textContent='持股：僅在 Android App 本機查看';}
  else{
   const triage=buildPrivatePortfolioTriage(),urgent=triage.filter(x=>['defense','profit'].includes(x.category.id)),pending=triage.filter(x=>x.category.id==='pending');
   hold.textContent=!holdings.length?'持股：尚未匯入持股':urgent.length?'持股：'+urgent.length+' 檔優先檢查｜'+urgent.slice(0,2).map(x=>x.h.name).join('、'):pending.length===triage.length?'持股：等待今日有效資料，暫停買賣判讀':'持股：'+(triage.length-pending.length)+' 檔已分級｜優先防守訊號 0 檔';
  }
- const top=trusted&&Array.isArray(system.attack)?system.attack[0]:null;
- attack.textContent=top?'主攻觀察：'+String(top.code||'')+' '+String(top.name||'')+'｜JEI '+String(top.score??'--')+'分':'主攻：今日有效名單尚未產生';
+ const top=(trusted||historical)&&Array.isArray(system.attack)?system.attack[0]:null;
+ attack.textContent=top?(historical?'前次收盤主攻觀察：':'主攻觀察：')+String(top.code||'')+' '+String(top.name||'')+'｜JEI '+String(top.score??'--')+'分':'主攻：有效名單尚未產生';
 }
 function exportHoldingsData(){
  const code='JEI-HOLDINGS:'+holdings.map(h=>[h.code,h.name,h.cost,h.shares].join(',')).join(';');
