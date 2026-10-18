@@ -17,8 +17,9 @@ def build(pick_dir,price_dir):
     report["data_quality"]["verified_by_system"]=False
     board=leaderboard(report)
     board["data_date"]=max((p["as_of"] for p in report["picks"]),default=None)
-    board["price_data_date"]=max((row["date"] for rows in collect(price_dir).values() for row in rows),default=None)
-    audit=audit_snapshot_dates(load_snapshots(pick_dir),collect(price_dir))
+    observations=collect(price_dir)
+    board["price_data_date"]=max((row["date"] for rows in observations.values() for row in rows),default=None)
+    audit=audit_snapshot_dates(load_snapshots(pick_dir),observations)
     board["data_quality"]={"price_source":"JEI feed snapshots",
                            "unresolved_future_prices":audit["unresolved"],
                            "verified_by_system":False,
