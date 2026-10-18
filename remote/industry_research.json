@@ -1,0 +1,282 @@
+{
+  "schema": 1,
+  "mode": "dated_industry_primary_source_evidence",
+  "as_of": "2026-10-18",
+  "freshness_days": 365,
+  "research_evidence_only": true,
+  "not_broker_rating": true,
+  "method": "逐篇人工核對公開原始研究摘要與發表日期，同機構文章不重複計為獨立機構；非自動購買或下載付費報告。",
+  "themes": {
+    "光通訊/CPO": {
+      "focus": "800G/1.6T、光模組、CPO、光學對準與測試",
+      "risks_to_verify": "出貨速度、客戶驗證、光引擎良率、資本支出循環",
+      "evidence_level": "單一研究機構佐證",
+      "independent_institutions": 1,
+      "institutions": [
+        "TrendForce"
+      ],
+      "source_articles": 4,
+      "sources": [
+        {
+          "id": "trendforce-cpo-test-20261013",
+          "organization": "TrendForce",
+          "date": "2026-10-13",
+          "title": "光電測試平台成CPO量產關鍵",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20261013-13265.html",
+          "sectors": [
+            "光通訊/CPO",
+            "半導體設備/測試"
+          ],
+          "evidence": "研究指出CPO量產需整合光學與電性測試，光電測試平台及對位流程是瓶頸",
+          "caveat": "量產導入、測試成本和良率仍有不確定性",
+          "type": "公開研究摘要",
+          "days_old": 5
+        },
+        {
+          "id": "trendforce-cpo-ship-20260727",
+          "organization": "TrendForce",
+          "date": "2026-07-27",
+          "title": "NVIDIA、Broadcom CPO交換器小量出貨",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20260727-13150.html",
+          "sectors": [
+            "光通訊/CPO"
+          ],
+          "evidence": "部分CPO交換器已進入小量供應，光引擎與先進封裝產能為擴產門檻",
+          "caveat": "小量出貨不等於整體供應鏈都已大規模商轉",
+          "type": "公開研究摘要",
+          "days_old": 83
+        },
+        {
+          "id": "trendforce-optical-20260420",
+          "organization": "TrendForce",
+          "date": "2026-04-20",
+          "title": "2026年AI光收發模組市場規模預測",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20260420-13016.html",
+          "sectors": [
+            "光通訊/CPO"
+          ],
+          "evidence": "預估2026年AI光收發模組市場約260億美元，供應鏈面臨EML等零件產能限制",
+          "caveat": "市場規模成長不表示所有台廠能取得訂單",
+          "type": "公開研究摘要",
+          "days_old": 181
+        },
+        {
+          "id": "trendforce-ai-20251127",
+          "organization": "TrendForce",
+          "date": "2025-11-27",
+          "title": "2026年AI重構科技新格局",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20251127-12803.html",
+          "sectors": [
+            "AI伺服器/散熱",
+            "記憶體/儲存",
+            "光通訊/CPO"
+          ],
+          "evidence": "看好AI機櫃、液冷、HBM與高速互連的產業採用趨勢",
+          "caveat": "較早期的預測需以後續出貨及資本支出驗證",
+          "type": "公開研究摘要",
+          "days_old": 325
+        }
+      ],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "記憶體/儲存": {
+      "focus": "HBM/DRAM供需、先進記憶體設備",
+      "risks_to_verify": "供給擴充、報價循環、HBM排擠一般DRAM",
+      "evidence_level": "多機構產業研究佐證",
+      "independent_institutions": 2,
+      "institutions": [
+        "SEMI",
+        "TrendForce"
+      ],
+      "source_articles": 3,
+      "sources": [
+        {
+          "id": "trendforce-hbm-20260728",
+          "organization": "TrendForce",
+          "date": "2026-07-28",
+          "title": "AI Wave & DRAM Deficits: 2027 Global DRAM Outlook（公開摘要）",
+          "url": "https://www.trendforce.com/research/download/RP260728GY",
+          "sectors": [
+            "記憶體/儲存"
+          ],
+          "evidence": "公開目錄及摘要指出HBM與伺服器記憶體需求成長，供給擴張仍有設備交期限制",
+          "caveat": "未取得付費全文，僅引用公開摘要；價格高度週期性",
+          "type": "付費報告之公開摘要",
+          "days_old": 82
+        },
+        {
+          "id": "semi-equipment-20260715",
+          "organization": "SEMI",
+          "date": "2026-07-15",
+          "title": "2028年半導體設備市場預測",
+          "url": "https://www.semi.org/zh/node/173816",
+          "sectors": [
+            "半導體設備/測試",
+            "記憶體/儲存",
+            "AI伺服器/散熱"
+          ],
+          "evidence": "2026年全球半導體設備市場預估1659億美元，2028年約2295億美元；成長動能包括HBM、測試與先進封裝",
+          "caveat": "全球設備市場預測並非台灣個別設備公司營收保證",
+          "type": "公開產業組織預測",
+          "days_old": 95
+        },
+        {
+          "id": "trendforce-ai-20251127",
+          "organization": "TrendForce",
+          "date": "2025-11-27",
+          "title": "2026年AI重構科技新格局",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20251127-12803.html",
+          "sectors": [
+            "AI伺服器/散熱",
+            "記憶體/儲存",
+            "光通訊/CPO"
+          ],
+          "evidence": "看好AI機櫃、液冷、HBM與高速互連的產業採用趨勢",
+          "caveat": "較早期的預測需以後續出貨及資本支出驗證",
+          "type": "公開研究摘要",
+          "days_old": 325
+        }
+      ],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "半導體設備/測試": {
+      "focus": "先進製程、先進封裝、測試設備與光電測試",
+      "risks_to_verify": "設備交期、導入良率、客戶資本支出修正",
+      "evidence_level": "多機構產業研究佐證",
+      "independent_institutions": 2,
+      "institutions": [
+        "SEMI",
+        "TrendForce"
+      ],
+      "source_articles": 2,
+      "sources": [
+        {
+          "id": "trendforce-cpo-test-20261013",
+          "organization": "TrendForce",
+          "date": "2026-10-13",
+          "title": "光電測試平台成CPO量產關鍵",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20261013-13265.html",
+          "sectors": [
+            "光通訊/CPO",
+            "半導體設備/測試"
+          ],
+          "evidence": "研究指出CPO量產需整合光學與電性測試，光電測試平台及對位流程是瓶頸",
+          "caveat": "量產導入、測試成本和良率仍有不確定性",
+          "type": "公開研究摘要",
+          "days_old": 5
+        },
+        {
+          "id": "semi-equipment-20260715",
+          "organization": "SEMI",
+          "date": "2026-07-15",
+          "title": "2028年半導體設備市場預測",
+          "url": "https://www.semi.org/zh/node/173816",
+          "sectors": [
+            "半導體設備/測試",
+            "記憶體/儲存",
+            "AI伺服器/散熱"
+          ],
+          "evidence": "2026年全球半導體設備市場預估1659億美元，2028年約2295億美元；成長動能包括HBM、測試與先進封裝",
+          "caveat": "全球設備市場預測並非台灣個別設備公司營收保證",
+          "type": "公開產業組織預測",
+          "days_old": 95
+        }
+      ],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "AI伺服器/散熱": {
+      "focus": "AI機櫃需求、資料中心液冷、高密度算力",
+      "risks_to_verify": "機櫃出貨實績、單位價值、訂單集中與液冷滲透",
+      "evidence_level": "多機構產業研究佐證",
+      "independent_institutions": 2,
+      "institutions": [
+        "SEMI",
+        "TrendForce"
+      ],
+      "source_articles": 2,
+      "sources": [
+        {
+          "id": "semi-equipment-20260715",
+          "organization": "SEMI",
+          "date": "2026-07-15",
+          "title": "2028年半導體設備市場預測",
+          "url": "https://www.semi.org/zh/node/173816",
+          "sectors": [
+            "半導體設備/測試",
+            "記憶體/儲存",
+            "AI伺服器/散熱"
+          ],
+          "evidence": "2026年全球半導體設備市場預估1659億美元，2028年約2295億美元；成長動能包括HBM、測試與先進封裝",
+          "caveat": "全球設備市場預測並非台灣個別設備公司營收保證",
+          "type": "公開產業組織預測",
+          "days_old": 95
+        },
+        {
+          "id": "trendforce-ai-20251127",
+          "organization": "TrendForce",
+          "date": "2025-11-27",
+          "title": "2026年AI重構科技新格局",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20251127-12803.html",
+          "sectors": [
+            "AI伺服器/散熱",
+            "記憶體/儲存",
+            "光通訊/CPO"
+          ],
+          "evidence": "看好AI機櫃、液冷、HBM與高速互連的產業採用趨勢",
+          "caveat": "較早期的預測需以後續出貨及資本支出驗證",
+          "type": "公開研究摘要",
+          "days_old": 325
+        }
+      ],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "PCB/載板": {
+      "focus": "高速運算相關載板與PCB",
+      "risks_to_verify": "高階材料升級、產能良率、業者營收確認",
+      "evidence_level": "研究證據不足",
+      "independent_institutions": 0,
+      "institutions": [],
+      "source_articles": 0,
+      "sources": [],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "航運": {
+      "focus": "運價、船舶供需與運輸循環",
+      "risks_to_verify": "運價指數、船舶供給、地緣政治與消費需求",
+      "evidence_level": "研究證據不足",
+      "independent_institutions": 0,
+      "institutions": [],
+      "source_articles": 0,
+      "sources": [],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    }
+  },
+  "sector_order": [
+    "記憶體/儲存",
+    "AI伺服器/散熱",
+    "半導體設備/測試",
+    "光通訊/CPO",
+    "PCB/載板",
+    "航運"
+  ],
+  "source_registry": "research_sources.json",
+  "updated_at": "2026-10-18 08:00"
+}
