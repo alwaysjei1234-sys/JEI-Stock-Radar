@@ -82,8 +82,8 @@ def freeze_picks(feed, prices, date, origin="scheduled_close"):
             except (TypeError, ValueError):
                 continue
             # The recorded recommendation must agree with the official archive.
-            if (not math.isfinite(shown) or not math.isfinite(score) or
-                    shown <= 0 or abs(shown / price - 1) > 0.005 if price else True):
+            if (price is None or not math.isfinite(shown) or not math.isfinite(score)
+                    or shown <= 0 or abs(shown / price - 1) > 0.005):
                 continue
             seen.add(code)
             frozen.append({
@@ -132,6 +132,12 @@ def compile_report(frozen, archive, updated_at):
                 continue
             closes = [quote(days_data[d],p["code"]) for d in days[origin_idx+1:final_idx+1]]
             close_returns = [(c/first-1)*100 for c in closes if c is not None]
+            if len(close_returns) != horizon:
+                progression.append({"trading_days":horizon, "status":"missing_price",
+                                    "end_day":last_day,
+                                    "observed_closes":len(close_returns),
+                                    "expected_closes":horizon})
+                continue
             progression.append({
                 "trading_days":horizon, "status":"complete", "end_day":last_day,
                 "end_close":last_price, "gross_return_pct":round((last_price/first-1)*100,3),
@@ -207,7 +213,15 @@ def update(feed, archive, prior, now):
                and 0 <= (local.date()-datetime.strptime(asof,"%Y-%m-%d").date()).days <= 7
                if re.fullmatch(r"\d{4}-\d{2}-\d{2}",asof) else False)
     if asof==today or bootstrap:
-        if close_verified(feed,archive,asof):
+        stamp = None
+        try:
+            stamp = datetime.strptime(str(feed.get("updated_at") or ""),
+                                      "%Y-%m-%d %H:%M").replace(tzinfo=TZ)
+        except (ValueError, TypeError):
+            pass
+        # Prevent a future-dated feed from being captured before the session.
+        if (stamp is not None and stamp <= local and
+                close_verified(feed,archive,asof)):
             if not any(x.get("day")==asof for x in stored):
                 origin="verified_archive_bootstrap" if bootstrap and asof!=today else origin
                 new=freeze_picks(feed,days[asof],asof,origin)
@@ -228,7 +242,7 @@ def main():
     prior=json.loads(PICKS.read_text(encoding="utf-8")) if PICKS.exists() else {
         "schema":1,"mode":"immutable_asof_pick_archive","picks":[]}
     ledger,report,captured=update(feed,archive,prior,now)
-    if captured:
+    if captured or not PICKS.exists():
         PICKS.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     # Do not overwrite identical daily report outside of a new official close.
     if captured or not REPORT.exists() or json.loads(REPORT.read_text(encoding="utf-8")).get("latest_official_day")!=report["latest_official_day"]:
