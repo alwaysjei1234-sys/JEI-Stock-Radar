@@ -118,7 +118,7 @@ const SYSTEM = `你是 JEI 台股投資分析會診成員。你會收到 JEI 的
 7. 多 AI 會診時要獨立判斷，不迎合其他模型。若不確定，明確寫出不確定因素。`;
 
 function userPrompt(body){
-  const history=(body.history||[]).slice(-8).map(x=>`${x.role}: ${textOf(x.content,1000)}`).join("\n");
+  const history=(Array.isArray(body.history)?body.history:[]).slice(-8).filter(x=>x && typeof x==="object").map(x=>`${x.role==="assistant"?"assistant":"user"}: ${textOf(x.content,1000)}`).join("\n");
   return `使用者問題：${textOf(body.question,2800)}
 
 JEI 市場/持股資料：
