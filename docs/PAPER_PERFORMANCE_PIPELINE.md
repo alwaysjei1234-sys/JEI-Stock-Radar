@@ -42,3 +42,13 @@ python -m scripts.run_archived_paper_pipeline --picks-dir data/pick_snapshots --
 此流程串起原始推薦快照 → feed 股價快照 → 3/7/15/30/60 日績效統計，報告包含 `data_quality.official_close_verified=false`。**此報告僅供驗證資料管線，不得宣稱為官方價格驗證的真實績效。**
 
 當 feed 未覆蓋某檔股票的某個交易日，價格序列不完整；只有另行提供完整且可信的交易日曆，才可嚴格判斷缺漏的進出場日期。正式績效報告須先接入證交所／櫃買中心官方歷史行情與指數日曆。
+
+## 策略排行榜與嚴格行情輸入
+```bash
+python -m scripts.validated_paper_report --input /path/to/official-prices.json --picks /tmp/jei-picks.json --output /tmp/jei-strict-report.json
+python -m scripts.paper_leaderboard --report /tmp/jei-strict-report.json --output /tmp/jei-leaderboard.json
+```
+- `validated_paper_report` 要求明確來源、每日股價為正且有限、交易日不可重複、必須附上基準指數交易日曆。
+- 來源欄位只是操作人員聲明，**不是獨立驗證**。嚴格報告預設 `verified_by_system=false`，排行榜不顯示未核實報酬。待官方行情擷取、來源校驗及調整價格程序完成後才能提供可稽核的 `verified_by_system=true`。
+- 正式排行榜以至少 10 筆成熟且有基準比較的訊號作為排名門檻；其他樣本只顯示累積數量，不作優劣宣稱。
+- 注意：此功能目前輸出 JSON，尚未整合到 `remote/cash.html` 的手機介面。
