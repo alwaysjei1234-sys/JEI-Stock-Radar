@@ -207,6 +207,20 @@ async function run(){
   await privateContext.close();
   console.log('PASS offline Android bundled UI, private risk alerts and official-close suppression');
 
+  await page.goto(base+'industry_research.html',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('來源審核基準日'),{timeout:12000});
+  assert.match(await page.locator('h1').innerText(),/未來主流產業/);
+  assert.match(await page.locator('#themes').innerText(),/記憶體\/儲存/);
+  assert.match(await page.locator('#themes').innerText(),/多機構產業研究佐證/);
+  assert.match(await page.locator('#themes').innerText(),/單一研究機構佐證/);
+  assert.match(await page.locator('#themes').innerText(),/研究證據不足/);
+  assert.match(await page.locator('#themes').innerText(),/產業展望仍未完成逐家公司基本面驗證/);
+  assert.ok((await page.locator('#themes a[href^="https://"]').count())>=5,
+            'research scorecard must have direct dated primary source links');
+  assert.equal(await page.locator('#themes script').count(),0,
+               'research report source strings must not be executable markup');
+  console.log('PASS industry research cross-validation: independent sources, dates, caution and no fabricated stock buy');
+
   await page.goto(base+'cash.html',{waitUntil:'domcontentloaded'});
   await page.locator('#cloudRows tr').first().waitFor({state:'attached',timeout:15000});
   assert.equal(await page.locator('#cloudRows tr').count(),4);
