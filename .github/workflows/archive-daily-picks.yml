@@ -1,0 +1,58 @@
+name: JEI immutable daily pick archive
+
+on:
+  schedule:
+    # 19:30 Asia/Taipei on weekdays, after TWSE/TPEX closing feeds.
+    - cron: '30 11 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jei-daily-pick-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Record only today's completed market snapshot
+        id: capture
+        shell: bash
+        run: |
+          set -euo pipefail
+          FEED_DATE=$(python -c 'import json;print(json.load(open("remote/system.json",encoding="utf-8"))["data_date"])')
+          TAIPEI_DATE=$(TZ=Asia/Taipei date +%F)
+          if [ "$FEED_DATE" != "$TAIPEI_DATE" ]; then
+            echo "No same-day completed feed ($FEED_DATE vs $TAIPEI_DATE); skip."
+            echo "created=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          TARGET="data/pick_snapshots/$FEED_DATE.json"
+          if [ -e "$TARGET" ]; then
+            echo "Snapshot already exists; preserve immutable original."
+            echo "created=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          python -m scripts.export_daily_picks --output "$TARGET" --limit 10
+          echo "created=true" >> "$GITHUB_OUTPUT"
+          echo "target=$TARGET" >> "$GITHUB_OUTPUT"
+      - name: Commit original signal snapshot
+        if: steps.capture.outputs.created == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "${{ steps.capture.outputs.target }}"
+          git commit -m "data(paper): archive original picks ${{ steps.capture.outputs.target }}"
+          git pull --rebase origin main
+          git push origin HEAD:main
