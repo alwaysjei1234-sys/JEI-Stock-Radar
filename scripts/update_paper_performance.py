@@ -55,18 +55,37 @@ def price_for(quotes, code):
         return None
 
 def validate(feed, archive, day):
+    """Refuse to turn an intraday, mislabeled or incomplete close into simulated P&L."""
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(day)):
+        raise ValueError("官方收盤日期格式錯誤")
+    market = feed.get("market") if isinstance(feed, dict) else None
+    if not isinstance(market, dict):
+        raise ValueError("尚未取得市場收盤資料")
+    count = market.get("close_count")
     if (feed.get("data_date") != day or
-        feed.get("market", {}).get("mode") != "今日收盤" or
-        feed.get("market", {}).get("stale") is not False or
-        int(feed.get("market", {}).get("close_count") or 0) < 500):
+        market.get("mode") != "今日收盤" or
+        market.get("stale") is not False or
+        isinstance(count, bool) or
+        not isinstance(count, (int, float)) or
+        not math.isfinite(count) or count < 500):
         raise ValueError("尚未取得今日已驗證官方收盤行情；拒絕更新模擬")
-    if (archive.get("schema") != 1 or
+    try:
+        timestamp = datetime.strptime(str(feed.get("updated_at") or ""),
+                                      "%Y-%m-%d %H:%M").replace(tzinfo=TZ)
+        if timestamp.date().isoformat() != day or timestamp.hour * 60 + timestamp.minute < 810:
+            raise ValueError("官方收盤時間未達 13:30；拒絕使用盤中價格模擬")
+    except (TypeError, ValueError) as exc:
+        raise ValueError("官方收盤時間或日期未驗證；拒絕模擬") from exc
+    if (not isinstance(archive, dict) or archive.get("schema") != 1 or
         archive.get("kind") != "official_daily_close" or
         not isinstance(archive.get("days"), dict)):
         raise ValueError("官方收盤價封存格式不正確")
     quotes = archive["days"].get(day)
-    if not isinstance(quotes, dict) or len(quotes) < 500:
-        raise ValueError("當天收盤價封存不足；拒絕以舊價或盤中價模擬")
+    if not isinstance(quotes, dict):
+        raise ValueError("無當日收盤價封存；拒絕以舊價模擬")
+    coverage = sum(price_for(quotes, code) is not None for code in quotes)
+    if coverage < 500:
+        raise ValueError("當天有效官方收盤價不足 500 檔；拒絕模擬")
 
 def daily_signals(feed, quotes, day):
     candidates = []
@@ -134,6 +153,13 @@ def advance(feed, archive, state, day):
         return False
     days = sorted(d for d in archive["days"] if re.fullmatch(r"\d{4}-\d{2}-\d{2}", d) and d <= day)
     prior_day = days[-2] if len(days) > 1 and days[-1] == day else None
+    # A skipped *archived* trading session cannot be silently treated as one day.
+    # An unrecorded session has unknown daily exit triggers and hypothetical fills.
+    last = state.get("last_processed_day")
+    if last and prior_day != last:
+        raise ValueError("模擬交易日出現缺口：最後更新 " + str(last)
+                         + "、本次前一封存交易日 " + str(prior_day)
+                         + "；停止計算，必須核對補齊後才能繼續")
     quotes = archive["days"][day]
     prior_signals = [x for x in state["signals"] if x.get("day") == prior_day]
 

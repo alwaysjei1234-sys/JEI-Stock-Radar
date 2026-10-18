@@ -8,6 +8,9 @@ on:
     branches: [ "main" ]
     paths:
       - 'scripts/update_paper_performance.py'
+      - 'scripts/update_pick_validation.py'
+      - 'remote/pick_validation.html'
+      - 'tests/test_pick_validation.py'
       - '.github/workflows/update-paper-performance.yml'
 
 permissions:
@@ -31,22 +34,23 @@ jobs:
           python-version: '3.12'
       - name: Test no-look-ahead and cost assumptions
         run: python -m unittest discover -s tests -p 'test_paper_performance.py' -v
+      - name: Verify forward-only picked-stock analysis and no hindsight
+        run: python -m unittest discover -s tests -p 'test_pick_validation.py' -v
       - name: Generate daily public paper-only benchmark
         run: python scripts/update_paper_performance.py
-      - name: Publish observation ledger
+      - name: Freeze daily picks and generate 3-60 trading-day report
+        run: python scripts/update_pick_validation.py
+      - name: Publish paper benchmark and immutable picked-stock validation
         run: |
-          if [ ! -f remote/strategy_performance.json ] || git diff --quiet -- remote/strategy_performance.json; then
-            if [ -f remote/strategy_performance.json ] && ! git ls-files --error-unmatch remote/strategy_performance.json >/dev/null 2>&1; then
-              echo "New ledger is untracked, publishing"
-            else
-              echo "No paper benchmark change"
-              exit 0
-            fi
+          git add -N remote/strategy_performance.json remote/pick_history.json remote/pick_validation.json
+          if git diff --quiet -- remote/strategy_performance.json remote/pick_history.json remote/pick_validation.json; then
+            echo "No validated new daily closes or paper scorecard change"
+            exit 0
           fi
           git config user.name "JEI Paper Strategy Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add remote/strategy_performance.json
-          git commit -m "Auto-update four-strategy paper observation ledger"
+          git add remote/strategy_performance.json remote/pick_history.json remote/pick_validation.json
+          git commit -m "Auto-update official paper performance and picked-stock outcomes"
           for i in 1 2 3; do
             if git push; then exit 0; fi
             echo "Push raced with other data writers: $i"

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JEI 選股自我驗證｜3～60 交易日報告</title>
+<style>
+:root{color-scheme:dark;font:15px system-ui,"Noto Sans TC",sans-serif;background:#06101b;color:#ecf5ff}
+*{box-sizing:border-box}body{max-width:940px;margin:auto;padding:16px;line-height:1.55}
+a{color:#7bd9ff}h1{font-size:24px;line-height:1.3}h2{font-size:19px;margin:10px 0}
+section{background:#0d2438;border:1px solid #244b69;border-radius:14px;padding:17px;margin:14px 0}
+small,.mut{color:#adcadb}p{margin:8px 0}label{display:block;font-size:13px;color:#c6e2f3}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+select,button{font:inherit;width:100%;padding:10px;border-radius:9px;border:1px solid #396784;background:#092039;color:inherit}
+button{background:#165f96;cursor:pointer;font-weight:650}.hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.metric{padding:11px;background:#071927;border:1px solid #2b526f;border-radius:10px}.metric span{display:block;font-size:11px;color:#accde2}.metric strong{display:block;font-size:22px;overflow-wrap:anywhere}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px;min-width:680px}
+td,th{text-align:left;border-bottom:1px solid #2a4d67;padding:10px}th{white-space:nowrap;color:#b6d5e7}
+.positive{color:#47dfa7}.negative{color:#ff9c9c}.warn{color:#ffce7b}.chip{display:inline-block;padding:3px 8px;background:#1b4162;border-radius:20px;font-size:12px;margin-right:5px}
+.note{padding:10px;border-left:3px solid #dda54d;background:#122a3d;border-radius:6px}
+@media(max-width:500px){body{padding:11px}h1{font-size:20px}section{padding:12px}.metric{padding:8px}.metric strong{font-size:18px}}
+</style></head><body>
+<a href="./index.html">← JEI 選股雷達</a> · <a href="./cash.html">現股模擬</a>
+<h1>JEI 選股自我驗證報告</h1>
+<p>驗證當天真正選出的股票，追蹤第 <b>3、7、15、20、40、60 個交易日</b>；包含主攻股、下一棒、突然妖股、明日妖股、未來妖股。所有資料都按照「當時的選股結果」固定保存。</p>
+<p class="note"><b>重要：</b>這是「收盤到收盤的假設表現」，不是實際成交績效。只計算官方收盤價、估算費稅；不含滑價、最低手續費、無法成交風險。未到期、缺價格的股票不計勝負。</p>
+<section><div class="hero">
+<div class="metric"><span>最新驗證收盤</span><strong id="asOf">--</strong></div>
+<div class="metric"><span>封存觀察紀錄</span><strong id="total">--</strong></div>
+<div class="metric"><span>目前已完成期數</span><strong id="matured">--</strong></div>
+</div><p class="mut" id="status" role="status">正在讀取 JEI 雲端驗證資料…</p></section>
+<section><h2>分類與觀察期比較</h2>
+<div class="grid">
+<label>選股類型<select id="group">
+<option value="attack">🚀 今日主攻</option><option value="next">⏭ 下一棒</option>
+<option value="monster">🔥 突然妖股</option><option value="tomorrow_monster">🌟 明日妖股</option>
+<option value="future_monster">🔭 未來妖股</option>
+</select></label>
+<label>追蹤交易日<select id="horizon">
+<option value="3">3 交易日</option><option value="7">7 交易日</option>
+<option value="15">15 交易日</option><option value="20">20 交易日（約1個月）</option>
+<option value="40">40 交易日（約2個月）</option><option value="60">60 交易日（約3個月）</option>
+</select></label></div>
+<div class="hero" style="margin-top:12px">
+<div class="metric"><span>到期樣本</span><strong id="sample">--</strong></div>
+<div class="metric"><span>淨報酬勝率</span><strong id="wins">--</strong></div>
+<div class="metric"><span>平均估算淨報酬</span><strong id="average">--</strong></div>
+</div><p class="mut" id="comparison"></p></section>
+<section><h2>原始選股與逐檔績效</h2><p class="mut">按訊號日期記錄當時分數、名次和官方收盤價；到期之前明確顯示追蹤中。不同分類可能有同一檔股票，不能當成獨立部位加總。</p>
+<div class="scroll"><table><thead><tr><th>選出日期／名次</th><th>股票</th><th>JEI 分數</th><th>訊號收盤</th><th>到期日／狀態</th><th>估算淨報酬</th></tr></thead><tbody id="pickRows"></tbody></table></div>
+<p class="mut" id="empty"></p></section>
+<section><h2>系統自我檢查規則</h2><div id="notes"></div>
+<p><button id="refresh">更新官方收盤驗證報告</button></p></section>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const GROUPS={attack:'今日主攻',next:'下一棒',monster:'突然妖股',tomorrow_monster:'明日妖股',future_monster:'未來妖股'};
+let report=null;
+const fmt=n=>n===null||n===undefined||!Number.isFinite(Number(n))?'--':(Number(n)>=0?'+':'')+Number(n).toFixed(2)+'%';
+function cell(row,value){const td=document.createElement('td');td.textContent=String(value);row.appendChild(td);return td}
+function render(){
+ if(!report)return;
+ const g=$('group').value,h=Number($('horizon').value);
+ const stats=report.groups?.[g]?.[String(h)]||{},records=(report.picks||[]).filter(x=>x.group===g).sort((a,b)=>b.day.localeCompare(a.day)||a.rank-b.rank);
+ $('asOf').textContent=report.latest_official_day||'--';
+ $('total').textContent=String(report.total_frozen_picks||0);
+ const matured=(report.picks||[]).reduce((n,p)=>n+(p.outcomes||[]).filter(x=>x.status==='complete').length,0);
+ $('matured').textContent=String(matured);
+ $('sample').textContent=String(stats.completed||0);
+ $('wins').textContent=fmt(stats.win_rate_pct);
+ $('average').textContent=fmt(stats.avg_estimated_net_pct);
+ $('comparison').textContent='已完成 '+(stats.completed||0)+' 筆｜待到期 '+(stats.pending||0)+' 筆｜缺有效收盤價 '+(stats.missing_price||0)+' 筆｜中位數 '+fmt(stats.median_estimated_net_pct)+'｜最差 '+fmt(stats.worst_estimated_net_pct)+'。'+
+ ((stats.completed||0)<10?' 有效樣本少於10筆，暫不判斷哪種選股策略最好。':'可開始觀察，但仍須跨市場狀態驗證。');
+ const body=$('pickRows');body.replaceChildren();
+ for(const x of records){
+  const outcome=(x.outcomes||[]).find(z=>z.trading_days===h)||{status:'pending'};
+  const tr=document.createElement('tr');
+  cell(tr,x.day+' / #'+x.rank);
+  cell(tr,x.code+' '+x.name);
+  cell(tr,x.score);
+  cell(tr,x.signal_close);
+  cell(tr,outcome.status==='complete'?outcome.end_day:outcome.status==='missing_price'?'到期但缺收盤':'尚待第 '+h+' 個交易日');
+  const val=outcome.status==='complete'?fmt(outcome.estimated_net_return_pct):'未到期';
+  const td=cell(tr,val);
+  if(outcome.status==='complete')td.className=outcome.estimated_net_return_pct>=0?'positive':'negative';
+  else td.className='warn';
+  body.appendChild(tr);
+ }
+ $('empty').textContent=records.length?'共 '+records.length+' 筆 '+(GROUPS[g]||g)+' 的實際歷史選股名單':'此分類尚無可稽核的官方收盤名單';
+ const notes=$('notes');notes.replaceChildren();
+ for(const item of report.analysis_notes||[]){const p=document.createElement('p');p.className='mut';p.textContent='• '+item;notes.appendChild(p)}
+ $('status').textContent='資料來源：JEI 已封存官方收盤｜最後報告更新 '+(report.updated_at||'--')+'｜本頁不會更動選股結果或下單';
+}
+async function refresh(){
+ $('status').textContent='正在核對雲端資料…';
+ try{
+  const response=await fetch('./pick_validation.json?ts='+Date.now(),{cache:'no-store'});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  const data=await response.json();
+  if(data.schema!==1||data.mode!=='forward_official_close_pick_validation'||!Array.isArray(data.picks))throw Error('驗證資料格式錯誤');
+  report=data;render();
+ }catch(e){$('status').textContent='尚未取得合格的選股驗證報告：'+String(e?.message||e)+'，不顯示虛構績效'}
+}
+$('group').addEventListener('change',render);
+$('horizon').addEventListener('change',render);
+$('refresh').addEventListener('click',refresh);
+refresh();
+</script></body></html>
