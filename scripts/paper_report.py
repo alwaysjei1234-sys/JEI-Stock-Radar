@@ -14,6 +14,7 @@ from pathlib import Path
 from scripts.forward_pick_score import score_pick
 from scripts.paper_score_summary import summarize
 from scripts.paper_benchmark import compare_with_benchmark
+from scripts.validated_paper_report import _validate_series
 
 
 def build_report(picks, prices, benchmark=None):
@@ -23,6 +24,7 @@ def build_report(picks, prices, benchmark=None):
     if benchmark is not None:
         if not isinstance(benchmark, list):
             raise ValueError("benchmark must be dated close list")
+        _validate_series(benchmark, "benchmark")
         trading_dates = [row["date"] for row in benchmark]
         if trading_dates != sorted(set(trading_dates)):
             raise ValueError("benchmark trading dates must be unique and ascending")
