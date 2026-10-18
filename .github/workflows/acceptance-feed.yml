@@ -8,6 +8,8 @@ on:
       - 'remote/update.json'
       - 'remote/index.html'
       - 'scripts/acceptance_feed_smoke.py'
+      - 'scripts/forward_pick_score.py'
+      - 'tests/test_forward_pick_score.py'
       - '.github/workflows/acceptance-feed.yml'
   pull_request:
     paths:
@@ -15,6 +17,8 @@ on:
       - 'remote/update.json'
       - 'remote/index.html'
       - 'scripts/acceptance_feed_smoke.py'
+      - 'scripts/forward_pick_score.py'
+      - 'tests/test_forward_pick_score.py'
       - '.github/workflows/acceptance-feed.yml'
   workflow_dispatch:
   schedule:
