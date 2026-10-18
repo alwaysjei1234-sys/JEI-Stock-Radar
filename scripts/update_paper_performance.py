@@ -56,7 +56,7 @@ def price_for(quotes, code):
 
 def validate(feed, archive, day):
     """Refuse to turn an intraday, mislabeled or incomplete close into simulated P&L."""
-    if not re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}", str(day)):
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(day)):
         raise ValueError("官方收盤日期格式錯誤")
     market = feed.get("market") if isinstance(feed, dict) else None
     if not isinstance(market, dict):
