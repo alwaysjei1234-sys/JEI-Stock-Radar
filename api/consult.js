@@ -260,10 +260,13 @@ module.exports=async function handler(req,res){
   if(typeof body==="string"){
     try{body=JSON.parse(body)}catch{return json(res,400,{error:"Invalid JSON"})}
   }
-  body=body||{};
+  if(!body || typeof body!=="object" || Array.isArray(body)) return json(res,400,{error:"JSON object required"});
   // Verify the private token without invoking any AI provider or using model quota.
   if(body.action==="verify_token") return json(res,200,{ok:true,verified:true,free_only:true,paid_gateway:false});
-  if(!String(body.question||"").trim()) return json(res,400,{error:"question required"});
+  if(typeof body.question!=="string" || !body.question.trim() || body.question.length>2800)
+    return json(res,400,{error:"question must be a nonempty string up to 2800 characters"});
+  if(body.providers!==undefined && (!Array.isArray(body.providers) || body.providers.length>5 || body.providers.some(x=>typeof x!=="string")))
+    return json(res,400,{error:"providers must be a list of up to five names"});
 
   // An Ollama key being configured must never opt the user in automatically.
   const requested=Array.isArray(body.providers)&&body.providers.length
