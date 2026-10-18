@@ -30,6 +30,10 @@ def build_report(picks, prices, benchmark=None):
             raise ValueError("benchmark trading dates must be unique and ascending")
     seen = set()
     scored = []
+    for code,series in prices.items():
+        if not isinstance(code,str) or not code.strip():
+            raise ValueError("invalid price symbol")
+        _validate_series(series,code)
     for pick in picks:
         identity = (pick["as_of"], str(pick["code"]), pick["cohort"])
         if identity in seen:
