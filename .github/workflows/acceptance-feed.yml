@@ -1,0 +1,36 @@
+name: JEI feed acceptance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'remote/system.json'
+      - 'remote/update.json'
+      - 'remote/index.html'
+      - 'scripts/acceptance_feed_smoke.py'
+      - '.github/workflows/acceptance-feed.yml'
+  pull_request:
+    paths:
+      - 'remote/system.json'
+      - 'remote/update.json'
+      - 'remote/index.html'
+      - 'scripts/acceptance_feed_smoke.py'
+      - '.github/workflows/acceptance-feed.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '15 1 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  feed-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate remote feed and update metadata
+        run: python scripts/acceptance_feed_smoke.py
