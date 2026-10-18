@@ -16,6 +16,14 @@ REGISTRY=ROOT/"remote/research_sources.json"
 OUT=ROOT/"remote/industry_research.json"
 TZ=ZoneInfo("Asia/Taipei")
 AGE_LIMIT_DAYS=365
+OFFICIAL_DOMAINS={"TrendForce":("trendforce.com","trendforce.com.tw"),
+                  "SEMI":("semi.org",)}
+
+def official_publisher_host(organization,hostname):
+    hosts=OFFICIAL_DOMAINS.get(organization,())
+    name=(hostname or "").lower()
+    return bool(hosts and any(name==domain or name.endswith("."+domain)
+                              for domain in hosts))
 
 def validate_registry(data):
     if not isinstance(data,dict) or data.get("schema")!=1:
@@ -45,8 +53,9 @@ def validate_registry(data):
         if day.isoformat()!=row["date"]:
             raise ValueError("日期必須標準 ISO 格式")
         url=urlsplit(row["url"])
-        if url.scheme!="https" or not url.hostname or url.username or url.password:
-            raise ValueError("研究來源只接受完整 HTTPS 官方網址")
+        if (url.scheme!="https" or not url.hostname or url.username or url.password
+                or not official_publisher_host(row["organization"],url.hostname)):
+            raise ValueError("研究來源必須使用可核對之研究機構官方 HTTPS 網址")
         if not isinstance(row.get("sectors"),list) or not row["sectors"]:
             raise ValueError("研究必須有產業對應")
         if any(s not in sector_names for s in row["sectors"]):
