@@ -294,8 +294,8 @@ module.exports=async function handler(req,res){
 
   return json(res,200,{
     ok:answers.length>0,
-    free_only:!providers.includes("ollama_cloud"),
-    ollama_credit_usage:providers.includes("ollama_cloud"),
+    free_only:!settled.some(x=>x.provider==="ollama_cloud" && !!x.text),
+    ollama_credit_usage:settled.some(x=>x.provider==="ollama_cloud" && (!!x.text || !!x.error)),
     answers,skipped,failed,consensus,
     as_of:new Date().toISOString()
   });
