@@ -17,7 +17,9 @@ OUT=ROOT/"remote/industry_research.json"
 TZ=ZoneInfo("Asia/Taipei")
 AGE_LIMIT_DAYS=365
 OFFICIAL_DOMAINS={"TrendForce":("trendforce.com","trendforce.com.tw"),
-                  "SEMI":("semi.org",)}
+                  "SEMI":("semi.org",),
+                  "UBS":("ubs.com",),
+                  "IEA":("iea.org",)}
 
 def official_publisher_host(organization,hostname):
     hosts=OFFICIAL_DOMAINS.get(organization,())
@@ -109,7 +111,7 @@ def build(data,asof):
         "freshness_days":AGE_LIMIT_DAYS,
         "research_evidence_only":True,
         "not_broker_rating":True,
-        "method":"逐篇人工核對公開原始研究摘要與發表日期，同機構文章不重複計為獨立機構；非自動購買或下載付費報告。",
+        "method":"逐篇核對投資機構公開觀點、產業研究與國際能源官方預測及其原始網址/發表日期；同機構不重複計為獨立來源，未閱讀付費全文。",
         "themes":by_sector,
         "sector_order":sorted(by_sector,key=lambda k:
                               (-by_sector[k]["independent_institutions"],
