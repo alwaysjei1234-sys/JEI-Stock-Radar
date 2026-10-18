@@ -921,11 +921,12 @@ function renderAiConsultResult(raw){
  finishAiConsult();
  const answers=j.answers||[];
  if(answers.length)answers.forEach(x=>chatSay('bot',`【${x.label||x.provider}｜${x.model||'AI'}】\n${x.text||'無回覆'}`));
- if(j.consensus)chatSay('bot',`【JEI 多 AI 綜合結論】\n${j.consensus}`);
+ if(j.consensus&&answers.length)chatSay('bot',`【JEI 多 AI 綜合結論】\n${j.consensus}`);
  const failed=j.failed||[];
  if(failed.length)chatSay('bot','部分免費 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,100)+'）').join('、'));
  const skipped=(j.skipped||[]).map(x=>x.label||x.provider);
  if(skipped.length)chatSay('bot','尚未設定免費 Key：'+skipped.join('、'));
+ if(!answers.length&&!failed.length)chatSay('bot','沒有取得 AI 回覆，請先確認 JEI 私人連線碼與免費 Key。');
 }
 function sendAiConsult(q){
  if(aiPending){toast('上一個 AI 會診還在處理');return}
