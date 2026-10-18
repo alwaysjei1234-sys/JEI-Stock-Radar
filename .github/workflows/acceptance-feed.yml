@@ -21,6 +21,8 @@ on:
       - 'scripts/collect_pick_snapshots.py'
       - 'tests/test_collect_pick_snapshots.py'
       - 'tests/test_trading_calendar.py'
+      - 'scripts/export_feed_closes.py'
+      - 'tests/test_export_feed_closes.py'
       - '.github/workflows/archive-daily-picks.yml'
       - '.github/workflows/acceptance-feed.yml'
   pull_request:
@@ -42,6 +44,8 @@ on:
       - 'scripts/collect_pick_snapshots.py'
       - 'tests/test_collect_pick_snapshots.py'
       - 'tests/test_trading_calendar.py'
+      - 'scripts/export_feed_closes.py'
+      - 'tests/test_export_feed_closes.py'
       - '.github/workflows/archive-daily-picks.yml'
       - '.github/workflows/acceptance-feed.yml'
   workflow_dispatch:
