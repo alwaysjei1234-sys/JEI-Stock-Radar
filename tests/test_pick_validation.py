@@ -68,7 +68,10 @@ class PickValidationTests(unittest.TestCase):
         report=compile_report(item,a,"2026-10-16 20:00")
         attack=next(x for x in report["picks"] if x["group"]=="attack" and x["code"]=="2344")
         self.assertEqual(attack["outcomes"][0]["status"],"missing_price")
-        self.assertIsNone(report["groups"]["attack"]["3"]["best_estimated_net_pct"])
+        self.assertEqual(report["groups"]["attack"]["3"]["missing_price"],1)
+        self.assertEqual(report["groups"]["attack"]["3"]["completed"],1)
+        self.assertIsNotNone(report["groups"]["attack"]["3"]["best_estimated_net_pct"],
+                             "the unaffected pick is still a valid separate observation")
 
     def test_invalid_official_close_rejects_false_confidence(self):
         a=archive()
