@@ -16,6 +16,9 @@ on:
       - 'tests/test_paper_benchmark.py'
       - 'scripts/paper_report.py'
       - 'tests/test_paper_report.py'
+      - 'scripts/export_daily_picks.py'
+      - 'tests/test_export_daily_picks.py'
+      - '.github/workflows/archive-daily-picks.yml'
       - '.github/workflows/acceptance-feed.yml'
   pull_request:
     paths:
@@ -31,6 +34,9 @@ on:
       - 'tests/test_paper_benchmark.py'
       - 'scripts/paper_report.py'
       - 'tests/test_paper_report.py'
+      - 'scripts/export_daily_picks.py'
+      - 'tests/test_export_daily_picks.py'
+      - '.github/workflows/archive-daily-picks.yml'
       - '.github/workflows/acceptance-feed.yml'
   workflow_dispatch:
   schedule:
