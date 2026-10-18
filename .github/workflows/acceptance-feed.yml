@@ -34,3 +34,5 @@ jobs:
           python-version: '3.11'
       - name: Validate remote feed and update metadata
         run: python scripts/acceptance_feed_smoke.py
+      - name: Test forward-only paper performance
+        run: python -m unittest discover -s tests -p 'test_forward_pick_score.py'
