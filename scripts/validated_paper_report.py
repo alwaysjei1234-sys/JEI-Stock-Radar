@@ -18,6 +18,8 @@ def _validate_series(series, label):
         raise ValueError(f"{label}: expected list")
     prev=None
     for row in series:
+        if not isinstance(row,dict):
+            raise ValueError(f"{label}: observation must be object")
         d=date.fromisoformat(row["date"])
         p=row["close"]
         if prev is not None and d<=prev:
