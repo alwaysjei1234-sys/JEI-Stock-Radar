@@ -169,17 +169,26 @@ async function askGemini(body,timeout=28000){
 }
 async function askGroq(body,provider,timeout=28000){
   const key=requestKey(body,"groq");
-  if(!key) return null;
+  if(!key)return null;
   const model=PROVIDERS[provider].model;
-  const j=await fetchJson("https://api.groq.com/openai/v1/chat/completions",{
-    method:"POST",
-    headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json"},
-    body:JSON.stringify({
-      model,temperature:0.25,max_tokens:900,
-      messages:[{role:"system",content:SYSTEM},{role:"user",content:userPrompt(body)}]
-    })
+  const url="https://api.groq.com/openai/v1/chat/completions";
+  const headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"};
+  const call=async(b,limit)=>fetchJson(url,{
+    method:"POST",headers,
+    body:JSON.stringify({model,temperature:0.25,max_tokens:900,
+      messages:[{role:"system",content:SYSTEM},{role:"user",content:userPrompt(b).slice(0,limit)}]})
   },timeout);
-  return extractChat(j)||"無有效回覆";
+  try{
+    const j=await call(body,provider==="groq_qwen"?4500:18000);
+    return extractChat(j)||"無有效回覆";
+  }catch(e){
+    if(!/HTTP 413|request too large|tokens per minute|context length/i.test(String(e?.message||e)))throw e;
+    // Retry once with a smaller, clearly labeled excerpt, preserving the question.
+    const reduced={...body,context:textOf(body.context,1000),history:[],
+      question:textOf(body.question,700)};
+    const j=await call(reduced,2200);
+    return extractChat(j)||"無有效回覆";
+  }
 }
 async function askOpenRouter(body,timeout=28000){
   const key=requestKey(body,"openrouter");
