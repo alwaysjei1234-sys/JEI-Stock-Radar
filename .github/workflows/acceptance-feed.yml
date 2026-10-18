@@ -14,6 +14,8 @@ on:
       - 'tests/test_paper_score_summary.py'
       - 'scripts/paper_benchmark.py'
       - 'tests/test_paper_benchmark.py'
+      - 'scripts/paper_report.py'
+      - 'tests/test_paper_report.py'
       - '.github/workflows/acceptance-feed.yml'
   pull_request:
     paths:
@@ -27,6 +29,8 @@ on:
       - 'tests/test_paper_score_summary.py'
       - 'scripts/paper_benchmark.py'
       - 'tests/test_paper_benchmark.py'
+      - 'scripts/paper_report.py'
+      - 'tests/test_paper_report.py'
       - '.github/workflows/acceptance-feed.yml'
   workflow_dispatch:
   schedule:
