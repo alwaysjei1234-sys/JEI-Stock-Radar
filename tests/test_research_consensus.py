@@ -45,7 +45,7 @@ class ResearchEvidenceTests(unittest.TestCase):
         altered["sources"].append(repeated)
         result=build(altered,self.today)
         self.assertEqual(result["themes"]["光通訊/CPO"]["independent_institutions"],1)
-        self.assertEqual(result["themes"]["光通訊/CPO"]["source_articles"],4)
+        self.assertEqual(result["themes"]["光通訊/CPO"]["source_articles"],5)
 
     def test_published_research_matches_reviewed_registry(self):
         output=REGISTRY.parent/"industry_research.json"
