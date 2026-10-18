@@ -23,6 +23,10 @@ on:
       - 'tests/test_trading_calendar.py'
       - 'scripts/export_feed_closes.py'
       - 'tests/test_export_feed_closes.py'
+      - 'scripts/collect_feed_closes.py'
+      - 'tests/test_collect_feed_closes.py'
+      - 'scripts/run_archived_paper_pipeline.py'
+      - 'tests/test_archived_paper_pipeline.py'
       - '.github/workflows/archive-daily-picks.yml'
       - '.github/workflows/acceptance-feed.yml'
   pull_request:
@@ -46,6 +50,10 @@ on:
       - 'tests/test_trading_calendar.py'
       - 'scripts/export_feed_closes.py'
       - 'tests/test_export_feed_closes.py'
+      - 'scripts/collect_feed_closes.py'
+      - 'tests/test_collect_feed_closes.py'
+      - 'scripts/run_archived_paper_pipeline.py'
+      - 'tests/test_archived_paper_pipeline.py'
       - '.github/workflows/archive-daily-picks.yml'
       - '.github/workflows/acceptance-feed.yml'
   workflow_dispatch:
