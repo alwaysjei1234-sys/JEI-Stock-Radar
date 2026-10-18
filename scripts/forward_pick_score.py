@@ -49,7 +49,7 @@ def score_pick(pick, sessions, fee_rate=0.001425, sell_tax_rate=0.003, slippage_
         calendar_dates=set(calendar)
         if any(d > as_of and d not in calendar_dates for d,_ in clean):
             raise ValueError("stock price date outside benchmark trading calendar")
-        # Benchmark calendar is authoritative; extra stock rows are ignored.
+        # The benchmark calendar determines horizons; missing stock closes stay missing.
         future = [(d, prices.get(d)) for d in calendar if d > as_of]
     else:
         future = [(d, p) for d, p in clean if d > as_of]
