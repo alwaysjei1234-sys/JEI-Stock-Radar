@@ -20,6 +20,7 @@ on:
       - 'tests/test_export_daily_picks.py'
       - 'scripts/collect_pick_snapshots.py'
       - 'tests/test_collect_pick_snapshots.py'
+      - 'tests/test_trading_calendar.py'
       - '.github/workflows/archive-daily-picks.yml'
       - '.github/workflows/acceptance-feed.yml'
   pull_request:
@@ -40,6 +41,7 @@ on:
       - 'tests/test_export_daily_picks.py'
       - 'scripts/collect_pick_snapshots.py'
       - 'tests/test_collect_pick_snapshots.py'
+      - 'tests/test_trading_calendar.py'
       - '.github/workflows/archive-daily-picks.yml'
       - '.github/workflows/acceptance-feed.yml'
   workflow_dispatch:
