@@ -3,6 +3,7 @@
 Use with scripts.forward_pick_score.score_pick results.
 """
 from statistics import mean
+from math import isfinite
 from scripts.forward_pick_score import COHORTS, HORIZONS
 
 def summarize(scored_picks):
@@ -14,7 +15,9 @@ def summarize(scored_picks):
             key = str(horizon)
             valid = [p["outcomes"][key]["net_return_pct"] for p in selected
                      if p.get("outcomes", {}).get(key, {}).get("status") == "mature"
-                     and isinstance(p["outcomes"][key].get("net_return_pct"), (int, float))]
+                     and isinstance(p["outcomes"][key].get("net_return_pct"), (int, float))
+                     and not isinstance(p["outcomes"][key].get("net_return_pct"), bool)
+                     and isfinite(p["outcomes"][key]["net_return_pct"])]
             output[cohort][key] = {
                 "total_signals": len(selected),
                 "matured": len(valid),
