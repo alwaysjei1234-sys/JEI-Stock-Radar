@@ -8,13 +8,14 @@ import json
 from pathlib import Path
 from scripts.run_archived_paper_pipeline import run
 from scripts.paper_leaderboard import leaderboard
+from scripts.collect_feed_closes import collect
 
 def build(pick_dir,price_dir):
     report=run(pick_dir,price_dir)
     report["data_quality"]["verified_by_system"]=False
     board=leaderboard(report)
     board["data_date"]=max((p["as_of"] for p in report["picks"]),default=None)
-    board["price_data_date"]=max((row["date"] for rows in __import__("scripts.collect_feed_closes",fromlist=["collect"]).collect(price_dir).values() for row in rows),default=None)
+    board["price_data_date"]=max((row["date"] for rows in collect(price_dir).values() for row in rows),default=None)
     board["data_quality"]={"price_source":"JEI feed snapshots",
                            "verified_by_system":False,
                            "sample_count":report["sample_count"],
