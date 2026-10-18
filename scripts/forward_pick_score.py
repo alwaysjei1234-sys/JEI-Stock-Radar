@@ -44,7 +44,8 @@ def score_pick(pick, sessions, fee_rate=0.001425, sell_tax_rate=0.003, slippage_
         if calendar != sorted(set(calendar)):
             raise ValueError("trading calendar must be unique and ascending")
         prices = dict(clean)
-        if any(d not in set(calendar) for d,_ in clean):
+        calendar_dates=set(calendar)
+        if any(d > as_of and d not in calendar_dates for d,_ in clean):
             raise ValueError("stock price date outside benchmark trading calendar")
         # Benchmark calendar is authoritative; extra stock rows are ignored.
         future = [(d, prices.get(d)) for d in calendar if d > as_of]
