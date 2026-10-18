@@ -212,7 +212,7 @@ async function run(){
   assert.match(await page.locator('h1').innerText(),/未來主流產業/);
   assert.match(await page.locator('#themes').innerText(),/記憶體\/儲存/);
   assert.match(await page.locator('#themes').innerText(),/多機構產業研究佐證/);
-  assert.match(await page.locator('#themes').innerText(),/單一研究機構佐證/);
+  assert.match(await page.locator('#themes').innerText(),/電力\/電網\/基建/);
   assert.match(await page.locator('#themes').innerText(),/研究證據不足/);
   assert.match(await page.locator('#themes').innerText(),/產業展望仍未完成逐家公司基本面驗證/);
   assert.ok((await page.locator('#themes a[href^="https://"]').count())>=5,
