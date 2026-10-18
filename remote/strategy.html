@@ -41,7 +41,7 @@ async function reload(){
    const data=await response.json();
    if(data.schema_version!==1||!data.horizons)throw Error("資料格式不正確");
    report=data;
-   el("status").textContent=(data.data_date?"最新選股日期："+data.data_date+"；":"")+(data.price_data_date?"行情觀察至："+data.price_data_date+"；":"")+(data.verified===true?"已讀取核實資料，績效僅為模擬":"行情尚未核實，暫不顯示報酬");
+   el("status").textContent=(data.data_date?"最新選股日期："+data.data_date+"；":"")+(data.price_data_date?"行情觀察至："+data.price_data_date+"；":"")+(data.verified===true?"已讀取核實資料，績效僅為模擬":"行情尚未核實，暫不顯示報酬")+(Number.isInteger(data.data_quality?.unresolved_future_prices)?"；待補未來行情："+data.data_quality.unresolved_future_prices+"筆":"");
  }catch(e){report=null;el("status").textContent="待驗證："+e.message}
  draw();
 }
