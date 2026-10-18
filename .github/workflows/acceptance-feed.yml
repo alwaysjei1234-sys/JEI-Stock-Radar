@@ -7,6 +7,8 @@ on:
       - 'remote/system.json'
       - 'remote/update.json'
       - 'remote/index.html'
+      - 'api/consult.js'
+      - 'tests/ai_consult.test.js'
       - 'tests/test_strategy_page.py'
       - 'remote/paper-leaderboard.json'
       - 'remote/strategy.html'
@@ -61,6 +63,8 @@ on:
       - 'remote/system.json'
       - 'remote/update.json'
       - 'remote/index.html'
+      - 'api/consult.js'
+      - 'tests/ai_consult.test.js'
       - 'tests/test_strategy_page.py'
       - 'remote/paper-leaderboard.json'
       - 'remote/strategy.html'
@@ -128,6 +132,8 @@ jobs:
           python-version: '3.11'
       - name: Validate remote feed and update metadata
         run: python scripts/acceptance_feed_smoke.py
+      - name: Test AI consultation request validation
+        run: node --test tests/ai_consult.test.js
       - name: Check Python source syntax
         run: python -m compileall -q scripts tests
       - name: Test forward-only paper performance
