@@ -7,7 +7,7 @@ const PROVIDERS = {
   gemini_free: {
     label: "Gemini Free",
     key: "gemini",
-    model: process.env.GEMINI_FREE_MODEL || "gemini-2.5-flash",
+    model: process.env.GEMINI_FREE_MODEL || "gemini-2.5-flash-lite",
     via: "Google AI Studio Free Tier"
   },
   groq_oss: {
