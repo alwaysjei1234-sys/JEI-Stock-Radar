@@ -47,6 +47,27 @@ class ResearchEvidenceTests(unittest.TestCase):
         self.assertEqual(result["themes"]["光通訊/CPO"]["independent_institutions"],1)
         self.assertEqual(result["themes"]["光通訊/CPO"]["source_articles"],4)
 
+    def test_published_research_matches_reviewed_registry(self):
+        output=REGISTRY.parent/"industry_research.json"
+        published=json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(published["mode"],"dated_industry_primary_source_evidence")
+        calculated=build(self.sources,date.fromisoformat(published["as_of"]))
+        self.assertEqual(calculated["themes"],published["themes"])
+        self.assertEqual(calculated["sector_order"],published["sector_order"])
+        self.assertFalse(any(t.get("actionable_buy_signal") for t in published["themes"].values()))
+        self.assertTrue(all(x["url"].startswith("https://")
+                            for t in published["themes"].values() for x in t["sources"]))
+
+    def test_future_stock_scores_remain_independent_from_sector_reports(self):
+        updater=(REGISTRY.parents[0].parent/"scripts/update_system.py").read_text(encoding="utf-8")
+        self.assertIn('x["research_only"]=True',updater)
+        self.assertIn('x["research_status"]=label',updater)
+        self.assertIn('x["research_institutions"]=institutions[:5]',updater)
+        self.assertIn('future_monster.append(item(s,score,reason,"next",risk,sec,ss))',updater)
+        # The new evidence panel must not secretly turn outlook into a stock scoring bonus.
+        self.assertNotIn('score+=research',updater)
+        self.assertNotIn('score += research',updater)
+
     def test_reject_unattributed_url_and_unknown_industry(self):
         for bad in ["http://example.com/x","https://someone:password@example.com/x",""]:
             changed=copy.deepcopy(self.sources)
