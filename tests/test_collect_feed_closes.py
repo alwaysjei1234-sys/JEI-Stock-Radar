@@ -14,6 +14,16 @@ class FeedPriceCollectionTests(unittest.TestCase):
                 (Path(d)/f"{day}.json").write_text(json.dumps(payload),encoding="utf-8")
             self.assertEqual([p["close"] for p in collect(d)["2330"]],[100,101])
 
+    def test_reject_invalid_close(self):
+        with tempfile.TemporaryDirectory() as d:
+            day="2026-10-16"
+            payload={"data_date":day,
+                "source":"official close not independently confirmed",
+                "prices":{"2330":{"date":day,"close":float("nan")}}}
+            (Path(d)/(day+".json")).write_text(json.dumps(payload),encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(d)
+
     def test_reject_wrong_date(self):
         with tempfile.TemporaryDirectory() as d:
             payload={"data_date":"2026-10-16",
