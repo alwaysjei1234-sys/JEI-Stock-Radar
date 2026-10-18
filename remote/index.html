@@ -857,10 +857,17 @@ function loadAiCloud(){
  testAiCloud(true)
 }
 function saveFreeAiKeys(){
- settingSet('free_gemini_key',($('geminiFreeKey')?.value||'').trim());
- settingSet('free_groq_key',($('groqFreeKey')?.value||'').trim());
- settingSet('free_openrouter_key',($('openrouterFreeKey')?.value||'').trim());
- testAiCloud(true);toast('免費 AI 設定已儲存')
+ const keys=[['geminiFreeKey','free_gemini_key'],['groqFreeKey','free_groq_key'],['openrouterFreeKey','free_openrouter_key']];
+ for(const [id,key] of keys){
+  const field=$(id);if(!field)continue;
+  const value=field.value.trim();
+  // Empty fields must not silently erase previously saved API keys.
+  if(value)settingSet(key,value);
+ }
+ const saved=keys.filter(([,key])=>!!settingGet(key)).length;
+ if(!saved){toast('尚未輸入免費 API Key');return}
+ testAiCloud(true);
+ toast('已儲存 '+saved+' 組免費 AI Key，請到 AI 對話中心測試')
 }
 function openExternal(u){if(nativeOk()&&typeof JEINative.openUrl==='function')JEINative.openUrl(u);else window.open(u,'_blank','noopener')}
 function saveAiCloud(){
