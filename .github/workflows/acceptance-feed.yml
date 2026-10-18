@@ -12,6 +12,8 @@ on:
       - 'tests/test_forward_pick_score.py'
       - 'scripts/paper_score_summary.py'
       - 'tests/test_paper_score_summary.py'
+      - 'scripts/paper_benchmark.py'
+      - 'tests/test_paper_benchmark.py'
       - '.github/workflows/acceptance-feed.yml'
   pull_request:
     paths:
@@ -23,6 +25,8 @@ on:
       - 'tests/test_forward_pick_score.py'
       - 'scripts/paper_score_summary.py'
       - 'tests/test_paper_score_summary.py'
+      - 'scripts/paper_benchmark.py'
+      - 'tests/test_paper_benchmark.py'
       - '.github/workflows/acceptance-feed.yml'
   workflow_dispatch:
   schedule:
@@ -43,4 +47,4 @@ jobs:
       - name: Validate remote feed and update metadata
         run: python scripts/acceptance_feed_smoke.py
       - name: Test forward-only paper performance
-        run: python -m unittest discover -s tests -p 'test_*score*.py'
+        run: python -m unittest discover -s tests -p 'test_*.py'
