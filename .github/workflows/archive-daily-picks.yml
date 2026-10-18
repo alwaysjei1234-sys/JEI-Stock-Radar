@@ -49,6 +49,9 @@ jobs:
           fi
           echo "created=true" >> "$GITHUB_OUTPUT"
           echo "target=$TARGET" >> "$GITHUB_OUTPUT"
+      - name: Generate diagnostic leaderboard
+        if: steps.capture.outputs.created == 'true'
+        run: python -m scripts.build_diagnostic_leaderboard --output remote/paper-leaderboard.json
       - name: Commit original signal snapshot
         if: steps.capture.outputs.created == 'true'
         shell: bash
@@ -56,7 +59,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- "${{ steps.capture.outputs.target }}" data/feed_closes/
+          git add -- "${{ steps.capture.outputs.target }}" data/feed_closes/ remote/paper-leaderboard.json
           git commit -m "data(paper): archive original picks ${{ steps.capture.outputs.target }}"
           git pull --rebase origin main
           git push origin HEAD:main
