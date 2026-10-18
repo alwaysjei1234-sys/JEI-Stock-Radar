@@ -69,7 +69,8 @@ class ResearchEvidenceTests(unittest.TestCase):
         self.assertNotIn('score += research',updater)
 
     def test_reject_unattributed_url_and_unknown_industry(self):
-        for bad in ["http://example.com/x","https://someone:password@example.com/x",""]:
+        for bad in ["http://example.com/x","https://someone:password@example.com/x",
+                    "https://trendforce.com.evil.example/fake","https://example.com/a",""]:
             changed=copy.deepcopy(self.sources)
             changed["sources"][0]["url"]=bad
             with self.subTest(url=bad),self.assertRaises(ValueError):
