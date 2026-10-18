@@ -19,6 +19,13 @@ from scripts.paper_benchmark import compare_with_benchmark
 def build_report(picks, prices, benchmark=None):
     if not isinstance(picks, list) or not isinstance(prices, dict):
         raise ValueError("picks must be list and prices must be code->sessions object")
+    trading_dates = None
+    if benchmark is not None:
+        if not isinstance(benchmark, list):
+            raise ValueError("benchmark must be dated close list")
+        trading_dates = [row["date"] for row in benchmark]
+        if trading_dates != sorted(set(trading_dates)):
+            raise ValueError("benchmark trading dates must be unique and ascending")
     seen = set()
     scored = []
     for pick in picks:
@@ -27,7 +34,7 @@ def build_report(picks, prices, benchmark=None):
             raise ValueError(f"duplicate immutable pick: {identity}")
         seen.add(identity)
         code = str(pick["code"])
-        scored.append(score_pick({**pick, "code": code}, prices.get(code, [])))
+        scored.append(score_pick({**pick, "code": code}, prices.get(code, []), trading_dates=trading_dates))
     benchmark_returns = {}
     if benchmark is not None:
         # Use only actual dated benchmark observations; never forward fill.
