@@ -17,6 +17,7 @@ def prices(value):
 def feed(day, attack=True, stale=False, mode="今日收盤"):
     return {
         "data_date": day,
+        "updated_at": day + " 14:45",
         "market": {"mode": mode, "stale": stale, "close_count": 600},
         "attack": [{"code": "2603", "name": "長榮", "score": 92}] if attack else [],
         "monster": [],
@@ -78,6 +79,51 @@ class TestDailyStrategyEngine(unittest.TestCase):
         a["days"][DAY1] = {"2603": 100.0}
         with self.assertRaises(ValueError):
             advance(feed(DAY1), a, copy.deepcopy(original), DAY1)
+
+    def test_official_close_must_be_published_after_1330(self):
+        a = archive((DAY1, 100.0))
+        original = initial_state()
+        cases = [
+            {**feed(DAY1), "updated_at": DAY1 + " 12:35"},
+            {**feed(DAY1), "updated_at": DAY2 + " 14:45"},
+            {**feed(DAY1), "updated_at": "invalid date"},
+            {**feed(DAY1), "updated_at": DAY1 + " 13:29"},
+            {**feed(DAY1), "market": {**feed(DAY1)["market"], "close_count": True}},
+            {**feed(DAY1), "market": {**feed(DAY1)["market"], "close_count": "1954"}},
+        ]
+        for item in cases:
+            with self.subTest(snapshot=item):
+                state = copy.deepcopy(original)
+                with self.assertRaises(ValueError):
+                    advance(item, a, state, DAY1)
+                self.assertEqual(state, original, "invalid timestamps must not mutate any P&L")
+        ready = feed(DAY1)
+        ready["updated_at"] = DAY1 + " 13:30"
+        state = initial_state()
+        self.assertTrue(advance(ready, a, state, DAY1))
+
+    def test_500_valid_quotes_not_merely_500_json_keys(self):
+        a = archive((DAY1, 100.0))
+        a["days"][DAY1] = {str(1000+i): "not-a-price" for i in range(600)}
+        a["days"][DAY1]["2603"] = 100
+        state = initial_state()
+        with self.assertRaisesRegex(ValueError, "有效官方收盤價不足"):
+            advance(feed(DAY1), a, state, DAY1)
+        self.assertIsNone(state["last_processed_day"])
+
+    def test_gap_in_archived_trading_days_does_not_fabricate_fills(self):
+        state = initial_state()
+        a = archive((DAY1, 100.0))
+        advance(feed(DAY1), a, state, DAY1)
+        # A valid archived 10/14 close exists, but the daily job never processed it.
+        a["days"][DAY2] = prices(100.0)
+        a["days"][DAY3] = prices(106.0)
+        previous = copy.deepcopy(state)
+        with self.assertRaisesRegex(ValueError, "交易日出現缺口"):
+            advance(feed(DAY3), a, state, DAY3)
+        self.assertEqual(state, previous, "an unprocessed day must not alter P&L")
+        advance(feed(DAY2, False), a, state, DAY2)
+        self.assertTrue(advance(feed(DAY3, False), a, state, DAY3))
 
     def test_stop_loss_and_hypothetical_cash_limits(self):
         s = initial_state()
