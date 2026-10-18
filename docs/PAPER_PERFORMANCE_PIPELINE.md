@@ -26,3 +26,10 @@ python -m scripts.paper_report --picks /tmp/jei-picks.json --prices /path/to/ver
 第二行是手動範例，**只適用確定當日的原始 feed**；既有日期若已有檔案，程式會拒絕覆寫。不要以目前 feed 回填過往日期。
 
 `prices` JSON 是股票代號到每日收盤價格陣列的映射；`benchmark` JSON 是同日期的指數收盤價陣列。所有日期採 ISO YYYY-MM-DD。請先驗證來源及交易日完整性。
+
+## 2026-10：交易日與行情快照防呆
+- 績效報告在提供基準指數每日收盤價時，以基準指數的**實際交易日期**定位第 3、7、15、30、60 個交易日。個股缺少進場或出場價格時標示 unavailable，避免以後一天的價格錯補。
+- 同一盤後封存程序會額外記錄 `data/feed_closes/YYYY-MM-DD.json`，只讀 `remote/system.json` 各選股區塊的 `price` 欄位，並排除互相矛盾的價格。
+- **feed.price 是當時 feed 的價格觀測，不是已經獨立查證的官方收盤價**。不應直接將它宣稱為已核實的績效行情；需要與 TWSE/TPEX 官方歷史資料對照。
+- `data/feed_closes` 僅覆蓋有出現在推薦區塊的股票，不是完整市場每日價格，因此不能單靠此檔案直接完成長期績效。
+- 已提交的定時任務不保證 GitHub Actions 已實際執行；請查閱 Actions 執行紀錄和當日快照是否產生。
