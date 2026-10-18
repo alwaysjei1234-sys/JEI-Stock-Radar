@@ -18,6 +18,15 @@ class LeaderboardTests(unittest.TestCase):
         monster=next(x for x in r["horizons"]["3"] if x["cohort"]=="monster")
         self.assertEqual(monster["mean_excess_pct"],3)
         self.assertEqual(monster["win_rate_pct"],75)
+    def test_verified_but_small_sample_is_not_ranked(self):
+        payload=self.sample(True)
+        payload["cohort_summary"]["monster"]["3"]["matured"]=9
+        payload["benchmark_comparison"]["monster"]["3"]["paired_count"]=9
+        row=next(x for x in leaderboard(payload)["horizons"]["3"] if x["cohort"]=="monster")
+        self.assertFalse(row["eligible"])
+        self.assertIsNone(row["win_rate_pct"])
+        self.assertIsNone(row["mean_excess_pct"])
+
     def test_all_five_horizons(self):
         self.assertEqual(set(leaderboard({})["horizons"]),{"3","7","15","30","60"})
 
