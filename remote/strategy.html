@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JEI 策略績效驗證</title><style>
+body{font:15px system-ui,sans-serif;background:#06101b;color:#eef8ff;max-width:850px;margin:auto;padding:16px}
+a{color:#75d9ff}section{background:#0d2438;border:1px solid #24506e;border-radius:14px;padding:16px;margin:14px 0}
+select,button{background:#102d45;border:1px solid #386580;color:white;padding:10px;border-radius:9px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;border-bottom:1px solid #29475d;padding:9px}
+.scroll{overflow-x:auto}.mut{color:#9bb7cb}.warn{color:#ffd166}
+</style></head><body>
+<a href="./cash.html">返回現股模擬</a><h1>JEI 選股策略績效</h1>
+<p class="mut">主流強勢、妖股與未來潛力妖股；獨立於私人持股，不執行交易。使用次一交易日收盤代理價，並非真實成交。</p>
+<section><label for="horizon">持有交易日：</label>
+<select id="horizon"><option>3</option><option>7</option><option>15</option><option>30</option><option>60</option></select>
+<button id="reload">更新資料</button><p id="status" class="warn" role="status">讀取中</p>
+<div class="scroll"><table><thead><tr><th>策略</th><th>成熟樣本</th><th>未完成</th><th>勝率</th><th>淨報酬</th><th>超額報酬</th></tr></thead><tbody id="results"></tbody></table></div>
+<p class="mut">至少 10 筆成熟且可比較大盤的樣本，才顯示策略報酬。未核實價格不得顯示成績。</p></section>
+<script>
+"use strict";
+let report=null;
+const el=id=>document.getElementById(id);
+const pct=v=>typeof v==="number"&&Number.isFinite(v)?v.toFixed(2)+"%":"--";
+function draw(){
+ const tbody=el("results");tbody.replaceChildren();
+ const rows=report?.horizons?.[el("horizon").value]||[];
+ if(!Array.isArray(rows)||!rows.length){
+   const tr=tbody.insertRow(),td=tr.insertCell();td.colSpan=6;td.textContent="尚無可顯示資料";return;
+ }
+ for(const r of rows){
+   const tr=tbody.insertRow();
+   const valid=report.verified===true&&r.matured>=10&&r.paired_count>=10;
+   for(const v of [r.label||r.cohort,r.matured??0,r.pending??0,
+     valid?pct(r.win_rate_pct):"--",valid?pct(r.mean_net_return_pct):"--",
+     valid?pct(r.mean_excess_pct):"--"]){tr.insertCell().textContent=String(v)}
+ }
+}
+async function reload(){
+ el("status").textContent="讀取中";
+ try{
+   const response=await fetch("./paper-leaderboard.json",{cache:"no-store"});
+   if(!response.ok)throw Error("尚未發布績效資料");
+   const data=await response.json();
+   if(data.schema_version!==1||!data.horizons)throw Error("資料格式不正確");
+   report=data;
+   el("status").textContent=data.verified===true?"已讀取核實資料，績效僅為模擬":"行情尚未核實，暫不顯示報酬";
+ }catch(e){report=null;el("status").textContent="待驗證："+e.message}
+ draw();
+}
+el("horizon").addEventListener("change",draw);
+el("reload").addEventListener("click",reload);
+reload();
+</script></body></html>
