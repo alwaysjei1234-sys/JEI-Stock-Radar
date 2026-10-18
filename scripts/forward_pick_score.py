@@ -37,7 +37,7 @@ def score_pick(pick, sessions, fee_rate=0.001425, sell_tax_rate=0.003, slippage_
             raise ValueError("invalid close")
         seen.add(d)
         clean.append((d, float(p)))
-    if clean != sorted(clean):
+    if any(clean[i][0] >= clean[i+1][0] for i in range(len(clean)-1)):
         raise ValueError("sessions must be strictly ascending")
     if trading_dates is not None:
         calendar = [date.fromisoformat(d) for d in trading_dates]
