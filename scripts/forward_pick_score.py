@@ -48,6 +48,9 @@ def score_pick(pick, sessions, fee_rate=0.001425, sell_tax_rate=0.003, slippage_
     result["entry_date"] = entry_date.isoformat()
     result["entry_price"] = entry
     for h in HORIZONS:
+        # Do not claim h trading sessions elapsed if the source price series
+        # skips any exchange sessions. A trusted trading calendar must be
+        # supplied by the report pipeline for strict completeness checks.
         if len(future) <= h:
             result["outcomes"][str(h)] = {"status": "pending"}
             continue
