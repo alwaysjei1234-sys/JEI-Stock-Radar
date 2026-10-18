@@ -43,6 +43,10 @@ jobs:
             exit 0
           fi
           python -m scripts.export_daily_picks --output "$TARGET" --limit 10
+          PRICE_TARGET="data/feed_closes/$FEED_DATE.json"
+          if [ ! -e "$PRICE_TARGET" ]; then
+            python -m scripts.export_feed_closes --output "$PRICE_TARGET"
+          fi
           echo "created=true" >> "$GITHUB_OUTPUT"
           echo "target=$TARGET" >> "$GITHUB_OUTPUT"
       - name: Commit original signal snapshot
@@ -52,7 +56,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- "${{ steps.capture.outputs.target }}"
+          git add -- "${{ steps.capture.outputs.target }}" data/feed_closes/
           git commit -m "data(paper): archive original picks ${{ steps.capture.outputs.target }}"
           git pull --rebase origin main
           git push origin HEAD:main
