@@ -752,8 +752,34 @@ def main():
     future_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
     future_monster=[]
     for score,s,sec,ss,r5,r10,r20,hp in future_pool[:12]:
-        reason=f"1–4週潛力觀察｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜20日 {fmt_ret(r20)}｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "控制追價")
+        reason=f"1–4週價量潛力觀察｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜20日 {fmt_ret(r20)}｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "控制追價")
         future_monster.append(item(s,score,reason,"next",risk,sec,ss))
+
+    # Transparent outside-industry research is context, never an unearned stock
+    # upgrade or proof of company revenue/orders. Keep technical scores intact.
+    try:
+        research=json.loads(Path("remote/industry_research.json").read_text(encoding="utf-8"))
+        published=datetime.strptime(str(research.get("as_of","")),"%Y-%m-%d").date()
+        if (research.get("mode")!="dated_industry_primary_source_evidence"
+                or not 0 <= (now.date()-published).days <= 30):
+            research={}
+    except (OSError, ValueError, TypeError):
+        research={}
+    themes=research.get("themes") if isinstance(research.get("themes"),dict) else {}
+    for x in future_monster:
+        evidence=themes.get(x["sector"]) or {}
+        institutions=evidence.get("institutions") or []
+        independent=int(evidence.get("independent_institutions") or 0)
+        if independent>=2:
+            label="產業研究雙機構以上佐證；個股營收/估值未驗證"
+        elif independent==1:
+            label="單一研究機構產業展望；不足以稱為共識"
+        else:
+            label="尚無足夠產業研報佐證"
+        x["research_status"]=label
+        x["research_independent_sources"]=independent
+        x["research_institutions"]=institutions[:5]
+        x["research_only"]=True
 
     rotate_src=sorted(attack[:8]+next_list[:8],key=lambda x:(x.get("sector_score",50),x["score"]),reverse=True)[:8]
     rotate=[dict(x,reason="換股候選｜"+x["reason"]) for x in rotate_src]
