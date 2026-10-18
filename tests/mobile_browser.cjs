@@ -219,6 +219,38 @@ async function run(){
   await page.waitForFunction(()=>!document.querySelector('#scanStatus').textContent.includes('尚未載入'));
   console.log('PASS mobile cash page, cloud 4-strategy scoreboard and stock scanning');
 
+  // Stock picking must keep as-of selections immutable, flag incomplete horizons,
+  // and never execute candidate labels as untrusted HTML.
+  await page.route('**/pick_validation.json?**',route=>route.fulfill({
+   status:200,contentType:'application/json',body:JSON.stringify({
+    schema:1,mode:'forward_official_close_pick_validation',
+    latest_official_day:'2026-10-16',updated_at:'2026-10-18 08:10',
+    total_frozen_picks:2,analysis_notes:['不可事後補選贏家'],
+    groups:{attack:{
+     '3':{completed:1,pending:1,missing_price:0,win_rate_pct:100,avg_estimated_net_pct:5.52,median_estimated_net_pct:5.52,worst_estimated_net_pct:5.52},
+     '7':{completed:0,pending:2,missing_price:0,win_rate_pct:null,avg_estimated_net_pct:null,median_estimated_net_pct:null,worst_estimated_net_pct:null}
+    }},
+    picks:[
+     {day:'2026-10-16',group:'attack',rank:1,code:'3017',name:'測試〈script〉',score:95,signal_close:3315,
+      outcomes:[{trading_days:3,status:'complete',end_day:'2026-10-21',estimated_net_return_pct:5.52},{trading_days:7,status:'pending'}]},
+     {day:'2026-10-16',group:'attack',rank:2,code:'6531',name:'待觀察',score:90,signal_close:882,
+      outcomes:[{trading_days:3,status:'pending'},{trading_days:7,status:'pending'}]}
+    ]
+   })
+  }));
+  await page.goto(base+'pick_validation.html',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('最後報告更新'));
+  assert.equal(await page.locator('#asOf').innerText(),'2026-10-16');
+  assert.equal(await page.locator('#total').innerText(),'2');
+  assert.match(await page.locator('#comparison').innerText(),/有效樣本少於10筆/);
+  assert.match(await page.locator('#pickRows').innerText(),/5.52%/);
+  assert.equal(await page.locator('#pickRows script').count(),0,'untrusted pick names are text only');
+  await page.locator('#horizon').selectOption('7');
+  assert.equal(await page.locator('#sample').innerText(),'0');
+  assert.equal(await page.locator('#wins').innerText(),'--');
+  assert.match(await page.locator('#pickRows').innerText(),/尚待第 7 個交易日/);
+  console.log('PASS forward-only pick validation scorecard: 3-day complete, 7-day pending, no HTML injection');
+
   await page.goto(base+'paper.html',{waitUntil:'domcontentloaded'});
   await page.locator('h1').waitFor({state:'visible'});
   assert.match(await page.locator('h1').innerText(),/當沖/);
