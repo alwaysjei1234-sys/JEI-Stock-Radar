@@ -10,7 +10,7 @@ from math import isfinite
 HORIZONS = (3, 7, 15, 30, 60)
 COHORTS = ("momentum", "monster", "pre_breakout")
 
-def score_pick(pick, sessions, fee_rate=0.001425, sell_tax_rate=0.003, slippage_rate=0.001):
+def score_pick(pick, sessions, fee_rate=0.001425, sell_tax_rate=0.003, slippage_rate=0.001, trading_dates=None):
     """sessions: sorted unique trading sessions [{date: ISO, close: positive number}].
 
     Signal is generated after the snapshot's as_of close; entry is NEXT session's
@@ -36,7 +36,14 @@ def score_pick(pick, sessions, fee_rate=0.001425, sell_tax_rate=0.003, slippage_
         clean.append((d, float(p)))
     if clean != sorted(clean):
         raise ValueError("sessions must be strictly ascending")
-    future = [(d, p) for d, p in clean if d > as_of]
+    if trading_dates is not None:
+        calendar = [date.fromisoformat(d) for d in trading_dates]
+        if calendar != sorted(set(calendar)):
+            raise ValueError("trading calendar must be unique and ascending")
+        prices = dict(clean)
+        future = [(d, prices.get(d)) for d in calendar if d > as_of]
+    else:
+        future = [(d, p) for d, p in clean if d > as_of]
     result = {"code": pick["code"], "as_of": pick["as_of"],
               "cohort": pick["cohort"], "entry_rule": "next_session_close_proxy",
               "outcomes": {}}
@@ -45,16 +52,21 @@ def score_pick(pick, sessions, fee_rate=0.001425, sell_tax_rate=0.003, slippage_
             result["outcomes"][str(h)] = {"status": "pending"}
         return result
     entry_date, entry = future[0]
+    if entry is None:
+        for h in HORIZONS:
+            result["outcomes"][str(h)] = {"status": "unavailable", "reason": "missing_entry_close"}
+        return result
     result["entry_date"] = entry_date.isoformat()
     result["entry_price"] = entry
     for h in HORIZONS:
-        # Do not claim h trading sessions elapsed if the source price series
-        # skips any exchange sessions. A trusted trading calendar must be
-        # supplied by the report pipeline for strict completeness checks.
         if len(future) <= h:
             result["outcomes"][str(h)] = {"status": "pending"}
             continue
         exit_date, exit_price = future[h]
+        if exit_price is None:
+            result["outcomes"][str(h)] = {"status": "unavailable", "reason": "missing_exit_close",
+                                          "exit_date": exit_date.isoformat()}
+            continue
         gross = exit_price / entry - 1
         net = (exit_price * (1 - fee_rate - sell_tax_rate - slippage_rate) /
                (entry * (1 + fee_rate + slippage_rate))) - 1
