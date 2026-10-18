@@ -699,7 +699,7 @@ window.JEI_STATIC={
 };
 function showFeedStatus(){const m=system.market||{},c=Number.isFinite(+m.close_count)?+m.close_count:(Array.isArray(system.universe)?system.universe.length:0);if(!tradingWindow()){const verified=isTrustedFeed(),historical=isRecentCloseObservation();$('netDot').classList.toggle('off',!verified&&!historical);$('netText').textContent=verified?'今日已收盤 '+c+'檔':historical?'前次收盤 '+String(system.data_date||''):'行情待更新';}}
 function refreshMarket(){
- if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}
+ if(!tradingWindow()){seedMarketFromSystem();refreshOfficialCloses();showFeedStatus();return}
  if(nativeOk()){
   const codes=liveCodes();liveScanReceived=0;
   if(!codes.length){$('netText').textContent='等待 JEI 股票清單';return}
