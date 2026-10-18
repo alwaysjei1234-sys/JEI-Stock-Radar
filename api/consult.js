@@ -132,18 +132,40 @@ ${history||"無"}
 
 async function askGemini(body,timeout=28000){
   const key=requestKey(body,"gemini");
-  if(!key) return null;
-  const model=PROVIDERS.gemini_free.model;
-  const j=await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{
-    method:"POST",
-    headers:{"x-goog-api-key":key,"Content-Type":"application/json"},
-    body:JSON.stringify({
-      system_instruction:{parts:[{text:SYSTEM}]},
-      contents:[{role:"user",parts:[{text:userPrompt(body)}]}],
-      generationConfig:{temperature:0.25,maxOutputTokens:900}
-    })
-  },timeout);
-  return extractGemini(j)||"無有效回覆";
+  if(!key)return null;
+  const headers={"x-goog-api-key":key,"Content-Type":"application/json"};
+  const base="https://generativelanguage.googleapis.com/v1beta/models/";
+  const requested=PROVIDERS.gemini_free.model;
+  let models=[requested];
+  // Model availability differs by Google account and key. Discover allowed
+  // generateContent models on 404 instead of guessing another hardcoded ID.
+  async function discover(){
+    const j=await fetchJson("https://generativelanguage.googleapis.com/v1beta/models?pageSize=100",{headers},Math.min(timeout,10000));
+    const allowed=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>String(m.name||"").replace(/^models\//,""));
+    const preferred=allowed.filter(m=>/flash/i.test(m)&&!/embedding|image|tts|live/i.test(m));
+    return [...new Set([...preferred,...allowed])].slice(0,12);
+  }
+  const payload=JSON.stringify({
+    system_instruction:{parts:[{text:SYSTEM}]},
+    contents:[{role:"user",parts:[{text:userPrompt(body)}]}],
+    generationConfig:{temperature:0.25,maxOutputTokens:900}
+  });
+  let lastError=null;
+  for(let i=0;i<models.length&&i<4;i++){
+    try{
+      const j=await fetchJson(base+encodeURIComponent(models[i])+":generateContent",{method:"POST",headers,body:payload},timeout);
+      return extractGemini(j)||"無有效回覆";
+    }catch(e){
+      lastError=e;
+      if(!/HTTP 404\b|no longer available|not found/i.test(String(e?.message||e)))throw e;
+      if(i===0){
+        try{models=[...new Set([requested,...await discover()])]}catch(discoveryError){
+          throw new Error("Gemini 模型不可用，且模型清單查詢失敗："+String(discoveryError?.message||discoveryError).slice(0,220));
+        }
+      }
+    }
+  }
+  throw new Error("Gemini 已嘗試可用模型但未成功："+String(lastError?.message||lastError).slice(0,250));
 }
 async function askGroq(body,provider,timeout=28000){
   const key=requestKey(body,"groq");
