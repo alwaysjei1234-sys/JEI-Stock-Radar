@@ -17,9 +17,14 @@ def collect(directory):
             raise ValueError(f"snapshot date/filename mismatch: {path}")
         if "official close not independently confirmed" not in snapshot.get("source", ""):
             raise ValueError(f"unrecognized price provenance: {path}")
+        if not isinstance(snapshot.get("conflict_codes",[]),list):
+            raise ValueError(f"invalid conflict list: {path}")
+        conflicted=set(snapshot.get("conflict_codes",[]))
         if not isinstance(snapshot.get("prices"),dict):
             raise ValueError(f"invalid price map: {path}")
         for code, observation in snapshot["prices"].items():
+            if code in conflicted:
+                raise ValueError(f"conflicted symbol was included in price map: {path} {code}")
             if observation["date"] != day:
                 raise ValueError(f"price date mismatch: {path} {code}")
             close=observation["close"]
