@@ -28,7 +28,7 @@ def extract(feed, limit=10):
             pick = {"as_of": as_of, "code": code, "cohort": cohort,
                     "rank": len(seen), "name": str(row.get("name", "")),
                     "source": f"remote/system.json:{feed_key}"}
-            if isinstance(row.get("score"), (int, float)) and not isinstance(row["score"], bool):
+            if isinstance(row.get("score"), (int, float)) and not isinstance(row["score"], bool) and __import__("math").isfinite(row["score"]):
                 pick["signal_score"] = row["score"]
             picks.append(pick)
             if len(seen) >= limit:
