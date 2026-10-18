@@ -24,6 +24,17 @@ class FeedPriceCollectionTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 collect(d)
 
+    def test_reject_conflicted_symbol(self):
+        with tempfile.TemporaryDirectory() as d:
+            day="2026-10-16"
+            payload={"data_date":day,
+                "source":"official close not independently confirmed",
+                "conflict_codes":["2330"],
+                "prices":{"2330":{"date":day,"close":100}}}
+            (Path(d)/(day+".json")).write_text(json.dumps(payload),encoding="utf-8")
+            with self.assertRaises(ValueError):
+                collect(d)
+
     def test_reject_wrong_date(self):
         with tempfile.TemporaryDirectory() as d:
             payload={"data_date":"2026-10-16",
