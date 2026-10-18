@@ -40,15 +40,15 @@ jobs:
           if [ -e "$TARGET" ]; then
             echo "Snapshot already exists; preserve immutable original."
             echo "created=false" >> "$GITHUB_OUTPUT"
-            exit 0
+          else
+            python -m scripts.export_daily_picks --output "$TARGET" --limit 10
+            echo "created=true" >> "$GITHUB_OUTPUT"
+            echo "target=$TARGET" >> "$GITHUB_OUTPUT"
           fi
-          python -m scripts.export_daily_picks --output "$TARGET" --limit 10
           PRICE_TARGET="data/feed_closes/$FEED_DATE.json"
           if [ ! -e "$PRICE_TARGET" ]; then
             python -m scripts.export_feed_closes --output "$PRICE_TARGET"
           fi
-          echo "created=true" >> "$GITHUB_OUTPUT"
-          echo "target=$TARGET" >> "$GITHUB_OUTPUT"
       - name: Generate diagnostic leaderboard
         run: python -m scripts.build_diagnostic_leaderboard --output remote/paper-leaderboard.json
       - name: Commit archive and updated diagnostic leaderboard
