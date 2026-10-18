@@ -12,6 +12,10 @@ class ReportTests(unittest.TestCase):
         self.assertEqual(report["benchmark_comparison"]["momentum"]["3"]["paired_count"],1)
         self.assertEqual(report["cohort_summary"]["momentum"]["60"]["pending_or_unavailable"],1)
 
+    def test_reject_invalid_unused_price_series(self):
+        with self.assertRaises(ValueError):
+            build_report([],{"2330":[{"date":"2026-10-16","close":float("nan")}]})
+
     def test_duplicate_pick_rejected(self):
         pick={"code":"2330","cohort":"monster","as_of":"2026-01-01"}
         with self.assertRaises(ValueError):
