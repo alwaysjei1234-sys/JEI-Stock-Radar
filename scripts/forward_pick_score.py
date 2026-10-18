@@ -22,6 +22,8 @@ def score_pick(pick, sessions, fee_rate=0.001425, sell_tax_rate=0.003, slippage_
     for name,value in (("fee_rate",fee_rate),("sell_tax_rate",sell_tax_rate),("slippage_rate",slippage_rate)):
         if isinstance(value,bool) or not isinstance(value,(int,float)) or not isfinite(value) or not 0 <= value < 1:
             raise ValueError(f"invalid {name}")
+    if fee_rate + sell_tax_rate + slippage_rate >= 1:
+        raise ValueError("combined selling costs must be below 100%")
     if pick["cohort"] not in COHORTS:
         raise ValueError("unknown cohort")
     if not pick.get("code"):
