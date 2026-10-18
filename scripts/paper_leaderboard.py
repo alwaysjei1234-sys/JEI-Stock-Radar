@@ -22,12 +22,14 @@ def leaderboard(report):
             stat=report.get("cohort_summary",{}).get(cohort,{}).get(h,{})
             bench=report.get("benchmark_comparison",{}).get(cohort,{}).get(h,{})
             matured=stat.get("matured",0)
+            eligible = verified and matured >= 10 and bench.get("paired_count",0) >= 10
             rows.append({"cohort":cohort,"label":label,"matured":matured,
                          "pending":stat.get("pending_or_unavailable",0),
-                         "win_rate_pct":stat.get("win_rate_pct") if verified else None,
-                         "mean_net_return_pct":stat.get("mean_net_return_pct") if verified else None,
-                         "mean_excess_pct":bench.get("mean_excess_pct") if verified else None,
-                         "paired_count":bench.get("paired_count",0) if verified else 0})
+                         "win_rate_pct":stat.get("win_rate_pct") if eligible else None,
+                         "mean_net_return_pct":stat.get("mean_net_return_pct") if eligible else None,
+                         "mean_excess_pct":bench.get("mean_excess_pct") if eligible else None,
+                         "paired_count":bench.get("paired_count",0) if verified else 0,
+                         "eligible":eligible})
         # Sample-size threshold avoids celebrating a single lucky pick.
         rows.sort(key=lambda r:(r["matured"]>=10 and r["mean_excess_pct"] is not None,
                                 r["mean_excess_pct"] if r["matured"]>=10 and r["mean_excess_pct"] is not None else float("-inf")),reverse=True)
