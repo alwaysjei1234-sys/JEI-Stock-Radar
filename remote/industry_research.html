@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JEI 未來主流產業｜研究報告交叉驗證</title>
+<style>
+:root{color-scheme:dark;background:#06101b;color:#eaf7ff;font:15px system-ui,"Noto Sans TC",sans-serif}
+*{box-sizing:border-box}body{max-width:890px;margin:auto;padding:16px;line-height:1.6}
+h1{font-size:24px}h2{font-size:19px;margin:0 0 9px}a{color:#7ad9ff}
+section{background:#0c2235;border:1px solid #2b506a;border-radius:14px;padding:15px;margin:13px 0}
+p{margin:7px 0}.mut{font-size:13px;color:#acc7db}.notice{border-left:4px solid #d9a44b;padding:9px 12px;background:#102739}
+.small{font-size:12px}.pill{display:inline-block;border:1px solid #446985;padding:2px 9px;border-radius:30px;font-size:12px;margin:3px 5px 3px 0}
+.source{padding:9px 0;border-top:1px solid #244963}.source a{font-size:14px;font-weight:650}
+.stock{display:inline-block;padding:4px 8px;background:#163b59;margin:4px 5px 2px 0;border-radius:8px}
+button{padding:11px 14px;width:100%;border:1px solid #3e749e;background:#135f96;color:white;border-radius:8px;font:inherit;cursor:pointer}
+@media(max-width:500px){body{padding:11px}h1{font-size:20px}section{padding:12px}}
+</style></head><body>
+<a href="./index.html">← JEI 選股雷達</a>　·　<a href="./pick_validation.html">選股績效驗證</a>
+<h1>🔭 未來主流產業｜研究報告交叉驗證</h1>
+<p>比較不同研究機構的公開產業展望，找未來 3～12 個月有可能延續的成長方向。<b>產業趨勢不等於個股買進訊號</b>；報告發表日期、獨立來源數與相反風險會同時顯示。</p>
+<p class="notice">資料僅根據公開、已標示來源的研究摘要，沒有讀取付費研報全文；同一研究機構的多篇文章只算一個來源。尚未確認公司營收、獲利、估值、接單與客戶導入者一律是「觀察」，不是 JEI 已驗證買點。</p>
+<section><h2>研究驗證狀態</h2><p id="status" role="status">讀取來源中…</p><p class="mut" id="method"></p><button type="button" id="refresh">重新讀取研究來源</button></section>
+<div id="themes"></div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const add=(p,tag,content,cls)=>{
+ const e=document.createElement(tag);e.textContent=String(content??'');if(cls)e.className=cls;p.appendChild(e);return e
+};
+let research=null,feed=null;
+function render(){
+ if(!research)return;
+ const today=new Date(),ymd=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(today);
+ const stale=research.as_of!==ymd;
+ $('status').textContent='來源審核基準日 '+research.as_of+'｜'+Object.keys(research.themes||{}).length+
+   ' 個產業｜'+(stale?'來源檢查日期不是今天；資料可能過期':'依來源日期與獨立研究機構數分類');
+ $('method').textContent=research.method||'';
+ const root=$('themes');root.replaceChildren();
+ const ordered=research.sector_order||Object.keys(research.themes);
+ for(const sector of ordered){
+  const t=research.themes[sector];if(!t)continue;
+  const card=document.createElement('section');
+  add(card,'h2',sector);
+  add(card,'span',t.evidence_level,'pill');
+  add(card,'span','獨立研究機構 '+t.independent_institutions+' 家','pill');
+  add(card,'span','公開研究 '+t.source_articles+' 篇','pill');
+  add(card,'p','研究主題：'+t.focus);
+  add(card,'p','後續必須驗證：'+t.risks_to_verify,'mut');
+  if(!t.company_fundamentals_verified)add(card,'p','⚠ 產業展望仍未完成逐家公司基本面驗證，不能直接列入買進結論','mut');
+  const candidates=(Array.isArray(feed?.future_monster)?feed.future_monster:[]).filter(x=>x.sector===sector).slice(0,8);
+  if(candidates.length){
+   add(card,'p','JEI 目前價量候選（僅產業對應，非研報推薦）：','mut');
+   for(const x of candidates)add(card,'span',String(x.code)+' '+String(x.name)+'｜JEI '+String(x.score??'--'),'stock');
+  }else add(card,'p','JEI 目前未列出此族群的未來妖股價量候選','mut');
+  for(const src of t.sources||[]){
+   const block=document.createElement('div');block.className='source';
+   const href=String(src.url||'');
+   const title=add(block,'div',src.organization+'｜'+src.date+'｜公開來源','mut');
+   const a=document.createElement('a');a.textContent=src.title;
+   if(/^https:\/\/[A-Za-z0-9.-]+\//.test(href)){a.href=href;a.target='_blank';a.rel='noopener noreferrer';}
+   block.appendChild(a);
+   add(block,'p',src.evidence,'mut');
+   add(block,'p','限制／風險：'+src.caveat,'mut');
+   card.appendChild(block);
+  }
+  if(!t.source_articles)add(card,'p','目前沒有符合新鮮度要求的已核對公開研究；不能以題材或網路聲量冒充研報共識。','mut');
+  root.appendChild(card);
+ }
+}
+async function refresh(){
+ $('status').textContent='核對產業研究日期與來源中…';
+ try{
+  const a=await fetch('./industry_research.json?ts='+Date.now(),{cache:'no-store'});
+  if(!a.ok)throw Error('HTTP '+a.status);
+  const j=await a.json();
+  if(j.schema!==1||j.mode!=='dated_industry_primary_source_evidence'||!j.themes)throw Error('研究資料格式錯誤');
+  research=j;
+  try{const r=await fetch('./system.json?ts='+Date.now(),{cache:'no-store'});if(r.ok)feed=await r.json()}catch{}
+  render();
+ }catch(e){$('status').textContent='研究來源資料未通過驗證或尚未建立：'+String(e?.message||e)}
+}
+$('refresh').addEventListener('click',refresh);refresh();
+</script></body></html>

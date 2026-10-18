@@ -1,0 +1,88 @@
+"""Evidence is not a ticker recommendation; repeated media citations count once."""
+import copy
+import json
+import unittest
+from datetime import date
+from pathlib import Path
+from scripts.research_consensus import build, validate_registry
+
+REGISTRY=Path(__file__).resolve().parents[1]/"remote/research_sources.json"
+
+class ResearchEvidenceTests(unittest.TestCase):
+    def setUp(self):
+        self.sources=json.loads(REGISTRY.read_text(encoding="utf-8"))
+        self.today=date(2026,10,18)
+
+    def test_valid_dated_public_industry_sources(self):
+        self.assertTrue(validate_registry(self.sources))
+        result=build(self.sources,self.today)
+        self.assertTrue(result["research_evidence_only"])
+        self.assertTrue(result["not_broker_rating"])
+        mem=result["themes"]["記憶體/儲存"]
+        self.assertEqual(mem["independent_institutions"],3)
+        self.assertEqual(mem["institutions"],["SEMI","TrendForce","UBS"])
+        self.assertFalse(mem["company_fundamentals_verified"])
+        self.assertFalse(mem["actionable_buy_signal"])
+        optical=result["themes"]["光通訊/CPO"]
+        self.assertEqual(optical["independent_institutions"],2,
+                         "three TrendForce articles count as one independent institution")
+        self.assertGreaterEqual(optical["source_articles"],5)
+        grid=result["themes"]["電力/電網/基建"]
+        self.assertEqual(grid["independent_institutions"],2)
+        self.assertEqual(grid["institutions"],["IEA","UBS"])
+        self.assertEqual(result["themes"]["AI伺服器/散熱"]["independent_institutions"],4)
+        self.assertEqual(result["themes"]["航運"]["independent_institutions"],0)
+        self.assertEqual(result["themes"]["PCB/載板"]["evidence_level"],"研究證據不足")
+
+    def test_future_dated_and_old_reports_never_boost_independent_count(self):
+        newer=build(self.sources,date(2026,1,1))
+        self.assertEqual(newer["themes"]["光通訊/CPO"]["independent_institutions"],1)
+        self.assertTrue(newer["themes"]["光通訊/CPO"]["excluded_sources"])
+        aged=build(self.sources,date(2028,12,31))
+        self.assertEqual(aged["themes"]["光通訊/CPO"]["independent_institutions"],0)
+        self.assertEqual(aged["themes"]["半導體設備/測試"]["source_articles"],0)
+
+    def test_institution_duplicate_cannot_forge_consensus(self):
+        altered=copy.deepcopy(self.sources)
+        repeated=copy.deepcopy(altered["sources"][0])
+        repeated["id"]="another-reference-by-same-institution"
+        altered["sources"].append(repeated)
+        result=build(altered,self.today)
+        self.assertEqual(result["themes"]["光通訊/CPO"]["independent_institutions"],2)
+        self.assertEqual(result["themes"]["光通訊/CPO"]["source_articles"],6)
+
+    def test_published_research_matches_reviewed_registry(self):
+        output=REGISTRY.parent/"industry_research.json"
+        published=json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(published["mode"],"dated_industry_primary_source_evidence")
+        calculated=build(self.sources,date.fromisoformat(published["as_of"]))
+        self.assertEqual(calculated["themes"],published["themes"])
+        self.assertEqual(calculated["sector_order"],published["sector_order"])
+        self.assertFalse(any(t.get("actionable_buy_signal") for t in published["themes"].values()))
+        self.assertTrue(all(x["url"].startswith("https://")
+                            for t in published["themes"].values() for x in t["sources"]))
+
+    def test_future_stock_scores_remain_independent_from_sector_reports(self):
+        updater=(REGISTRY.parents[0].parent/"scripts/update_system.py").read_text(encoding="utf-8")
+        self.assertIn('x["research_only"]=True',updater)
+        self.assertIn('x["research_status"]=label',updater)
+        self.assertIn('x["research_institutions"]=institutions[:5]',updater)
+        self.assertIn('future_monster.append(item(s,score,reason,"next",risk,sec,ss))',updater)
+        # The new evidence panel must not secretly turn outlook into a stock scoring bonus.
+        self.assertNotIn('score+=research',updater)
+        self.assertNotIn('score += research',updater)
+
+    def test_reject_unattributed_url_and_unknown_industry(self):
+        for bad in ["http://example.com/x","https://someone:password@example.com/x",
+                    "https://trendforce.com.evil.example/fake","https://example.com/a",""]:
+            changed=copy.deepcopy(self.sources)
+            changed["sources"][0]["url"]=bad
+            with self.subTest(url=bad),self.assertRaises(ValueError):
+                validate_registry(changed)
+        changed=copy.deepcopy(self.sources)
+        changed["sources"][0]["sectors"]=["神祕妖股保證翻倍"]
+        with self.assertRaises(ValueError):
+            validate_registry(changed)
+
+if __name__=="__main__":
+    unittest.main()

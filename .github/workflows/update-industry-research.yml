@@ -1,0 +1,51 @@
+name: JEI Future Industry Research Review
+on:
+  # Recalculate research freshness weekly; sources require reviewed, traceable
+  # additions in research_sources.json (not automatic rumor scraping).
+  schedule:
+    - cron: '15 0 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'remote/research_sources.json'
+      - 'scripts/research_consensus.py'
+      - '.github/workflows/update-industry-research.yml'
+permissions:
+  contents: write
+concurrency:
+  group: jei-industry-research
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test research source traceability and distinct institutions
+        run: python -m unittest discover -s tests -p 'test_research_consensus.py' -v
+      - name: Validate source dates and regenerate dated evidence
+        run: python scripts/research_consensus.py
+      - name: Publish curated source evidence
+        run: |
+          git add -N remote/industry_research.json
+          if git diff --quiet -- remote/industry_research.json; then
+            echo "Evidence already up to date"
+            exit 0
+          fi
+          git config user.name "JEI Research Evidence Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add remote/industry_research.json
+          git commit -m "Auto-refresh dated future-industry research evidence"
+          for i in 1 2 3; do
+            if git push; then exit 0; fi
+            git fetch origin main
+            git rebase origin/main
+            sleep 3
+          done
+          exit 1

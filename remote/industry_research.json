@@ -1,0 +1,475 @@
+{
+  "schema": 1,
+  "mode": "dated_industry_primary_source_evidence",
+  "as_of": "2026-10-18",
+  "freshness_days": 365,
+  "research_evidence_only": true,
+  "not_broker_rating": true,
+  "method": "逐篇核對投資機構公開觀點、產業研究與國際能源官方預測及其原始網址/發表日期；同機構不重複計為獨立來源，未閱讀付費全文。",
+  "themes": {
+    "光通訊/CPO": {
+      "focus": "800G/1.6T、光模組、CPO、光學對準與測試",
+      "risks_to_verify": "出貨速度、客戶驗證、光引擎良率、資本支出循環",
+      "evidence_level": "多機構產業研究佐證",
+      "independent_institutions": 2,
+      "institutions": [
+        "TrendForce",
+        "UBS"
+      ],
+      "source_articles": 5,
+      "sources": [
+        {
+          "id": "trendforce-cpo-test-20261013",
+          "organization": "TrendForce",
+          "date": "2026-10-13",
+          "title": "光電測試平台成CPO量產關鍵",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20261013-13265.html",
+          "sectors": [
+            "光通訊/CPO",
+            "半導體設備/測試"
+          ],
+          "evidence": "研究指出CPO量產需整合光學與電性測試，光電測試平台及對位流程是瓶頸",
+          "caveat": "量產導入、測試成本和良率仍有不確定性",
+          "type": "公開研究摘要",
+          "days_old": 5
+        },
+        {
+          "id": "trendforce-cpo-ship-20260727",
+          "organization": "TrendForce",
+          "date": "2026-07-27",
+          "title": "NVIDIA、Broadcom CPO交換器小量出貨",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20260727-13150.html",
+          "sectors": [
+            "光通訊/CPO"
+          ],
+          "evidence": "部分CPO交換器已進入小量供應，光引擎與先進封裝產能為擴產門檻",
+          "caveat": "小量出貨不等於整體供應鏈都已大規模商轉",
+          "type": "公開研究摘要",
+          "days_old": 83
+        },
+        {
+          "id": "ubs-cio-20260612",
+          "organization": "UBS",
+          "date": "2026-06-12",
+          "title": "Volatility in AI and tech do not derail the investment thesis",
+          "url": "https://www.ubs.com/global/en/wealthmanagement/insights/chief-investment-office/house-view/daily/2026/latest-12062026.html",
+          "sectors": [
+            "光通訊/CPO",
+            "記憶體/儲存",
+            "半導體設備/測試"
+          ],
+          "evidence": "UBS CIO公開投資展望認為AI支出受益鏈逐步擴展至光學互連、記憶體與半導體資本設備；並未推薦特定台股",
+          "caveat": "光學互連是整體分類，不代表每一家CPO元件商都受惠；AI資本支出融資與估值是重要變數",
+          "type": "投資機構公開產業展望",
+          "days_old": 128
+        },
+        {
+          "id": "trendforce-optical-20260420",
+          "organization": "TrendForce",
+          "date": "2026-04-20",
+          "title": "2026年AI光收發模組市場規模預測",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20260420-13016.html",
+          "sectors": [
+            "光通訊/CPO"
+          ],
+          "evidence": "預估2026年AI光收發模組市場約260億美元，供應鏈面臨EML等零件產能限制",
+          "caveat": "市場規模成長不表示所有台廠能取得訂單",
+          "type": "公開研究摘要",
+          "days_old": 181
+        },
+        {
+          "id": "trendforce-ai-20251127",
+          "organization": "TrendForce",
+          "date": "2025-11-27",
+          "title": "2026年AI重構科技新格局",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20251127-12803.html",
+          "sectors": [
+            "AI伺服器/散熱",
+            "記憶體/儲存",
+            "光通訊/CPO"
+          ],
+          "evidence": "看好AI機櫃、液冷、HBM與高速互連的產業採用趨勢",
+          "caveat": "較早期的預測需以後續出貨及資本支出驗證",
+          "type": "公開研究摘要",
+          "days_old": 325
+        }
+      ],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "記憶體/儲存": {
+      "focus": "HBM/DRAM供需、先進記憶體設備",
+      "risks_to_verify": "供給擴充、報價循環、HBM排擠一般DRAM",
+      "evidence_level": "多機構產業研究佐證",
+      "independent_institutions": 3,
+      "institutions": [
+        "SEMI",
+        "TrendForce",
+        "UBS"
+      ],
+      "source_articles": 4,
+      "sources": [
+        {
+          "id": "trendforce-hbm-20260728",
+          "organization": "TrendForce",
+          "date": "2026-07-28",
+          "title": "AI Wave & DRAM Deficits: 2027 Global DRAM Outlook（公開摘要）",
+          "url": "https://www.trendforce.com/research/download/RP260728GY",
+          "sectors": [
+            "記憶體/儲存"
+          ],
+          "evidence": "公開目錄及摘要指出HBM與伺服器記憶體需求成長，供給擴張仍有設備交期限制",
+          "caveat": "未取得付費全文，僅引用公開摘要；價格高度週期性",
+          "type": "付費報告之公開摘要",
+          "days_old": 82
+        },
+        {
+          "id": "semi-equipment-20260715",
+          "organization": "SEMI",
+          "date": "2026-07-15",
+          "title": "2028年半導體設備市場預測",
+          "url": "https://www.semi.org/zh/node/173816",
+          "sectors": [
+            "半導體設備/測試",
+            "記憶體/儲存",
+            "AI伺服器/散熱"
+          ],
+          "evidence": "2026年全球半導體設備市場預估1659億美元，2028年約2295億美元；成長動能包括HBM、測試與先進封裝",
+          "caveat": "全球設備市場預測並非台灣個別設備公司營收保證",
+          "type": "公開產業組織預測",
+          "days_old": 95
+        },
+        {
+          "id": "ubs-cio-20260612",
+          "organization": "UBS",
+          "date": "2026-06-12",
+          "title": "Volatility in AI and tech do not derail the investment thesis",
+          "url": "https://www.ubs.com/global/en/wealthmanagement/insights/chief-investment-office/house-view/daily/2026/latest-12062026.html",
+          "sectors": [
+            "光通訊/CPO",
+            "記憶體/儲存",
+            "半導體設備/測試"
+          ],
+          "evidence": "UBS CIO公開投資展望認為AI支出受益鏈逐步擴展至光學互連、記憶體與半導體資本設備；並未推薦特定台股",
+          "caveat": "光學互連是整體分類，不代表每一家CPO元件商都受惠；AI資本支出融資與估值是重要變數",
+          "type": "投資機構公開產業展望",
+          "days_old": 128
+        },
+        {
+          "id": "trendforce-ai-20251127",
+          "organization": "TrendForce",
+          "date": "2025-11-27",
+          "title": "2026年AI重構科技新格局",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20251127-12803.html",
+          "sectors": [
+            "AI伺服器/散熱",
+            "記憶體/儲存",
+            "光通訊/CPO"
+          ],
+          "evidence": "看好AI機櫃、液冷、HBM與高速互連的產業採用趨勢",
+          "caveat": "較早期的預測需以後續出貨及資本支出驗證",
+          "type": "公開研究摘要",
+          "days_old": 325
+        }
+      ],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "半導體設備/測試": {
+      "focus": "先進製程、先進封裝、測試設備與光電測試",
+      "risks_to_verify": "設備交期、導入良率、客戶資本支出修正",
+      "evidence_level": "多機構產業研究佐證",
+      "independent_institutions": 3,
+      "institutions": [
+        "SEMI",
+        "TrendForce",
+        "UBS"
+      ],
+      "source_articles": 4,
+      "sources": [
+        {
+          "id": "trendforce-cpo-test-20261013",
+          "organization": "TrendForce",
+          "date": "2026-10-13",
+          "title": "光電測試平台成CPO量產關鍵",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20261013-13265.html",
+          "sectors": [
+            "光通訊/CPO",
+            "半導體設備/測試"
+          ],
+          "evidence": "研究指出CPO量產需整合光學與電性測試，光電測試平台及對位流程是瓶頸",
+          "caveat": "量產導入、測試成本和良率仍有不確定性",
+          "type": "公開研究摘要",
+          "days_old": 5
+        },
+        {
+          "id": "ubs-cio-20260804",
+          "organization": "UBS",
+          "date": "2026-08-04",
+          "title": "AI opportunities beyond tech",
+          "url": "https://www.ubs.com/global/en/wealthmanagement/insights/chief-investment-office/house-view/daily/2026/latest-04082026.html",
+          "sectors": [
+            "半導體設備/測試",
+            "AI伺服器/散熱",
+            "電力/電網/基建"
+          ],
+          "evidence": "UBS CIO偏好AI基建的半導體設備與電力資源鏈，認為供電能力及電網接入是中期擴張限制之一",
+          "caveat": "半導體設備支出、發電投資與台灣公司盈利之間仍有多層傳導與評價風險",
+          "type": "投資機構公開產業展望",
+          "days_old": 75
+        },
+        {
+          "id": "semi-equipment-20260715",
+          "organization": "SEMI",
+          "date": "2026-07-15",
+          "title": "2028年半導體設備市場預測",
+          "url": "https://www.semi.org/zh/node/173816",
+          "sectors": [
+            "半導體設備/測試",
+            "記憶體/儲存",
+            "AI伺服器/散熱"
+          ],
+          "evidence": "2026年全球半導體設備市場預估1659億美元，2028年約2295億美元；成長動能包括HBM、測試與先進封裝",
+          "caveat": "全球設備市場預測並非台灣個別設備公司營收保證",
+          "type": "公開產業組織預測",
+          "days_old": 95
+        },
+        {
+          "id": "ubs-cio-20260612",
+          "organization": "UBS",
+          "date": "2026-06-12",
+          "title": "Volatility in AI and tech do not derail the investment thesis",
+          "url": "https://www.ubs.com/global/en/wealthmanagement/insights/chief-investment-office/house-view/daily/2026/latest-12062026.html",
+          "sectors": [
+            "光通訊/CPO",
+            "記憶體/儲存",
+            "半導體設備/測試"
+          ],
+          "evidence": "UBS CIO公開投資展望認為AI支出受益鏈逐步擴展至光學互連、記憶體與半導體資本設備；並未推薦特定台股",
+          "caveat": "光學互連是整體分類，不代表每一家CPO元件商都受惠；AI資本支出融資與估值是重要變數",
+          "type": "投資機構公開產業展望",
+          "days_old": 128
+        }
+      ],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "AI伺服器/散熱": {
+      "focus": "AI機櫃需求、資料中心液冷、高密度算力",
+      "risks_to_verify": "機櫃出貨實績、單位價值、訂單集中與液冷滲透",
+      "evidence_level": "多機構產業研究佐證",
+      "independent_institutions": 4,
+      "institutions": [
+        "IEA",
+        "SEMI",
+        "TrendForce",
+        "UBS"
+      ],
+      "source_articles": 5,
+      "sources": [
+        {
+          "id": "iea-ai-20261014",
+          "organization": "IEA",
+          "date": "2026-10-14",
+          "title": "Powering Artificial Intelligence",
+          "url": "https://www.iea.org/reports/powering-artificial-intelligence",
+          "sectors": [
+            "AI伺服器/散熱",
+            "電力/電網/基建"
+          ],
+          "evidence": "IEA研究資料中心融入電力系統的政策與基建限制，辨識供電可靠度、成本與永續性風險",
+          "caveat": "電力系統限制可能拖延資料中心正式啟用，並非所有配電商都會立即實現盈利",
+          "type": "國際能源署公開AI電力研究",
+          "days_old": 4
+        },
+        {
+          "id": "ubs-cio-20260925",
+          "organization": "UBS",
+          "date": "2026-09-25",
+          "title": "AI infrastructure: Strong demand does not remove execution risks",
+          "url": "https://www.ubs.com/global/en/wealthmanagement/insights/chief-investment-office/house-view/daily/2026/latest-25092026.html",
+          "sectors": [
+            "AI伺服器/散熱",
+            "電力/電網/基建"
+          ],
+          "evidence": "UBS CIO提醒資料中心強勁需求不等於工程能如期落地，電力與融資可能成為收入認列瓶頸",
+          "caveat": "部分專案可能延後、縮減或取消；訂單與實際出貨需以公司公告追蹤",
+          "type": "投資機構公開風險研究",
+          "days_old": 23
+        },
+        {
+          "id": "ubs-cio-20260804",
+          "organization": "UBS",
+          "date": "2026-08-04",
+          "title": "AI opportunities beyond tech",
+          "url": "https://www.ubs.com/global/en/wealthmanagement/insights/chief-investment-office/house-view/daily/2026/latest-04082026.html",
+          "sectors": [
+            "半導體設備/測試",
+            "AI伺服器/散熱",
+            "電力/電網/基建"
+          ],
+          "evidence": "UBS CIO偏好AI基建的半導體設備與電力資源鏈，認為供電能力及電網接入是中期擴張限制之一",
+          "caveat": "半導體設備支出、發電投資與台灣公司盈利之間仍有多層傳導與評價風險",
+          "type": "投資機構公開產業展望",
+          "days_old": 75
+        },
+        {
+          "id": "semi-equipment-20260715",
+          "organization": "SEMI",
+          "date": "2026-07-15",
+          "title": "2028年半導體設備市場預測",
+          "url": "https://www.semi.org/zh/node/173816",
+          "sectors": [
+            "半導體設備/測試",
+            "記憶體/儲存",
+            "AI伺服器/散熱"
+          ],
+          "evidence": "2026年全球半導體設備市場預估1659億美元，2028年約2295億美元；成長動能包括HBM、測試與先進封裝",
+          "caveat": "全球設備市場預測並非台灣個別設備公司營收保證",
+          "type": "公開產業組織預測",
+          "days_old": 95
+        },
+        {
+          "id": "trendforce-ai-20251127",
+          "organization": "TrendForce",
+          "date": "2025-11-27",
+          "title": "2026年AI重構科技新格局",
+          "url": "https://www.trendforce.com.tw/presscenter/news/20251127-12803.html",
+          "sectors": [
+            "AI伺服器/散熱",
+            "記憶體/儲存",
+            "光通訊/CPO"
+          ],
+          "evidence": "看好AI機櫃、液冷、HBM與高速互連的產業採用趨勢",
+          "caveat": "較早期的預測需以後續出貨及資本支出驗證",
+          "type": "公開研究摘要",
+          "days_old": 325
+        }
+      ],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "電力/電網/基建": {
+      "focus": "資料中心供電、電網擴充、變壓器及配電瓶頸",
+      "risks_to_verify": "電力供應和併網許可、建置資金、當地規範、訂單兌現與專案延宕",
+      "evidence_level": "多機構產業研究佐證",
+      "independent_institutions": 2,
+      "institutions": [
+        "IEA",
+        "UBS"
+      ],
+      "source_articles": 4,
+      "sources": [
+        {
+          "id": "iea-ai-20261014",
+          "organization": "IEA",
+          "date": "2026-10-14",
+          "title": "Powering Artificial Intelligence",
+          "url": "https://www.iea.org/reports/powering-artificial-intelligence",
+          "sectors": [
+            "AI伺服器/散熱",
+            "電力/電網/基建"
+          ],
+          "evidence": "IEA研究資料中心融入電力系統的政策與基建限制，辨識供電可靠度、成本與永續性風險",
+          "caveat": "電力系統限制可能拖延資料中心正式啟用，並非所有配電商都會立即實現盈利",
+          "type": "國際能源署公開AI電力研究",
+          "days_old": 4
+        },
+        {
+          "id": "ubs-cio-20260925",
+          "organization": "UBS",
+          "date": "2026-09-25",
+          "title": "AI infrastructure: Strong demand does not remove execution risks",
+          "url": "https://www.ubs.com/global/en/wealthmanagement/insights/chief-investment-office/house-view/daily/2026/latest-25092026.html",
+          "sectors": [
+            "AI伺服器/散熱",
+            "電力/電網/基建"
+          ],
+          "evidence": "UBS CIO提醒資料中心強勁需求不等於工程能如期落地，電力與融資可能成為收入認列瓶頸",
+          "caveat": "部分專案可能延後、縮減或取消；訂單與實際出貨需以公司公告追蹤",
+          "type": "投資機構公開風險研究",
+          "days_old": 23
+        },
+        {
+          "id": "ubs-cio-20260804",
+          "organization": "UBS",
+          "date": "2026-08-04",
+          "title": "AI opportunities beyond tech",
+          "url": "https://www.ubs.com/global/en/wealthmanagement/insights/chief-investment-office/house-view/daily/2026/latest-04082026.html",
+          "sectors": [
+            "半導體設備/測試",
+            "AI伺服器/散熱",
+            "電力/電網/基建"
+          ],
+          "evidence": "UBS CIO偏好AI基建的半導體設備與電力資源鏈，認為供電能力及電網接入是中期擴張限制之一",
+          "caveat": "半導體設備支出、發電投資與台灣公司盈利之間仍有多層傳導與評價風險",
+          "type": "投資機構公開產業展望",
+          "days_old": 75
+        },
+        {
+          "id": "iea-electricity-20260206",
+          "organization": "IEA",
+          "date": "2026-02-06",
+          "title": "Electricity 2026",
+          "url": "https://www.iea.org/reports/electricity-2026/",
+          "sectors": [
+            "電力/電網/基建"
+          ],
+          "evidence": "IEA預測2026至2030年間資料中心與電氣化將推升全球用電需求，並需加大電網彈性與投資",
+          "caveat": "需求預測並非股票投資建議；各地併網和審批速度差異顯著",
+          "type": "國際能源署公開電力研究",
+          "days_old": 254
+        }
+      ],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "PCB/載板": {
+      "focus": "高速運算相關載板與PCB",
+      "risks_to_verify": "高階材料升級、產能良率、業者營收確認",
+      "evidence_level": "研究證據不足",
+      "independent_institutions": 0,
+      "institutions": [],
+      "source_articles": 0,
+      "sources": [],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    },
+    "航運": {
+      "focus": "運價、船舶供需與運輸循環",
+      "risks_to_verify": "運價指數、船舶供給、地緣政治與消費需求",
+      "evidence_level": "研究證據不足",
+      "independent_institutions": 0,
+      "institutions": [],
+      "source_articles": 0,
+      "sources": [],
+      "excluded_sources": [],
+      "company_fundamentals_verified": false,
+      "actionable_buy_signal": false,
+      "caution": "產業報告只能驗證發展方向；缺少個別公司營收、訂單、獲利、估值及相對股價時，不得升級成個股買進訊號"
+    }
+  },
+  "sector_order": [
+    "AI伺服器/散熱",
+    "半導體設備/測試",
+    "記憶體/儲存",
+    "光通訊/CPO",
+    "電力/電網/基建",
+    "PCB/載板",
+    "航運"
+  ],
+  "source_registry": "research_sources.json",
+  "updated_at": "2026-10-18 08:00"
+}
