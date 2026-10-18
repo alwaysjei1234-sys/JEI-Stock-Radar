@@ -19,14 +19,18 @@ class ResearchEvidenceTests(unittest.TestCase):
         self.assertTrue(result["research_evidence_only"])
         self.assertTrue(result["not_broker_rating"])
         mem=result["themes"]["記憶體/儲存"]
-        self.assertEqual(mem["independent_institutions"],2)
-        self.assertEqual(mem["institutions"],["SEMI","TrendForce"])
+        self.assertEqual(mem["independent_institutions"],3)
+        self.assertEqual(mem["institutions"],["SEMI","TrendForce","UBS"])
         self.assertFalse(mem["company_fundamentals_verified"])
         self.assertFalse(mem["actionable_buy_signal"])
         optical=result["themes"]["光通訊/CPO"]
-        self.assertEqual(optical["independent_institutions"],1,
+        self.assertEqual(optical["independent_institutions"],2,
                          "three TrendForce articles count as one independent institution")
-        self.assertGreaterEqual(optical["source_articles"],3)
+        self.assertGreaterEqual(optical["source_articles"],5)
+        grid=result["themes"]["電力/電網/基建"]
+        self.assertEqual(grid["independent_institutions"],2)
+        self.assertEqual(grid["institutions"],["IEA","UBS"])
+        self.assertEqual(result["themes"]["AI伺服器/散熱"]["independent_institutions"],4)
         self.assertEqual(result["themes"]["航運"]["independent_institutions"],0)
         self.assertEqual(result["themes"]["PCB/載板"]["evidence_level"],"研究證據不足")
 
@@ -44,8 +48,8 @@ class ResearchEvidenceTests(unittest.TestCase):
         repeated["id"]="another-reference-by-same-institution"
         altered["sources"].append(repeated)
         result=build(altered,self.today)
-        self.assertEqual(result["themes"]["光通訊/CPO"]["independent_institutions"],1)
-        self.assertEqual(result["themes"]["光通訊/CPO"]["source_articles"],5)
+        self.assertEqual(result["themes"]["光通訊/CPO"]["independent_institutions"],2)
+        self.assertEqual(result["themes"]["光通訊/CPO"]["source_articles"],6)
 
     def test_published_research_matches_reviewed_registry(self):
         output=REGISTRY.parent/"industry_research.json"
