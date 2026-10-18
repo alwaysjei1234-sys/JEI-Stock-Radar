@@ -9,6 +9,8 @@ from pathlib import Path
 from scripts.run_archived_paper_pipeline import run
 from scripts.paper_leaderboard import leaderboard
 from scripts.collect_feed_closes import collect
+from scripts.collect_pick_snapshots import load_snapshots
+from scripts.audit_paper_inputs import audit_snapshot_dates
 
 def build(pick_dir,price_dir):
     report=run(pick_dir,price_dir)
@@ -16,7 +18,9 @@ def build(pick_dir,price_dir):
     board=leaderboard(report)
     board["data_date"]=max((p["as_of"] for p in report["picks"]),default=None)
     board["price_data_date"]=max((row["date"] for rows in collect(price_dir).values() for row in rows),default=None)
+    audit=audit_snapshot_dates(load_snapshots(pick_dir),collect(price_dir))
     board["data_quality"]={"price_source":"JEI feed snapshots",
+                           "unresolved_future_prices":audit["unresolved"],
                            "verified_by_system":False,
                            "sample_count":report["sample_count"],
                            "warning":"Not official historical closes; performance withheld."}
