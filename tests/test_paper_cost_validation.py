@@ -10,5 +10,10 @@ class CostValidationTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     score_pick(pick,[],**{name:value})
 
+    def test_reject_combined_selling_cost_over_100_percent(self):
+        pick={"code":"2330","cohort":"momentum","as_of":"2026-10-12"}
+        with self.assertRaises(ValueError):
+            score_pick(pick,[],fee_rate=0.4,sell_tax_rate=0.4,slippage_rate=0.3)
+
 if __name__=="__main__":
     unittest.main()
