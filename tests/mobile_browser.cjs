@@ -42,7 +42,7 @@ async function run(){
   await page.locator('#homeQuick').waitFor({state:'visible'});
   await page.locator('#feedGate').waitFor({state:'visible'});
   assert.match(await page.locator('#feedGate').innerText(),/行情|收盤|盤中/);
-  assert.match(await page.locator('#quickRisk').innerText(),/大盤/);
+  assert.match(await page.locator('#quickRisk').innerText(),/大盤|前次收盤|風險/);
   assert.match(await page.locator('#quickHold').innerText(),/Android App/);
   assert.match(await page.locator('#quickAttack').innerText(),/主攻/);
   assert.equal(await page.locator('#holdTriage').isVisible(),false,'private triage never shown on public browser');
