@@ -68,7 +68,7 @@ class OffhoursArchiveTests(unittest.TestCase):
         self.assertGreater(len(market["attack"]),0)
         self.assertGreater(len(market["sectors"]),0)
         self.assertEqual(market["holdings"],{})
-        self.assertIsNotNone(MOD.validated_previous_close(market,datetime.fromisoformat(market["data_date"]+"T18:00:00").replace(tzinfo=TAIPEI)))
+        self.assertIsNotNone(MOD.validated_previous_close(market,datetime.strptime(market["updated_at"],"%Y-%m-%d %H:%M").replace(tzinfo=TAIPEI)+timedelta(minutes=1)))
 
     def test_no_weekend_candle_in_published_history(self):
         history=json.loads((ROOT/"remote/history.json").read_text(encoding="utf-8"))
