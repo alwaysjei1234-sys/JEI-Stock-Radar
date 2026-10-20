@@ -315,15 +315,17 @@ module.exports=async function handler(req,res){
     ?body.providers:Object.keys(PROVIDERS).filter(p=>!PROVIDERS[p].opt_in);
   const providers=[...new Set(requested.map(String))].filter(x=>CALLERS[x]).slice(0,5);
 
+  const requestStarted=Date.now();
   const settled=await Promise.all(providers.map(async provider=>{
     const st=providerStatus(provider,body);
     if(!st.available) return {provider,label:PROVIDERS[provider].label,skipped:true,reason:"尚未設定免費 API Key",key_group:PROVIDERS[provider].key};
+    const started=Date.now();
     try{
       const text=await CALLERS[provider](body);
-      if(!text) return {provider,label:PROVIDERS[provider].label,skipped:true,reason:"尚未設定免費 API Key"};
-      return {provider,label:PROVIDERS[provider].label,text,via:st.via,model:st.model};
+      if(!text) return {provider,label:PROVIDERS[provider].label,skipped:true,reason:"尚未設定免費 API Key",duration_ms:Date.now()-started};
+      return {provider,label:PROVIDERS[provider].label,text,via:st.via,model:st.model,duration_ms:Date.now()-started};
     }catch(e){
-      return {provider,label:PROVIDERS[provider].label,error:friendlyError(e),via:st.via,model:st.model};
+      return {provider,label:PROVIDERS[provider].label,error:friendlyError(e),via:st.via,model:st.model,duration_ms:Date.now()-started};
     }
   }));
 
@@ -339,6 +341,7 @@ module.exports=async function handler(req,res){
     free_only:!settled.some(x=>x.provider==="ollama_cloud" && !!x.text),
     ollama_credit_usage:settled.some(x=>x.provider==="ollama_cloud" && (!!x.text || !!x.error)),
     answers,skipped,failed,consensus,
+    duration_ms:Date.now()-requestStarted,
     as_of:new Date().toISOString()
   });
 };
