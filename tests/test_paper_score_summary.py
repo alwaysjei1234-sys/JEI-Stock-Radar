@@ -14,11 +14,17 @@ class PaperSummaryTests(unittest.TestCase):
         self.assertEqual(result["pending_or_unavailable"],1)
         self.assertEqual(result["win_rate_pct"],50)
         self.assertEqual(result["mean_net_return_pct"],2.5)
+        self.assertEqual(result["median_net_return_pct"],2.5)
+        self.assertEqual(result["max_net_return_pct"],10)
+        self.assertEqual(result["min_net_return_pct"],-5)
+        self.assertEqual(result["loss_rate_pct"],50)
 
     def test_empty_group_is_unknown_not_zero(self):
         row=summarize([])["pre_breakout"]["60"]
         self.assertIsNone(row["win_rate_pct"])
         self.assertIsNone(row["mean_net_return_pct"])
+        self.assertIsNone(row["median_net_return_pct"])
+        self.assertIsNone(row["loss_rate_pct"])
 
 if __name__=="__main__":
     unittest.main()
