@@ -926,6 +926,7 @@ function renderAiConsultResult(raw){
  if(failed.length)chatSay('bot','部分免費 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,100)+'）').join('、'));
  const skipped=(j.skipped||[]).map(x=>x.label||x.provider);
  if(skipped.length)chatSay('bot','尚未設定免費 Key：'+skipped.join('、'));
+ if(!answers.length&&failed.length)chatSay('bot','本次 AI 均未成功回覆；請依上方各模型錯誤檢查額度、模型名稱或網路後再試。');
  if(!answers.length&&!failed.length)chatSay('bot','沒有取得 AI 回覆，請先確認 JEI 私人連線碼與免費 Key。');
 }
 function sendAiConsult(q){
@@ -939,7 +940,7 @@ function sendAiConsult(q){
  const hist=chatHistory.slice(0,-1).slice(-10).map(x=>({role:x.who==='me'?'user':'assistant',content:x.text}));
  const payload={question:q,mode:aiMode,providers,free_keys:freeAiKeys(),context:aiContext(q),history:hist};
  aiPending=true;if($('chatSendBtn'))$('chatSendBtn').disabled=true;
- aiWatchdog=setTimeout(()=>{if(aiAbort)aiAbort.abort();failAiConsult('等候 AI 回覆超過 45 秒，已恢復輸入。請檢查網路及免費額度。')},45000);
+ aiWatchdog=setTimeout(()=>{if(aiAbort)aiAbort.abort();failAiConsult('等候 AI 回覆超過 58 秒，已恢復輸入。可能是免費模型忙碌或網路逾時；請查看各模型狀態後重試。')},58000);
  chatSay('bot',aiMode==='panel'?'🧠 免費多 AI 會診中：'+providers.map(p=>AI_LABELS[p]).join('＋')+'…':'正在詢問 '+AI_LABELS[providers[0]]+'…');
  try{
   if(nativeOk()&&typeof JEINative.consultAI==='function')JEINative.consultAI(url,JSON.stringify(payload),token);
