@@ -29,3 +29,39 @@ test("AI consultation rejects malformed request without calling providers",async
     else process.env.JEI_CLIENT_TOKEN=old;
   }
 });
+
+
+test("AI provider discovery exposes all five choices without secrets",async()=>{
+  const response=await invoke(null,"GET");
+  assert.equal(response.status,200);
+  assert.equal(response.body.free_only,true);
+  assert.equal(response.body.paid_gateway,false);
+  assert.deepEqual(Object.keys(response.body.providers).sort(),
+    ["gemini_free","groq_oss","groq_qwen","openrouter_free","ollama_cloud"].sort());
+  for(const provider of Object.values(response.body.providers)){
+    assert.equal(typeof provider.available,"boolean");
+    assert.equal(typeof provider.label,"string");
+    assert.equal(typeof provider.server_key,"boolean");
+    assert.equal(typeof provider.requires_client_key,"boolean");
+  }
+});
+
+test("AI consultation returns explicit skipped status for five unconfigured models",async()=>{
+  const keys=["JEI_CLIENT_TOKEN","GEMINI_API_KEY","GROQ_API_KEY","OPENROUTER_API_KEY","OLLAMA_API_KEY"];
+  const saved=Object.fromEntries(keys.map(k=>[k,process.env[k]]));
+  try{
+    process.env.JEI_CLIENT_TOKEN="test-token";
+    for(const key of keys.slice(1))delete process.env[key];
+    const response=await invoke({question:"市場風險？",providers:["gemini_free","groq_oss","groq_qwen","openrouter_free","ollama_cloud"]});
+    assert.equal(response.status,200);
+    assert.equal(response.body.ok,false);
+    assert.equal(response.body.answers.length,0);
+    assert.equal(response.body.skipped.length,5);
+    assert.equal(response.body.failed.length,0);
+  }finally{
+    for(const key of keys){
+      if(saved[key]===undefined)delete process.env[key];
+      else process.env[key]=saved[key];
+    }
+  }
+});
