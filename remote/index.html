@@ -920,10 +920,12 @@ function renderAiConsultResult(raw){
  let j;try{j=JSON.parse(raw)}catch(e){failAiConsult('伺服器回傳不是有效的 AI JSON（可能是登入頁面）');return}
  finishAiConsult();
  const answers=j.answers||[];
- if(answers.length)answers.forEach(x=>chatSay('bot',`【${x.label||x.provider}｜${x.model||'AI'}】\n${x.text||'無回覆'}`));
+ const aiSeconds=x=>Number.isFinite(Number(x?.duration_ms))?'｜'+(Number(x.duration_ms)/1000).toFixed(1)+'秒':'';
+ if(answers.length)answers.forEach(x=>chatSay('bot',`【${x.label||x.provider}｜${x.model||'AI'}${aiSeconds(x)}】\n${x.text||'無回覆'}`));
  if(j.consensus&&answers.length)chatSay('bot',`【JEI 多 AI 綜合結論】\n${j.consensus}`);
  const failed=j.failed||[];
- if(failed.length)chatSay('bot','部分免費 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,100)+'）').join('、'));
+ if(failed.length)chatSay('bot','部分免費 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,100)+aiSeconds(x)+'）').join('、'));
+ if(Number.isFinite(Number(j.duration_ms)))chatSay('bot','⏱ 本次 AI 會診總耗時：'+(Number(j.duration_ms)/1000).toFixed(1)+'秒');
  const skipped=(j.skipped||[]).map(x=>x.label||x.provider);
  if(skipped.length)chatSay('bot','尚未設定免費 Key：'+skipped.join('、'));
  if(!answers.length&&failed.length)chatSay('bot','本次 AI 均未成功回覆；請依上方各模型錯誤檢查額度、模型名稱或網路後再試。');
