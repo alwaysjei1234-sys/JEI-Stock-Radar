@@ -201,13 +201,11 @@ def quote_num(m,key):
     return None
 
 def live_price(m):
+    # Only the exchange's actual last-traded price qualifies as a live trade.
+    # Bid/ask are indicative quotes; 'y' is yesterday's close. Neither may
+    # be counted as a fresh intraday transaction or used to lift coverage.
     z=num(m.get("z"))
-    if z is not None and z>0:return z
-    b=quote_num(m,"b");a=quote_num(m,"a")
-    if b and a:return (b+a)/2.0
-    if b:return b
-    if a:return a
-    return num(m.get("y"))
+    return z if z is not None and z>0 else None
 
 def enrich_live(rows, asof=None):
     expected_day=(asof or datetime.now(TZ)).strftime("%Y%m%d")
