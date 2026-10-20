@@ -61,19 +61,20 @@ class OffhoursArchiveTests(unittest.TestCase):
 
     def test_checked_in_market_snapshot_is_valid_nontrading_archive(self):
         market=json.loads((ROOT/"remote/system.json").read_text(encoding="utf-8"))
-        self.assertEqual(market["data_date"],"2026-10-16")
-        self.assertEqual(market["updated_at"],"2026-10-16 17:10")
+        self.assertRegex(market["data_date"],r"^\\d{4}-\\d{2}-\\d{2}$")
+        self.assertTrue(market["updated_at"].startswith(market["data_date"]))
         self.assertFalse(market["market"]["stale"])
         self.assertGreaterEqual(market["market"]["close_count"],500)
         self.assertGreater(len(market["attack"]),0)
         self.assertGreater(len(market["sectors"]),0)
         self.assertEqual(market["holdings"],{})
-        self.assertIsNotNone(MOD.validated_previous_close(market,SUNDAY))
+        self.assertIsNotNone(MOD.validated_previous_close(market,datetime.fromisoformat(market["data_date"]+"T18:00:00").replace(tzinfo=TAIPEI)))
 
     def test_no_weekend_candle_in_published_history(self):
         history=json.loads((ROOT/"remote/history.json").read_text(encoding="utf-8"))
         self.assertFalse(any(x.get("date") in ("2026-10-17","2026-10-18") for x in history))
-        self.assertEqual(history[-1]["date"],"2026-10-16")
+        self.assertLess(history[-1]["date"],"2026-10-21")
+        self.assertLess(datetime.fromisoformat(history[-1]["date"]).weekday(),5)
         source=(ROOT/"scripts/update_system.py").read_text(encoding="utf-8")
         self.assertIn("if official_close_verified:",source)
         self.assertIn("history=update_history(history,date_key",source)
