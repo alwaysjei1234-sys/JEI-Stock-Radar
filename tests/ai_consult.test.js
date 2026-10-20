@@ -65,3 +65,39 @@ test("AI consultation returns explicit skipped status for five unconfigured mode
     }
   }
 });
+
+test("AI consultation refuses missing or wrong private token before provider calls",async()=>{
+  const old=process.env.JEI_CLIENT_TOKEN;
+  try{
+    process.env.JEI_CLIENT_TOKEN="test-token";
+    for(const token of ["","incorrect"]){
+      const response=await invoke({question:"請分析",providers:["gemini_free"]},"POST",token);
+      assert.equal(response.status,401);
+      assert.match(response.body.error,/連線碼/);
+    }
+    delete process.env.JEI_CLIENT_TOKEN;
+    const unconfigured=await invoke({question:"請分析",providers:["gemini_free"]});
+    assert.equal(unconfigured.status,503);
+    assert.match(unconfigured.body.error,/連線碼/);
+  }finally{
+    if(old===undefined)delete process.env.JEI_CLIENT_TOKEN;
+    else process.env.JEI_CLIENT_TOKEN=old;
+  }
+});
+
+test("AI consultation rejects oversized or malformed provider lists",async()=>{
+  const old=process.env.JEI_CLIENT_TOKEN;
+  try{
+    process.env.JEI_CLIENT_TOKEN="test-token";
+    for(const providers of [
+      ["gemini_free","groq_oss","groq_qwen","openrouter_free","ollama_cloud","extra"],
+      [null], [123], "gemini_free"
+    ]){
+      const response=await invoke({question:"測試",providers});
+      assert.equal(response.status,400);
+    }
+  }finally{
+    if(old===undefined)delete process.env.JEI_CLIENT_TOKEN;
+    else process.env.JEI_CLIENT_TOKEN=old;
+  }
+});
