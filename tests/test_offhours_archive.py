@@ -61,7 +61,7 @@ class OffhoursArchiveTests(unittest.TestCase):
 
     def test_checked_in_market_snapshot_is_valid_nontrading_archive(self):
         market=json.loads((ROOT/"remote/system.json").read_text(encoding="utf-8"))
-        self.assertRegex(market["data_date"],r"^\\d{4}-\\d{2}-\\d{2}$")
+        self.assertRegex(market["data_date"],r"^\d{4}-\d{2}-\d{2}$")
         self.assertTrue(market["updated_at"].startswith(market["data_date"]))
         self.assertFalse(market["market"]["stale"])
         self.assertGreaterEqual(market["market"]["close_count"],500)
