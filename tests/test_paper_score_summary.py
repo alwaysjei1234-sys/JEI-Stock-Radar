@@ -18,6 +18,14 @@ class PaperSummaryTests(unittest.TestCase):
         self.assertEqual(result["max_net_return_pct"],10)
         self.assertEqual(result["min_net_return_pct"],-5)
         self.assertEqual(result["loss_rate_pct"],50)
+        self.assertEqual(result["profit_factor"],2)
+        self.assertEqual(result["profit_factor_note"],"measured")
+
+    def test_no_losses_is_not_falsely_infinite_profit_factor(self):
+        data = [{"cohort":"momentum","outcomes":{"3":{"status":"mature","net_return_pct":5}}}]
+        result = summarize(data)["momentum"]["3"]
+        self.assertIsNone(result["profit_factor"])
+        self.assertEqual(result["profit_factor_note"],"no_realized_losses")
 
     def test_empty_group_is_unknown_not_zero(self):
         row=summarize([])["pre_breakout"]["60"]
@@ -25,6 +33,8 @@ class PaperSummaryTests(unittest.TestCase):
         self.assertIsNone(row["mean_net_return_pct"])
         self.assertIsNone(row["median_net_return_pct"])
         self.assertIsNone(row["loss_rate_pct"])
+        self.assertIsNone(row["profit_factor"])
+        self.assertEqual(row["profit_factor_note"],"no_matured_samples")
 
 if __name__=="__main__":
     unittest.main()
