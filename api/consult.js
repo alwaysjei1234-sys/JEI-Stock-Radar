@@ -140,7 +140,7 @@ async function askGemini(body,timeout=28000){
   // Model availability differs by Google account and key. Discover allowed
   // generateContent models on 404 instead of guessing another hardcoded ID.
   async function discover(){
-    const j=await fetchJson("https://generativelanguage.googleapis.com/v1beta/models?pageSize=100",{headers},Math.min(timeout,10000));
+    const j=await fetchJson("https://generativelanguage.googleapis.com/v1beta/models?pageSize=100",{headers},Math.min(remaining(),10000));
     const allowed=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>String(m.name||"").replace(/^models\//,""));
     const preferred=allowed.filter(m=>/flash/i.test(m)&&!/embedding|image|tts|live/i.test(m));
     return [...new Set([...preferred,...allowed])].slice(0,12);
@@ -151,9 +151,14 @@ async function askGemini(body,timeout=28000){
     generationConfig:{temperature:0.25,maxOutputTokens:900}
   });
   let lastError=null;
+  // Share one time budget across retries and model discovery; never multiply
+  // the caller's timeout by the number of fallback Gemini models.
+  const deadline=Date.now()+timeout;
+  const remaining=()=>Math.max(0,deadline-Date.now());
   for(let i=0;i<models.length&&i<4;i++){
+    if(remaining()<1000)break;
     try{
-      const j=await fetchJson(base+encodeURIComponent(models[i])+":generateContent",{method:"POST",headers,body:payload},timeout);
+      const j=await fetchJson(base+encodeURIComponent(models[i])+":generateContent",{method:"POST",headers,body:payload},remaining());
       return extractGemini(j)||"無有效回覆";
     }catch(e){
       lastError=e;
