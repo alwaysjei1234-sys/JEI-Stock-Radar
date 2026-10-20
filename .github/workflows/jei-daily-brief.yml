@@ -18,6 +18,8 @@ on:
       - 'scripts/build_daily_brief.py'
       - 'scripts/send_line_brief.py'
       - 'tests/test_daily_brief.py'
+      - 'tests/test_send_line_alert.py'
+      - 'scripts/send_line_alert.py'
       - '.github/workflows/jei-daily-brief.yml'
 permissions:
   contents: write
@@ -36,7 +38,9 @@ jobs:
         with:
           python-version: '3.12'
       - name: Test briefing and LINE safety
-        run: python -m unittest discover -s tests -p 'test_daily_brief.py' -v
+        run: |
+          python -m unittest discover -s tests -p 'test_daily_brief.py' -v
+          python -m unittest discover -s tests -p 'test_send_line_alert.py' -v
       - name: Select edition and LINE policy
         id: edition
         env:
