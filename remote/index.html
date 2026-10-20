@@ -828,7 +828,14 @@ function testAiCloud(silent=true){
  fetch(u+(u.includes('?')?'&':'?')+'health='+Date.now(),{method:'GET',cache:'no-store'})
   .then(r=>r.json().then(j=>({ok:r.ok,j})))
   .then(({ok,j})=>{if(!ok)throw new Error(j?.error||'HTTP error');renderAiHealth(j);if(!silent){const n=Object.values(aiProviderStatus).filter(x=>x&&x.available).length;toast(n?'免費 AI 已設定 '+n+' 個模型':'請先申請至少一組免費 Key')}})
-  .catch(e=>{aiHealthLoaded=false;$('aiStatusBar').innerHTML='<span class="chip warn">JEI 中繼離線</span>';if($('aiCloudStatus'))$('aiCloudStatus').textContent='JEI 中繼連線失敗｜'+e.message;if(!silent)toast('JEI 連線失敗')})
+  .catch(e=>{
+   // Do not keep stale provider readiness from a previous successful health check.
+   aiHealthLoaded=false;aiProviderStatus={};
+   document.querySelectorAll('.aiProvider').forEach(b=>{b.classList.remove('ready');b.classList.add('unavailable');b.title='JEI 中繼連線失敗，無法確認模型狀態';});
+   $('aiStatusBar').innerHTML='<span class="chip warn">JEI 中繼離線｜模型狀態未確認</span>';
+   if($('aiCloudStatus'))$('aiCloudStatus').textContent='JEI 中繼連線失敗｜'+e.message;
+   if(!silent)toast('JEI 連線失敗')
+  })
 }
 function importAiSetupFromHash(){
  try{
