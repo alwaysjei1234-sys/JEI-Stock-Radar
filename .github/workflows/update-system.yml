@@ -5,6 +5,7 @@ on:
   schedule:
     # 09:00-19:45 Taiwan time (UTC+8): keep running after close until official
     # TWSE/TPEx daily files have rolled to the current trading date.
+    - cron: '30,45 0 * * 1-5' # 08:30/08:45 Taipei: pre-open feed preparation (not live prices)
     - cron: '*/15 1-11 * * 1-5'
   workflow_dispatch:
   push:
