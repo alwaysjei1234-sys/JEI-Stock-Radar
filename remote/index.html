@@ -796,7 +796,7 @@ function setAiMode(mode){
  else $('aiCloudHint').textContent='多 AI 會診：原免費模型平行分析；Ollama Cloud 需在 Vercel 設定金鑰後手動勾選，會消耗 Ollama 額度。';
 }
 function toggleProvider(btn){
- if(aiMode==='local'||btn.classList.contains('unavailable'))return;
+ if(aiMode==='local')return; // Allow choosing an unconfigured model; sending still filters unavailable providers.
  btn.classList.toggle('on');
  if(!document.querySelector('.aiProvider.on'))btn.classList.add('on');
  persistAiProviders()
@@ -816,7 +816,7 @@ function renderAiHealth(j){
    aiProviderStatus[p]={...s,available:ok};
    if(ok)available++;
    b.classList.toggle('ready',ok);b.classList.toggle('unavailable',!ok);
-   b.title=ok?((s.via||'免費 API')+'｜'+(s.model||'')):(p==='ollama_cloud'?'請先在 Vercel 設定 OLLAMA_API_KEY':'請到「更新」設定免費 API Key');
+   b.title=ok?((s.via||'免費 API')+'｜'+(s.model||'')):(p==='ollama_cloud'?'尚未連線：請先在 Vercel 設定 OLLAMA_API_KEY；可先選取':'尚未連線：請到「更新」設定免費 API Key；可先選取');
    chips.push('<span class="chip '+(ok?'ok':'warn')+'">'+AI_LABELS[p]+' '+(ok?'✓':'需Key')+'</span>')
  });
  chips.unshift('<span class="chip ok">付費 Gateway 關閉 ✓</span>');
