@@ -934,6 +934,14 @@ def main():
                 "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
         "market":{"status":market_status,"mode":market_mode,
                   "live_count":live_count,"close_count":len(stocks),"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source,"post_close_refresh":post_close_refresh,
+                  "live_diagnostics":{"attempted":quote_refresh_window,
+                      "valid_trades":live_count,"required_trades":500,
+                      "required_coverage_pct":35,
+                      "errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],
+                      "reason":("非行情更新時段" if not quote_refresh_window else
+                                "盤中有效成交價與覆蓋率已達標" if live_valid else
+                                "交易時段外：僅供收盤資料參考" if not market_open else
+                                "MIS 查詢失敗或有效成交價覆蓋率不足")},
                   "brief":f"{market_mode}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
         "sectors":sectors,"stock_sectors":stock_sector,
         "universe":[{"code":x["code"],"name":x["name"],"market":x["market"]} for x in stocks if re.fullmatch(r"[1-9][0-9]{3}",x["code"])],
