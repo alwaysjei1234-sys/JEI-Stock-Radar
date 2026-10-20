@@ -111,8 +111,13 @@ def fetch_tpex_daily(date_obj):
         else:continue
         if re.fullmatch(r"[0-9A-Z]{4,8}",code) and close is not None:
             out.append({"code":code,"close":close})
-    if not out:raise RuntimeError("TPEx daily_close_quotes returned no parsed rows")
-    return out
+    # A partial/blocked TPEx response must not masquerade as full-market data.
+    # Reject tiny result sets and duplicates; the caller may fall back to a
+    # dated, explicitly stale snapshot instead of publishing false freshness.
+    unique={x["code"]:x for x in out if x.get("close",0)>0}
+    if len(unique)<500:
+        raise RuntimeError(f"TPEx daily_close_quotes coverage too low: {len(unique)} valid symbols")
+    return list(unique.values())
 
 def backfill_twse_history(history, now, min_days=20, max_otc_fetches=0):
     """Keep the main market feed fast. Historical network backfill is handled separately."""
