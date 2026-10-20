@@ -5,6 +5,8 @@ import pathlib
 import re
 import sys
 from datetime import date, datetime
+from zoneinfo import ZoneInfo
+TAIPEI = ZoneInfo('Asia/Taipei')
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ERRORS = []
 def check(ok, msg):
@@ -24,7 +26,7 @@ check(ui.is_file() and ui.stat().st_size > 1000, "Remote UI exists and is nonemp
 data_date = feed.get("data_date", "")
 try:
     observed = date.fromisoformat(data_date)
-    check(observed <= date.today(), "Market data date is not in the future")
+    check(observed <= datetime.now(TAIPEI).date(), "Market data date is not in the future")
 except (ValueError, TypeError):
     check(False, "Market data date parses as ISO date")
 market = feed.get("market", {})
