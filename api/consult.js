@@ -178,11 +178,17 @@ async function askGroq(body,provider,timeout=28000){
   const model=PROVIDERS[provider].model;
   const url="https://api.groq.com/openai/v1/chat/completions";
   const headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"};
-  const call=async(b,limit)=>fetchJson(url,{
-    method:"POST",headers,
-    body:JSON.stringify({model,temperature:0.25,max_tokens:900,
-      messages:[{role:"system",content:SYSTEM},{role:"user",content:userPrompt(b).slice(0,limit)}]})
-  },timeout);
+  // Retry with a smaller prompt only inside the original request budget.
+  const deadline=Date.now()+timeout;
+  const call=async(b,limit)=>{
+    const remaining=deadline-Date.now();
+    if(remaining<1000)throw new Error("Groq 本次請求已達等待上限，請稍後重試");
+    return fetchJson(url,{
+      method:"POST",headers,
+      body:JSON.stringify({model,temperature:0.25,max_tokens:900,
+        messages:[{role:"system",content:SYSTEM},{role:"user",content:userPrompt(b).slice(0,limit)}]})
+    },remaining);
+  };
   try{
     const j=await call(body,provider==="groq_qwen"?4500:18000);
     return extractChat(j)||"無有效回覆";
