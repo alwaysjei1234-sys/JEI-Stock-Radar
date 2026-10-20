@@ -251,7 +251,16 @@ def enrich_live(rows, asof=None):
         # MIS can return the prior session on holidays, before opening, or after outages.
         # Never overwrite official rows or count a quote without the exchange date for today.
         quote_day=re.sub(r"[^0-9]","",str(m.get("d","") or ""))
-        if quote_day!=expected_day:continue
+        # The last-trade time must also be a plausible current-session time.
+        # A matching date alone can still refer to a stale cached MIS quote.
+        quote_time=str(m.get("t","") or "").strip()
+        try:
+            hh,mm,ss=(int(v) for v in quote_time.split(":"))
+            valid_trade_time=(9<=hh<=13 and 0<=mm<60 and 0<=ss<60
+                              and (hh<13 or mm<=30))
+        except (ValueError,TypeError):
+            valid_trade_time=False
+        if quote_day!=expected_day or not valid_trade_time:continue
         prev=num(m.get("y"));price=live_price(m)
         if price is None or price<=0 or prev is None or prev<=0:continue
         x["close"]=price;x["change"]=price-prev;x["pct"]=(price-prev)/prev*100.0
