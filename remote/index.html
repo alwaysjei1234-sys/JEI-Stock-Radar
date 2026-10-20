@@ -931,6 +931,19 @@ function renderAiConsultResult(raw){
  if(answers.length)answers.forEach(x=>chatSay('bot',`【${x.label||x.provider}｜${x.model||'AI'}${aiSeconds(x)}】\n${x.text||'無回覆'}`));
  if(j.consensus&&answers.length)chatSay('bot',`【JEI 多 AI 綜合結論】\n${j.consensus}`);
  const failed=j.failed||[];
+ // A configured API key is not proof that a provider actually responded.
+ // Preserve health-check key readiness, but show last-request outcome separately.
+ if(answers.length||failed.length){
+  const passed=new Set(answers.map(x=>x.provider));
+  const errors=new Set(failed.map(x=>x.provider));
+  document.querySelectorAll('.aiProvider').forEach(b=>{
+   const p=b.dataset.provider;
+   if(passed.has(p))b.title='本次會診成功回覆'+aiSeconds(answers.find(x=>x.provider===p));
+   else if(errors.has(p))b.title='本次會診失敗：'+String(failed.find(x=>x.provider===p)?.error||'連線失敗').slice(0,120);
+  });
+  const result=answers.map(x=>(x.label||x.provider)+' ✓'+aiSeconds(x)).concat(failed.map(x=>(x.label||x.provider)+' ✕'+aiSeconds(x)));
+  chatSay('bot','本次模型實測：'+result.join('、'));
+ }
  if(failed.length)chatSay('bot','部分免費 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,100)+aiSeconds(x)+'）').join('、'));
  if(Number.isFinite(Number(j.duration_ms)))chatSay('bot','⏱ 本次 AI 會診總耗時：'+(Number(j.duration_ms)/1000).toFixed(1)+'秒');
  const skipped=(j.skipped||[]).map(x=>x.label||x.provider);
