@@ -3,7 +3,7 @@ name: Update JEI Market Feed
 
 on:
   schedule:
-    # 09:00-16:45 Taiwan time (UTC+8): keep running after close until official
+    # 09:00-19:45 Taiwan time (UTC+8): keep running after close until official
     # TWSE/TPEx daily files have rolled to the current trading date.
     - cron: '*/15 1-11 * * 1-5'
   workflow_dispatch:
@@ -32,6 +32,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate feed builder syntax
+        run: python -m py_compile scripts/update_system.py
       - name: Build market feed
         run: python scripts/update_system.py
       - name: Publish JEI market files
