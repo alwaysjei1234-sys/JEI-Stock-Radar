@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Collect public Taiwan-market RSS headlines for research, not trading signals."""
+"""Collect Taiwan, research and international RSS headlines for research only."""
 import json
 import re
 import urllib.request
@@ -49,13 +49,13 @@ def collect(categories=("tw_market",), opener=None):
             "research_only": True, "items": items[:250], "errors": errors}
 
 def main():
-    # Start with Taiwan headlines; research and international are opt-in phases.
-    data = collect(("tw_market",))
+    # Taiwan first, followed by research and international context.
+    data = collect(("tw_market", "research", "international"))
     if data["errors"] and not data["items"]:
-        raise SystemExit("No usable Taiwan RSS items: " + str(data["errors"]))
+        raise SystemExit("No usable RSS items: " + str(data["errors"]))
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Collected {len(data['items'])} Taiwan headlines; errors={len(data['errors'])}")
+    print(f"Collected {len(data['items'])} RSS headlines; errors={len(data['errors'])}")
 
 if __name__ == "__main__":
     main()
