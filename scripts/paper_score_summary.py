@@ -28,5 +28,9 @@ def summarize(scored_picks):
                 "max_net_return_pct": max(valid) if valid else None,
                 "median_net_return_pct": round(median(valid), 4) if valid else None,
                 "loss_rate_pct": round(sum(x < 0 for x in valid) / len(valid) * 100, 2) if valid else None,
+                "profit_factor": (round(sum(x for x in valid if x > 0) / -sum(x for x in valid if x < 0), 4)
+                                  if any(x < 0 for x in valid) else None),
+                "profit_factor_note": ("no_realized_losses" if valid and not any(x < 0 for x in valid)
+                                       else "no_matured_samples" if not valid else "measured"),
             }
     return output
