@@ -612,3 +612,5 @@ check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(
 
 if(passed+failed<30){console.error('FAIL expected at least 30 independent checks');process.exitCode=1;}
 console.log(`JEI smoke summary: ${passed}/${passed+failed} passed (${Math.round(100*passed/(passed+failed))}%)`);
+
+check('TPEx close feed rejects partial responses',()=>{assert.ok(py.includes('len(unique)<500'));assert.ok(py.includes('coverage too low'));assert.ok(py.includes('return list(unique.values())'))});
