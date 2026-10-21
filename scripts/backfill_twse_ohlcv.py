@@ -13,8 +13,11 @@ from scripts.fetch_twse_history import fetch_month
 
 def target_months(asof):
     year, month=asof.year,asof.month
-    prev_year,prev_month=(year-1,12) if month==1 else (year,month-1)
-    return [f"{prev_year:04d}{prev_month:02d}",f"{year:04d}{month:02d}"]
+    months=[]
+    for offset in (2,1,0):
+        total=year*12+(month-1)-offset
+        months.append(f"{total//12:04d}{total%12+1:02d}")
+    return months
 
 
 def run(system_path, output_dir, max_codes=8, pause=4):
