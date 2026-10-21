@@ -249,7 +249,9 @@ def main():
     if captured or not PICKS.exists():
         PICKS.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     # Do not overwrite identical daily report outside of a new official close.
-    if captured or not REPORT.exists() or json.loads(REPORT.read_text(encoding="utf-8")).get("latest_official_day")!=report["latest_official_day"]:
+    if (captured or not REPORT.exists() or
+            any(json.loads(REPORT.read_text(encoding="utf-8")).get(key) != report.get(key)
+                for key in ("latest_official_day", "duplicate_signal_summary"))):
         REPORT.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"captured":captured,"latest_official_day":report["latest_official_day"],
                       "picks":len(ledger["picks"]),
