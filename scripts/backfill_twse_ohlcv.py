@@ -36,11 +36,16 @@ def run(system_path, output_dir, max_codes=8, pause=4):
     output_dir=Path(output_dir)
     output_dir.mkdir(parents=True,exist_ok=True)
     fetched=0
-    # Cap total work per run and rotate the starting symbol by trading date.
-    # This prevents the same first eight signals monopolizing the cache.
+    # Prefer symbols with the fewest already verified month files. A fixed
+    # trading-date rotation can repeatedly revisit the same eight names during
+    # a holiday or stale close, leaving the remaining watchlist uncovered.
+    # Rotate ties deterministically so coverage improves on every scheduled run.
     if codes:
         start=asof.toordinal()%len(codes)
-        codes=(codes[start:]+codes[:start])[:max_codes]
+        rotated=codes[start:]+codes[:start]
+        months=target_months(asof)
+        codes=sorted(rotated,key=lambda code:sum(
+            (output_dir/f"{code}-{month}.json").exists() for month in months))[:max_codes]
     for code in codes:
         for month in target_months(asof):
             path=output_dir/f"{code}-{month}.json"
