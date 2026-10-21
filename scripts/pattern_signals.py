@@ -17,6 +17,42 @@ def _range_ratio(values):
     avg = sum(values) / len(values)
     return (max(values) - min(values)) / avg if avg > 0 else math.inf
 
+def attach_verified_ohlcv(patterns, files_by_code):
+    """Attach genuine unadjusted TWSE candles only when they match official closes."""
+    for rows in patterns.get("signals", {}).values():
+        for signal in rows:
+            code=str(signal.get("code",""))
+            sources=files_by_code.get(code,[])
+            if not sources:continue
+            candles={}
+            valid=True
+            for source in sources:
+                if (source.get("code")!=code or source.get("market")!="TWSE"
+                    or source.get("adjusted_for_corporate_actions") is not False
+                    or source.get("ohlcv_units",{}).get("volume")!="shares"):
+                    valid=False;break
+                for candle in source.get("ohlcv",[]):
+                    try:
+                        day=candle["date"]
+                        o,h,l,c=[float(candle[k]) for k in ("open","high","low","close")]
+                        v=candle["volume"]
+                        if (not all(math.isfinite(x) and x>0 for x in (o,h,l,c))
+                            or not isinstance(v,int) or isinstance(v,bool) or v<0
+                            or l>min(o,c) or h<max(o,c) or day in candles):
+                            raise ValueError("invalid candle")
+                        candles[day]={"date":day,"open":o,"high":h,"low":l,"close":c,"volume":v}
+                    except (KeyError,TypeError,ValueError):
+                        valid=False;break
+                if not valid:break
+            series=signal.get("close_series",[])
+            if (not valid or len(series)<10 or any(p["date"] not in candles for p in series)
+                or any(abs(candles[p["date"]]["close"]-float(p["close"]))>0.0001 for p in series)):
+                continue
+            signal["ohlcv"]=[candles[p["date"]] for p in series]
+            signal["ohlcv_source_verified"]=True
+            signal["ohlcv_adjusted_for_corporate_actions"]=False
+    return patterns
+
 def build_pattern_signals(history, by_code, stock_sectors, sectors, asof=None):
     """Produce auditable watchlists; 21 *consecutive snapshot* closes required."""
     out = {
