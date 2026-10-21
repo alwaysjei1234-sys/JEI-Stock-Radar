@@ -10,6 +10,7 @@ on:
     paths:
       - 'remote/pick_validation.json'
       - 'scripts/check-pick-validation.cjs'
+      - 'scripts/test-pick-validation.cjs'
       - '.github/workflows/validate-pick-performance.yml'
   workflow_dispatch:
 permissions:
