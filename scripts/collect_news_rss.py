@@ -33,7 +33,7 @@ def classify_sectors(title):
 
 def headline_fingerprint(title):
     """Group exact normalized headline repeats; not a claim of semantic equivalence."""
-    normalized = re.sub(r"[^\\w]+", "", title.casefold(), flags=re.UNICODE)
+    normalized = re.sub(r"[^\w]+", "", title.casefold(), flags=re.UNICODE)
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:20]
 
 def publication_utc(raw):
