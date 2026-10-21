@@ -12,7 +12,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 <section><label for="horizon">持有交易日：</label>
 <select id="horizon"><option>3</option><option>7</option><option>15</option><option>30</option><option>60</option></select>
 <button id="reload">更新資料</button><p id="status" class="warn" role="status">讀取中</p>
-<div class="scroll"><table><thead><tr><th>策略</th><th>成熟樣本</th><th>未完成</th><th>勝率</th><th>淨報酬</th><th>超額報酬</th></tr></thead><tbody id="results"></tbody></table></div>
+<div class="scroll"><table><thead><tr><th>策略</th><th>成熟樣本</th><th>未完成</th><th>勝率</th><th>平均淨報酬</th><th>中位數</th><th>虧損率</th><th>獲利因子</th><th>超額報酬</th></tr></thead><tbody id="results"></tbody></table></div>
 <p class="mut">至少 10 筆成熟且可比較大盤的樣本，才顯示策略報酬。未核實價格不得顯示成績。</p></section>
 <script>
 "use strict";
@@ -23,13 +23,15 @@ function draw(){
  const tbody=el("results");tbody.replaceChildren();
  const rows=report?.horizons?.[el("horizon").value]||[];
  if(!Array.isArray(rows)||!rows.length){
-   const tr=tbody.insertRow(),td=tr.insertCell();td.colSpan=6;td.textContent="尚無可顯示資料";return;
+   const tr=tbody.insertRow(),td=tr.insertCell();td.colSpan=9;td.textContent="尚無可顯示資料";return;
  }
  for(const r of rows){
    const tr=tbody.insertRow();
    const valid=report.verified===true&&r.matured>=10&&r.paired_count>=10;
    for(const v of [r.label||r.cohort,r.matured??0,r.pending??0,
      valid?pct(r.win_rate_pct):"--",valid?pct(r.mean_net_return_pct):"--",
+     valid?pct(r.median_net_return_pct):"--",valid?pct(r.loss_rate_pct):"--",
+     valid&&typeof r.profit_factor==="number"&&Number.isFinite(r.profit_factor)?r.profit_factor.toFixed(2):"--",
      valid?pct(r.mean_excess_pct):"--"]){tr.insertCell().textContent=String(v)}
  }
 }
