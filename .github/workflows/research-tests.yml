@@ -26,8 +26,8 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '15 0 * * *'
-    # Taiwan 2026-10-21 21:00–2026-10-22 02:00, hourly checkpoints
-    - cron: '0 13-18 21 10 *'
+    # Hourly integrity checks; CI validates and reports, but does not auto-merge code.
+    - cron: '0 * * * *'
 jobs:
   node-tests:
     runs-on: ubuntu-latest
