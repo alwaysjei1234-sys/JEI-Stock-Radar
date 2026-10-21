@@ -11,7 +11,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
-from scripts.parse_twse_stock_day import parse_twse_stock_day
+from scripts.parse_twse_stock_day import parse_twse_stock_day, parse_twse_stock_day_ohlcv
 
 BASE="https://www.twse.com.tw/exchangeReport/STOCK_DAY"
 
@@ -32,9 +32,14 @@ def fetch_month(code, month, timeout=20):
         raise ValueError("TWSE response unexpectedly large")
     payload=json.loads(raw.decode("utf-8-sig"))
     series=parse_twse_stock_day(payload,code)
+    candles=parse_twse_stock_day_ohlcv(payload,code)
+    if [row["date"] for row in candles]!=[row["date"] for row in series]:
+        raise ValueError("OHLCV and close-only trading dates disagree")
     return {"code":code,"market":"TWSE","source":"TWSE STOCK_DAY fetched via HTTPS; corporate actions not adjusted",
             "source_url":url,"retrieved_at":datetime.now(timezone.utc).isoformat(),
-            "prices":series}
+            "prices":series,"ohlcv":candles,
+            "ohlcv_units":{"price":"TWD per share","volume":"shares"},
+            "adjusted_for_corporate_actions":False}
 
 def main():
     p=argparse.ArgumentParser()
