@@ -54,8 +54,18 @@ def main():
     for index,month in enumerate(args.months):
         output=args.output_dir/(str(args.stock_code)+"-"+month+".json")
         if output.exists():
-            print("Skip existing",output)
-            continue
+            try:
+                existing=json.loads(output.read_text(encoding="utf-8"))
+                if (existing.get("code")==str(args.stock_code)
+                    and isinstance(existing.get("ohlcv"),list)
+                    and isinstance(existing.get("prices"),list)
+                    and [x["date"] for x in existing["ohlcv"]]==[x["date"] for x in existing["prices"]]
+                    and existing.get("adjusted_for_corporate_actions") is False):
+                    print("Skip validated existing OHLCV",output)
+                    continue
+            except (ValueError,KeyError,TypeError,AttributeError):
+                pass
+            raise ValueError(f"Existing file is not validated OHLCV; move or archive before retry: {output}")
         if index:
             time.sleep(args.pause)
         result=fetch_month(args.stock_code,month)
