@@ -209,6 +209,16 @@ def update(feed, archive, prior, now):
     today=local.date().isoformat()
     asof=str(feed.get("data_date") or "")
     stored=list(prior["picks"])
+    # Historical signals are append-only: reject corrupt or duplicated identities.
+    ids=set()
+    for pick in stored:
+        if not isinstance(pick,dict):
+            raise ValueError("封存推薦資料格式錯誤，不可覆寫")
+        identity=pick.get("id")
+        expected=f"{pick.get('day')}:{pick.get('group')}:{pick.get('code')}"
+        if not isinstance(identity,str) or identity!=expected or identity in ids:
+            raise ValueError("封存推薦識別碼錯誤或重複，不可覆寫")
+        ids.add(identity)
     captured=False
     origin="scheduled_close"
     # The very first import may seed the latest *audited* Friday close on a
