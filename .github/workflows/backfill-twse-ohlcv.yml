@@ -8,6 +8,7 @@ on:
       - 'scripts/backfill_twse_ohlcv.py'
   schedule:
     - cron: '10 9 * * 1-5' # 17:10 Taipei after official close
+    - cron: '40 11 * * 1-5' # 19:40 Taipei second bounded batch
 permissions:
   contents: write
 concurrency:
@@ -24,7 +25,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Fetch bounded official TWSE candle months
-        run: python -m scripts.backfill_twse_ohlcv --max-codes 8 --pause 4
+        run: python -m scripts.backfill_twse_ohlcv --max-codes 12 --pause 4
       - name: Publish only original verified month files
         run: |
           git add data/twse_ohlcv/
