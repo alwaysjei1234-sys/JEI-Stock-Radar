@@ -4,6 +4,7 @@ on:
     paths:
       - 'remote/pick_validation.json'
       - 'scripts/check-pick-validation.cjs'
+      - 'scripts/test-pick-validation.cjs'
       - '.github/workflows/validate-pick-performance.yml'
   pull_request:
     paths:
@@ -23,4 +24,6 @@ jobs:
         with:
           node-version: '22'
       - name: Verify archived picks and performance aggregates
-        run: node scripts/check-pick-validation.cjs
+        run: |
+          node scripts/check-pick-validation.cjs
+          node scripts/test-pick-validation.cjs
