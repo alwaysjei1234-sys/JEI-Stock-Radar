@@ -38,8 +38,7 @@ class BackfillCalendarTests(unittest.TestCase):
             def fake_fetch(code,month):
                 return {"code":code,"market":"TWSE","adjusted_for_corporate_actions":False,
                     "ohlcv_units":{"volume":"shares"},"ohlcv":[{"date":"2026-10-20"}]}
-            with patch("scripts.backfill_twse_ohlcv.fetch_month",side_effect=fake_fetch) as fetch, \\
-                 patch("scripts.backfill_twse_ohlcv.time.sleep"):
+            with patch("scripts.backfill_twse_ohlcv.fetch_month",side_effect=fake_fetch) as fetch, patch("scripts.backfill_twse_ohlcv.time.sleep"):
                 self.assertEqual(run(source,cache,max_codes=2,pause=3),6)
                 self.assertEqual({call.args[0] for call in fetch.call_args_list},{"2377","3005"})
 
