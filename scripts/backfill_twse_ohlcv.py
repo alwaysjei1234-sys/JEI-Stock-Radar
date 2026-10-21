@@ -36,6 +36,10 @@ def run(system_path, output_dir, max_codes=8, pause=4):
     output_dir=Path(output_dir)
     output_dir.mkdir(parents=True,exist_ok=True)
     fetched=0
+    # Prioritize incomplete OHLCV coverage before symbols already represented
+    # by verified chart cards; preserve strict official-close reconciliation.
+    verified_codes={str(row.get("code","")) for rows in patterns.get("signals",{}).values()
+                    for row in rows if row.get("ohlcv_source_verified") is True}
     # Prefer symbols with the fewest already verified month files. A fixed
     # trading-date rotation can repeatedly revisit the same eight names during
     # a holiday or stale close, leaving the remaining watchlist uncovered.
@@ -44,8 +48,8 @@ def run(system_path, output_dir, max_codes=8, pause=4):
         start=asof.toordinal()%len(codes)
         rotated=codes[start:]+codes[:start]
         months=target_months(asof)
-        codes=sorted(rotated,key=lambda code:sum(
-            (output_dir/f"{code}-{month}.json").exists() for month in months))[:max_codes]
+        codes=sorted(rotated,key=lambda code:(code in verified_codes,sum(
+            (output_dir/f"{code}-{month}.json").exists() for month in months)))[:max_codes]
     print(json.dumps({"status":"backfill_plan","data_date":asof.isoformat(),
                       "watchlist_codes":len(set(str(row.get("code",""))
                           for rows in patterns.get("signals",{}).values() for row in rows)),
