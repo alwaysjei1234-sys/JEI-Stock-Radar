@@ -1231,4 +1231,40 @@ window.JEI_NATIVE={
 };
 function init(){loadScreenPrefs();importAiSetupFromHash();loadHoldAlertSettings();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshMarket();if(tradingWindow())refreshSystem()}},60000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshAll(false)});init();
-</script></body></html>
+</script><section id="jeiPickPerformance" style="max-width:1180px;margin:14px auto;padding:16px;border:1px solid #183e5c;border-radius:16px;background:#0a1b2b;color:#eff8ff;font-family:system-ui,sans-serif">
+<h2 style="margin:0 0 8px;font-size:18px">選股績效驗證 <small id="jeiPickSync" style="font-size:12px;color:#8ca8bd">載入中</small></h2>
+<p id="jeiPickOverview" style="font-size:13px;color:#8ca8bd">正在讀取官方收盤績效紀錄…</p>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;text-align:right"><thead><tr><th style="text-align:left">策略</th><th>交易日</th><th>已完成</th><th>勝率</th><th>平均淨報酬</th><th>最差回撤</th></tr></thead><tbody id="jeiPickRows"></tbody></table></div>
+<p style="font-size:11px;color:#8ca8bd">依封存推薦與官方收盤價回測；非實際成交或保證報酬。缺價與未到期不計勝負。</p>
+</section>
+<script>
+(function(){
+ const names={attack:'主攻',next:'下一棒',monster:'妖股',tomorrow_monster:'明日妖股',future_monster:'未來妖股'};
+ const esc=x=>String(x==null?'—':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const pct=x=>x==null?'—':Number(x).toFixed(2)+'%';
+ async function syncPicks(){
+  const status=document.getElementById('jeiPickSync'),overview=document.getElementById('jeiPickOverview'),body=document.getElementById('jeiPickRows');
+  try{
+   const res=await fetch('/remote/pick_validation.json?ts='+Date.now(),{cache:'no-store'});
+   if(!res.ok)throw Error('HTTP '+res.status);
+   const data=await res.json();
+   if(!data||!data.groups||!Array.isArray(data.picks))throw Error('績效資料格式錯誤');
+   const dup=data.duplicate_signal_summary;
+   status.textContent='官方收盤 '+(data.latest_official_day||'未知')+'｜產生 '+(data.updated_at||'未知');
+   overview.textContent='封存 '+data.total_frozen_picks+' 筆推薦'+(dup?'｜不重複訊號 '+dup.unique_day_symbol_signals+'｜跨分類重複 '+dup.cross_category_duplicates:'｜新版風險欄位待更新');
+   const rows=[];
+   for(const [key,label] of Object.entries(names)){
+    for(const days of [3,7,15,20,30,40,60]){
+     const v=data.groups[key]&&data.groups[key][String(days)];if(!v)continue;
+     rows.push('<tr style="border-top:1px solid #183e5c"><td style="text-align:left;padding:7px 3px">'+esc(label)+'</td><td>'+days+'</td><td>'+esc(v.completed)+'</td><td>'+pct(v.win_rate_pct)+'</td><td>'+pct(v.avg_estimated_net_pct)+'</td><td>'+pct(v.worst_max_close_drawdown_pct)+'</td></tr>');
+    }
+   }
+   body.innerHTML=rows.join('');
+  }catch(e){status.textContent='資料同步失敗';overview.textContent='無法取得績效報告：'+e.message;body.replaceChildren()}
+ }
+ window.JEI_refreshPickPerformance=syncPicks;
+ syncPicks();document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncPicks()});
+ setInterval(()=>{if(!document.hidden)syncPicks()},300000);
+})();
+</script>
+</body></html>
