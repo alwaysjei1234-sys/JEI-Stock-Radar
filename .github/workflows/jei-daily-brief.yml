@@ -4,6 +4,7 @@ on:
     # UTC / Taipei: 08:55 morning, 09:10 morning backup, 15:30 and 18:10 close weekdays
     - cron: '55 0 * * 1-5'
     - cron: '10 1 * * 1-5' # 09:10 Taipei backup; LINE retry key deduplicates
+    - cron: '25 1 * * 1-5' # 09:25 second backup if GitHub schedule is delayed
     - cron: '30 7 * * 1-5'
     - cron: '10 10 * * 1-5'
   workflow_dispatch:
@@ -48,7 +49,7 @@ jobs:
           SCHEDULE: ${{ github.event.schedule }}
           SELECTED: ${{ inputs.edition }}
         run: |
-          if [ "$SCHEDULE" = '55 0 * * 1-5' ] || [ "$SCHEDULE" = '10 1 * * 1-5' ]; then
+          if [ "$SCHEDULE" = '55 0 * * 1-5' ] || [ "$SCHEDULE" = '10 1 * * 1-5' ] || [ "$SCHEDULE" = '25 1 * * 1-5' ]; then
             echo 'name=morning' >> "$GITHUB_OUTPUT"
             echo 'send=true' >> "$GITHUB_OUTPUT"
           elif [ "$SCHEDULE" = '10 10 * * 1-5' ]; then
@@ -81,6 +82,15 @@ jobs:
           done
           echo 'Could not publish; LINE step will not run'
           exit 1
+      - name: Explain LINE dispatch decision
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+          EVENT: ${{ github.event_name }}
+          EDITION: ${{ steps.edition.outputs.name }}
+          SEND: ${{ steps.edition.outputs.send }}
+        run: |
+          echo "JEI LINE decision: event=$EVENT schedule=$SCHEDULE edition=$EDITION eligible=$SEND"
+          if [ "$SEND" != 'true' ]; then echo 'LINE skipped by schedule policy (push/manual builds do not send)'; fi
       - name: Optional LINE push (no email)
         if: steps.edition.outputs.send == 'true'
         env:
