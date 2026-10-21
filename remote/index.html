@@ -1289,4 +1289,32 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
  });
 })();
 </script>
+<section style="max-width:1180px;margin:14px auto;padding:16px;border:1px solid #183e5c;border-radius:16px;background:#0a1b2b;color:#eff8ff;font-family:system-ui,sans-serif">
+<h2 style="font-size:18px;margin:0 0 8px">券商預測驗證 <small style="font-size:11px;color:#8ca8bd">手動驗證工具</small></h2>
+<p style="font-size:12px;color:#8ca8bd">請輸入有來源的預測與官方歷史收盤資料；不會自動假設券商已達標。</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<input id="jeiAuditTarget" type="number" min="0" step="any" placeholder="券商目標價" aria-label="目標價" style="flex:1;min-width:95px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<input id="jeiAuditDate" type="date" aria-label="預測日期" style="flex:1;min-width:130px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<input id="jeiAuditCloses" placeholder="日期,收盤價；日期,收盤價" aria-label="歷史收盤價" style="flex:2;min-width:180px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<button id="jeiAuditRun" style="padding:10px;background:#237fc9;color:white;border:0;border-radius:9px">驗證</button></div>
+<p id="jeiAuditOutput" aria-live="polite" style="font-size:13px;color:#b7cde0">尚未執行驗證</p></section>
+<script src="/remote/forecast_audit.js"></script>
+<script>
+(function(){
+ const button=document.getElementById('jeiAuditRun'),out=document.getElementById('jeiAuditOutput');
+ button.addEventListener('click',function(){
+  if(!window.JEIForecastAudit){out.textContent='驗證模組尚未載入';return;}
+  const targetText=document.getElementById('jeiAuditTarget').value;
+  const target=targetText===''?NaN:Number(targetText);
+  const date=document.getElementById('jeiAuditDate').value;
+  const closes=document.getElementById('jeiAuditCloses').value.split(/[;；\n]+/).map(v=>{
+   const p=v.split(/[,，]/);return {date:(p[0]||'').trim(),close:p[1]&&p[1].trim()!==''?Number(p[1]):NaN};
+  });
+  const now=new Date(),today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+  const result=window.JEIForecastAudit.evaluate({target,date,months:12},closes,today);
+  const labels={invalid:'輸入資料無效',hit:'已觀察到達標',miss:'到期未達標',pending:'仍在觀察',missing_price:'缺少到期附近有效收盤價'};
+  out.textContent=(labels[result.state]||'未知狀態')+(result.deadline?'｜預測到期 '+result.deadline:'')+'｜輸入資料未經官方來源驗證。';
+ });
+})();
+</script>
 </body></html>
