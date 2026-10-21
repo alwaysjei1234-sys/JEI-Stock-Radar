@@ -90,6 +90,7 @@
 .jei-home-hub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.jei-home-hub button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;min-height:94px;padding:13px;border:1px solid #29465d;border-radius:16px;background:linear-gradient(135deg,#172e48,#102235);color:#e8f4ff;text-align:left;font:inherit;cursor:pointer}.jei-home-hub button span{font-size:21px}.jei-home-hub button b{font-size:17px}.jei-home-hub button small{font-size:12px;color:#a9c1d2}.jei-home-hub button:focus-visible{outline:2px solid #36d5eb}@media(min-width:650px){.jei-home-hub{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .pattern-detail{margin-top:9px;border-top:1px solid #2a4a62;padding-top:8px}.pattern-detail summary{cursor:pointer;color:#81d8ff;font-size:12px;font-weight:700}.pattern-detail p{margin:7px 0 0}
 .pattern-close-chart{display:block;width:100%;height:auto;max-height:132px;margin-top:10px;border:1px solid #25465d;border-radius:9px;background:#091c2c}
+.pattern-trend-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.pattern-trend-stats>div{padding:8px 4px;text-align:center;border-radius:8px;background:#112b42}.pattern-trend-stats small{display:block;font-size:10px;color:#b5c9d9}.pattern-trend-stats b{display:block;margin-top:4px;font-size:14px}
 </style>
 </head>
 <body>
@@ -275,6 +276,12 @@ function renderPatternRadar(){
    line.setAttribute('fill','none');line.setAttribute('stroke',values.at(-1)>=values[0]?'#ef7777':'#66cbb2');
    line.setAttribute('stroke-width','2.8');line.setAttribute('stroke-linecap','round');line.setAttribute('stroke-linejoin','round');
    chart.appendChild(line);card.appendChild(chart);
+   const stats=document.createElement('div');stats.className='pattern-trend-stats';
+   const first=values[0],last=values[values.length-1],change=(last/first-1)*100;
+   const prior=values.slice(0,-1),mean=prior.reduce((a,b)=>a+b,0)/prior.length;
+   [['區間變化',(change>=0?'+':'')+change.toFixed(2)+'%'],['末日收盤',last.toFixed(2)],['對前期均價',(last>=mean?'+':'')+((last/mean-1)*100).toFixed(2)+'%']].forEach(([name,value])=>{
+    const cell=document.createElement('div');const k=document.createElement('small');k.textContent=name;const v=document.createElement('b');v.textContent=value;cell.append(k,v);stats.appendChild(cell);
+   });card.appendChild(stats);
    const chartNote=document.createElement('div');chartNote.className='sub';chartNote.textContent='官方收盤走勢｜'+String(series[0].date||'')+' 至 '+String(series.at(-1).date||'')+'｜不是開高低收 K 線';card.appendChild(chartNote);
   }
   const details=document.createElement('details');details.className='pattern-detail';
