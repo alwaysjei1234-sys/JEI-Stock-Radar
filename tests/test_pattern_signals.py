@@ -49,6 +49,8 @@ class StrategyRadarTests(unittest.TestCase):
         self.assertTrue(row["volume_price_observation"]["confirmed_price_volume_breakout"])
         self.assertEqual(row["volume_price_observation"]["volume_ratio"],2.0)
         self.assertEqual(row["volume_price_observation"]["prior_20_avg_volume_shares"],1000)
+        self.assertIn("官方成交量 2.00 倍；量價同步突破",row["reason"])
+        self.assertNotIn("未驗證成交量",row["reason"])
 
     def test_requires_twenty_one_snapshot_sessions(self):
         h, stocks, sector, stats = fixture(n=20)
