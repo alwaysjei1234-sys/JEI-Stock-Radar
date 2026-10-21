@@ -45,6 +45,18 @@ def publication_utc(raw):
 
 CODE = re.compile(r"(?<![0-9])(?:[0-9]{4})(?![0-9])")
 
+def sector_news_summary(items):
+    """News volume is a watchlist signal, never a verified research consensus."""
+    sectors = {}
+    for sector in SECTOR_TERMS:
+        relevant = [item for item in items if sector in item.get("sectors", [])]
+        hosts = sorted({item.get("publisher_host", "") for item in relevant if item.get("publisher_host")})
+        sectors[sector] = {"headlines": len(relevant), "publisher_hosts": hosts,
+                           "distinct_publisher_hosts": len(hosts),
+                           "research_institutions_verified": 0,
+                           "status": "news_leads_only_not_independent_research"}
+    return sectors
+
 def collect(categories=("tw_market",), opener=None):
     opener = opener or urllib.request.urlopen
     items, errors, seen, headlines = [], [], set(), set()
@@ -88,7 +100,8 @@ def collect(categories=("tw_market",), opener=None):
             "research_only": True, "institutional_research_verified": False,
             "independent_research_institutions": 0,
             "news_is_not_institutional_evidence": True,
-            "items": items[:250], "errors": errors}
+            "items": items[:250], "sector_news_summary": sector_news_summary(items[:250]),
+            "errors": errors}
 
 def main():
     # Taiwan first, followed by research and international context.
