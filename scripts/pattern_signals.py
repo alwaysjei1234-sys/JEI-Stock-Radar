@@ -70,6 +70,20 @@ def attach_verified_ohlcv(patterns, files_by_code):
                     "volume_expansion":ratio is not None and ratio>=1.5,
                     "confirmed_price_volume_breakout":breakout and ratio is not None and ratio>=1.5,
                 }
+            # The original close-only screening text must not keep claiming
+            # volume is unverified after genuine official OHLCV is attached.
+            reason=signal.get("reason","")
+            if isinstance(reason,str) and "未驗證成交量" in reason:
+                observation=signal.get("volume_price_observation")
+                if observation:
+                    ratio=observation["volume_ratio"]
+                    verdict=("量價同步突破" if observation["confirmed_price_volume_breakout"]
+                             else "未達量價同步突破條件")
+                    volume_text=(f"官方成交量 {ratio:.2f} 倍；{verdict}"
+                                 if ratio is not None else "官方成交量已驗證；均量為零，無法計算量比")
+                    signal["reason"]=reason.replace("未驗證成交量",volume_text)
+                else:
+                    signal["reason"]=reason.replace("未驗證成交量","官方K線已驗證；量價條件不足")
             signal["ohlcv_source_verified"]=True
             signal["ohlcv_adjusted_for_corporate_actions"]=False
     return patterns
