@@ -45,6 +45,14 @@ for(const pick of data.picks){
  }
 }
 assert.deepEqual([...ids].sort(),[...ledgerIds].sort(),'report and ledger identities differ');
+const allowedGroups=new Set(['attack','next','monster','tomorrow_monster','future_monster']);
+const expectedHorizons=[3,7,15,20,30,40,60];
+assert.deepEqual([...horizons].sort((a,b)=>a-b),expectedHorizons,'incorrect trading-day horizons');
+for(const pick of data.picks){
+ assert.ok(allowedGroups.has(pick.group),'unknown strategy group');
+ assert.ok(Number.isInteger(pick.rank)&&pick.rank>=1&&pick.rank<=5,'invalid frozen ranking');
+ assert.ok(/^\\d{4}$/.test(pick.code),'invalid Taiwan stock code');
+}
 for(const [group,byHorizon] of Object.entries(data.groups)){
  for(const [horizon,summary] of Object.entries(byHorizon)){
   const records=data.picks.filter(p=>p.group===group).map(p=>p.outcomes.find(o=>o.trading_days===Number(horizon)));
