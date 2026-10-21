@@ -12,6 +12,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'scripts/update_system.py'
+      - 'data/twse_ohlcv/**'
       - '.github/workflows/update-system.yml'
 
 permissions:
