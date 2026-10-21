@@ -83,7 +83,7 @@ def parse_twse_stock_day_ohlcv(payload, expected_code=None):
     result=[]
     for row in payload["data"]:
         raw_date=str(row[date_idx]).strip()
-        match=re.fullmatch(r"(\\d{2,3})/(\\d{1,2})/(\\d{1,2})",raw_date)
+        match=re.fullmatch(r"(\d{2,3})/(\d{1,2})/(\d{1,2})",raw_date)
         day=date(1911+int(match[1]),int(match[2]),int(match[3])).isoformat()
         if day not in valid_dates:
             continue
