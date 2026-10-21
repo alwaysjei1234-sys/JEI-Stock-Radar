@@ -62,6 +62,50 @@ def parse_twse_stock_day(payload, expected_code=None):
         raise ValueError("TWSE dates must be ascending")
     return result
 
+def parse_twse_stock_day_ohlcv(payload, expected_code=None):
+    """Strict OHLCV parsing; fail closed if any required TWSE column is absent.
+
+    Volume is TWSE 成交股數 (shares), not lots. Untraded rows are omitted.
+    This is raw, unadjusted exchange data, not adjusted candles.
+    """
+    closes=parse_twse_stock_day(payload, expected_code)
+    fields=payload["fields"]
+    names=[str(x).replace(" ","").replace("\\u3000","") for x in fields]
+    columns={"open":"開盤價","high":"最高價","low":"最低價","close":"收盤價","volume":"成交股數"}
+    indexes={}
+    for key,header in columns.items():
+        matches=[i for i,name in enumerate(names) if name==header]
+        if len(matches)!=1:
+            raise ValueError("unique TWSE OHLCV column required: "+header)
+        indexes[key]=matches[0]
+    date_idx=names.index("日期")
+    valid_dates={x["date"]:x["close"] for x in closes}
+    result=[]
+    for row in payload["data"]:
+        raw_date=str(row[date_idx]).strip()
+        match=re.fullmatch(r"(\\d{2,3})/(\\d{1,2})/(\\d{1,2})",raw_date)
+        day=date(1911+int(match[1]),int(match[2]),int(match[3])).isoformat()
+        if day not in valid_dates:
+            continue
+        values={}
+        for key,index in indexes.items():
+            raw=str(row[index]).replace(",","").strip()
+            try:
+                value=float(raw)
+            except ValueError as exc:
+                raise ValueError("invalid TWSE OHLCV "+key) from exc
+            if not isfinite(value) or value<0 or (key!="volume" and value<=0):
+                raise ValueError("invalid TWSE OHLCV "+key)
+            values[key]=int(value) if key=="volume" and value.is_integer() else value
+        if not isinstance(values["volume"],int):
+            raise ValueError("volume must be an integer share count")
+        if not (values["low"]<=values["open"]<=values["high"] and values["low"]<=values["close"]<=values["high"]):
+            raise ValueError("TWSE OHLC range inconsistent")
+        if values["close"]!=valid_dates[day]:
+            raise ValueError("TWSE close mismatch")
+        result.append({"date":day,**values})
+    return result
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--input",type=Path,required=True)
