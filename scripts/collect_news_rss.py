@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Collect Taiwan, research and international RSS headlines for research only."""
 import json
+import hashlib
 import re
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -30,6 +31,11 @@ def classify_sectors(title):
     return [sector for sector, terms in SECTOR_TERMS.items()
             if any(term.casefold() in text for term in terms)]
 
+def headline_fingerprint(title):
+    """Group exact normalized headline repeats; not a claim of semantic equivalence."""
+    normalized = re.sub(r"[^\\w]+", "", title.casefold(), flags=re.UNICODE)
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:20]
+
 def publication_utc(raw):
     try:
         parsed = parsedate_to_datetime(raw)
@@ -41,7 +47,7 @@ CODE = re.compile(r"(?<![0-9])(?:[0-9]{4})(?![0-9])")
 
 def collect(categories=("tw_market",), opener=None):
     opener = opener or urllib.request.urlopen
-    items, errors, seen = [], [], set()
+    items, errors, seen, headlines = [], [], set(), set()
     for category in categories:
         if category not in FEEDS:
             raise ValueError("Unknown category: " + category)
@@ -61,8 +67,13 @@ def collect(categories=("tw_market",), opener=None):
                 if key in seen:
                     continue
                 seen.add(key)
+                fingerprint = headline_fingerprint(title)
+                if fingerprint in headlines:
+                    continue
+                headlines.add(fingerprint)
                 items.append({
                     "category": category, "title": title[:300],
+                    "headline_fingerprint": fingerprint,
                     "url": link, "published": (entry.findtext("pubDate") or "").strip(),
                     "mentioned_codes": sorted(set(CODE.findall(title))),
                     "source": "Yahoo Finance RSS",
@@ -75,6 +86,8 @@ def collect(categories=("tw_market",), opener=None):
             errors.append({"category": category, "error": str(exc)[:200]})
     return {"generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "research_only": True, "institutional_research_verified": False,
+            "independent_research_institutions": 0,
+            "news_is_not_institutional_evidence": True,
             "items": items[:250], "errors": errors}
 
 def main():
