@@ -13,8 +13,8 @@ const events=[{id:'one',symbol:'TEST',date:'2026-10-01',entryPrice:100,roundTrip
 const quotes={TEST:[{date:'2026-10-01',close:100},{date:'2026-10-02',close:110},{date:'2026-10-05',close:90}]};
 const results=performance(events,quotes,[1,2,3]);
 assert.equal(results[0].state,'completed');
-assert.equal(results[0].netPct,9.5);
-assert.equal(results[1].netPct,-10.5);
+assert.ok(Math.abs(results[0].netPct - 9.5) < 1e-9, 'net return must be approximately 9.5%');
+assert.ok(Math.abs(results[1].netPct + 10.5) < 1e-9, 'net return must be approximately -10.5%');
 assert.equal(results[2].state,'pending');
 assert.equal(results[2].netPct,null);
 console.log('JEI research engine smoke tests passed');
