@@ -121,8 +121,9 @@ for(const [group,byHorizon] of Object.entries(data.groups)){
   assert.equal(total,records.length,'unaccounted picks for '+group+'/'+horizon);
   const finished=records.filter(o=>o.status==='complete');
   if(!finished.length){
-   assert.equal(summary.win_rate_pct,null,'no completed picks must not show a win rate');
-   assert.equal(summary.avg_estimated_net_pct,null,'no completed picks must not show a return');
+   for(const field of ['win_rate_pct','avg_estimated_net_pct','median_estimated_net_pct','best_estimated_net_pct','worst_estimated_net_pct']){
+    assert.equal(summary[field],null,'no completed picks must not show '+field);
+   }
   }
  }
 }
