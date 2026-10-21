@@ -1256,6 +1256,9 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
    const invalid=data.picks.some(p=>!p||!p.id||!p.day||!p.code||!Array.isArray(p.outcomes));
    if(invalid)throw Error('封存推薦缺少必要欄位');
    const ids=new Set(data.picks.map(p=>p.id));
+   const outcomesInvalid=data.picks.some(p=>p.outcomes.some(o=>!o||!Number.isInteger(o.trading_days)||!['complete','pending','missing_price'].includes(o.status)||
+    (o.status==='complete'&&(!Number.isFinite(o.estimated_net_return_pct)||!o.end_day))));
+   if(outcomesInvalid)throw Error('績效明細含有無效狀態或報酬');
    if(ids.size!==actualCount)throw Error('封存推薦識別碼重複');
    const official=Date.parse(String(data.latest_official_day||'')+'T00:00:00+08:00');
    const age=Number.isFinite(official)?Math.floor((Date.now()-official)/86400000):null;
