@@ -95,6 +95,7 @@
 .pattern-chart-legend{font-size:11px;color:#c3d7e6;margin-top:7px;line-height:1.5}
 .pattern-trend-readout{margin-top:10px;padding:10px;border-radius:10px;background:#132e43;border:1px solid #2c536b}.pattern-trend-readout>b{display:block;font-size:14px;color:#d7ecf8}.pattern-trend-readout .sub{margin-top:5px}
 .pattern-momentum{margin-top:8px;padding:10px;border-radius:10px;border:1px solid #294b62;background:#10273a}.pattern-momentum>b{font-size:13px;color:#d6ecfa}.pattern-momentum .sub{margin-top:5px}
+.pattern-ohlcv-panel{margin-top:10px;padding:10px;border:1px solid #28536c;border-radius:12px;background:#0b2435}.pattern-ohlcv-panel>b{font-size:13px;color:#e4f3ff}.pattern-ohlcv-panel svg{margin-top:8px}
 </style>
 </head>
 <body>
@@ -326,6 +327,33 @@ function renderPatternRadar(){
    const caution=document.createElement('div');caution.className='sub';caution.textContent='RSI 為14筆收盤變動的簡單平均版本（非 Wilder 平滑）；不代表超買必跌或超賣必漲。';momentum.appendChild(caution);
    card.append(trend,momentum);
    const chartNote=document.createElement('div');chartNote.className='sub';chartNote.textContent='官方收盤走勢｜'+String(series[0].date||'')+' 至 '+String(series.at(-1).date||'')+'｜不是開高低收 K 線';card.appendChild(chartNote);
+  }
+  const candles=Array.isArray(x.ohlcv)?x.ohlcv:[];
+  const validCandles=candles.length>=10&&candles.length<=120&&candles.every((c,i)=>{
+   const o=Number(c.open),h=Number(c.high),l=Number(c.low),v=Number(c.volume),close=Number(c.close);
+   return /^\\d{4}-\\d{2}-\\d{2}$/.test(String(c.date||''))&&(!i||String(c.date)>String(candles[i-1].date))
+    &&[o,h,l,close,v].every(Number.isFinite)&&o>0&&h>0&&l>0&&close>0&&v>=0&&Number.isInteger(v)
+    &&l<=Math.min(o,close)&&h>=Math.max(o,close);
+  })&&x.ohlcv_source_verified===true&&x.ohlcv_adjusted_for_corporate_actions===false;
+  if(validCandles){
+   const section=document.createElement('div');section.className='pattern-ohlcv-panel';
+   const heading=document.createElement('b');heading.textContent='官方原始日 K 線｜'+candles.length+' 日';section.appendChild(heading);
+   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 320 170');svg.setAttribute('role','img');svg.setAttribute('aria-label','未還原日K線與成交股數柱狀圖');svg.classList.add('pattern-close-chart');
+   const low=Math.min(...candles.map(c=>Number(c.low))),high=Math.max(...candles.map(c=>Number(c.high))),range=high-low||1;
+   const maxVol=Math.max(1,...candles.map(c=>Number(c.volume)));
+   const priceY=p=>8+(high-p)/range*108;
+   const make=(name,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',name);Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,String(v)));svg.appendChild(el);return el;};
+   candles.forEach((c,i)=>{
+    const xPos=8+(i+.5)*304/candles.length,up=Number(c.close)>=Number(c.open),color=up?'#ef7777':'#66cbb2',width=Math.max(1.4,304/candles.length*.58);
+    make('line',{x1:xPos,y1:priceY(Number(c.high)),x2:xPos,y2:priceY(Number(c.low)),stroke:color,'stroke-width':1.3});
+    make('rect',{x:xPos-width/2,y:Math.min(priceY(Number(c.open)),priceY(Number(c.close))),width,height:Math.max(1,Math.abs(priceY(Number(c.open))-priceY(Number(c.close)))),fill:color});
+    make('rect',{x:xPos-width/2,y:164-Number(c.volume)/maxVol*34,width,height:Number(c.volume)/maxVol*34,fill:color,opacity:.7});
+   });
+   section.appendChild(svg);
+   const note=document.createElement('div');note.className='sub';note.textContent='紅漲綠跌｜成交量單位：股｜未還原除權息｜'+String(candles[0].date)+' 至 '+String(candles.at(-1).date);section.appendChild(note);
+   card.appendChild(section);
+  }else{
+   const pending=document.createElement('div');pending.className='sub';pending.textContent='日 K 線與成交量：等待已驗證 OHLCV 資料，暫不繪製模擬 K 線';card.appendChild(pending);
   }
   const details=document.createElement('details');details.className='pattern-detail';
   const summary=document.createElement('summary');summary.textContent='查看資料依據與驗證限制 ▾';details.appendChild(summary);
