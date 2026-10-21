@@ -65,7 +65,7 @@ class ResearchEvidenceTests(unittest.TestCase):
     def test_future_stock_scores_remain_independent_from_sector_reports(self):
         updater=(REGISTRY.parents[0].parent/"scripts/update_system.py").read_text(encoding="utf-8")
         self.assertIn('x["research_only"]=True',updater)
-        self.assertIn('x["research_status"]=label',updater)
+        self.assertIn('x["research_status"]=research_label',updater)
         self.assertIn('x["research_institutions"]=institutions[:5]',updater)
         self.assertIn('future_monster.append(item(s,score,reason,"next",risk,sec,ss))',updater)
         # The new evidence panel must not secretly turn outlook into a stock scoring bonus.
