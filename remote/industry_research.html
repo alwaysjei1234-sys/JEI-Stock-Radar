@@ -28,9 +28,10 @@ let research=null,feed=null;
 function render(){
  if(!research)return;
  const today=new Date(),ymd=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(today);
- const stale=research.as_of!==ymd;
+ const ageDays=Math.floor((Date.parse(ymd+'T00:00:00Z')-Date.parse(research.as_of+'T00:00:00Z'))/86400000);
+ const stale=!Number.isFinite(ageDays)||ageDays<0||ageDays>7;
  $('status').textContent='來源審核基準日 '+research.as_of+'｜'+Object.keys(research.themes||{}).length+
-   ' 個產業｜'+(stale?'來源檢查日期不是今天；資料可能過期':'依來源日期與獨立研究機構數分類');
+   ' 個產業｜'+(stale?'來源審核超過7天或日期異常；請重新審核':'來源審核在7天內；依原始發表日期與獨立機構數分類');
  $('method').textContent=research.method||'';
  const root=$('themes');root.replaceChildren();
  const ordered=research.sector_order||Object.keys(research.themes);
