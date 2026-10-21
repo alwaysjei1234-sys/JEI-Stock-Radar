@@ -86,6 +86,7 @@
 @media(min-width:760px){.strategy-controls{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .jei-explore{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:9px 0 12px}.jei-explore a,.jei-explore button{display:flex;align-items:center;justify-content:center;min-height:44px;text-align:center;text-decoration:none;color:var(--txt);background:#112b42;border:1px solid var(--line);border-radius:12px;font:700 12px system-ui,sans-serif;padding:7px 3px}.jei-explore a:focus-visible,.jei-explore button:focus-visible{outline:2px solid var(--cyan)}@media(max-width:410px){.jei-explore{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .pattern-plan{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#0b2031}.pattern-plan-row{margin-top:11px;padding:11px;border-radius:10px;background:#122b42;border:1px solid #21435c}.pattern-plan-row b{display:block;font-size:15px}.pattern-plan-row .sub{margin-top:5px;line-height:1.5}
+.pattern-ref-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}.pattern-ref-levels>div{background:#0b2031;border-radius:8px;padding:8px 5px;text-align:center}.pattern-ref-levels small{display:block;font-size:10px;color:#b6c7d6}.pattern-ref-levels b{display:block;margin-top:4px;font-size:15px}
 </style>
 </head>
 <body>
@@ -249,7 +250,14 @@ function renderPatternRadar(){
   const name=document.createElement('b');name.textContent=String(x.name||'')+' '+String(x.code||'');card.appendChild(name);
   const meta=document.createElement('div');meta.className='sub';meta.textContent='收盤 '+(Number.isFinite(Number(x.price))?Number(x.price).toFixed(2):'--')+'｜強度 '+String(x.score??'--')+'｜'+String(x.data_date||p.data_date||'日期未知');card.appendChild(meta);
   const reason=document.createElement('div');reason.className='sub';reason.textContent=String(x.reason||'無策略說明');card.appendChild(reason);
-  const status=document.createElement('div');status.className='sub';status.textContent='進場帶：待量價驗證｜防守價：待 ATR/結構驗證｜R/R：尚不可計算';card.appendChild(status);
+  const levels=x.reference_levels;
+  if(levels&&[levels.prior_20_close_high,levels.prior_20_close_low,levels.prior_20_close_mean].every(v=>Number.isFinite(Number(v))&&Number(v)>0)){
+   const refs=document.createElement('div');refs.className='pattern-ref-levels';
+   [['20日收盤高點',levels.prior_20_close_high],['20日收盤均價',levels.prior_20_close_mean],['20日收盤低點',levels.prior_20_close_low]].forEach(([title,value])=>{
+    const item=document.createElement('div');const label=document.createElement('small');label.textContent=title;const number=document.createElement('b');number.textContent=Number(value).toFixed(2);item.append(label,number);refs.appendChild(item);
+   });card.appendChild(refs);
+  }
+  const status=document.createElement('div');status.className='sub';status.textContent='收盤參考位不等於可成交價｜進場帶：待量價驗證｜防守價：待 ATR/結構驗證｜R/R：尚不可計算';card.appendChild(status);
   plan.appendChild(card);
  });
  el.appendChild(plan);
