@@ -28,3 +28,7 @@ const undated=calc({price:100,reports:[{broker:'A',target:120,date:'2026-10-01'}
 assert.equal(undated.count,0);
 assert.equal(undated.mean,null);
 assert.equal(calc({price:'',asOf:'2026-10-21',reports:[]}).price,null);
+
+const impossible=calc({price:100,asOf:'2026-10-21',reports:[{broker:'A',target:999,date:'2026-02-30'}]});
+assert.equal(impossible.count,0);
+assert.equal(calc({price:100,asOf:'2026-02-30',reports}).count,0);
