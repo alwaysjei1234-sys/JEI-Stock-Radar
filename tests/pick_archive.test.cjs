@@ -69,6 +69,24 @@ for(const pick of data.picks){
   assert.ok(Math.abs(gross-outcome.gross_return_pct)<=0.00051,'gross return formula mismatch: '+pick.id);
  }
 }
+for(const [group,byHorizon] of Object.entries(data.groups)){
+ for(const [horizon,summary] of Object.entries(byHorizon)){
+  const returns=data.picks.filter(p=>p.group===group)
+   .flatMap(p=>p.outcomes.filter(o=>o.trading_days===Number(horizon)&&o.status==='complete'))
+   .map(o=>o.estimated_net_return_pct).sort((a,b)=>a-b);
+  if(!returns.length)continue;
+  const round=(v,n)=>Number(v.toFixed(n));
+  const wins=returns.filter(v=>v>0).length;
+  const avg=returns.reduce((a,b)=>a+b,0)/returns.length;
+  const mid=Math.floor(returns.length/2);
+  const median=returns.length%2?returns[mid]:(returns[mid-1]+returns[mid])/2;
+  assert.ok(Math.abs(summary.win_rate_pct-round(100*wins/returns.length,2))<=0.01,'win rate mismatch: '+group+'/'+horizon);
+  assert.ok(Math.abs(summary.avg_estimated_net_pct-round(avg,3))<=0.001,'average return mismatch: '+group+'/'+horizon);
+  assert.ok(Math.abs(summary.median_estimated_net_pct-round(median,3))<=0.001,'median return mismatch: '+group+'/'+horizon);
+  assert.equal(summary.best_estimated_net_pct,returns[returns.length-1],'best return mismatch: '+group+'/'+horizon);
+  assert.equal(summary.worst_estimated_net_pct,returns[0],'worst return mismatch: '+group+'/'+horizon);
+ }
+}
 const allowedGroups=new Set(['attack','next','monster','tomorrow_monster','future_monster']);
 const expectedHorizons=[3,7,15,20,30,40,60];
 assert.deepEqual([...horizons].sort((a,b)=>a-b),expectedHorizons,'incorrect trading-day horizons');
