@@ -6,11 +6,11 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 try:
-    from scripts.pattern_signals import build_pattern_signals
+    from scripts.pattern_signals import build_pattern_signals, attach_verified_ohlcv
 except ModuleNotFoundError as exc:
     if exc.name not in ("scripts", "scripts.pattern_signals"):
         raise
-    from pattern_signals import build_pattern_signals
+    from pattern_signals import build_pattern_signals, attach_verified_ohlcv
 
 TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
@@ -902,6 +902,22 @@ def main():
         HISTORY.parent.mkdir(parents=True,exist_ok=True)
         HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
         patterns=build_pattern_signals(history,by_code,stock_sector,sectors,asof=today_iso)
+        # Optional, locally staged TWSE monthly files only. No new network calls
+        # or invented candles during the daily market feed refresh.
+        candle_dir=Path("data/twse_ohlcv")
+        if candle_dir.is_dir() and patterns.get("status")=="ready":
+            selected={str(row["code"]) for rows in patterns["signals"].values() for row in rows}
+            files_by_code={}
+            for code in selected:
+                monthly=[]
+                for file in sorted(candle_dir.glob(code+"-??????.json")):
+                    try:
+                        monthly.append(json.loads(file.read_text(encoding="utf-8")))
+                    except (OSError,ValueError):
+                        monthly=[]
+                        break
+                if monthly:files_by_code[code]=monthly
+            attach_verified_ohlcv(patterns,files_by_code)
         backtest=calc_backtest(history,{x["code"]:x["close"] for x in stocks})
     else:
         patterns=build_pattern_signals([],{}, {}, [],asof=today_iso)
