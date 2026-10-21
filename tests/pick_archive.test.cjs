@@ -8,6 +8,15 @@ const ledger=JSON.parse(fs.readFileSync('remote/pick_history.json','utf8'));
 assert.ok(Array.isArray(ledger.picks),'missing immutable pick ledger');
 assert.equal(ledger.picks.length,data.picks.length,'report must include every frozen ledger pick');
 const ledgerIds=new Set(ledger.picks.map(p=>p.id));
+const ledgerById=new Map(ledger.picks.map(p=>[p.id,p]));
+for(const pick of data.picks){
+ const source=ledgerById.get(pick.id);
+ assert.ok(source,'published pick missing in ledger: '+pick.id);
+ for(const field of ['day','group','rank','code','name','score','signal_close','origin']){
+  assert.deepEqual(pick[field],source[field],'archived recommendation was altered: '+pick.id+'/'+field);
+ }
+}
+
 assert.equal(ledgerIds.size,ledger.picks.length,'duplicate frozen ledger identity');
 const ids=new Set();
 const horizons=new Set(data.horizons_trading_days);
