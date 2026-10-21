@@ -87,6 +87,21 @@ for(const [group,byHorizon] of Object.entries(data.groups)){
   assert.equal(summary.worst_estimated_net_pct,returns[0],'worst return mismatch: '+group+'/'+horizon);
  }
 }
+const officialDates=Object.entries(official.days)
+ .filter(([date,quotes])=>/^\d{4}-\d{2}-\d{2}$/.test(date)&&Object.values(quotes).filter(v=>Number.isFinite(v)&&v>0).length>=500)
+ .map(([date])=>date).sort();
+for(const pick of data.picks){
+ const signalIndex=officialDates.indexOf(pick.day);
+ assert.ok(signalIndex>=0,'signal date not found in official trading calendar: '+pick.id);
+ for(const outcome of pick.outcomes){
+  const expectedIndex=signalIndex+outcome.trading_days;
+  if(expectedIndex>=officialDates.length){
+   assert.equal(outcome.status,'pending','unmatured horizon must remain pending: '+pick.id);
+  }else{
+   assert.equal(outcome.end_day,officialDates[expectedIndex],'incorrect future trading-day settlement: '+pick.id);
+  }
+ }
+}
 const allowedGroups=new Set(['attack','next','monster','tomorrow_monster','future_monster']);
 const expectedHorizons=[3,7,15,20,30,40,60];
 assert.deepEqual([...horizons].sort((a,b)=>a-b),expectedHorizons,'incorrect trading-day horizons');
