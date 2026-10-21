@@ -31,6 +31,18 @@ class StrategyRadarTests(unittest.TestCase):
         self.assertNotIn("probability", result["signals"]["breakout"][0])
         self.assertEqual(result["signals"]["breakout"][0]["data_date"], h[-1]["date"])
 
+    def test_reference_levels_use_prior_closes_only(self):
+        h, stocks, sector, stats = fixture()
+        result = build_pattern_signals(h, stocks, sector, stats)
+        row = result["signals"]["breakout"][0]
+        prior = [snap["prices"][row["code"]] for snap in h[:-1]]
+        levels = row["reference_levels"]
+        self.assertAlmostEqual(levels["prior_20_close_high"], round(max(prior), 4))
+        self.assertAlmostEqual(levels["prior_20_close_low"], round(min(prior), 4))
+        self.assertAlmostEqual(levels["prior_20_close_mean"], round(sum(prior)/20, 4))
+        self.assertNotIn("stop_loss", row)
+        self.assertNotIn("entry_price", row)
+
     def test_rejects_mismatched_market_date(self):
         h, stocks, sector, stats = fixture()
         result = build_pattern_signals(h, stocks, sector, stats, asof="2026-10-31")
