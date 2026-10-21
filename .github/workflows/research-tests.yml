@@ -10,6 +10,7 @@ on:
       - 'scripts/pick_risk_metrics.py'
       - 'remote/pick_history.json'
       - 'remote/pick_validation.json'
+      - 'remote/daily_prices.json'
       - '.github/workflows/research-tests.yml'
   pull_request:
     paths:
@@ -23,6 +24,8 @@ on:
       - 'remote/pick_validation.json'
       - '.github/workflows/research-tests.yml'
   workflow_dispatch:
+  schedule:
+    - cron: '15 0 * * *'
 jobs:
   node-tests:
     runs-on: ubuntu-latest
@@ -35,6 +38,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Frozen pick archive integrity
+        run: node tests/pick_archive.test.cjs
+      - name: Python pick validation
+        run: python3 -m unittest discover -s tests -p test_pick_validation.py
       - name: Forecast audit
         run: node tests/forecast_audit.test.cjs
       - name: Target consensus
