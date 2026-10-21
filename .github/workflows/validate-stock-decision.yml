@@ -1,0 +1,33 @@
+name: Validate JEI Stock Decision
+on:
+  push:
+    paths:
+      - 'remote/stock_decision.js'
+      - 'remote/index.html'
+      - 'scripts/test-stock-decision.cjs'
+      - '.github/workflows/validate-stock-decision.yml'
+  pull_request:
+    paths:
+      - 'remote/stock_decision.js'
+      - 'remote/index.html'
+      - 'scripts/test-stock-decision.cjs'
+      - '.github/workflows/validate-stock-decision.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-decision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate stock decision regression cases
+        run: node scripts/test-stock-decision.cjs
+      - name: Check UI integration and JS syntax
+        run: |
+          node --check remote/stock_decision.js
+          node --check scripts/test-stock-decision.cjs
+          node -e "const fs=require('fs');const h=fs.readFileSync('remote/index.html','utf8');if(!h.includes('id=\"jeiDecisionCard\"')||!h.includes('/remote/stock_decision.js'))process.exit(1)"
