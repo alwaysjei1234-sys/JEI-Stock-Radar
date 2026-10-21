@@ -4,6 +4,11 @@ const data=JSON.parse(fs.readFileSync('remote/pick_validation.json','utf8'));
 assert.ok(Array.isArray(data.picks),'missing frozen picks');
 assert.equal(data.total_frozen_picks,data.picks.length,'archive count mismatch');
 assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(data.latest_official_day),'missing official day');
+const ledger=JSON.parse(fs.readFileSync('remote/pick_history.json','utf8'));
+assert.ok(Array.isArray(ledger.picks),'missing immutable pick ledger');
+assert.equal(ledger.picks.length,data.picks.length,'report must include every frozen ledger pick');
+const ledgerIds=new Set(ledger.picks.map(p=>p.id));
+assert.equal(ledgerIds.size,ledger.picks.length,'duplicate frozen ledger identity');
 const ids=new Set();
 const horizons=new Set(data.horizons_trading_days);
 for(const pick of data.picks){
@@ -30,6 +35,7 @@ for(const pick of data.picks){
   }
  }
 }
+assert.deepEqual([...ids].sort(),[...ledgerIds].sort(),'report and ledger identities differ');
 for(const [group,byHorizon] of Object.entries(data.groups)){
  for(const [horizon,summary] of Object.entries(byHorizon)){
   const records=data.picks.filter(p=>p.group===group).map(p=>p.outcomes.find(o=>o.trading_days===Number(horizon)));
