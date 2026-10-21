@@ -93,6 +93,7 @@
 .pattern-trend-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.pattern-trend-stats>div{padding:8px 4px;text-align:center;border-radius:8px;background:#112b42}.pattern-trend-stats small{display:block;font-size:10px;color:#b5c9d9}.pattern-trend-stats b{display:block;margin-top:4px;font-size:14px}
 .pattern-chart-button{display:block;width:100%;padding:0;margin:0;border:0;background:transparent;cursor:pointer}.pattern-chart-button:focus-visible{outline:2px solid #65cfff;border-radius:9px}.pattern-chart-inspect{font-size:11px;color:#a9c7dc;margin-top:5px}.pattern-point-list{margin-top:7px;padding:9px;border:1px solid #2b4b64;border-radius:9px;max-height:190px;overflow:auto;font-size:12px;line-height:1.8}.pattern-point-list[hidden]{display:none}
 .pattern-chart-legend{font-size:11px;color:#c3d7e6;margin-top:7px;line-height:1.5}
+.pattern-trend-readout{margin-top:10px;padding:10px;border-radius:10px;background:#132e43;border:1px solid #2c536b}.pattern-trend-readout>b{display:block;font-size:14px;color:#d7ecf8}.pattern-trend-readout .sub{margin-top:5px}
 </style>
 </head>
 <body>
@@ -304,6 +305,15 @@ function renderPatternRadar(){
    [['區間變化',(change>=0?'+':'')+change.toFixed(2)+'%'],['末日收盤',last.toFixed(2)],['對前期均價',(last>=mean?'+':'')+((last/mean-1)*100).toFixed(2)+'%']].forEach(([name,value])=>{
     const cell=document.createElement('div');const k=document.createElement('small');k.textContent=name;const v=document.createElement('b');v.textContent=value;cell.append(k,v);stats.appendChild(cell);
    });card.appendChild(stats);
+   const ma5=values.slice(-5).reduce((a,b)=>a+b,0)/5;
+   const ma10=values.slice(-10).reduce((a,b)=>a+b,0)/10;
+   const prevMa5=values.slice(-6,-1).reduce((a,b)=>a+b,0)/5;
+   const above5=last>ma5,above10=last>ma10,aligned=ma5>ma10;
+   const trend=document.createElement('div');trend.className='pattern-trend-readout';
+   const headline=document.createElement('b');headline.textContent='均線狀態：'+(above5&&above10&&aligned?'短線偏強':!above5&&!above10&&!aligned?'短線偏弱':'多空交錯');trend.appendChild(headline);
+   const description=document.createElement('div');description.className='sub';description.textContent='收盤 '+(above5?'高於':'不高於')+' MA5｜'+(above10?'高於':'不高於')+' MA10｜MA5 '+(aligned?'高於':'不高於')+' MA10｜MA5 '+(ma5>prevMa5?'上彎':ma5<prevMa5?'下彎':'持平');trend.appendChild(description);
+   const figures=document.createElement('div');figures.className='sub';figures.textContent='MA5 '+ma5.toFixed(2)+'｜MA10 '+ma10.toFixed(2)+'｜僅收盤價趨勢，非買賣訊號';trend.appendChild(figures);
+   card.appendChild(trend);
    const chartNote=document.createElement('div');chartNote.className='sub';chartNote.textContent='官方收盤走勢｜'+String(series[0].date||'')+' 至 '+String(series.at(-1).date||'')+'｜不是開高低收 K 線';card.appendChild(chartNote);
   }
   const details=document.createElement('details');details.className='pattern-detail';
