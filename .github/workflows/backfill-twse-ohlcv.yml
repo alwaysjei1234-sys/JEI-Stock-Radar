@@ -1,6 +1,10 @@
 name: Backfill TWSE Pattern Candles
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/backfill-twse-ohlcv.yml'
   schedule:
     - cron: '10 9 * * 1-5' # 17:10 Taipei after official close
 permissions:
