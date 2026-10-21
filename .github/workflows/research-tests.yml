@@ -5,6 +5,7 @@ on:
       - 'remote/forecast_audit.js'
       - 'remote/target_consensus.js'
       - 'remote/research_engine.js'
+      - 'remote/index.html'
       - 'tests/**'
       - 'scripts/update_pick_validation.py'
       - 'scripts/pick_risk_metrics.py'
@@ -45,6 +46,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Dashboard smoke tests
+        run: node tests/dashboard_smoke.test.cjs
       - name: Frozen pick archive integrity
         run: node tests/pick_archive.test.cjs
       - name: Python pick validation
