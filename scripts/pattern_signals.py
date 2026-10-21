@@ -67,6 +67,12 @@ def build_pattern_signals(history, by_code, stock_sectors, sectors, asof=None):
             "price": round(price, 4), "change_pct": round(change, 2),
             "sector": sector, "data_date": out["data_date"],
             "basis_sessions": 21,
+            "reference_levels": {
+                "prior_20_close_high": round(max(prior), 4),
+                "prior_20_close_low": round(min(prior), 4),
+                "prior_20_close_mean": round(mean, 4),
+                "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價",
+            },
         }
         def add(key, strength, description):
             # Relative rank within a given strategy, not success probability.
