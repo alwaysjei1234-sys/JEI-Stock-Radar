@@ -1,0 +1,40 @@
+name: Refresh pick validation report
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 12 * * 1-5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pick-validation-report
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run regression tests
+        run: python -m unittest discover -s tests -p 'test_pick*.py'
+      - name: Rebuild verified report from immutable history
+        run: python -m scripts.update_pick_validation
+      - name: Commit only regenerated public report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add remote/pick_validation.json
+          if git diff --cached --quiet; then
+            echo "Report already current"
+            exit 0
+          fi
+          git commit -m "data: refresh verified pick performance report"
+          git pull --rebase origin main
+          git push origin HEAD:main
