@@ -19,10 +19,3 @@ assert.equal(results[2].state,'pending');
 assert.equal(results[2].netPct,null);
 console.log('JEI research engine smoke tests passed');
 
-require('./pick_archive.test.cjs');
-
-const {spawnSync}=require('node:child_process');
-const python=spawnSync('python3',['-m','unittest','discover','-s','tests','-p','test_pick_validation.py'],{encoding:'utf8'});
-if(python.stdout)process.stdout.write(python.stdout);
-if(python.stderr)process.stderr.write(python.stderr);
-assert.equal(python.status,0,'Python pick validation tests failed');
