@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """JEI forward-only stock-pick validation, independent of broker fills and private holdings.
 
-Each vetted daily close freezes that day's top picks. Day 3/7/15/20/40/60
+Each vetted daily close freezes that day's top picks. Day 3/7/15/20/30/40/60
 means *future archived trading closes*, not calendar days. A missing horizon
 is pending, not a loss, win or a guessed exit. No automatic parameter tuning.
 """
@@ -20,7 +20,7 @@ PICKS = ROOT / "remote/pick_history.json"
 REPORT = ROOT / "remote/pick_validation.json"
 TZ = ZoneInfo("Asia/Taipei")
 GROUPS = ("attack", "next", "monster", "tomorrow_monster", "future_monster")
-HORIZONS = (3, 7, 15, 20, 40, 60)
+HORIZONS = (3, 7, 15, 20, 30, 40, 60)
 FEE = 0.001425
 SELL_TAX = 0.003
 MAX_PICKS = 5
@@ -184,7 +184,7 @@ def compile_report(frozen, archive, updated_at):
         "total_frozen_picks":len(frozen),
         "analysis_notes":[
             "每個交易日的主攻／下一棒／妖股／明日妖股／未來妖股取當時前五檔，當日官方收盤價封存；不得事後換股或補選贏家。",
-            "3、7、15、20、40、60 為後續交易日數（20日約1個月、40日約2個月、60日約3個月），未到期一律 pending。",
+            "3、7、15、20、30、40、60 為後續交易日數（20日約1個月、40日約2個月、60日約3個月），未到期一律 pending。",
             "假設訊號日收盤買入、指定未來收盤賣出，只是股價觀察；無法保證當時能成交。估算買賣兩端手續費及賣出交易稅；不含滑價、最低手續費。",
             "不同分類可能包含相同股票，不能把類別績效當成獨立投資組合；未成熟或缺價樣本不能算勝負。",
             "僅以事前保存名單與日後已驗證官方收盤計分。有效樣本不足時不選最佳策略、不自動修改參數。"
