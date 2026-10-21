@@ -85,6 +85,7 @@
 .strategy-note{line-height:1.65;color:#b1cbdd;font-size:12px}
 @media(min-width:760px){.strategy-controls{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .jei-explore{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:9px 0 12px}.jei-explore a,.jei-explore button{display:flex;align-items:center;justify-content:center;min-height:44px;text-align:center;text-decoration:none;color:var(--txt);background:#112b42;border:1px solid var(--line);border-radius:12px;font:700 12px system-ui,sans-serif;padding:7px 3px}.jei-explore a:focus-visible,.jei-explore button:focus-visible{outline:2px solid var(--cyan)}@media(max-width:410px){.jei-explore{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pattern-plan{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#0b2031}.pattern-plan-row{margin-top:11px;padding:11px;border-radius:10px;background:#122b42;border:1px solid #21435c}.pattern-plan-row b{display:block;font-size:15px}.pattern-plan-row .sub{margin-top:5px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -240,6 +241,18 @@ function renderPatternRadar(){
  const all=Array.isArray(p.signals?.[activePatternStrategy])?p.signals[activePatternStrategy]:[];
  stamp.textContent=(historical?'前次官方收盤 '+p.data_date+'｜歷史觀察，非今日進場推薦':'官方收盤 '+p.data_date)+'｜'+label+' '+all.length+' 檔｜有效歷史樣本 '+(p.coverage||0)+' 檔｜不代表成交或報酬';
  renderRank('patternResults',all,'今日此策略沒有達標候選，不以虛構股票補榜');
+ const plan=document.createElement('div');plan.className='pattern-plan';
+ const heading=document.createElement('div');heading.className='panelTitle';heading.textContent='📋 候選個股觀察卡｜非委託建議';plan.appendChild(heading);
+ const note=document.createElement('div');note.className='sub';note.textContent='僅有官方收盤價與策略理由；尚未具備完整高低價、ATR、成交量驗證，不產生虛構的進場帶、防守價或 R/R。';plan.appendChild(note);
+ all.slice(0,8).forEach(x=>{
+  const card=document.createElement('div');card.className='pattern-plan-row';
+  const name=document.createElement('b');name.textContent=String(x.name||'')+' '+String(x.code||'');card.appendChild(name);
+  const meta=document.createElement('div');meta.className='sub';meta.textContent='收盤 '+(Number.isFinite(Number(x.price))?Number(x.price).toFixed(2):'--')+'｜強度 '+String(x.score??'--')+'｜'+String(x.data_date||p.data_date||'日期未知');card.appendChild(meta);
+  const reason=document.createElement('div');reason.className='sub';reason.textContent=String(x.reason||'無策略說明');card.appendChild(reason);
+  const status=document.createElement('div');status.className='sub';status.textContent='進場帶：待量價驗證｜防守價：待 ATR/結構驗證｜R/R：尚不可計算';card.appendChild(status);
+  plan.appendChild(card);
+ });
+ el.appendChild(plan);
 }
 function renderWebReco(){
  const a=system.web_recommendations||[],stamp=system.web_recommendations_updated_at||'尚未更新';
