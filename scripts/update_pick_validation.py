@@ -9,6 +9,7 @@ import json
 import math
 import re
 import statistics
+from scripts.pick_risk_metrics import max_close_drawdown, duplicate_signal_summary
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -144,6 +145,7 @@ def compile_report(frozen, archive, updated_at):
                 "estimated_net_return_pct":round(net_percent(first,last_price),3),
                 "best_close_return_pct":round(max(close_returns),3) if close_returns else None,
                 "worst_close_return_pct":round(min(close_returns),3) if close_returns else None,
+                "max_close_drawdown_pct":max_close_drawdown(first, closes),
                 "observed_closes":sum(c is not None for c in closes),
                 "expected_closes":horizon
             })
@@ -176,11 +178,13 @@ def compile_report(frozen, archive, updated_at):
                 "median_estimated_net_pct":round(statistics.median(values),3) if m else None,
                 "best_estimated_net_pct":round(max(values),3) if m else None,
                 "worst_estimated_net_pct":round(min(values),3) if m else None,
+                "worst_max_close_drawdown_pct":round(min(r["max_close_drawdown_pct"] for r in results),3) if m else None,
             }
     return {
         "schema":1, "mode":"forward_official_close_pick_validation",
         "updated_at":updated_at, "latest_official_day":days[-1] if days else None,
         "horizons_trading_days":list(HORIZONS), "groups":groups, "picks":observed,
+        "duplicate_signal_summary":duplicate_signal_summary(observed),
         "total_frozen_picks":len(frozen),
         "analysis_notes":[
             "每個交易日的主攻／下一棒／妖股／明日妖股／未來妖股取當時前五檔，當日官方收盤價封存；不得事後換股或補選贏家。",
