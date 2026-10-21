@@ -37,6 +37,8 @@ for(const [group,byHorizon] of Object.entries(data.groups)){
   for(const [state,key] of [['complete','completed'],['pending','pending'],['missing_price','missing_price']]){
    assert.equal(summary[key],records.filter(o=>o.status===state).length,'incorrect '+key+' for '+group+'/'+horizon);
   }
+  const total=summary.completed+summary.pending+summary.missing_price;
+  assert.equal(total,records.length,'unaccounted picks for '+group+'/'+horizon);
   const finished=records.filter(o=>o.status==='complete');
   if(!finished.length){
    assert.equal(summary.win_rate_pct,null,'no completed picks must not show a win rate');
