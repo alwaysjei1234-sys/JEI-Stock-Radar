@@ -870,7 +870,7 @@ def main():
                 archived_patterns=json.loads(json.dumps(archived_patterns))
                 # Older archived signals predate close_series. Reconstruct ONLY
                 # their observed historical closes, without rescoring signals.
-                snapshots=read_json(HISTORY,[])
+                snapshots=json.loads(HISTORY.read_text(encoding="utf-8")) if HISTORY.exists() else []
                 if (isinstance(snapshots,list) and len(snapshots)>=21
                         and snapshots[-1].get("date")==retained.get("data_date")):
                     last21=snapshots[-21:]
