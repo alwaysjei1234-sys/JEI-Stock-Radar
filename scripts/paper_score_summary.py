@@ -34,3 +34,29 @@ def summarize(scored_picks):
                                        else "no_matured_samples" if not valid else "measured"),
             }
     return output
+
+
+def rank_strategies(scored_picks, horizon=15, min_matured=10):
+    """Rank only sufficiently observed cohorts; insufficient samples remain unranked."""
+    if horizon not in HORIZONS:
+        raise ValueError("unsupported horizon")
+    if isinstance(min_matured, bool) or not isinstance(min_matured, int) or min_matured < 1:
+        raise ValueError("min_matured must be a positive integer")
+    summary = summarize(scored_picks)
+    rows = []
+    for cohort in COHORTS:
+        item = summary[cohort][str(horizon)]
+        eligible = item["matured"] >= min_matured
+        rows.append({"cohort": cohort, "horizon": horizon, "eligible": eligible,
+                     "reason": "sufficient_samples" if eligible else "insufficient_matured_samples",
+                     **item})
+    # Median-first ranking reduces sensitivity to one-off outlier gains.
+    ranked = sorted((r for r in rows if r["eligible"]),
+                    key=lambda r: (r["median_net_return_pct"], r["win_rate_pct"],
+                                   r["mean_net_return_pct"]), reverse=True)
+    for position, row in enumerate(ranked, 1):
+        row["rank"] = position
+    for row in rows:
+        if not row["eligible"]:
+            row["rank"] = None
+    return sorted(rows, key=lambda r: (r["rank"] is None, r["rank"] or 999))
