@@ -30,4 +30,18 @@ for(const pick of data.picks){
   }
  }
 }
+for(const [group,byHorizon] of Object.entries(data.groups)){
+ for(const [horizon,summary] of Object.entries(byHorizon)){
+  const records=data.picks.filter(p=>p.group===group).map(p=>p.outcomes.find(o=>o.trading_days===Number(horizon)));
+  assert.ok(records.every(Boolean),'missing outcome for '+group+'/'+horizon);
+  for(const [state,key] of [['complete','completed'],['pending','pending'],['missing_price','missing_price']]){
+   assert.equal(summary[key],records.filter(o=>o.status===state).length,'incorrect '+key+' for '+group+'/'+horizon);
+  }
+  const finished=records.filter(o=>o.status==='complete');
+  if(!finished.length){
+   assert.equal(summary.win_rate_pct,null,'no completed picks must not show a win rate');
+   assert.equal(summary.avg_estimated_net_pct,null,'no completed picks must not show a return');
+  }
+ }
+}
 console.log('JEI frozen picks verified:',data.picks.length);
