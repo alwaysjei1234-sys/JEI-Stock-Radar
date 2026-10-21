@@ -77,8 +77,9 @@ def run(system_path, output_dir, max_codes=8, pause=4):
                         refresh=True
                 except (OSError,ValueError,AttributeError):
                     pass
-                print("Existing invalid file; preserving for manual review:",path)
-                continue
+                if not refresh:
+                    print("Existing invalid file; preserving for manual review:",path)
+                    continue
             if fetched:time.sleep(pause)
             try:
                 result=fetch_month(code,month)
