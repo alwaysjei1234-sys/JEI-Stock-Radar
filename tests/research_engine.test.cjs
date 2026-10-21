@@ -18,3 +18,5 @@ assert.equal(results[1].netPct,-10.5);
 assert.equal(results[2].state,'pending');
 assert.equal(results[2].netPct,null);
 console.log('JEI research engine smoke tests passed');
+
+require('./pick_archive.test.cjs');
