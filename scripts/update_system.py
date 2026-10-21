@@ -859,6 +859,27 @@ def main():
         except (OSError,ValueError):
             retained=None
         if retained is not None:
+            # Refresh read-only research with verified staged OHLCV even when
+            # exchanges have not yet published a NEW official closing session.
+            # Preserve the original data date and never create new trade signals.
+            archived_patterns=retained.get("patterns")
+            candle_dir=Path("data/twse_ohlcv")
+            if (isinstance(archived_patterns,dict)
+                    and archived_patterns.get("status")=="ready"
+                    and candle_dir.is_dir()):
+                archived_patterns=json.loads(json.dumps(archived_patterns))
+                files_by_code={}
+                for code in {str(row.get("code","")) for rows in archived_patterns.get("signals",{}).values() for row in rows}:
+                    monthly=[]
+                    for file in sorted(candle_dir.glob(code+"-??????.json")):
+                        try:
+                            monthly.append(json.loads(file.read_text(encoding="utf-8")))
+                        except (OSError,ValueError):
+                            monthly=[]
+                            break
+                    if monthly:files_by_code[code]=monthly
+                attach_verified_ohlcv(archived_patterns,files_by_code)
+                retained["patterns"]=archived_patterns
             OUT.write_text(json.dumps(retained,ensure_ascii=False,indent=2),encoding="utf-8")
             print(json.dumps({"status":"archived_close_only",
                               "data_date":retained["data_date"],
