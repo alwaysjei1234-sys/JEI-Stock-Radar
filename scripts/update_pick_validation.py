@@ -263,7 +263,7 @@ def main():
     # Refresh when the schema or risk fields change, even on a non-trading day.
     if (captured or not REPORT.exists() or
             any(json.loads(REPORT.read_text(encoding="utf-8")).get(key) != report.get(key)
-                for key in ("latest_official_day", "duplicate_signal_summary", "groups")) or
+                for key in ("latest_official_day", "duplicate_signal_summary", "groups", "picks", "total_frozen_picks")) or
             "max_close_drawdown_pct" not in REPORT.read_text(encoding="utf-8")):
         REPORT.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"captured":captured,"latest_official_day":report["latest_official_day"],
