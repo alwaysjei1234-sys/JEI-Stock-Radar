@@ -32,3 +32,7 @@ assert.equal(calc({price:'',asOf:'2026-10-21',reports:[]}).price,null);
 const impossible=calc({price:100,asOf:'2026-10-21',reports:[{broker:'A',target:999,date:'2026-02-30'}]});
 assert.equal(impossible.count,0);
 assert.equal(calc({price:100,asOf:'2026-02-30',reports}).count,0);
+
+const duplicate=calc({price:100,asOf:'2026-10-21',reports:[{broker:'A',target:110,date:'2026-09-01'},{broker:'A',target:130,date:'2026-10-01'},{broker:'B',target:150,date:'2026-10-02'}]});
+assert.equal(duplicate.count,2);
+assert.equal(duplicate.mean,140);
