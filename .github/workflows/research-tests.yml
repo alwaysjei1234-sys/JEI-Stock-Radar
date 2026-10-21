@@ -28,6 +28,9 @@ on:
     - cron: '15 0 * * *'
     # Hourly integrity checks; CI validates and reports, but does not auto-merge code.
     - cron: '0 * * * *'
+concurrency:
+  group: jei-research-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
 jobs:
   node-tests:
     runs-on: ubuntu-latest
@@ -58,9 +61,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          title='JEI 每日自動驗證失敗'
+          title='JEI 自動驗證失敗'
           existing=$(gh issue list --state open --search "$title in:title" --json number,title --jq ".[] | select(.title == \"$title\") | .number" | head -n 1)
-          body="每日自動測試失敗。請檢查 [執行紀錄](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})，修正後重新執行測試；未驗證前不要改寫歷史績效。"
+          body="自動測試失敗。請檢查 [執行紀錄](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})，修正後重新執行測試；未驗證前不要改寫歷史績效。"
           if [ -n "$existing" ]; then
             gh issue comment "$existing" --body "$body"
           else
