@@ -117,6 +117,27 @@ class PickValidationTests(unittest.TestCase):
         self.assertFalse(captured)
         self.assertFalse(state["picks"])
 
+    def test_reject_duplicate_archived_identity(self):
+        a=archive(4)
+        rows=freeze_picks(feed(),a["days"][DATES[0]],DATES[0])
+        previous={"schema":1,"picks":[rows[0],copy.deepcopy(rows[0])]}
+        with self.assertRaisesRegex(ValueError,"重複"):
+            update(feed("2026-10-16"),a,previous,datetime(2026,10,16,16,tzinfo=TZ))
+
+    def test_missed_trading_day_blocks_new_capture(self):
+        a=archive(4)
+        rows=freeze_picks(feed(),a["days"][DATES[0]],DATES[0])
+        previous={"schema":1,"picks":rows}
+        f=feed("2026-10-16")
+        f["attack"][0]["price"]=110
+        f["attack"][1]["price"]=91
+        for group in GROUPS:f[group]=copy.deepcopy(f["attack"])
+        with self.assertRaisesRegex(ValueError,"尚未記錄"):
+            update(f,a,previous,datetime(2026,10,16,16,tzinfo=TZ))
+        f["market"]["stale"]=True
+        _,_,captured=update(f,a,previous,datetime(2026,10,16,16,tzinfo=TZ))
+        self.assertFalse(captured)
+
     def test_no_best_strategy_from_zero_matured_observations(self):
         a=archive(2)
         rows=freeze_picks(feed(),a["days"][DATES[0]],DATES[0])
