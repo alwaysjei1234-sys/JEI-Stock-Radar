@@ -1,5 +1,5 @@
 import unittest
-from scripts.pattern_signals import build_pattern_signals
+from scripts.pattern_signals import build_pattern_signals, attach_verified_ohlcv
 
 def fixture(n=21, count=320, jump=True):
     codes = [str(1000 + i) for i in range(count)]
@@ -15,6 +15,24 @@ def fixture(n=21, count=320, jump=True):
     return days, stocks, sectors, stats
 
 class StrategyRadarTests(unittest.TestCase):
+    def test_verified_ohlcv_requires_matching_official_closes(self):
+        h, stocks, sector, stats = fixture()
+        patterns=build_pattern_signals(h,stocks,sector,stats)
+        code=patterns["signals"]["breakout"][0]["code"]
+        candles=[{"date":day["date"],"open":day["prices"][code],
+                  "high":day["prices"][code],"low":day["prices"][code],
+                  "close":day["prices"][code],"volume":1000} for day in h]
+        source={"code":code,"market":"TWSE","adjusted_for_corporate_actions":False,
+                "ohlcv_units":{"volume":"shares"},"ohlcv":candles}
+        attach_verified_ohlcv(patterns,{code:[source]})
+        row=next(x for x in patterns["signals"]["breakout"] if x["code"]==code)
+        self.assertTrue(row["ohlcv_source_verified"])
+        self.assertEqual(len(row["ohlcv"]),21)
+        patterns=build_pattern_signals(h,stocks,sector,stats)
+        source["ohlcv"][-1]["close"]+=1
+        attach_verified_ohlcv(patterns,{code:[source]})
+        row=next(x for x in patterns["signals"]["breakout"] if x["code"]==code)
+        self.assertNotIn("ohlcv",row)
     def test_requires_twenty_one_snapshot_sessions(self):
         h, stocks, sector, stats = fixture(n=20)
         result = build_pattern_signals(h, stocks, sector, stats)
