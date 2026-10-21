@@ -88,6 +88,7 @@
 .pattern-plan{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#0b2031}.pattern-plan-row{margin-top:11px;padding:11px;border-radius:10px;background:#122b42;border:1px solid #21435c}.pattern-plan-row b{display:block;font-size:15px}.pattern-plan-row .sub{margin-top:5px;line-height:1.5}
 .pattern-ref-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}.pattern-ref-levels>div{background:#0b2031;border-radius:8px;padding:8px 5px;text-align:center}.pattern-ref-levels small{display:block;font-size:10px;color:#b6c7d6}.pattern-ref-levels b{display:block;margin-top:4px;font-size:15px}
 .jei-home-hub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.jei-home-hub button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;min-height:94px;padding:13px;border:1px solid #29465d;border-radius:16px;background:linear-gradient(135deg,#172e48,#102235);color:#e8f4ff;text-align:left;font:inherit;cursor:pointer}.jei-home-hub button span{font-size:21px}.jei-home-hub button b{font-size:17px}.jei-home-hub button small{font-size:12px;color:#a9c1d2}.jei-home-hub button:focus-visible{outline:2px solid #36d5eb}@media(min-width:650px){.jei-home-hub{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.pattern-detail{margin-top:9px;border-top:1px solid #2a4a62;padding-top:8px}.pattern-detail summary{cursor:pointer;color:#81d8ff;font-size:12px;font-weight:700}.pattern-detail p{margin:7px 0 0}
 </style>
 </head>
 <body>
@@ -259,6 +260,11 @@ function renderPatternRadar(){
    });card.appendChild(refs);
   }
   const status=document.createElement('div');status.className='sub';status.textContent='收盤參考位不等於可成交價｜進場帶：待量價驗證｜防守價：待 ATR/結構驗證｜R/R：尚不可計算';card.appendChild(status);
+  const details=document.createElement('details');details.className='pattern-detail';
+  const summary=document.createElement('summary');summary.textContent='查看資料依據與驗證限制 ▾';details.appendChild(summary);
+  const provenance=document.createElement('p');provenance.className='sub';provenance.textContent='策略：'+label+'｜歷史收盤樣本 '+String(x.basis_sessions??'--')+' 日｜訊號日期 '+String(x.data_date||p.data_date||'未知');details.appendChild(provenance);
+  const limitation=document.createElement('p');limitation.className='sub';limitation.textContent='參考價僅由訊號日以前的收盤資料計算；不含盤中高低點、委託簿、成交量確認或獨立基本面佐證。';details.appendChild(limitation);
+  card.appendChild(details);
   plan.appendChild(card);
  });
  el.appendChild(plan);
