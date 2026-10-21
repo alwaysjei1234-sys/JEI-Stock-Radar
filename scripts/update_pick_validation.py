@@ -248,6 +248,9 @@ def update(feed, archive, prior, now):
     report=compile_report(stored,archive,local.strftime("%Y-%m-%d %H:%M"))
     if len(report["picks"])!=len(stored):
         raise ValueError("封存推薦無法完整核對官方歷史收盤價，拒絕產生不完整績效")
+    report_ids={p["id"] for p in report["picks"]}
+    if report_ids!=ids.union({p["id"] for p in stored if p["id"] not in ids}):
+        raise ValueError("績效報表與封存帳本的推薦識別碼不一致")
     return {"schema":1,"mode":"immutable_asof_pick_archive","picks":stored},report,captured
 
 
