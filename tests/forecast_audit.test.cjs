@@ -6,4 +6,7 @@ assert.equal(evaluate(f,[{date:'2026-01-02',close:100}],'2026-04-01').state,'pen
 assert.equal(evaluate(f,[],'2026-10-21').state,'missing_price');
 assert.equal(evaluate({date:'bad',target:120},[],'2026-10-21').state,'invalid');
 assert.equal(summarize([{state:'hit',hit:true},{state:'miss',hit:false},{state:'pending'}]).hitRate,0.5);
+assert.equal(evaluate(f,[{date:'2026-10-20',close:110}],'2026-10-21').state,'miss');
+assert.equal(evaluate(f,[{date:'2026-10-01',close:110}],'2026-10-21').state,'missing_price');
+assert.equal(evaluate(f,[],'invalid-date').state,'invalid');
 console.log('forecast audit smoke tests passed');
