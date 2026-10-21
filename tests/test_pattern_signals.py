@@ -33,6 +33,23 @@ class StrategyRadarTests(unittest.TestCase):
         attach_verified_ohlcv(patterns,{code:[source]})
         row=next(x for x in patterns["signals"]["breakout"] if x["code"]==code)
         self.assertNotIn("ohlcv",row)
+    def test_verified_volume_price_breakout(self):
+        h,stocks,sector,stats=fixture()
+        patterns=build_pattern_signals(h,stocks,sector,stats)
+        code=patterns["signals"]["breakout"][0]["code"]
+        candles=[]
+        for i,day in enumerate(h):
+            close=day["prices"][code]
+            candles.append({"date":day["date"],"open":close,"high":close,
+                            "low":close,"close":close,"volume":2000 if i==20 else 1000})
+        source={"code":code,"market":"TWSE","adjusted_for_corporate_actions":False,
+                "ohlcv_units":{"volume":"shares"},"ohlcv":candles}
+        attach_verified_ohlcv(patterns,{code:[source]})
+        row=next(x for x in patterns["signals"]["breakout"] if x["code"]==code)
+        self.assertTrue(row["volume_price_observation"]["confirmed_price_volume_breakout"])
+        self.assertEqual(row["volume_price_observation"]["volume_ratio"],2.0)
+        self.assertEqual(row["volume_price_observation"]["prior_20_avg_volume_shares"],1000)
+
     def test_requires_twenty_one_snapshot_sessions(self):
         h, stocks, sector, stats = fixture(n=20)
         result = build_pattern_signals(h, stocks, sector, stats)
