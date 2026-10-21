@@ -1,0 +1,32 @@
+name: JEI Research Engine Tests
+on:
+  push:
+    paths:
+      - 'remote/forecast_audit.js'
+      - 'remote/target_consensus.js'
+      - 'remote/research_engine.js'
+      - 'tests/**'
+      - '.github/workflows/research-tests.yml'
+  pull_request:
+    paths:
+      - 'remote/forecast_audit.js'
+      - 'remote/target_consensus.js'
+      - 'remote/research_engine.js'
+      - 'tests/**'
+      - '.github/workflows/research-tests.yml'
+  workflow_dispatch:
+jobs:
+  node-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Forecast audit
+        run: node tests/forecast_audit.test.cjs
+      - name: Target consensus
+        run: node tests/target_consensus.test.cjs
+      - name: Research engine
+        run: node tests/research_engine.test.cjs
