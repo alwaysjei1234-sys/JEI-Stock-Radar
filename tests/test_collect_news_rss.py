@@ -1,8 +1,17 @@
 import unittest
-from scripts.collect_news_rss import classify_sectors, publication_utc, headline_fingerprint, collect
+from scripts.collect_news_rss import classify_sectors, publication_utc, headline_fingerprint, collect, sector_news_summary
 from io import BytesIO
 
 class NewsResearchTagTests(unittest.TestCase):
+    def test_sector_summary_does_not_inflate_research_evidence(self):
+        rows = [{"sectors":["光通訊/CPO"],"publisher_host":"news.example"},
+                {"sectors":["光通訊/CPO"],"publisher_host":"news.example"},
+                {"sectors":["光通訊/CPO"],"publisher_host":"another.example"}]
+        result = sector_news_summary(rows)["光通訊/CPO"]
+        self.assertEqual(result["headlines"],3)
+        self.assertEqual(result["distinct_publisher_hosts"],2)
+        self.assertEqual(result["research_institutions_verified"],0)
+
     def test_headline_deduplication_key(self):
         self.assertEqual(headline_fingerprint("CPO 產業！"), headline_fingerprint("cpo產業"))
         self.assertNotEqual(headline_fingerprint("CPO 產業"), headline_fingerprint("DRAM 產業"))
