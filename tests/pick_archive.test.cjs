@@ -51,7 +51,7 @@ assert.deepEqual([...horizons].sort((a,b)=>a-b),expectedHorizons,'incorrect trad
 for(const pick of data.picks){
  assert.ok(allowedGroups.has(pick.group),'unknown strategy group');
  assert.ok(Number.isInteger(pick.rank)&&pick.rank>=1&&pick.rank<=5,'invalid frozen ranking');
- assert.ok(/^\\d{4}$/.test(pick.code),'invalid Taiwan stock code');
+ assert.ok(/^\d{4}$/.test(pick.code),'invalid Taiwan stock code');
 }
 for(const [group,byHorizon] of Object.entries(data.groups)){
  for(const [horizon,summary] of Object.entries(byHorizon)){
