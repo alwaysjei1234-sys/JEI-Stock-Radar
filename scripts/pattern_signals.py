@@ -48,7 +48,25 @@ def attach_verified_ohlcv(patterns, files_by_code):
             if (not valid or len(series)<10 or any(p["date"] not in candles for p in series)
                 or any(abs(candles[p["date"]]["close"]-float(p["close"]))>0.0001 for p in series)):
                 continue
-            signal["ohlcv"]=[candles[p["date"]] for p in series]
+            ordered=[candles[p["date"]] for p in series]
+            signal["ohlcv"]=ordered
+            if len(ordered)>=21:
+                prior=ordered[-21:-1]
+                last=ordered[-1]
+                avg_volume=sum(c["volume"] for c in prior)/len(prior)
+                prior_high=max(c["high"] for c in prior)
+                ratio=(last["volume"]/avg_volume) if avg_volume>0 else None
+                breakout=last["close"]>prior_high
+                signal["volume_price_observation"]={
+                    "basis":"20筆官方原始日K線；未還原除權息；非買賣建議",
+                    "prior_20_high":round(prior_high,4),
+                    "prior_20_avg_volume_shares":round(avg_volume,2),
+                    "latest_volume_shares":last["volume"],
+                    "volume_ratio":round(ratio,2) if ratio is not None else None,
+                    "price_breakout":breakout,
+                    "volume_expansion":ratio is not None and ratio>=1.5,
+                    "confirmed_price_volume_breakout":breakout and ratio is not None and ratio>=1.5,
+                }
             signal["ohlcv_source_verified"]=True
             signal["ohlcv_adjusted_for_corporate_actions"]=False
     return patterns
