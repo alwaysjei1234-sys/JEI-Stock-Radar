@@ -868,6 +868,23 @@ def main():
                     and archived_patterns.get("status")=="ready"
                     and candle_dir.is_dir()):
                 archived_patterns=json.loads(json.dumps(archived_patterns))
+                # Older archived signals predate close_series. Reconstruct ONLY
+                # their observed historical closes, without rescoring signals.
+                snapshots=read_json(HISTORY,[])
+                if (isinstance(snapshots,list) and len(snapshots)>=21
+                        and snapshots[-1].get("date")==retained.get("data_date")):
+                    last21=snapshots[-21:]
+                    if len({snap.get("date") for snap in last21})==21:
+                        for rows in archived_patterns.get("signals",{}).values():
+                            for row in rows:
+                                code=str(row.get("code",""))
+                                try:
+                                    observed=[{"date":snap["date"],"close":float(snap["prices"][code])}
+                                              for snap in last21]
+                                except (KeyError,ValueError,TypeError):
+                                    continue
+                                if (len(observed)==21 and observed[-1]["close"]==float(row.get("price",0))):
+                                    row["close_series"]=observed
                 files_by_code={}
                 for code in {str(row.get("code","")) for rows in archived_patterns.get("signals",{}).values() for row in rows}:
                     monthly=[]
