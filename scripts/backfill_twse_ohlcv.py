@@ -36,7 +36,12 @@ def run(system_path, output_dir, max_codes=8, pause=4):
     output_dir=Path(output_dir)
     output_dir.mkdir(parents=True,exist_ok=True)
     fetched=0
-    for code in codes[:max_codes]:
+    # Cap total work per run and rotate the starting symbol by trading date.
+    # This prevents the same first eight signals monopolizing the cache.
+    if codes:
+        start=asof.toordinal()%len(codes)
+        codes=(codes[start:]+codes[:start])[:max_codes]
+    for code in codes:
         for month in target_months(asof):
             path=output_dir/f"{code}-{month}.json"
             if path.exists():
