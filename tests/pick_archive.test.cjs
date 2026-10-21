@@ -45,6 +45,19 @@ for(const pick of data.picks){
  }
 }
 assert.deepEqual([...ids].sort(),[...ledgerIds].sort(),'report and ledger identities differ');
+const official=JSON.parse(fs.readFileSync('remote/daily_prices.json','utf8'));
+assert.equal(official.kind,'official_daily_close','unverified daily close archive');
+for(const pick of data.picks){
+ const signal=official.days?.[pick.day]?.[pick.code];
+ assert.ok(Number.isFinite(signal)&&signal>0,'missing official signal close: '+pick.id);
+ assert.ok(Math.abs(signal/pick.signal_close-1)<=0.005,'signal close differs from official archive: '+pick.id);
+ for(const outcome of pick.outcomes){
+  if(outcome.status!=='complete')continue;
+  const settlement=official.days?.[outcome.end_day]?.[pick.code];
+  assert.ok(Number.isFinite(settlement)&&settlement>0,'missing official exit close: '+pick.id);
+  assert.ok(Math.abs(settlement/outcome.end_close-1)<1e-9,'settlement close differs from archive: '+pick.id);
+ }
+}
 const allowedGroups=new Set(['attack','next','monster','tomorrow_monster','future_monster']);
 const expectedHorizons=[3,7,15,20,30,40,60];
 assert.deepEqual([...horizons].sort((a,b)=>a-b),expectedHorizons,'incorrect trading-day horizons');
