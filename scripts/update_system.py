@@ -783,12 +783,12 @@ def main():
         institutions=evidence.get("institutions") or []
         independent=int(evidence.get("independent_institutions") or 0)
         if independent>=2:
-            label="產業研究雙機構以上佐證；個股營收/估值未驗證"
+            research_label="產業研究雙機構以上佐證；個股營收/估值未驗證"
         elif independent==1:
-            label="單一研究機構產業展望；不足以稱為共識"
+            research_label="單一研究機構產業展望；不足以稱為共識"
         else:
-            label="尚無足夠產業研報佐證"
-        x["research_status"]=label
+            research_label="尚無足夠產業研報佐證"
+        x["research_status"]=research_label
         x["research_independent_sources"]=independent
         x["research_institutions"]=institutions[:5]
         x["research_only"]=True
