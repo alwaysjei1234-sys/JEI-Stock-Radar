@@ -1234,7 +1234,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 </script><section id="jeiPickPerformance" style="max-width:1180px;margin:14px auto;padding:16px;border:1px solid #183e5c;border-radius:16px;background:#0a1b2b;color:#eff8ff;font-family:system-ui,sans-serif">
 <h2 style="margin:0 0 8px;font-size:18px">選股績效驗證 <small id="jeiPickSync" style="font-size:12px;color:#8ca8bd">載入中</small></h2>
 <p id="jeiPickOverview" style="font-size:13px;color:#8ca8bd">正在讀取官方收盤績效紀錄…</p>
-<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;text-align:right"><thead><tr><th style="text-align:left">策略</th><th>交易日</th><th>已完成</th><th>勝率</th><th>平均淨報酬</th><th>最差回撤</th></tr></thead><tbody id="jeiPickRows"></tbody></table></div>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;text-align:right"><thead><tr><th style="text-align:left">策略</th><th>交易日</th><th>已完成</th><th>勝率</th><th>平均淨報酬</th><th>最差淨報酬</th></tr></thead><tbody id="jeiPickRows"></tbody></table></div>
 <p style="font-size:11px;color:#8ca8bd">依封存推薦與官方收盤價回測；非實際成交或保證報酬。缺價與未到期不計勝負。</p>
 </section>
 <script>
@@ -1250,13 +1250,16 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
    const data=await res.json();
    if(!data||!data.groups||!Array.isArray(data.picks))throw Error('績效資料格式錯誤');
    const dup=data.duplicate_signal_summary;
-   status.textContent='官方收盤 '+(data.latest_official_day||'未知')+'｜產生 '+(data.updated_at||'未知');
+   const official=Date.parse(String(data.latest_official_day||'')+'T00:00:00+08:00');
+   const age=Number.isFinite(official)?Math.floor((Date.now()-official)/86400000):null;
+   const stale=age!==null&&age>4;
+   status.textContent=(stale?'⚠ 資料可能過期｜':'')+'官方收盤 '+(data.latest_official_day||'未知')+'｜產生 '+(data.updated_at||'未知');
    overview.textContent='封存 '+data.total_frozen_picks+' 筆推薦'+(dup?'｜不重複訊號 '+dup.unique_day_symbol_signals+'｜跨分類重複 '+dup.cross_category_duplicates:'｜新版風險欄位待更新');
    const rows=[];
    for(const [key,label] of Object.entries(names)){
     for(const days of [3,7,15,20,30,40,60,90]){
      const v=data.groups[key]&&data.groups[key][String(days)];if(!v)continue;
-     rows.push('<tr style="border-top:1px solid #183e5c"><td style="text-align:left;padding:7px 3px">'+esc(label)+'</td><td>'+days+'</td><td>'+esc(v.completed)+'</td><td>'+pct(v.win_rate_pct)+'</td><td>'+pct(v.avg_estimated_net_pct)+'</td><td>'+pct(v.worst_max_close_drawdown_pct)+'</td></tr>');
+     rows.push('<tr style="border-top:1px solid #183e5c"><td style="text-align:left;padding:7px 3px">'+esc(label)+'</td><td>'+days+'</td><td>'+esc(v.completed)+'</td><td>'+pct(v.win_rate_pct)+'</td><td>'+pct(v.avg_estimated_net_pct)+'</td><td>'+pct(v.worst_estimated_net_pct)+'</td></tr>');
     }
    }
    body.innerHTML=rows.length?rows.join(''):'<tr><td colspan="6" style="padding:12px;text-align:left;color:#8ca8bd">目前沒有可驗證的已完成績效；不得將缺值視為零報酬。</td></tr>';
