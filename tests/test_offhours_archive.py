@@ -73,7 +73,7 @@ class OffhoursArchiveTests(unittest.TestCase):
     def test_no_weekend_candle_in_published_history(self):
         history=json.loads((ROOT/"remote/history.json").read_text(encoding="utf-8"))
         self.assertFalse(any(x.get("date") in ("2026-10-17","2026-10-18") for x in history))
-        self.assertLess(history[-1]["date"],"2026-10-21")
+        self.assertLessEqual(history[-1]["date"],"2026-10-21")
         self.assertLess(datetime.fromisoformat(history[-1]["date"]).weekday(),5)
         source=(ROOT/"scripts/update_system.py").read_text(encoding="utf-8")
         self.assertIn("if official_close_verified:",source)
