@@ -32,6 +32,19 @@ for (const [strategy, horizons] of Object.entries(feed.groups || {})) {
       assert.ok(Number.isInteger(group[k]) && group[k] >= 0, strategy + '/' + days + ': invalid ' + k);
     }
     if (group.completed === 0) assert.equal(group.win_rate_pct, null, 'zero completed must not claim win rate');
+    const observations = feed.picks.filter(p => p.group === strategy).map(p => p.outcomes.find(o => o.trading_days === Number(days)));
+    assert.ok(observations.every(Boolean), strategy + '/' + days + ': missing outcome');
+    for (const [status, key] of [['complete', 'completed'], ['pending', 'pending'], ['missing_price', 'missing_price']]) {
+      assert.equal(observations.filter(o => o.status === status).length, group[key], strategy + '/' + days + ': ' + key + ' mismatch');
+    }
+    const completed = observations.filter(o => o.status === 'complete');
+    if (completed.length) {
+      const winRate = Math.round(completed.filter(o => o.estimated_net_return_pct > 0).length / completed.length * 10000) / 100;
+      assert.ok(Math.abs(winRate - group.win_rate_pct) < 0.011, strategy + '/' + days + ': win rate mismatch');
+      const avg = completed.reduce((sum, o) => sum + o.estimated_net_return_pct, 0) / completed.length;
+      assert.ok(Math.abs(avg - group.avg_estimated_net_pct) < 0.011, strategy + '/' + days + ': average net return mismatch');
+    }
+
   }
 }
 console.log('PASS: JEI pick validation integrity (' + feed.picks.length + ' picks)');
