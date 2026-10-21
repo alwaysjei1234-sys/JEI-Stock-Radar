@@ -61,6 +61,8 @@ function render(){
    add(block,'p','限制／風險：'+src.caveat,'mut');
    card.appendChild(block);
   }
+  const coverage=news?.sector_news_summary?.[sector];
+  if(coverage)add(card,'p','新聞觀察：'+coverage.headlines+' 則｜來源網域 '+coverage.distinct_publisher_hosts+' 個（不等於獨立研究機構）','mut');
   const headlines=(Array.isArray(news?.items)?news.items:[]).filter(x=>Array.isArray(x.sectors)&&x.sectors.includes(sector)).slice(0,5);
   if(headlines.length){
    add(card,'p','近期新聞線索（未核實研報，不計入獨立機構佐證）：','mut');
