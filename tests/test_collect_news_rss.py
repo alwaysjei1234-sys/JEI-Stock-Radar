@@ -1,7 +1,21 @@
 import unittest
-from scripts.collect_news_rss import classify_sectors, publication_utc
+from scripts.collect_news_rss import classify_sectors, publication_utc, headline_fingerprint, collect
+from io import BytesIO
 
 class NewsResearchTagTests(unittest.TestCase):
+    def test_headline_deduplication_key(self):
+        self.assertEqual(headline_fingerprint("CPO 產業！"), headline_fingerprint("cpo產業"))
+        self.assertNotEqual(headline_fingerprint("CPO 產業"), headline_fingerprint("DRAM 產業"))
+
+    def test_repeated_headlines_are_not_independent_sources(self):
+        xml = b"""<rss><channel><item><title>CPO growth</title><link>https://example.com/a</link></item><item><title>CPO growth!</title><link>https://example.com/b</link></item></channel></rss>"""
+        class Response(BytesIO):
+            def __enter__(self): return self
+            def __exit__(self, *args): self.close()
+        result = collect(("tw_market",), opener=lambda *args, **kwargs: Response(xml))
+        self.assertEqual(len(result["items"]), 1)
+        self.assertEqual(result["independent_research_institutions"], 0)
+
     def test_multiple_sector_terms(self):
         self.assertIn("光通訊/CPO", classify_sectors("CPO 1.6T 光模組"))
         self.assertIn("記憶體/儲存", classify_sectors("HBM 需求增加"))
