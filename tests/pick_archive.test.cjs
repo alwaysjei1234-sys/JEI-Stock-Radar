@@ -50,7 +50,7 @@ assert.equal(official.kind,'official_daily_close','unverified daily close archiv
 for(const pick of data.picks){
  const signal=official.days?.[pick.day]?.[pick.code];
  assert.ok(Number.isFinite(signal)&&signal>0,'missing official signal close: '+pick.id);
- assert.ok(Math.abs(signal/pick.signal_close-1)<=0.005,'signal close differs from official archive: '+pick.id);
+ assert.equal(signal,pick.signal_close,'signal close differs from official archive: '+pick.id);
  for(const outcome of pick.outcomes){
   if(outcome.status!=='complete')continue;
   const settlement=official.days?.[outcome.end_day]?.[pick.code];
