@@ -89,6 +89,7 @@
 .pattern-ref-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}.pattern-ref-levels>div{background:#0b2031;border-radius:8px;padding:8px 5px;text-align:center}.pattern-ref-levels small{display:block;font-size:10px;color:#b6c7d6}.pattern-ref-levels b{display:block;margin-top:4px;font-size:15px}
 .jei-home-hub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.jei-home-hub button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;min-height:94px;padding:13px;border:1px solid #29465d;border-radius:16px;background:linear-gradient(135deg,#172e48,#102235);color:#e8f4ff;text-align:left;font:inherit;cursor:pointer}.jei-home-hub button span{font-size:21px}.jei-home-hub button b{font-size:17px}.jei-home-hub button small{font-size:12px;color:#a9c1d2}.jei-home-hub button:focus-visible{outline:2px solid #36d5eb}@media(min-width:650px){.jei-home-hub{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .pattern-detail{margin-top:9px;border-top:1px solid #2a4a62;padding-top:8px}.pattern-detail summary{cursor:pointer;color:#81d8ff;font-size:12px;font-weight:700}.pattern-detail p{margin:7px 0 0}
+.pattern-close-chart{display:block;width:100%;height:auto;max-height:132px;margin-top:10px;border:1px solid #25465d;border-radius:9px;background:#091c2c}
 </style>
 </head>
 <body>
@@ -260,6 +261,22 @@ function renderPatternRadar(){
    });card.appendChild(refs);
   }
   const status=document.createElement('div');status.className='sub';status.textContent='收盤參考位不等於可成交價｜進場帶：待量價驗證｜防守價：待 ATR/結構驗證｜R/R：尚不可計算';card.appendChild(status);
+  const series=Array.isArray(x.close_series)?x.close_series:[];
+  if(series.length>=2&&series.every(point=>Number.isFinite(Number(point.close))&&Number(point.close)>0)){
+   const chart=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   chart.setAttribute('viewBox','0 0 320 112');chart.setAttribute('role','img');
+   chart.setAttribute('aria-label',String(x.name||x.code)+'歷史收盤價走勢，非日內K線');
+   chart.classList.add('pattern-close-chart');
+   const values=series.map(point=>Number(point.close));
+   const low=Math.min(...values),high=Math.max(...values),spread=high-low||1;
+   const coordinates=values.map((value,i)=>[8+i*304/(values.length-1),102-(value-low)/spread*88]);
+   const line=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+   line.setAttribute('points',coordinates.map(point=>point.map(n=>n.toFixed(2)).join(',')).join(' '));
+   line.setAttribute('fill','none');line.setAttribute('stroke',values.at(-1)>=values[0]?'#ef7777':'#66cbb2');
+   line.setAttribute('stroke-width','2.8');line.setAttribute('stroke-linecap','round');line.setAttribute('stroke-linejoin','round');
+   chart.appendChild(line);card.appendChild(chart);
+   const chartNote=document.createElement('div');chartNote.className='sub';chartNote.textContent='官方收盤走勢｜'+String(series[0].date||'')+' 至 '+String(series.at(-1).date||'')+'｜不是開高低收 K 線';card.appendChild(chartNote);
+  }
   const details=document.createElement('details');details.className='pattern-detail';
   const summary=document.createElement('summary');summary.textContent='查看資料依據與驗證限制 ▾';details.appendChild(summary);
   const provenance=document.createElement('p');provenance.className='sub';provenance.textContent='策略：'+label+'｜歷史收盤樣本 '+String(x.basis_sessions??'--')+' 日｜訊號日期 '+String(x.data_date||p.data_date||'未知');details.appendChild(provenance);
