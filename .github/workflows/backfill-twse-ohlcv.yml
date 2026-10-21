@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/backfill-twse-ohlcv.yml'
+      - 'scripts/backfill_twse_ohlcv.py'
   schedule:
     - cron: '10 9 * * 1-5' # 17:10 Taipei after official close
 permissions:
