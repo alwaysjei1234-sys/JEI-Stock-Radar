@@ -67,6 +67,8 @@ def build_pattern_signals(history, by_code, stock_sectors, sectors, asof=None):
             "price": round(price, 4), "change_pct": round(change, 2),
             "sector": sector, "data_date": out["data_date"],
             "basis_sessions": 21,
+            "close_series": [{"date": snap["date"], "close": round(value, 4)}
+                             for snap, value in zip(snapshots, closes)],
             "reference_levels": {
                 "prior_20_close_high": round(max(prior), 4),
                 "prior_20_close_low": round(min(prior), 4),
