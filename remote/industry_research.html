@@ -24,7 +24,7 @@ const $=id=>document.getElementById(id);
 const add=(p,tag,content,cls)=>{
  const e=document.createElement(tag);e.textContent=String(content??'');if(cls)e.className=cls;p.appendChild(e);return e
 };
-let research=null,feed=null;
+let research=null,feed=null,news=null;
 function render(){
  if(!research)return;
  const today=new Date(),ymd=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(today);
@@ -61,6 +61,17 @@ function render(){
    add(block,'p','限制／風險：'+src.caveat,'mut');
    card.appendChild(block);
   }
+  const headlines=(Array.isArray(news?.items)?news.items:[]).filter(x=>Array.isArray(x.sectors)&&x.sectors.includes(sector)).slice(0,5);
+  if(headlines.length){
+   add(card,'p','近期新聞線索（未核實研報，不計入獨立機構佐證）：','mut');
+   for(const item of headlines){
+    const block=document.createElement('div');block.className='source';
+    const a=add(block,'a',item.title);
+    if(/^https:\/\/[A-Za-z0-9.-]+\//.test(String(item.url||''))){a.href=item.url;a.target='_blank';a.rel='noopener noreferrer'}
+    add(block,'p',(item.published_utc||item.published||'日期未核實')+'｜'+(item.publisher_host||item.source||'來源未明'),'mut');
+    card.appendChild(block);
+   }
+  }
   if(!t.source_articles)add(card,'p','目前沒有符合新鮮度要求的已核對公開研究；不能以題材或網路聲量冒充研報共識。','mut');
   root.appendChild(card);
  }
@@ -74,6 +85,7 @@ async function refresh(){
   if(j.schema!==1||j.mode!=='dated_industry_primary_source_evidence'||!j.themes)throw Error('研究資料格式錯誤');
   research=j;
   try{const r=await fetch('./system.json?ts='+Date.now(),{cache:'no-store'});if(r.ok)feed=await r.json()}catch{}
+  try{const r=await fetch('./news_intelligence.json?ts='+Date.now(),{cache:'no-store'});if(r.ok)news=await r.json()}catch{}
   render();
  }catch(e){$('status').textContent='研究來源資料未通過驗證或尚未建立：'+String(e?.message||e)}
 }
