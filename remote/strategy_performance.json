@@ -7,7 +7,7 @@
   "buy_fee_rate": 0.001425,
   "sell_fee_rate": 0.001425,
   "sell_tax_rate": 0.003,
-  "last_processed_day": "2026-10-20",
+  "last_processed_day": "2026-10-21",
   "signals": [
     {
       "id": "2026-10-13:3406",
@@ -278,23 +278,58 @@
       "score": 91,
       "source": "monster",
       "signal_close": 112.0
+    },
+    {
+      "id": "2026-10-21:1569",
+      "day": "2026-10-21",
+      "code": "1569",
+      "name": "濱川",
+      "score": 99,
+      "source": "monster",
+      "signal_close": 87.6
+    },
+    {
+      "id": "2026-10-21:2449",
+      "day": "2026-10-21",
+      "code": "2449",
+      "name": "京元電子",
+      "score": 99,
+      "source": "attack",
+      "signal_close": 278.0
+    },
+    {
+      "id": "2026-10-21:3374",
+      "day": "2026-10-21",
+      "code": "3374",
+      "name": "精材",
+      "score": 99,
+      "source": "monster",
+      "signal_close": 470.5
+    },
+    {
+      "id": "2026-10-21:3406",
+      "day": "2026-10-21",
+      "code": "3406",
+      "name": "玉晶光",
+      "score": 99,
+      "source": "monster",
+      "signal_close": 1140.0
+    },
+    {
+      "id": "2026-10-21:3532",
+      "day": "2026-10-21",
+      "code": "3532",
+      "name": "台勝科",
+      "score": 99,
+      "source": "monster",
+      "signal_close": 428.0
     }
   ],
   "strategies": {
     "fixed5": {
       "name": "固定 +5%",
-      "cash": 74291.42394125005,
+      "cash": 60.426438750029774,
       "positions": [
-        {
-          "code": "3406",
-          "name": "玉晶光",
-          "signal_day": "2026-10-13",
-          "entry_day": "2026-10-14",
-          "entry_price": 1065.0,
-          "entry_cost": 99186.139125,
-          "qty": 93,
-          "peak": 1115.0
-        },
         {
           "code": "3035",
           "name": "智原",
@@ -303,17 +338,7 @@
           "entry_price": 197.5,
           "entry_cost": 99879.62593750001,
           "qty": 505,
-          "peak": 197.5
-        },
-        {
-          "code": "1815",
-          "name": "富喬",
-          "signal_day": "2026-10-16",
-          "entry_day": "2026-10-19",
-          "entry_price": 154.0,
-          "entry_cost": 99934.20360000001,
-          "qty": 648,
-          "peak": 154.0
+          "peak": 198.0
         },
         {
           "code": "3167",
@@ -323,7 +348,7 @@
           "entry_price": 989.0,
           "entry_cost": 99040.9325,
           "qty": 100,
-          "peak": 989.0
+          "peak": 1000.0
         },
         {
           "code": "4939",
@@ -343,7 +368,7 @@
           "entry_price": 375.0,
           "entry_cost": 99892.14375,
           "qty": 266,
-          "peak": 375.0
+          "peak": 383.0
         },
         {
           "code": "5498",
@@ -353,17 +378,7 @@
           "entry_price": 62.1,
           "entry_cost": 99999.09594,
           "qty": 1608,
-          "peak": 62.1
-        },
-        {
-          "code": "6141",
-          "name": "柏承",
-          "signal_day": "2026-10-19",
-          "entry_day": "2026-10-20",
-          "entry_price": 59.7,
-          "entry_cost": 99960.64122,
-          "qty": 1672,
-          "peak": 59.7
+          "peak": 63.5
         },
         {
           "code": "4960",
@@ -373,7 +388,47 @@
           "entry_price": 30.55,
           "entry_cost": 99979.66829500001,
           "qty": 3268,
-          "peak": 30.55
+          "peak": 30.85
+        },
+        {
+          "code": "5475",
+          "name": "德宏",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 214.0,
+          "entry_cost": 99866.1067,
+          "qty": 466,
+          "peak": 214.0
+        },
+        {
+          "code": "3441",
+          "name": "聯一光",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 241.5,
+          "entry_cost": 99881.6287875,
+          "qty": 413,
+          "peak": 241.5
+        },
+        {
+          "code": "1709",
+          "name": "和益",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 56.0,
+          "entry_cost": 99990.2834,
+          "qty": 1783,
+          "peak": 56.0
+        },
+        {
+          "code": "3483",
+          "name": "力致",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 94.9,
+          "entry_cost": 64433.88763500001,
+          "qty": 678,
+          "peak": 94.9
         }
       ],
       "closed": [
@@ -556,6 +611,42 @@
           "reason": "收盤停損",
           "net": -5242.19,
           "net_return_pct": -5.258
+        },
+        {
+          "code": "3406",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "exit_day": "2026-10-21",
+          "entry_price": 1065.0,
+          "exit_price": 1140.0,
+          "qty": 93,
+          "reason": "收盤停利",
+          "net": 6364.72,
+          "net_return_pct": 6.417
+        },
+        {
+          "code": "1815",
+          "signal_day": "2026-10-16",
+          "entry_day": "2026-10-19",
+          "exit_day": "2026-10-21",
+          "entry_price": 154.0,
+          "exit_price": 147.0,
+          "qty": 648,
+          "reason": "收盤停損",
+          "net": -5099.71,
+          "net_return_pct": -5.103
+        },
+        {
+          "code": "6141",
+          "signal_day": "2026-10-19",
+          "entry_day": "2026-10-20",
+          "exit_day": "2026-10-21",
+          "entry_price": 59.7,
+          "exit_price": 53.8,
+          "qty": 1672,
+          "reason": "收盤停損",
+          "net": -10405.09,
+          "net_return_pct": -10.409
         }
       ],
       "equity_history": [
@@ -582,35 +673,29 @@
         {
           "day": "2026-10-20",
           "equity": 960780.87
+        },
+        {
+          "day": "2026-10-21",
+          "equity": 963548.04
         }
       ],
       "summary": {
-        "closed": 15,
-        "wins": 5,
+        "closed": 18,
+        "wins": 6,
         "win_rate_pct": 33.33,
-        "realized_net_ntd": -27861.38,
-        "realized_return_pct_of_initial": -2.786,
-        "open_positions": 9,
-        "cash_ntd": 74291.42,
-        "estimated_liquidation_equity_ntd": 960780.87,
-        "official_close_coverage": "9/9",
+        "realized_net_ntd": -37001.46,
+        "realized_return_pct_of_initial": -3.7,
+        "open_positions": 10,
+        "cash_ntd": 60.43,
+        "estimated_liquidation_equity_ntd": 963548.04,
+        "official_close_coverage": "10/10",
         "max_drawdown_pct": 4.471
       }
     },
     "fixed7": {
       "name": "固定 +7%",
-      "cash": 9579.013821249988,
+      "cash": 6.223153749961057,
       "positions": [
-        {
-          "code": "3406",
-          "name": "玉晶光",
-          "signal_day": "2026-10-13",
-          "entry_day": "2026-10-14",
-          "entry_price": 1065.0,
-          "entry_cost": 99186.139125,
-          "qty": 93,
-          "peak": 1115.0
-        },
         {
           "code": "2368",
           "name": "金像電",
@@ -629,17 +714,7 @@
           "entry_price": 197.5,
           "entry_cost": 99879.62593750001,
           "qty": 505,
-          "peak": 197.5
-        },
-        {
-          "code": "1815",
-          "name": "富喬",
-          "signal_day": "2026-10-16",
-          "entry_day": "2026-10-19",
-          "entry_price": 154.0,
-          "entry_cost": 99934.20360000001,
-          "qty": 648,
-          "peak": 154.0
+          "peak": 198.0
         },
         {
           "code": "3167",
@@ -649,7 +724,7 @@
           "entry_price": 989.0,
           "entry_cost": 99040.9325,
           "qty": 100,
-          "peak": 989.0
+          "peak": 1000.0
         },
         {
           "code": "4939",
@@ -669,7 +744,7 @@
           "entry_price": 375.0,
           "entry_cost": 99892.14375,
           "qty": 266,
-          "peak": 375.0
+          "peak": 383.0
         },
         {
           "code": "5498",
@@ -679,17 +754,7 @@
           "entry_price": 62.1,
           "entry_cost": 99999.09594,
           "qty": 1608,
-          "peak": 62.1
-        },
-        {
-          "code": "6141",
-          "name": "柏承",
-          "signal_day": "2026-10-19",
-          "entry_day": "2026-10-20",
-          "entry_price": 59.7,
-          "entry_cost": 99960.64122,
-          "qty": 1672,
-          "peak": 59.7
+          "peak": 63.5
         },
         {
           "code": "4960",
@@ -699,7 +764,37 @@
           "entry_price": 30.55,
           "entry_cost": 99979.66829500001,
           "qty": 3268,
-          "peak": 30.55
+          "peak": 30.85
+        },
+        {
+          "code": "5475",
+          "name": "德宏",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 214.0,
+          "entry_cost": 99866.1067,
+          "qty": 466,
+          "peak": 214.0
+        },
+        {
+          "code": "3441",
+          "name": "聯一光",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 241.5,
+          "entry_cost": 99881.6287875,
+          "qty": 413,
+          "peak": 241.5
+        },
+        {
+          "code": "1709",
+          "name": "和益",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 56.0,
+          "entry_cost": 99765.9642,
+          "qty": 1779,
+          "peak": 56.0
         }
       ],
       "closed": [
@@ -870,6 +965,42 @@
           "reason": "收盤停損",
           "net": -5242.19,
           "net_return_pct": -5.258
+        },
+        {
+          "code": "3406",
+          "signal_day": "2026-10-13",
+          "entry_day": "2026-10-14",
+          "exit_day": "2026-10-21",
+          "entry_price": 1065.0,
+          "exit_price": 1140.0,
+          "qty": 93,
+          "reason": "收盤停利",
+          "net": 6364.72,
+          "net_return_pct": 6.417
+        },
+        {
+          "code": "1815",
+          "signal_day": "2026-10-16",
+          "entry_day": "2026-10-19",
+          "exit_day": "2026-10-21",
+          "entry_price": 154.0,
+          "exit_price": 147.0,
+          "qty": 648,
+          "reason": "收盤停損",
+          "net": -5099.71,
+          "net_return_pct": -5.103
+        },
+        {
+          "code": "6141",
+          "signal_day": "2026-10-19",
+          "entry_day": "2026-10-20",
+          "exit_day": "2026-10-21",
+          "entry_price": 59.7,
+          "exit_price": 53.8,
+          "qty": 1672,
+          "reason": "收盤停損",
+          "net": -10405.09,
+          "net_return_pct": -10.409
         }
       ],
       "equity_history": [
@@ -896,24 +1027,28 @@
         {
           "day": "2026-10-20",
           "equity": 955439.18
+        },
+        {
+          "day": "2026-10-21",
+          "equity": 959802.25
         }
       ],
       "summary": {
-        "closed": 14,
-        "wins": 4,
-        "win_rate_pct": 28.57,
-        "realized_net_ntd": -32241.54,
-        "realized_return_pct_of_initial": -3.224,
+        "closed": 17,
+        "wins": 5,
+        "win_rate_pct": 29.41,
+        "realized_net_ntd": -41381.62,
+        "realized_return_pct_of_initial": -4.138,
         "open_positions": 10,
-        "cash_ntd": 9579.01,
-        "estimated_liquidation_equity_ntd": 955439.18,
+        "cash_ntd": 6.22,
+        "estimated_liquidation_equity_ntd": 959802.25,
         "official_close_coverage": "10/10",
         "max_drawdown_pct": 4.456
       }
     },
     "fixed10": {
       "name": "固定 +10%",
-      "cash": 30.095509999940987,
+      "cash": 38.27274249991656,
       "positions": [
         {
           "code": "3406",
@@ -923,7 +1058,7 @@
           "entry_price": 1065.0,
           "entry_cost": 99186.139125,
           "qty": 93,
-          "peak": 1115.0
+          "peak": 1140.0
         },
         {
           "code": "2368",
@@ -943,7 +1078,7 @@
           "entry_price": 197.5,
           "entry_cost": 99879.62593750001,
           "qty": 505,
-          "peak": 197.5
+          "peak": 198.0
         },
         {
           "code": "6269",
@@ -956,16 +1091,6 @@
           "peak": 88.3
         },
         {
-          "code": "1815",
-          "name": "富喬",
-          "signal_day": "2026-10-16",
-          "entry_day": "2026-10-19",
-          "entry_price": 154.0,
-          "entry_cost": 99934.20360000001,
-          "qty": 648,
-          "peak": 154.0
-        },
-        {
           "code": "3167",
           "name": "大量",
           "signal_day": "2026-10-16",
@@ -973,7 +1098,7 @@
           "entry_price": 989.0,
           "entry_cost": 99040.9325,
           "qty": 100,
-          "peak": 989.0
+          "peak": 1000.0
         },
         {
           "code": "4939",
@@ -993,7 +1118,7 @@
           "entry_price": 375.0,
           "entry_cost": 99892.14375,
           "qty": 266,
-          "peak": 375.0
+          "peak": 383.0
         },
         {
           "code": "5498",
@@ -1003,17 +1128,7 @@
           "entry_price": 62.1,
           "entry_cost": 99999.09594,
           "qty": 1608,
-          "peak": 62.1
-        },
-        {
-          "code": "6141",
-          "name": "柏承",
-          "signal_day": "2026-10-19",
-          "entry_day": "2026-10-20",
-          "entry_price": 59.7,
-          "entry_cost": 99960.64122,
-          "qty": 1672,
-          "peak": 59.7
+          "peak": 63.5
         },
         {
           "code": "4960",
@@ -1023,7 +1138,37 @@
           "entry_price": 30.55,
           "entry_cost": 82939.06999625001,
           "qty": 2711,
-          "peak": 30.55
+          "peak": 30.85
+        },
+        {
+          "code": "5475",
+          "name": "德宏",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 214.0,
+          "entry_cost": 99866.1067,
+          "qty": 466,
+          "peak": 214.0
+        },
+        {
+          "code": "3441",
+          "name": "聯一光",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 241.5,
+          "entry_cost": 84403.6039875,
+          "qty": 349,
+          "peak": 241.5
+        },
+        {
+          "code": "1709",
+          "name": "和益",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 56.0,
+          "entry_cost": 112.1596,
+          "qty": 2,
+          "peak": 56.0
         }
       ],
       "closed": [
@@ -1182,6 +1327,30 @@
           "reason": "收盤停損",
           "net": -41.44,
           "net_return_pct": -5.258
+        },
+        {
+          "code": "1815",
+          "signal_day": "2026-10-16",
+          "entry_day": "2026-10-19",
+          "exit_day": "2026-10-21",
+          "entry_price": 154.0,
+          "exit_price": 147.0,
+          "qty": 648,
+          "reason": "收盤停損",
+          "net": -5099.71,
+          "net_return_pct": -5.103
+        },
+        {
+          "code": "6141",
+          "signal_day": "2026-10-19",
+          "entry_day": "2026-10-20",
+          "exit_day": "2026-10-21",
+          "entry_price": 59.7,
+          "exit_price": 53.8,
+          "qty": 1672,
+          "reason": "收盤停損",
+          "net": -10405.09,
+          "net_return_pct": -10.409
         }
       ],
       "equity_history": [
@@ -1208,24 +1377,28 @@
         {
           "day": "2026-10-20",
           "equity": 974742.07
+        },
+        {
+          "day": "2026-10-21",
+          "equity": 978173.64
         }
       ],
       "summary": {
-        "closed": 13,
+        "closed": 15,
         "wins": 3,
-        "win_rate_pct": 23.08,
-        "realized_net_ntd": -20134.3,
-        "realized_return_pct_of_initial": -2.013,
-        "open_positions": 11,
-        "cash_ntd": 30.1,
-        "estimated_liquidation_equity_ntd": 974742.07,
-        "official_close_coverage": "11/11",
+        "win_rate_pct": 20.0,
+        "realized_net_ntd": -35639.1,
+        "realized_return_pct_of_initial": -3.564,
+        "open_positions": 12,
+        "cash_ntd": 38.27,
+        "estimated_liquidation_equity_ntd": 978173.64,
+        "official_close_coverage": "12/12",
         "max_drawdown_pct": 4.391
       }
     },
     "trailing": {
       "name": "上漲5%啟動／高點回落2%",
-      "cash": 7.655778749955061,
+      "cash": 7.20047874994539,
       "positions": [
         {
           "code": "3406",
@@ -1235,7 +1408,7 @@
           "entry_price": 1065.0,
           "entry_cost": 99186.139125,
           "qty": 93,
-          "peak": 1115.0
+          "peak": 1140.0
         },
         {
           "code": "3035",
@@ -1245,7 +1418,7 @@
           "entry_price": 197.5,
           "entry_cost": 99879.62593750001,
           "qty": 505,
-          "peak": 197.5
+          "peak": 198.0
         },
         {
           "code": "6269",
@@ -1265,7 +1438,7 @@
           "entry_price": 90.5,
           "entry_cost": 99963.7456375,
           "qty": 1103,
-          "peak": 102.5
+          "peak": 112.5
         },
         {
           "code": "3354",
@@ -1275,7 +1448,7 @@
           "entry_price": 41.8,
           "entry_cost": 99960.64121999999,
           "qty": 2388,
-          "peak": 50.5
+          "peak": 55.5
         },
         {
           "code": "2033",
@@ -1288,16 +1461,6 @@
           "peak": 66.0
         },
         {
-          "code": "1815",
-          "name": "富喬",
-          "signal_day": "2026-10-16",
-          "entry_day": "2026-10-19",
-          "entry_price": 154.0,
-          "entry_cost": 99934.20360000001,
-          "qty": 648,
-          "peak": 154.0
-        },
-        {
           "code": "3167",
           "name": "大量",
           "signal_day": "2026-10-16",
@@ -1305,7 +1468,7 @@
           "entry_price": 989.0,
           "entry_cost": 99040.9325,
           "qty": 100,
-          "peak": 989.0
+          "peak": 1000.0
         },
         {
           "code": "4939",
@@ -1325,7 +1488,7 @@
           "entry_price": 375.0,
           "entry_cost": 99892.14375,
           "qty": 266,
-          "peak": 375.0
+          "peak": 383.0
         },
         {
           "code": "5498",
@@ -1335,7 +1498,27 @@
           "entry_price": 62.1,
           "entry_cost": 38556.86535,
           "qty": 620,
-          "peak": 62.1
+          "peak": 63.5
+        },
+        {
+          "code": "5475",
+          "name": "德宏",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 214.0,
+          "entry_cost": 94722.7879,
+          "qty": 442,
+          "peak": 214.0
+        },
+        {
+          "code": "1709",
+          "name": "和益",
+          "signal_day": "2026-10-20",
+          "entry_day": "2026-10-21",
+          "entry_price": 56.0,
+          "entry_cost": 112.1596,
+          "qty": 2,
+          "peak": 56.0
         }
       ],
       "closed": [
@@ -1470,6 +1653,18 @@
           "reason": "收盤停損",
           "net": -41.44,
           "net_return_pct": -5.258
+        },
+        {
+          "code": "1815",
+          "signal_day": "2026-10-16",
+          "entry_day": "2026-10-19",
+          "exit_day": "2026-10-21",
+          "entry_price": 154.0,
+          "exit_price": 147.0,
+          "qty": 648,
+          "reason": "收盤停損",
+          "net": -5099.71,
+          "net_return_pct": -5.103
         }
       ],
       "equity_history": [
@@ -1496,22 +1691,26 @@
         {
           "day": "2026-10-20",
           "equity": 976169.44
+        },
+        {
+          "day": "2026-10-21",
+          "equity": 1008637.37
         }
       ],
       "summary": {
-        "closed": 11,
+        "closed": 12,
         "wins": 0,
         "win_rate_pct": 0.0,
-        "realized_net_ntd": -63536.61,
-        "realized_return_pct_of_initial": -6.354,
-        "open_positions": 11,
-        "cash_ntd": 7.66,
-        "estimated_liquidation_equity_ntd": 976169.44,
-        "official_close_coverage": "11/11",
+        "realized_net_ntd": -68636.32,
+        "realized_return_pct_of_initial": -6.864,
+        "open_positions": 12,
+        "cash_ntd": 7.2,
+        "estimated_liquidation_equity_ntd": 1008637.37,
+        "official_close_coverage": "12/12",
         "max_drawdown_pct": 4.391
       }
     }
   },
-  "updated_at": "2026-10-20 21:07",
+  "updated_at": "2026-10-21 18:51",
   "latest_signal_count": 5
 }

@@ -1,31 +1,32 @@
 {
   "schema": 1,
   "mode": "forward_official_close_pick_validation",
-  "updated_at": "2026-10-20 21:07",
-  "latest_official_day": "2026-10-20",
+  "updated_at": "2026-10-21 18:51",
+  "latest_official_day": "2026-10-21",
   "horizons_trading_days": [
     3,
     7,
     15,
     20,
+    30,
     40,
     60
   ],
   "groups": {
     "attack": {
       "3": {
-        "completed": 0,
+        "completed": 5,
         "pending": 15,
         "missing_price": 0,
-        "win_rate_pct": null,
-        "avg_estimated_net_pct": null,
-        "median_estimated_net_pct": null,
-        "best_estimated_net_pct": null,
-        "worst_estimated_net_pct": null
+        "win_rate_pct": 40.0,
+        "avg_estimated_net_pct": -0.674,
+        "median_estimated_net_pct": -0.138,
+        "best_estimated_net_pct": 3.164,
+        "worst_estimated_net_pct": -6.333
       },
       "7": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -35,7 +36,7 @@
       },
       "15": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -45,7 +46,17 @@
       },
       "20": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
+        "missing_price": 0,
+        "win_rate_pct": null,
+        "avg_estimated_net_pct": null,
+        "median_estimated_net_pct": null,
+        "best_estimated_net_pct": null,
+        "worst_estimated_net_pct": null
+      },
+      "30": {
+        "completed": 0,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -55,7 +66,7 @@
       },
       "40": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -65,7 +76,7 @@
       },
       "60": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -76,18 +87,18 @@
     },
     "next": {
       "3": {
-        "completed": 0,
+        "completed": 5,
         "pending": 15,
         "missing_price": 0,
-        "win_rate_pct": null,
-        "avg_estimated_net_pct": null,
-        "median_estimated_net_pct": null,
-        "best_estimated_net_pct": null,
-        "worst_estimated_net_pct": null
+        "win_rate_pct": 40.0,
+        "avg_estimated_net_pct": -0.086,
+        "median_estimated_net_pct": -0.373,
+        "best_estimated_net_pct": 6.225,
+        "worst_estimated_net_pct": -4.245
       },
       "7": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -97,7 +108,7 @@
       },
       "15": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -107,7 +118,17 @@
       },
       "20": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
+        "missing_price": 0,
+        "win_rate_pct": null,
+        "avg_estimated_net_pct": null,
+        "median_estimated_net_pct": null,
+        "best_estimated_net_pct": null,
+        "worst_estimated_net_pct": null
+      },
+      "30": {
+        "completed": 0,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -117,7 +138,7 @@
       },
       "40": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -127,7 +148,7 @@
       },
       "60": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -138,18 +159,18 @@
     },
     "monster": {
       "3": {
-        "completed": 0,
+        "completed": 5,
         "pending": 15,
         "missing_price": 0,
-        "win_rate_pct": null,
-        "avg_estimated_net_pct": null,
-        "median_estimated_net_pct": null,
-        "best_estimated_net_pct": null,
-        "worst_estimated_net_pct": null
+        "win_rate_pct": 40.0,
+        "avg_estimated_net_pct": -1.472,
+        "median_estimated_net_pct": -5.767,
+        "best_estimated_net_pct": 6.358,
+        "worst_estimated_net_pct": -7.029
       },
       "7": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -159,7 +180,7 @@
       },
       "15": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -169,7 +190,17 @@
       },
       "20": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
+        "missing_price": 0,
+        "win_rate_pct": null,
+        "avg_estimated_net_pct": null,
+        "median_estimated_net_pct": null,
+        "best_estimated_net_pct": null,
+        "worst_estimated_net_pct": null
+      },
+      "30": {
+        "completed": 0,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -179,7 +210,7 @@
       },
       "40": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -189,7 +220,7 @@
       },
       "60": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -200,18 +231,18 @@
     },
     "tomorrow_monster": {
       "3": {
-        "completed": 0,
+        "completed": 5,
         "pending": 15,
         "missing_price": 0,
-        "win_rate_pct": null,
-        "avg_estimated_net_pct": null,
-        "median_estimated_net_pct": null,
-        "best_estimated_net_pct": null,
-        "worst_estimated_net_pct": null
+        "win_rate_pct": 20.0,
+        "avg_estimated_net_pct": -0.643,
+        "median_estimated_net_pct": -1.081,
+        "best_estimated_net_pct": 6.225,
+        "worst_estimated_net_pct": -4.245
       },
       "7": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -221,7 +252,7 @@
       },
       "15": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -231,7 +262,17 @@
       },
       "20": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
+        "missing_price": 0,
+        "win_rate_pct": null,
+        "avg_estimated_net_pct": null,
+        "median_estimated_net_pct": null,
+        "best_estimated_net_pct": null,
+        "worst_estimated_net_pct": null
+      },
+      "30": {
+        "completed": 0,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -241,7 +282,7 @@
       },
       "40": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -251,7 +292,7 @@
       },
       "60": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -262,18 +303,18 @@
     },
     "future_monster": {
       "3": {
-        "completed": 0,
+        "completed": 5,
         "pending": 15,
         "missing_price": 0,
-        "win_rate_pct": null,
-        "avg_estimated_net_pct": null,
-        "median_estimated_net_pct": null,
-        "best_estimated_net_pct": null,
-        "worst_estimated_net_pct": null
+        "win_rate_pct": 20.0,
+        "avg_estimated_net_pct": -2.654,
+        "median_estimated_net_pct": -4.577,
+        "best_estimated_net_pct": 6.225,
+        "worst_estimated_net_pct": -6.76
       },
       "7": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -283,7 +324,7 @@
       },
       "15": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -293,7 +334,17 @@
       },
       "20": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
+        "missing_price": 0,
+        "win_rate_pct": null,
+        "avg_estimated_net_pct": null,
+        "median_estimated_net_pct": null,
+        "best_estimated_net_pct": null,
+        "worst_estimated_net_pct": null
+      },
+      "30": {
+        "completed": 0,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -303,7 +354,7 @@
       },
       "40": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -313,7 +364,7 @@
       },
       "60": {
         "completed": 0,
-        "pending": 15,
+        "pending": 20,
         "missing_price": 0,
         "win_rate_pct": null,
         "avg_estimated_net_pct": null,
@@ -337,7 +388,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 3235.0,
+          "gross_return_pct": -2.413,
+          "estimated_net_return_pct": -2.983,
+          "best_close_return_pct": 0.302,
+          "worst_close_return_pct": -2.413,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -352,6 +411,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -361,9 +424,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 3325.0,
-        "gross_return_pct": 0.302
+        "day": "2026-10-21",
+        "price": 3235.0,
+        "gross_return_pct": -2.413
       }
     },
     {
@@ -379,7 +442,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 831.0,
+          "gross_return_pct": -5.782,
+          "estimated_net_return_pct": -6.333,
+          "best_close_return_pct": -5.782,
+          "worst_close_return_pct": -9.297,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -394,6 +465,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -403,9 +478,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 800.0,
-        "gross_return_pct": -9.297
+        "day": "2026-10-21",
+        "price": 831.0,
+        "gross_return_pct": -5.782
       }
     },
     {
@@ -421,7 +496,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 3230.0,
+          "gross_return_pct": 3.526,
+          "estimated_net_return_pct": 2.921,
+          "best_close_return_pct": 3.526,
+          "worst_close_return_pct": -0.801,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -436,6 +519,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -445,9 +532,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 3095.0,
-        "gross_return_pct": -0.801
+        "day": "2026-10-21",
+        "price": 3230.0,
+        "gross_return_pct": 3.526
       }
     },
     {
@@ -463,7 +550,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 578.0,
+          "gross_return_pct": 3.77,
+          "estimated_net_return_pct": 3.164,
+          "best_close_return_pct": 3.77,
+          "worst_close_return_pct": -1.795,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -478,6 +573,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -487,9 +586,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 547.0,
-        "gross_return_pct": -1.795
+        "day": "2026-10-21",
+        "price": 578.0,
+        "gross_return_pct": 3.77
       }
     },
     {
@@ -505,7 +604,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 67.2,
+          "gross_return_pct": 0.448,
+          "estimated_net_return_pct": -0.138,
+          "best_close_return_pct": 0.747,
+          "worst_close_return_pct": -1.345,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -520,6 +627,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -529,9 +640,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 67.4,
-        "gross_return_pct": 0.747
+        "day": "2026-10-21",
+        "price": 67.2,
+        "gross_return_pct": 0.448
       }
     },
     {
@@ -547,7 +658,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 195.0,
+          "gross_return_pct": 6.849,
+          "estimated_net_return_pct": 6.225,
+          "best_close_return_pct": 6.849,
+          "worst_close_return_pct": -1.37,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -562,6 +681,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -571,9 +694,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 189.0,
-        "gross_return_pct": 3.562
+        "day": "2026-10-21",
+        "price": 195.0,
+        "gross_return_pct": 6.849
       }
     },
     {
@@ -589,7 +712,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 4990.0,
+          "gross_return_pct": -3.388,
+          "estimated_net_return_pct": -3.953,
+          "best_close_return_pct": -0.774,
+          "worst_close_return_pct": -4.259,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -604,6 +735,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -613,9 +748,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 4945.0,
-        "gross_return_pct": -4.259
+        "day": "2026-10-21",
+        "price": 4990.0,
+        "gross_return_pct": -3.388
       }
     },
     {
@@ -631,7 +766,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 16515.0,
+          "gross_return_pct": 0.212,
+          "estimated_net_return_pct": -0.373,
+          "best_close_return_pct": 0.212,
+          "worst_close_return_pct": -3.519,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -646,6 +789,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -655,9 +802,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 15900.0,
-        "gross_return_pct": -3.519
+        "day": "2026-10-21",
+        "price": 16515.0,
+        "gross_return_pct": 0.212
       }
     },
     {
@@ -673,7 +820,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 428.0,
+          "gross_return_pct": 2.515,
+          "estimated_net_return_pct": 1.916,
+          "best_close_return_pct": 2.515,
+          "worst_close_return_pct": -6.707,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -688,6 +843,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -697,9 +856,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 389.5,
-        "gross_return_pct": -6.707
+        "day": "2026-10-21",
+        "price": 428.0,
+        "gross_return_pct": 2.515
       }
     },
     {
@@ -715,7 +874,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 4970.0,
+          "gross_return_pct": -3.682,
+          "estimated_net_return_pct": -4.245,
+          "best_close_return_pct": 0.0,
+          "worst_close_return_pct": -3.876,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -730,6 +897,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -739,9 +910,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 4960.0,
-        "gross_return_pct": -3.876
+        "day": "2026-10-21",
+        "price": 4970.0,
+        "gross_return_pct": -3.682
       }
     },
     {
@@ -757,7 +928,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 383.0,
+          "gross_return_pct": 6.983,
+          "estimated_net_return_pct": 6.358,
+          "best_close_return_pct": 9.916,
+          "worst_close_return_pct": 4.749,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -772,6 +951,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -781,9 +964,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 375.0,
-        "gross_return_pct": 4.749
+        "day": "2026-10-21",
+        "price": 383.0,
+        "gross_return_pct": 6.983
       }
     },
     {
@@ -799,7 +982,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 63.5,
+          "gross_return_pct": 6.187,
+          "estimated_net_return_pct": 5.567,
+          "best_close_return_pct": 9.866,
+          "worst_close_return_pct": 3.846,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -814,6 +1005,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -823,9 +1018,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 62.1,
-        "gross_return_pct": 3.846
+        "day": "2026-10-21",
+        "price": 63.5,
+        "gross_return_pct": 6.187
       }
     },
     {
@@ -841,7 +1036,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 1000.0,
+          "gross_return_pct": -5.213,
+          "estimated_net_return_pct": -5.767,
+          "best_close_return_pct": -5.213,
+          "worst_close_return_pct": -7.962,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -856,6 +1059,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -865,9 +1072,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 971.0,
-        "gross_return_pct": -7.962
+        "day": "2026-10-21",
+        "price": 1000.0,
+        "gross_return_pct": -5.213
       }
     },
     {
@@ -883,7 +1090,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 77.9,
+          "gross_return_pct": -6.483,
+          "estimated_net_return_pct": -7.029,
+          "best_close_return_pct": -5.522,
+          "worst_close_return_pct": -6.483,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -898,6 +1113,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -907,9 +1126,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 78.7,
-        "gross_return_pct": -5.522
+        "day": "2026-10-21",
+        "price": 77.9,
+        "gross_return_pct": -6.483
       }
     },
     {
@@ -925,7 +1144,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 293.0,
+          "gross_return_pct": -5.939,
+          "estimated_net_return_pct": -6.488,
+          "best_close_return_pct": -4.013,
+          "worst_close_return_pct": -5.939,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -940,6 +1167,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -949,9 +1180,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 296.0,
-        "gross_return_pct": -4.976
+        "day": "2026-10-21",
+        "price": 293.0,
+        "gross_return_pct": -5.939
       }
     },
     {
@@ -967,7 +1198,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 195.0,
+          "gross_return_pct": 6.849,
+          "estimated_net_return_pct": 6.225,
+          "best_close_return_pct": 6.849,
+          "worst_close_return_pct": -1.37,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -982,6 +1221,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -991,9 +1234,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 189.0,
-        "gross_return_pct": 3.562
+        "day": "2026-10-21",
+        "price": 195.0,
+        "gross_return_pct": 6.849
       }
     },
     {
@@ -1009,7 +1252,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 199.0,
+          "gross_return_pct": -0.5,
+          "estimated_net_return_pct": -1.081,
+          "best_close_return_pct": -0.5,
+          "worst_close_return_pct": -4.25,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -1024,6 +1275,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1033,9 +1288,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 191.5,
-        "gross_return_pct": -4.25
+        "day": "2026-10-21",
+        "price": 199.0,
+        "gross_return_pct": -0.5
       }
     },
     {
@@ -1051,7 +1306,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 16515.0,
+          "gross_return_pct": 0.212,
+          "estimated_net_return_pct": -0.373,
+          "best_close_return_pct": 0.212,
+          "worst_close_return_pct": -3.519,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -1066,6 +1329,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1075,9 +1342,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 15900.0,
-        "gross_return_pct": -3.519
+        "day": "2026-10-21",
+        "price": 16515.0,
+        "gross_return_pct": 0.212
       }
     },
     {
@@ -1093,7 +1360,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 4970.0,
+          "gross_return_pct": -3.682,
+          "estimated_net_return_pct": -4.245,
+          "best_close_return_pct": 0.0,
+          "worst_close_return_pct": -3.876,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -1108,6 +1383,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1117,9 +1396,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 4960.0,
-        "gross_return_pct": -3.876
+        "day": "2026-10-21",
+        "price": 4970.0,
+        "gross_return_pct": -3.682
       }
     },
     {
@@ -1135,7 +1414,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 76.2,
+          "gross_return_pct": -3.177,
+          "estimated_net_return_pct": -3.742,
+          "best_close_return_pct": -3.177,
+          "worst_close_return_pct": -6.226,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -1150,6 +1437,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1159,9 +1450,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 73.8,
-        "gross_return_pct": -6.226
+        "day": "2026-10-21",
+        "price": 76.2,
+        "gross_return_pct": -3.177
       }
     },
     {
@@ -1177,7 +1468,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 257.5,
+          "gross_return_pct": -3.013,
+          "estimated_net_return_pct": -3.58,
+          "best_close_return_pct": -1.318,
+          "worst_close_return_pct": -3.013,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -1192,6 +1491,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1201,9 +1504,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 259.5,
-        "gross_return_pct": -2.26
+        "day": "2026-10-21",
+        "price": 257.5,
+        "gross_return_pct": -3.013
       }
     },
     {
@@ -1219,7 +1522,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 62.1,
+          "gross_return_pct": -4.019,
+          "estimated_net_return_pct": -4.579,
+          "best_close_return_pct": -1.855,
+          "worst_close_return_pct": -4.019,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -1234,6 +1545,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1243,9 +1558,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 62.2,
-        "gross_return_pct": -3.864
+        "day": "2026-10-21",
+        "price": 62.1,
+        "gross_return_pct": -4.019
       }
     },
     {
@@ -1261,7 +1576,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 1195.0,
+          "gross_return_pct": -4.016,
+          "estimated_net_return_pct": -4.577,
+          "best_close_return_pct": 0.402,
+          "worst_close_return_pct": -4.819,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -1276,6 +1599,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1285,9 +1612,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 1185.0,
-        "gross_return_pct": -4.819
+        "day": "2026-10-21",
+        "price": 1195.0,
+        "gross_return_pct": -4.016
       }
     },
     {
@@ -1303,7 +1630,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 77.0,
+          "gross_return_pct": -6.212,
+          "estimated_net_return_pct": -6.76,
+          "best_close_return_pct": -4.75,
+          "worst_close_return_pct": -8.77,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -1318,6 +1653,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1327,9 +1666,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 74.9,
-        "gross_return_pct": -8.77
+        "day": "2026-10-21",
+        "price": 77.0,
+        "gross_return_pct": -6.212
       }
     },
     {
@@ -1345,7 +1684,15 @@
       "outcomes": [
         {
           "trading_days": 3,
-          "status": "pending"
+          "status": "complete",
+          "end_day": "2026-10-21",
+          "end_close": 195.0,
+          "gross_return_pct": 6.849,
+          "estimated_net_return_pct": 6.225,
+          "best_close_return_pct": 6.849,
+          "worst_close_return_pct": -1.37,
+          "observed_closes": 3,
+          "expected_closes": 3
         },
         {
           "trading_days": 7,
@@ -1360,6 +1707,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1369,9 +1720,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 189.0,
-        "gross_return_pct": 3.562
+        "day": "2026-10-21",
+        "price": 195.0,
+        "gross_return_pct": 6.849
       }
     },
     {
@@ -1402,6 +1753,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1411,9 +1766,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 7745.0,
-        "gross_return_pct": -1.086
+        "day": "2026-10-21",
+        "price": 8000.0,
+        "gross_return_pct": 2.171
       }
     },
     {
@@ -1444,6 +1799,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1453,9 +1812,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 489.0,
-        "gross_return_pct": -5.962
+        "day": "2026-10-21",
+        "price": 506.0,
+        "gross_return_pct": -2.692
       }
     },
     {
@@ -1486,6 +1845,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1495,9 +1858,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 1055.0,
-        "gross_return_pct": -5.804
+        "day": "2026-10-21",
+        "price": 1100.0,
+        "gross_return_pct": -1.786
       }
     },
     {
@@ -1528,6 +1891,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1537,9 +1904,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 228.5,
-        "gross_return_pct": 9.856
+        "day": "2026-10-21",
+        "price": 214.0,
+        "gross_return_pct": 2.885
       }
     },
     {
@@ -1570,6 +1937,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1579,9 +1950,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 2290.0,
-        "gross_return_pct": -1.927
+        "day": "2026-10-21",
+        "price": 2395.0,
+        "gross_return_pct": 2.57
       }
     },
     {
@@ -1612,6 +1983,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1621,9 +1996,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 35.75,
-        "gross_return_pct": -2.589
+        "day": "2026-10-21",
+        "price": 37.25,
+        "gross_return_pct": 1.499
       }
     },
     {
@@ -1654,6 +2029,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1663,9 +2042,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 1305.0,
-        "gross_return_pct": -5.435
+        "day": "2026-10-21",
+        "price": 1340.0,
+        "gross_return_pct": -2.899
       }
     },
     {
@@ -1696,6 +2075,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1705,9 +2088,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 1550.0,
-        "gross_return_pct": -4.908
+        "day": "2026-10-21",
+        "price": 1500.0,
+        "gross_return_pct": -7.975
       }
     },
     {
@@ -1738,6 +2121,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1747,9 +2134,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 2405.0,
-        "gross_return_pct": -0.62
+        "day": "2026-10-21",
+        "price": 2420.0,
+        "gross_return_pct": 0.0
       }
     },
     {
@@ -1780,6 +2167,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1789,9 +2180,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 1925.0,
-        "gross_return_pct": 2.122
+        "day": "2026-10-21",
+        "price": 1880.0,
+        "gross_return_pct": -0.265
       }
     },
     {
@@ -1822,6 +2213,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1831,9 +2226,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 154.0,
-        "gross_return_pct": 0.0
+        "day": "2026-10-21",
+        "price": 147.0,
+        "gross_return_pct": -4.545
       }
     },
     {
@@ -1864,6 +2259,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1873,9 +2272,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 375.0,
-        "gross_return_pct": -4.701
+        "day": "2026-10-21",
+        "price": 383.0,
+        "gross_return_pct": -2.668
       }
     },
     {
@@ -1906,6 +2305,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1915,9 +2318,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 62.1,
-        "gross_return_pct": -5.479
+        "day": "2026-10-21",
+        "price": 63.5,
+        "gross_return_pct": -3.349
       }
     },
     {
@@ -1948,6 +2351,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1957,9 +2364,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 59.7,
-        "gross_return_pct": 2.226
+        "day": "2026-10-21",
+        "price": 53.8,
+        "gross_return_pct": -7.877
       }
     },
     {
@@ -1990,6 +2397,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -1999,9 +2410,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 61.1,
-        "gross_return_pct": 0.0
+        "day": "2026-10-21",
+        "price": 60.0,
+        "gross_return_pct": -1.8
       }
     },
     {
@@ -2032,6 +2443,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2041,9 +2456,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 35.75,
-        "gross_return_pct": -2.589
+        "day": "2026-10-21",
+        "price": 37.25,
+        "gross_return_pct": 1.499
       }
     },
     {
@@ -2074,6 +2489,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2083,9 +2502,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 1305.0,
-        "gross_return_pct": -5.435
+        "day": "2026-10-21",
+        "price": 1340.0,
+        "gross_return_pct": -2.899
       }
     },
     {
@@ -2116,6 +2535,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2125,9 +2548,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 1550.0,
-        "gross_return_pct": -4.908
+        "day": "2026-10-21",
+        "price": 1500.0,
+        "gross_return_pct": -7.975
       }
     },
     {
@@ -2158,6 +2581,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2167,9 +2594,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 144.5,
-        "gross_return_pct": -1.365
+        "day": "2026-10-21",
+        "price": 153.0,
+        "gross_return_pct": 4.437
       }
     },
     {
@@ -2200,6 +2627,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2209,9 +2640,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 293.5,
-        "gross_return_pct": -1.178
+        "day": "2026-10-21",
+        "price": 300.5,
+        "gross_return_pct": 1.178
       }
     },
     {
@@ -2242,6 +2673,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2251,9 +2686,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 1185.0,
-        "gross_return_pct": -5.2
+        "day": "2026-10-21",
+        "price": 1195.0,
+        "gross_return_pct": -4.4
       }
     },
     {
@@ -2284,6 +2719,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2293,9 +2732,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 112.0,
-        "gross_return_pct": 9.804
+        "day": "2026-10-21",
+        "price": 110.0,
+        "gross_return_pct": 7.843
       }
     },
     {
@@ -2326,6 +2765,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2335,9 +2778,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 35.75,
-        "gross_return_pct": -2.589
+        "day": "2026-10-21",
+        "price": 37.25,
+        "gross_return_pct": 1.499
       }
     },
     {
@@ -2368,6 +2811,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2377,9 +2824,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 1305.0,
-        "gross_return_pct": -5.435
+        "day": "2026-10-21",
+        "price": 1340.0,
+        "gross_return_pct": -2.899
       }
     },
     {
@@ -2410,6 +2857,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2419,9 +2870,9 @@
         }
       ],
       "latest_observation": {
-        "day": "2026-10-20",
-        "price": 52.2,
-        "gross_return_pct": -1.323
+        "day": "2026-10-21",
+        "price": 52.0,
+        "gross_return_pct": -1.701
       }
     },
     {
@@ -2452,6 +2903,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2460,7 +2915,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 195.0,
+        "gross_return_pct": 3.175
+      }
     },
     {
       "id": "2026-10-20:attack:3026",
@@ -2490,6 +2949,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2498,7 +2961,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 815.0,
+        "gross_return_pct": 2.645
+      }
     },
     {
       "id": "2026-10-20:attack:4566",
@@ -2528,6 +2995,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2536,7 +3007,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 85.1,
+        "gross_return_pct": -0.816
+      }
     },
     {
       "id": "2026-10-20:attack:8227",
@@ -2566,6 +3041,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2574,7 +3053,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 286.0,
+        "gross_return_pct": -3.051
+      }
     },
     {
       "id": "2026-10-20:attack:1809",
@@ -2604,6 +3087,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2612,7 +3099,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 47.3,
+        "gross_return_pct": 0.0
+      }
     },
     {
       "id": "2026-10-20:next:3653",
@@ -2642,6 +3133,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2650,7 +3145,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 6535.0,
+        "gross_return_pct": -1.729
+      }
     },
     {
       "id": "2026-10-20:next:2382",
@@ -2680,6 +3179,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2688,7 +3191,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 328.5,
+        "gross_return_pct": 2.496
+      }
     },
     {
       "id": "2026-10-20:next:4938",
@@ -2718,6 +3225,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2726,7 +3237,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 105.0,
+        "gross_return_pct": 0.0
+      }
     },
     {
       "id": "2026-10-20:next:2377",
@@ -2756,6 +3271,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2764,7 +3283,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 165.0,
+        "gross_return_pct": 0.304
+      }
     },
     {
       "id": "2026-10-20:next:2324",
@@ -2794,6 +3317,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2802,7 +3329,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 37.7,
+        "gross_return_pct": 2.168
+      }
     },
     {
       "id": "2026-10-20:monster:5475",
@@ -2832,6 +3363,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2840,7 +3375,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 214.0,
+        "gross_return_pct": -6.346
+      }
     },
     {
       "id": "2026-10-20:monster:3441",
@@ -2870,6 +3409,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2878,7 +3421,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 241.5,
+        "gross_return_pct": -9.888
+      }
     },
     {
       "id": "2026-10-20:monster:1709",
@@ -2908,6 +3455,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2916,7 +3467,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 56.0,
+        "gross_return_pct": -0.885
+      }
     },
     {
       "id": "2026-10-20:monster:3483",
@@ -2946,6 +3501,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2954,7 +3513,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 94.9,
+        "gross_return_pct": -0.628
+      }
     },
     {
       "id": "2026-10-20:monster:3026",
@@ -2984,6 +3547,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -2992,7 +3559,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 815.0,
+        "gross_return_pct": 2.645
+      }
     },
     {
       "id": "2026-10-20:tomorrow_monster:3653",
@@ -3022,6 +3593,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -3030,7 +3605,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 6535.0,
+        "gross_return_pct": -1.729
+      }
     },
     {
       "id": "2026-10-20:tomorrow_monster:4938",
@@ -3060,6 +3639,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -3068,7 +3651,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 105.0,
+        "gross_return_pct": 0.0
+      }
     },
     {
       "id": "2026-10-20:tomorrow_monster:2377",
@@ -3098,6 +3685,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -3106,7 +3697,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 165.0,
+        "gross_return_pct": 0.304
+      }
     },
     {
       "id": "2026-10-20:tomorrow_monster:6782",
@@ -3136,6 +3731,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -3144,7 +3743,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 270.0,
+        "gross_return_pct": 2.857
+      }
     },
     {
       "id": "2026-10-20:tomorrow_monster:2324",
@@ -3174,6 +3777,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -3182,7 +3789,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 37.7,
+        "gross_return_pct": 2.168
+      }
     },
     {
       "id": "2026-10-20:future_monster:3231",
@@ -3212,6 +3823,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -3220,7 +3835,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 195.0,
+        "gross_return_pct": 3.175
+      }
     },
     {
       "id": "2026-10-20:future_monster:3653",
@@ -3250,6 +3869,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -3258,7 +3881,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 6535.0,
+        "gross_return_pct": -1.729
+      }
     },
     {
       "id": "2026-10-20:future_monster:4938",
@@ -3288,6 +3915,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -3296,7 +3927,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 105.0,
+        "gross_return_pct": 0.0
+      }
     },
     {
       "id": "2026-10-20:future_monster:8213",
@@ -3326,6 +3961,10 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -3334,7 +3973,11 @@
           "status": "pending"
         }
       ],
-      "latest_observation": null
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 42.85,
+        "gross_return_pct": 4.512
+      }
     },
     {
       "id": "2026-10-20:future_monster:2382",
@@ -3364,6 +4007,1064 @@
           "status": "pending"
         },
         {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": {
+        "day": "2026-10-21",
+        "price": 328.5,
+        "gross_return_pct": 2.496
+      }
+    },
+    {
+      "id": "2026-10-21:attack:2449",
+      "day": "2026-10-21",
+      "group": "attack",
+      "rank": 1,
+      "code": "2449",
+      "name": "京元電子",
+      "score": 99.0,
+      "signal_close": 278.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:attack:3081",
+      "day": "2026-10-21",
+      "group": "attack",
+      "rank": 2,
+      "code": "3081",
+      "name": "聯亞",
+      "score": 96.0,
+      "signal_close": 2625.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:attack:3105",
+      "day": "2026-10-21",
+      "group": "attack",
+      "rank": 3,
+      "code": "3105",
+      "name": "穩懋",
+      "score": 94.0,
+      "signal_close": 512.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:attack:3363",
+      "day": "2026-10-21",
+      "group": "attack",
+      "rank": 4,
+      "code": "3363",
+      "name": "上詮",
+      "score": 94.0,
+      "signal_close": 549.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:attack:6182",
+      "day": "2026-10-21",
+      "group": "attack",
+      "rank": 5,
+      "code": "6182",
+      "name": "合晶",
+      "score": 93.0,
+      "signal_close": 111.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:next:3711",
+      "day": "2026-10-21",
+      "group": "next",
+      "rank": 1,
+      "code": "3711",
+      "name": "日月光投控",
+      "score": 99.0,
+      "signal_close": 684.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:next:6239",
+      "day": "2026-10-21",
+      "group": "next",
+      "rank": 2,
+      "code": "6239",
+      "name": "力成",
+      "score": 99.0,
+      "signal_close": 266.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:next:5483",
+      "day": "2026-10-21",
+      "group": "next",
+      "rank": 3,
+      "code": "5483",
+      "name": "中美晶",
+      "score": 98.0,
+      "signal_close": 199.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:next:3450",
+      "day": "2026-10-21",
+      "group": "next",
+      "rank": 4,
+      "code": "3450",
+      "name": "聯鈞",
+      "score": 97.0,
+      "signal_close": 450.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:next:3034",
+      "day": "2026-10-21",
+      "group": "next",
+      "rank": 5,
+      "code": "3034",
+      "name": "聯詠",
+      "score": 96.0,
+      "signal_close": 590.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:monster:4770",
+      "day": "2026-10-21",
+      "group": "monster",
+      "rank": 1,
+      "code": "4770",
+      "name": "上品",
+      "score": 99.0,
+      "signal_close": 313.5,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:monster:8042",
+      "day": "2026-10-21",
+      "group": "monster",
+      "rank": 2,
+      "code": "8042",
+      "name": "金山電",
+      "score": 99.0,
+      "signal_close": 148.5,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:monster:3374",
+      "day": "2026-10-21",
+      "group": "monster",
+      "rank": 3,
+      "code": "3374",
+      "name": "精材",
+      "score": 99.0,
+      "signal_close": 470.5,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:monster:1569",
+      "day": "2026-10-21",
+      "group": "monster",
+      "rank": 4,
+      "code": "1569",
+      "name": "濱川",
+      "score": 99.0,
+      "signal_close": 87.6,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:monster:3624",
+      "day": "2026-10-21",
+      "group": "monster",
+      "rank": 5,
+      "code": "3624",
+      "name": "光頡",
+      "score": 99.0,
+      "signal_close": 150.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:tomorrow_monster:2317",
+      "day": "2026-10-21",
+      "group": "tomorrow_monster",
+      "rank": 1,
+      "code": "2317",
+      "name": "鴻海",
+      "score": 99.0,
+      "signal_close": 250.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:tomorrow_monster:2409",
+      "day": "2026-10-21",
+      "group": "tomorrow_monster",
+      "rank": 2,
+      "code": "2409",
+      "name": "友達",
+      "score": 99.0,
+      "signal_close": 37.25,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:tomorrow_monster:3711",
+      "day": "2026-10-21",
+      "group": "tomorrow_monster",
+      "rank": 3,
+      "code": "3711",
+      "name": "日月光投控",
+      "score": 99.0,
+      "signal_close": 684.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:tomorrow_monster:2882",
+      "day": "2026-10-21",
+      "group": "tomorrow_monster",
+      "rank": 4,
+      "code": "2882",
+      "name": "國泰金",
+      "score": 99.0,
+      "signal_close": 114.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:tomorrow_monster:8299",
+      "day": "2026-10-21",
+      "group": "tomorrow_monster",
+      "rank": 5,
+      "code": "8299",
+      "name": "群聯",
+      "score": 99.0,
+      "signal_close": 1930.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:future_monster:3234",
+      "day": "2026-10-21",
+      "group": "future_monster",
+      "rank": 1,
+      "code": "3234",
+      "name": "光環",
+      "score": 87.0,
+      "signal_close": 196.5,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:future_monster:3363",
+      "day": "2026-10-21",
+      "group": "future_monster",
+      "rank": 2,
+      "code": "3363",
+      "name": "上詮",
+      "score": 85.0,
+      "signal_close": 549.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:future_monster:3081",
+      "day": "2026-10-21",
+      "group": "future_monster",
+      "rank": 3,
+      "code": "3081",
+      "name": "聯亞",
+      "score": 84.0,
+      "signal_close": 2625.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:future_monster:3034",
+      "day": "2026-10-21",
+      "group": "future_monster",
+      "rank": 4,
+      "code": "3034",
+      "name": "聯詠",
+      "score": 84.0,
+      "signal_close": 590.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
+          "trading_days": 40,
+          "status": "pending"
+        },
+        {
+          "trading_days": 60,
+          "status": "pending"
+        }
+      ],
+      "latest_observation": null
+    },
+    {
+      "id": "2026-10-21:future_monster:5483",
+      "day": "2026-10-21",
+      "group": "future_monster",
+      "rank": 5,
+      "code": "5483",
+      "name": "中美晶",
+      "score": 81.0,
+      "signal_close": 199.0,
+      "origin": "scheduled_close",
+      "outcomes": [
+        {
+          "trading_days": 3,
+          "status": "pending"
+        },
+        {
+          "trading_days": 7,
+          "status": "pending"
+        },
+        {
+          "trading_days": 15,
+          "status": "pending"
+        },
+        {
+          "trading_days": 20,
+          "status": "pending"
+        },
+        {
+          "trading_days": 30,
+          "status": "pending"
+        },
+        {
           "trading_days": 40,
           "status": "pending"
         },
@@ -3375,10 +5076,10 @@
       "latest_observation": null
     }
   ],
-  "total_frozen_picks": 75,
+  "total_frozen_picks": 100,
   "analysis_notes": [
     "每個交易日的主攻／下一棒／妖股／明日妖股／未來妖股取當時前五檔，當日官方收盤價封存；不得事後換股或補選贏家。",
-    "3、7、15、20、40、60 為後續交易日數（20日約1個月、40日約2個月、60日約3個月），未到期一律 pending。",
+    "3、7、15、20、30、40、60 為後續交易日數（20日約1個月、40日約2個月、60日約3個月），未到期一律 pending。",
     "假設訊號日收盤買入、指定未來收盤賣出，只是股價觀察；無法保證當時能成交。估算買賣兩端手續費及賣出交易稅；不含滑價、最低手續費。",
     "不同分類可能包含相同股票，不能把類別績效當成獨立投資組合；未成熟或缺價樣本不能算勝負。",
     "僅以事前保存名單與日後已驗證官方收盤計分。有效樣本不足時不選最佳策略、不自動修改參數。"
