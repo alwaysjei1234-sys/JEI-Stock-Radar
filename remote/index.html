@@ -1254,12 +1254,12 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
    overview.textContent='封存 '+data.total_frozen_picks+' 筆推薦'+(dup?'｜不重複訊號 '+dup.unique_day_symbol_signals+'｜跨分類重複 '+dup.cross_category_duplicates:'｜新版風險欄位待更新');
    const rows=[];
    for(const [key,label] of Object.entries(names)){
-    for(const days of [3,7,15,20,30,40,60]){
+    for(const days of [3,7,15,20,30,40,60,90]){
      const v=data.groups[key]&&data.groups[key][String(days)];if(!v)continue;
      rows.push('<tr style="border-top:1px solid #183e5c"><td style="text-align:left;padding:7px 3px">'+esc(label)+'</td><td>'+days+'</td><td>'+esc(v.completed)+'</td><td>'+pct(v.win_rate_pct)+'</td><td>'+pct(v.avg_estimated_net_pct)+'</td><td>'+pct(v.worst_max_close_drawdown_pct)+'</td></tr>');
     }
    }
-   body.innerHTML=rows.join('');
+   body.innerHTML=rows.length?rows.join(''):'<tr><td colspan="6" style="padding:12px;text-align:left;color:#8ca8bd">目前沒有可驗證的已完成績效；不得將缺值視為零報酬。</td></tr>';
   }catch(e){status.textContent='資料同步失敗';overview.textContent='無法取得績效報告：'+e.message;body.replaceChildren()}
  }
  window.JEI_refreshPickPerformance=syncPicks;
