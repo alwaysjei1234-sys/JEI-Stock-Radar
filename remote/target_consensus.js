@@ -12,9 +12,10 @@
   const rows=(Array.isArray(input&&input.reports)?input.reports:[]).filter(r=>
    r&&typeof r.broker==='string'&&r.broker.trim()&&typeof r.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&
    typeof r.target==='number'&&Number.isFinite(r.target)&&r.target>0);
-  const now=input&&/^\d{4}-\d{2}-\d{2}$/.test(input.asOf||'')?Date.parse(input.asOf+'T00:00:00Z'):null;
+  const parsedDate=input&&/^\d{4}-\d{2}-\d{2}$/.test(input.asOf||'')?Date.parse(input.asOf+'T00:00:00Z'):NaN;
+  const now=Number.isFinite(parsedDate)&&new Date(parsedDate).toISOString().slice(0,10)===input.asOf?parsedDate:null;
   // Future-dated reports must never contribute to a historical consensus.
-  const eligible=now===null?[]:rows.filter(r=>Date.parse(r.date+'T00:00:00Z')<=now);
+  const eligible=now===null?[]:rows.filter(r=>{const t=Date.parse(r.date+'T00:00:00Z');return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===r.date&&t<=now;});
   const sorted=eligible.slice().sort((a,b)=>a.target-b.target);
   const count=sorted.length;
   const mean=count?sorted.reduce((s,r)=>s+r.target,0)/count:null;
