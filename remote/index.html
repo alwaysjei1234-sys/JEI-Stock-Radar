@@ -350,6 +350,13 @@ function renderPatternRadar(){
     make('rect',{x:xPos-width/2,y:164-Number(c.volume)/maxVol*34,width,height:Number(c.volume)/maxVol*34,fill:color,opacity:.7});
    });
    section.appendChild(svg);
+   const vp=x.volume_price_observation;
+   if(vp&&Number.isFinite(Number(vp.prior_20_high))){
+    const label=document.createElement('div');label.className='sub';
+    const ratio=vp.volume_ratio===null?'量比無法計算':('量比 '+Number(vp.volume_ratio).toFixed(2)+' 倍');
+    label.textContent=(vp.confirmed_price_volume_breakout?'量價突破已驗證':vp.price_breakout?'價格突破，量能未確認':'尚未確認量價突破')+'｜'+ratio+'｜前20日高點 '+Number(vp.prior_20_high).toFixed(2);
+    section.appendChild(label);
+   }
    const note=document.createElement('div');note.className='sub';note.textContent='紅漲綠跌｜成交量單位：股｜未還原除權息｜'+String(candles[0].date)+' 至 '+String(candles.at(-1).date);section.appendChild(note);
    card.appendChild(section);
   }else{
