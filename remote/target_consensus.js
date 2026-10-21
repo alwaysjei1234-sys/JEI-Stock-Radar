@@ -11,7 +11,7 @@
   const validPrice=Number.isFinite(price)&&price>0;
   const rows=(Array.isArray(input&&input.reports)?input.reports:[]).filter(r=>
    r&&typeof r.broker==='string'&&r.broker.trim()&&typeof r.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&
-   Number.isFinite(r.target)&&r.target>0);
+   typeof r.target==='number'&&Number.isFinite(r.target)&&r.target>0);
   const sorted=rows.slice().sort((a,b)=>a.target-b.target);
   const count=sorted.length;
   const mean=count?sorted.reduce((s,r)=>s+r.target,0)/count:null;
