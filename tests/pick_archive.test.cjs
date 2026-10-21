@@ -58,6 +58,17 @@ for(const pick of data.picks){
   assert.ok(Math.abs(settlement/outcome.end_close-1)<1e-9,'settlement close differs from archive: '+pick.id);
  }
 }
+const costs=data.estimated_costs;
+assert.ok(costs&&Number.isFinite(costs.buy_fee)&&Number.isFinite(costs.sell_fee)&&Number.isFinite(costs.sell_tax),'missing simulation costs');
+for(const pick of data.picks){
+ for(const outcome of pick.outcomes){
+  if(outcome.status!=='complete')continue;
+  const net=100*(outcome.end_close*(1-costs.sell_fee-costs.sell_tax)/(pick.signal_close*(1+costs.buy_fee))-1);
+  assert.ok(Math.abs(net-outcome.estimated_net_return_pct)<=0.00051,'net return formula mismatch: '+pick.id);
+  const gross=100*(outcome.end_close/pick.signal_close-1);
+  assert.ok(Math.abs(gross-outcome.gross_return_pct)<=0.00051,'gross return formula mismatch: '+pick.id);
+ }
+}
 const allowedGroups=new Set(['attack','next','monster','tomorrow_monster','future_monster']);
 const expectedHorizons=[3,7,15,20,30,40,60];
 assert.deepEqual([...horizons].sort((a,b)=>a-b),expectedHorizons,'incorrect trading-day horizons');
