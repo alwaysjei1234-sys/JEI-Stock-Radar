@@ -46,6 +46,11 @@ def run(system_path, output_dir, max_codes=8, pause=4):
         months=target_months(asof)
         codes=sorted(rotated,key=lambda code:sum(
             (output_dir/f"{code}-{month}.json").exists() for month in months))[:max_codes]
+    print(json.dumps({"status":"backfill_plan","data_date":asof.isoformat(),
+                      "watchlist_codes":len(set(str(row.get("code",""))
+                          for rows in patterns.get("signals",{}).values() for row in rows)),
+                      "selected_codes":codes,"months":target_months(asof)},
+                     ensure_ascii=False))
     for code in codes:
         for month in target_months(asof):
             path=output_dir/f"{code}-{month}.json"
