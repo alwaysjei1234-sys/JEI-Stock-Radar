@@ -1262,12 +1262,14 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
    if(ids.size!==actualCount)throw Error('封存推薦識別碼重複');
    const official=Date.parse(String(data.latest_official_day||'')+'T00:00:00+08:00');
    const age=Number.isFinite(official)?Math.floor((Date.now()-official)/86400000):null;
-   const stale=age!==null&&age>4;
+   const stale=age===null||age>4;
+   const future=age!==null&&age<0;
+   if(future)throw Error('官方收盤日期晚於目前時間，暫停顯示績效');
    status.textContent=(stale?'⚠ 資料可能過期｜':'')+'官方收盤 '+(data.latest_official_day||'未知')+'｜產生 '+(data.updated_at||'未知');
    overview.textContent='封存 '+actualCount+' 筆推薦'+(dup?'｜不重複訊號 '+dup.unique_day_symbol_signals+'｜跨分類重複 '+dup.cross_category_duplicates:'｜新版風險欄位待更新');
    const rows=[];
    for(const [key,label] of Object.entries(names)){
-    for(const days of [3,7,15,20,30,40,60,90]){
+    for(const days of [3,7,15,20,30,40,60]){
      const v=data.groups[key]&&data.groups[key][String(days)];if(!v)continue;
      rows.push('<tr style="border-top:1px solid #183e5c"><td style="text-align:left;padding:7px 3px">'+esc(label)+'</td><td>'+days+'</td><td>'+esc(v.completed)+'</td><td>'+pct(v.win_rate_pct)+'</td><td>'+pct(v.avg_estimated_net_pct)+'</td><td>'+pct(v.worst_estimated_net_pct)+'</td></tr>');
     }
