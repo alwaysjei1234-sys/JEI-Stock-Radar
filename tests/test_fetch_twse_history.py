@@ -20,6 +20,18 @@ class FetchValidationTests(unittest.TestCase):
         self.assertEqual(result["ohlcv"],[{"date":"2026-10-01","open":99.0,"high":102.0,"low":98.0,"close":100.0,"volume":1200}])
         self.assertEqual(result["ohlcv_units"]["volume"],"shares")
         self.assertFalse(result["adjusted_for_corporate_actions"])
+    def test_existing_legacy_file_is_not_silently_skipped(self):
+        import tempfile
+        from pathlib import Path
+        from scripts.fetch_twse_history import main
+        with tempfile.TemporaryDirectory() as directory:
+            target=Path(directory)/"2330-202610.json"
+            target.write_text(json.dumps({"code":"2330","prices":[]}),encoding="utf-8")
+            with patch("sys.argv",["fetch_twse_history.py","--stock-code","2330",
+                                   "--months","202610","--output-dir",directory]):
+                with self.assertRaisesRegex(ValueError,"not validated OHLCV"):
+                    main()
+            self.assertEqual(json.loads(target.read_text())["prices"],[])
     def test_invalid_month(self):
         with self.assertRaises(ValueError):
             fetch_month("2330","202613")
