@@ -94,6 +94,7 @@
 .pattern-chart-button{display:block;width:100%;padding:0;margin:0;border:0;background:transparent;cursor:pointer}.pattern-chart-button:focus-visible{outline:2px solid #65cfff;border-radius:9px}.pattern-chart-inspect{font-size:11px;color:#a9c7dc;margin-top:5px}.pattern-point-list{margin-top:7px;padding:9px;border:1px solid #2b4b64;border-radius:9px;max-height:190px;overflow:auto;font-size:12px;line-height:1.8}.pattern-point-list[hidden]{display:none}
 .pattern-chart-legend{font-size:11px;color:#c3d7e6;margin-top:7px;line-height:1.5}
 .pattern-trend-readout{margin-top:10px;padding:10px;border-radius:10px;background:#132e43;border:1px solid #2c536b}.pattern-trend-readout>b{display:block;font-size:14px;color:#d7ecf8}.pattern-trend-readout .sub{margin-top:5px}
+.pattern-momentum{margin-top:8px;padding:10px;border-radius:10px;border:1px solid #294b62;background:#10273a}.pattern-momentum>b{font-size:13px;color:#d6ecfa}.pattern-momentum .sub{margin-top:5px}
 </style>
 </head>
 <body>
@@ -313,7 +314,17 @@ function renderPatternRadar(){
    const headline=document.createElement('b');headline.textContent='均線狀態：'+(above5&&above10&&aligned?'短線偏強':!above5&&!above10&&!aligned?'短線偏弱':'多空交錯');trend.appendChild(headline);
    const description=document.createElement('div');description.className='sub';description.textContent='收盤 '+(above5?'高於':'不高於')+' MA5｜'+(above10?'高於':'不高於')+' MA10｜MA5 '+(aligned?'高於':'不高於')+' MA10｜MA5 '+(ma5>prevMa5?'上彎':ma5<prevMa5?'下彎':'持平');trend.appendChild(description);
    const figures=document.createElement('div');figures.className='sub';figures.textContent='MA5 '+ma5.toFixed(2)+'｜MA10 '+ma10.toFixed(2)+'｜僅收盤價趨勢，非買賣訊號';trend.appendChild(figures);
-   card.appendChild(trend);
+   const momentum=document.createElement('div');momentum.className='pattern-momentum';
+   const delta5=(last/values[values.length-6]-1)*100;
+   const delta10=(last/values[values.length-11]-1)*100;
+   const changes=values.slice(1).map((v,i)=>v-values[i]);
+   const gains=changes.slice(-14).reduce((sum,d)=>sum+Math.max(d,0),0)/14;
+   const losses=changes.slice(-14).reduce((sum,d)=>sum+Math.max(-d,0),0)/14;
+   const rsi=losses===0?(gains===0?50:100):100-100/(1+gains/losses);
+   const momentumLabel=document.createElement('b');momentumLabel.textContent='價格動能｜僅歷史收盤';momentum.appendChild(momentumLabel);
+   const momentumText=document.createElement('div');momentumText.className='sub';momentumText.textContent='近5交易日 '+(delta5>=0?'+':'')+delta5.toFixed(2)+'%｜近10交易日 '+(delta10>=0?'+':'')+delta10.toFixed(2)+'%｜RSI(14) '+rsi.toFixed(1);momentum.appendChild(momentumText);
+   const caution=document.createElement('div');caution.className='sub';caution.textContent='RSI 為14筆收盤變動的簡單平均版本（非 Wilder 平滑）；不代表超買必跌或超賣必漲。';momentum.appendChild(caution);
+   card.append(trend,momentum);
    const chartNote=document.createElement('div');chartNote.className='sub';chartNote.textContent='官方收盤走勢｜'+String(series[0].date||'')+' 至 '+String(series.at(-1).date||'')+'｜不是開高低收 K 線';card.appendChild(chartNote);
   }
   const details=document.createElement('details');details.className='pattern-detail';
