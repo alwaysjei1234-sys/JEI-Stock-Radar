@@ -1,0 +1,26 @@
+name: Validate JEI Pick Performance
+on:
+  push:
+    paths:
+      - 'remote/pick_validation.json'
+      - 'scripts/check-pick-validation.cjs'
+      - '.github/workflows/validate-pick-performance.yml'
+  pull_request:
+    paths:
+      - 'remote/pick_validation.json'
+      - 'scripts/check-pick-validation.cjs'
+      - '.github/workflows/validate-pick-performance.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-pick-performance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify archived picks and performance aggregates
+        run: node scripts/check-pick-validation.cjs
