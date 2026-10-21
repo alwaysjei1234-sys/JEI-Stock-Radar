@@ -227,7 +227,7 @@ def update(feed, archive, prior, now):
                and 0 <= (local.date()-datetime.strptime(asof,"%Y-%m-%d").date()).days <= 7
                if re.fullmatch(r"\d{4}-\d{2}-\d{2}",asof) else False)
     # Do not append a later session when the official price archive has gaps.
-    if stored and asof in days and asof>max(p["day"] for p in stored):
+    if stored and asof==today and asof in days and close_verified(feed,archive,asof) and asof>max(p["day"] for p in stored):
         earlier=[d for d in days if max(p["day"] for p in stored)<d<asof]
         if earlier:
             raise ValueError("封存日之間存在尚未記錄的交易日，停止新增以避免績效樣本偏差")
