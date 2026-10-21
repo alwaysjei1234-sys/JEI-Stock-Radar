@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/probe_production.py'
+      - 'remote/update.json'
       - '.github/workflows/jei-production-probe.yml'
 permissions:
   contents: read
