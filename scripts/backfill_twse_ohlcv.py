@@ -58,6 +58,7 @@ def run(system_path, output_dir, max_codes=8, pause=4):
     for code in codes:
         for month in target_months(asof):
             path=output_dir/f"{code}-{month}.json"
+            refresh=False
             if path.exists():
                 try:
                     old=json.loads(path.read_text(encoding="utf-8"))
@@ -66,8 +67,14 @@ def run(system_path, output_dir, max_codes=8, pause=4):
                           and old.get("ohlcv_units",{}).get("volume")=="shares"
                           and isinstance(old.get("ohlcv"),list) and len(old["ohlcv"])>0)
                     if good:
-                        print("Existing official OHLCV file:",path)
-                        continue
+                        # The current month grows after each official close.
+                        # A valid cached file can still be one trading day stale.
+                        latest=max((str(c.get("date","")) for c in old["ohlcv"]),default="")
+                        if month!=asof.strftime("%Y%m") or latest>=asof.isoformat():
+                            print("Existing official OHLCV file:",path)
+                            continue
+                        print("Refresh stale current month:",path,"latest",latest)
+                        refresh=True
                 except (OSError,ValueError,AttributeError):
                     pass
                 print("Existing invalid file; preserving for manual review:",path)
@@ -75,8 +82,18 @@ def run(system_path, output_dir, max_codes=8, pause=4):
             if fetched:time.sleep(pause)
             try:
                 result=fetch_month(code,month)
-                with path.open("x",encoding="utf-8") as stream:
-                    json.dump(result,stream,ensure_ascii=False,separators=(",",":"))
+                if refresh:
+                    latest_new=max((str(c.get("date","")) for c in result.get("ohlcv",[])),default="")
+                    if latest_new<latest:
+                        print("Official response older than cache; preserving:",path)
+                        continue
+                    temp=path.with_suffix(".tmp")
+                    with temp.open("w",encoding="utf-8") as stream:
+                        json.dump(result,stream,ensure_ascii=False,separators=(",",":"))
+                    temp.replace(path)
+                else:
+                    with path.open("x",encoding="utf-8") as stream:
+                        json.dump(result,stream,ensure_ascii=False,separators=(",",":"))
                 fetched+=1
                 print("Saved",path)
             except Exception as exc:
