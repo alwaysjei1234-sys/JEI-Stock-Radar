@@ -24,7 +24,7 @@
   const upside=validPrice&&mean!==null?(mean/price-1)*100:null;
   const dispersion=mean!==null&&mean>0?(max-min)/mean*100:null;
   const dated=rows.map(r=>({...r,ageDays:now===null?null:Math.round((now-Date.parse(r.date+'T00:00:00Z'))/86400000)}));
-  const stale=dated.filter(r=>r.ageDays!==null&&r.ageDays>90).length;
+  const stale=dated.filter(r=>r.ageDays!==null&&r.ageDays>=0&&r.ageDays>90).length;
   const future=dated.filter(r=>r.ageDays!==null&&r.ageDays<0).length;
   return {price:validPrice?price:null,count,mean,median,min,max,upsidePct:upside,dispersionPct:dispersion,
    reports:dated,staleCount:stale,futureDatedCount:future,
