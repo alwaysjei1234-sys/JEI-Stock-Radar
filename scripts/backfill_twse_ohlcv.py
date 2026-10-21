@@ -40,7 +40,18 @@ def run(system_path, output_dir, max_codes=8, pause=4):
         for month in target_months(asof):
             path=output_dir/f"{code}-{month}.json"
             if path.exists():
-                print("Existing (validated during feed merge):",path)
+                try:
+                    old=json.loads(path.read_text(encoding="utf-8"))
+                    good=(old.get("code")==code and old.get("market")=="TWSE"
+                          and old.get("adjusted_for_corporate_actions") is False
+                          and old.get("ohlcv_units",{}).get("volume")=="shares"
+                          and isinstance(old.get("ohlcv"),list) and len(old["ohlcv"])>0)
+                    if good:
+                        print("Existing official OHLCV file:",path)
+                        continue
+                except (OSError,ValueError,AttributeError):
+                    pass
+                print("Existing invalid file; preserving for manual review:",path)
                 continue
             if fetched:time.sleep(pause)
             try:
