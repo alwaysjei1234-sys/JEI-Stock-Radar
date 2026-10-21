@@ -27,6 +27,9 @@ def leaderboard(report):
                          "pending":stat.get("pending_or_unavailable",0),
                          "win_rate_pct":stat.get("win_rate_pct") if eligible else None,
                          "mean_net_return_pct":stat.get("mean_net_return_pct") if eligible else None,
+                         "median_net_return_pct":stat.get("median_net_return_pct") if eligible else None,
+                         "loss_rate_pct":stat.get("loss_rate_pct") if eligible else None,
+                         "profit_factor":stat.get("profit_factor") if eligible else None,
                          "mean_excess_pct":bench.get("mean_excess_pct") if eligible else None,
                          "paired_count":bench.get("paired_count",0) if verified else 0,
                          "eligible":eligible})
