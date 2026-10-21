@@ -246,6 +246,8 @@ def update(feed, archive, prior, now):
     # Even without a fresh feed, all previously sealed picks get their horizons
     # recomputed from verified official close archives.
     report=compile_report(stored,archive,local.strftime("%Y-%m-%d %H:%M"))
+    if len(report["picks"])!=len(stored):
+        raise ValueError("封存推薦無法完整核對官方歷史收盤價，拒絕產生不完整績效")
     return {"schema":1,"mode":"immutable_asof_pick_archive","picks":stored},report,captured
 
 
