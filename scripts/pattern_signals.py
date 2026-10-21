@@ -34,6 +34,9 @@ def attach_verified_ohlcv(patterns, files_by_code):
                 for candle in source.get("ohlcv",[]):
                     try:
                         day=candle["date"]
+                        from datetime import date as _date
+                        if not isinstance(day,str) or _date.fromisoformat(day).isoformat()!=day:
+                            raise ValueError("invalid candle date")
                         o,h,l,c=[float(candle[k]) for k in ("open","high","low","close")]
                         v=candle["volume"]
                         if (not all(math.isfinite(x) and x>0 for x in (o,h,l,c))
@@ -41,7 +44,7 @@ def attach_verified_ohlcv(patterns, files_by_code):
                             or l>min(o,c) or h<max(o,c) or day in candles):
                             raise ValueError("invalid candle")
                         candles[day]={"date":day,"open":o,"high":h,"low":l,"close":c,"volume":v}
-                    except (KeyError,TypeError,ValueError):
+                    except (KeyError,TypeError,ValueError,OverflowError):
                         valid=False;break
                 if not valid:break
             series=signal.get("close_series",[])
