@@ -3,7 +3,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const feed = JSON.parse(fs.readFileSync(path.join(__dirname, '../remote/pick_validation.json'), 'utf8'));
+const feedPath = process.argv[2] ? path.resolve(process.argv[2]) : path.join(__dirname, '../remote/pick_validation.json');
+const feed = JSON.parse(fs.readFileSync(feedPath, 'utf8'));
 assert.equal(feed.mode, 'forward_official_close_pick_validation');
 assert.ok(Array.isArray(feed.picks), 'picks must be an array');
 assert.equal(feed.total_frozen_picks, feed.picks.length, 'frozen pick count mismatch');
