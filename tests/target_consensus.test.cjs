@@ -18,3 +18,8 @@ assert.ok(r.warnings.includes('包含超過90日報告'));
 assert.equal(calc({price:null,reports:[]}).upsidePct,null);
 assert.equal(calc({price:100,reports:[]}).mean,null);
 console.log('target consensus smoke tests passed');
+
+const future=calc({price:100,asOf:'2026-10-21',reports:[{broker:'A',target:120,date:'2026-10-20'},{broker:'B',target:999,date:'2026-10-22'}]});
+assert.equal(future.count,1);
+assert.equal(future.mean,120);
+assert.equal(future.futureDatedCount,1);
