@@ -59,8 +59,16 @@ def main():
                 if (existing.get("code")==str(args.stock_code)
                     and isinstance(existing.get("ohlcv"),list)
                     and isinstance(existing.get("prices"),list)
-                    and [x["date"] for x in existing["ohlcv"]]==[x["date"] for x in existing["prices"]]
-                    and existing.get("adjusted_for_corporate_actions") is False):
+                    and existing.get("market")=="TWSE"
+                    and existing.get("ohlcv_units",{}).get("volume")=="shares"
+                    and existing.get("adjusted_for_corporate_actions") is False
+                    and len(existing["ohlcv"])==len(existing["prices"])
+                    and all(isinstance(c,dict) and isinstance(p,dict)
+                        and c.get("date")==p.get("date") and c.get("close")==p.get("close")
+                        and all(isinstance(c.get(k),(int,float)) and c[k]>0 for k in ("open","high","low","close"))
+                        and isinstance(c.get("volume"),int) and c["volume"]>=0
+                        and c["low"]<=min(c["open"],c["close"])<=max(c["open"],c["close"])<=c["high"]
+                        for c,p in zip(existing["ohlcv"],existing["prices"]))):
                     print("Skip validated existing OHLCV",output)
                     continue
             except (ValueError,KeyError,TypeError,AttributeError):
