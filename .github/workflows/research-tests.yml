@@ -6,6 +6,10 @@ on:
       - 'remote/target_consensus.js'
       - 'remote/research_engine.js'
       - 'tests/**'
+      - 'scripts/update_pick_validation.py'
+      - 'scripts/pick_risk_metrics.py'
+      - 'remote/pick_history.json'
+      - 'remote/pick_validation.json'
       - '.github/workflows/research-tests.yml'
   pull_request:
     paths:
@@ -13,6 +17,10 @@ on:
       - 'remote/target_consensus.js'
       - 'remote/research_engine.js'
       - 'tests/**'
+      - 'scripts/update_pick_validation.py'
+      - 'scripts/pick_risk_metrics.py'
+      - 'remote/pick_history.json'
+      - 'remote/pick_validation.json'
       - '.github/workflows/research-tests.yml'
   workflow_dispatch:
 jobs:
