@@ -91,6 +91,7 @@
 .pattern-detail{margin-top:9px;border-top:1px solid #2a4a62;padding-top:8px}.pattern-detail summary{cursor:pointer;color:#81d8ff;font-size:12px;font-weight:700}.pattern-detail p{margin:7px 0 0}
 .pattern-close-chart{display:block;width:100%;height:auto;max-height:132px;margin-top:10px;border:1px solid #25465d;border-radius:9px;background:#091c2c}
 .pattern-trend-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.pattern-trend-stats>div{padding:8px 4px;text-align:center;border-radius:8px;background:#112b42}.pattern-trend-stats small{display:block;font-size:10px;color:#b5c9d9}.pattern-trend-stats b{display:block;margin-top:4px;font-size:14px}
+.pattern-chart-button{display:block;width:100%;padding:0;margin:0;border:0;background:transparent;cursor:pointer}.pattern-chart-button:focus-visible{outline:2px solid #65cfff;border-radius:9px}.pattern-chart-inspect{font-size:11px;color:#a9c7dc;margin-top:5px}.pattern-point-list{margin-top:7px;padding:9px;border:1px solid #2b4b64;border-radius:9px;max-height:190px;overflow:auto;font-size:12px;line-height:1.8}.pattern-point-list[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -275,7 +276,14 @@ function renderPatternRadar(){
    line.setAttribute('points',coordinates.map(point=>point.map(n=>n.toFixed(2)).join(',')).join(' '));
    line.setAttribute('fill','none');line.setAttribute('stroke',values.at(-1)>=values[0]?'#ef7777':'#66cbb2');
    line.setAttribute('stroke-width','2.8');line.setAttribute('stroke-linecap','round');line.setAttribute('stroke-linejoin','round');
-   chart.appendChild(line);card.appendChild(chart);
+   chart.appendChild(line);
+   const latest=coordinates[coordinates.length-1];const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('cx',latest[0].toFixed(2));dot.setAttribute('cy',latest[1].toFixed(2));dot.setAttribute('r','4');dot.setAttribute('fill','#fff');chart.appendChild(dot);
+   const tooltip=document.createElement('div');tooltip.className='pattern-chart-inspect';tooltip.textContent='點選走勢圖，查看各交易日收盤價';
+   const inspect=document.createElement('button');inspect.type='button';inspect.className='pattern-chart-button';inspect.setAttribute('aria-label','查看'+String(x.name||x.code)+'逐日收盤價');inspect.appendChild(chart);
+   const pointList=document.createElement('div');pointList.className='pattern-point-list';pointList.hidden=true;
+   series.forEach((point,i)=>{const row=document.createElement('div');row.textContent=String(point.date||'日期未知')+'　'+values[i].toFixed(2);pointList.appendChild(row);});
+   inspect.addEventListener('click',()=>{pointList.hidden=!pointList.hidden;tooltip.textContent=pointList.hidden?'點選走勢圖，查看各交易日收盤價':'逐日官方收盤價（共 '+series.length+' 筆）';inspect.setAttribute('aria-expanded',String(!pointList.hidden));});
+   inspect.setAttribute('aria-expanded','false');card.append(inspect,tooltip,pointList);
    const stats=document.createElement('div');stats.className='pattern-trend-stats';
    const first=values[0],last=values[values.length-1],change=(last/first-1)*100;
    const prior=values.slice(0,-1),mean=prior.reduce((a,b)=>a+b,0)/prior.length;
