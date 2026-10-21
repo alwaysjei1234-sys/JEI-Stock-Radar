@@ -16,7 +16,14 @@
   const now=Number.isFinite(parsedDate)&&new Date(parsedDate).toISOString().slice(0,10)===input.asOf?parsedDate:null;
   // Future-dated reports must never contribute to a historical consensus.
   const eligible=now===null?[]:rows.filter(r=>{const t=Date.parse(r.date+'T00:00:00Z');return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===r.date&&t<=now;});
-  const sorted=eligible.slice().sort((a,b)=>a.target-b.target);
+  // Count only the newest report per broker, preventing duplicate submissions from skewing consensus.
+  const latestByBroker=new Map();
+  for(const report of eligible){
+   const key=report.broker.trim().toLocaleLowerCase();
+   const previous=latestByBroker.get(key);
+   if(!previous||report.date>previous.date)latestByBroker.set(key,report);
+  }
+  const sorted=[...latestByBroker.values()].sort((a,b)=>a.target-b.target);
   const count=sorted.length;
   const mean=count?sorted.reduce((s,r)=>s+r.target,0)/count:null;
   const median=count?(count%2?sorted[(count-1)/2].target:(sorted[count/2-1].target+sorted[count/2].target)/2):null;
