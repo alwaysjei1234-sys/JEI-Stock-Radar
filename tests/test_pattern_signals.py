@@ -31,6 +31,18 @@ class StrategyRadarTests(unittest.TestCase):
         self.assertNotIn("probability", result["signals"]["breakout"][0])
         self.assertEqual(result["signals"]["breakout"][0]["data_date"], h[-1]["date"])
 
+    def test_chart_series_contains_only_dated_observed_closes(self):
+        h, stocks, sector, stats = fixture()
+        result = build_pattern_signals(h, stocks, sector, stats)
+        row = result["signals"]["breakout"][0]
+        series = row["close_series"]
+        self.assertEqual(len(series), 21)
+        self.assertEqual([point["date"] for point in series], [snap["date"] for snap in h])
+        self.assertEqual([point["close"] for point in series],
+                         [round(snap["prices"][row["code"]], 4) for snap in h])
+        self.assertNotIn("open", series[-1])
+        self.assertNotIn("volume", series[-1])
+
     def test_reference_levels_use_prior_closes_only(self):
         h, stocks, sector, stats = fixture()
         result = build_pattern_signals(h, stocks, sector, stats)
