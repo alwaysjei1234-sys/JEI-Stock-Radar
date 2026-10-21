@@ -74,7 +74,7 @@ def parse_twse_stock_day_ohlcv(payload, expected_code=None):
     columns={"open":"開盤價","high":"最高價","low":"最低價","close":"收盤價","volume":"成交股數"}
     indexes={}
     for key,header in columns.items():
-        matches=[i for i,name in enumerate(names) if name==header]
+        matches=[i for i,name in enumerate(names) if name in (("成交股數","交易股數") if key=="volume" else (header,))]
         if len(matches)!=1:
             raise ValueError("unique TWSE OHLCV column required: "+header)
         indexes[key]=matches[0]
