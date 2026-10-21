@@ -1,8 +1,9 @@
 name: JEI Daily Brief and Optional LINE
 on:
   schedule:
-    # UTC / Taipei: 08:55, 15:30, 18:10 weekdays; morning follows 08:30/08:45 feed preparation
+    # UTC / Taipei: 08:55 morning, 09:10 morning backup, 15:30 and 18:10 close weekdays
     - cron: '55 0 * * 1-5'
+    - cron: '10 1 * * 1-5' # 09:10 Taipei backup; LINE retry key deduplicates
     - cron: '30 7 * * 1-5'
     - cron: '10 10 * * 1-5'
   workflow_dispatch:
@@ -47,7 +48,7 @@ jobs:
           SCHEDULE: ${{ github.event.schedule }}
           SELECTED: ${{ inputs.edition }}
         run: |
-          if [ "$SCHEDULE" = '55 0 * * 1-5' ]; then
+          if [ "$SCHEDULE" = '55 0 * * 1-5' ] || [ "$SCHEDULE" = '10 1 * * 1-5' ]; then
             echo 'name=morning' >> "$GITHUB_OUTPUT"
             echo 'send=true' >> "$GITHUB_OUTPUT"
           elif [ "$SCHEDULE" = '10 10 * * 1-5' ]; then
