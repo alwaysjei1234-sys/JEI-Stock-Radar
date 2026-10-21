@@ -90,6 +90,7 @@ for(const [group,byHorizon] of Object.entries(data.groups)){
 const officialDates=Object.entries(official.days)
  .filter(([date,quotes])=>/^\d{4}-\d{2}-\d{2}$/.test(date)&&Object.values(quotes).filter(v=>Number.isFinite(v)&&v>0).length>=500)
  .map(([date])=>date).sort();
+assert.equal(data.latest_official_day,officialDates[officialDates.length-1],'performance report lags official price archive');
 for(const pick of data.picks){
  const signalIndex=officialDates.indexOf(pick.day);
  assert.ok(signalIndex>=0,'signal date not found in official trading calendar: '+pick.id);
