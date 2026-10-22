@@ -26,6 +26,7 @@
       resistanceLabel:hasResistance&&price>resistance?'已突破的原壓力':'參考壓力',
       asof:asof||null,quoteDate:quoteDate||null,flowDate:flowDate||null,
       flowFresh:!!(asof&&flowDate&&asof===flowDate),
+      flowVerified:false, // matching dates alone never verify institutional data
       caution:'支撐壓力為參考區間，非進出場保證；法人資料應標示其公布日期'};
   }
   return {analyze};
