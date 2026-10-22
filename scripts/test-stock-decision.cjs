@@ -15,4 +15,6 @@ assert.equal(analyze({price:NaN,support:83.3}).state,'missing_price');
 assert.equal(analyze({price:100}).state,'unverified');
 assert.equal(analyze({price:100,asof:'2026-10-21',flowDate:'2026-10-21'}).flowFresh,true);
 assert.equal(analyze({price:100,asof:'2026-10-21',flowDate:'2026-10-21'}).flowVerified,false);
+assert.equal(analyze({price:90,support:100,resistance:80}).state,'invalid_levels');
+assert.equal(analyze({price:90,support:90,resistance:90}).state,'invalid_levels');
 console.log('PASS: JEI stock decision regression scenarios');
