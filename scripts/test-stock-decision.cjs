@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const assert=require('node:assert/strict');
-const {analyze}=require('../remote/stock_decision.js');
+const {analyze,validateCloseFeed}=require('../remote/stock_decision.js');
 const t=analyze({price:316.5,support:277.5,resistance:298.5,asof:'2026-10-21',flowDate:'2026-10-20'});
 assert.equal(t.state,'broken_resistance');
 assert.equal(t.resistanceLabel,'已突破的原壓力');
@@ -17,4 +17,14 @@ assert.equal(analyze({price:100,asof:'2026-10-21',flowDate:'2026-10-21'}).flowFr
 assert.equal(analyze({price:100,asof:'2026-10-21',flowDate:'2026-10-21'}).flowVerified,false);
 assert.equal(analyze({price:90,support:100,resistance:80}).state,'invalid_levels');
 assert.equal(analyze({price:90,support:90,resistance:90}).state,'invalid_levels');
+const feed={data_date:'2026-10-21',market:{mode:'今日收盤',stale:false,close_count:1964}};
+const archive={kind:'official_daily_close',days:{'2026-10-21':{'1101':26.8}}};
+assert.deepEqual(validateCloseFeed(feed,archive,'1101','2026-10-22'),{ok:true,price:26.8,date:'2026-10-21',isToday:false});
+assert.equal(validateCloseFeed(feed,archive,'1101','2026-10-21').isToday,true);
+assert.equal(validateCloseFeed(feed,archive,'1101','2026-10-20').reason,'invalid_date');
+assert.equal(validateCloseFeed(feed,archive,'11','2026-10-22').reason,'invalid_code');
+assert.equal(validateCloseFeed({...feed,source_data_date:'2026-10-20'},archive,'1101','2026-10-22').reason,'source_date_mismatch');
+assert.equal(validateCloseFeed({...feed,market:{...feed.market,stale:true}},archive,'1101','2026-10-22').reason,'unverified_market');
+assert.equal(validateCloseFeed(feed,archive,'9999','2026-10-22').reason,'price_missing');
+assert.equal(validateCloseFeed(feed,{...archive,kind:'other'},'1101','2026-10-22').reason,'archive_missing');
 console.log('PASS: JEI stock decision regression scenarios');
