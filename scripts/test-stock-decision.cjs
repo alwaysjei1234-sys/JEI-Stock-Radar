@@ -34,4 +34,7 @@ assert.equal(marketFeedStatus({...feed,market:{...feed.market,stale:true}},'2026
 assert.equal(marketFeedStatus({...feed,data_date:'2026-10-22',market:{...feed.market,live_valid:true,live_count:900,live_coverage_pct:50}},'2026-10-22').state,'live');
 assert.equal(marketFeedStatus({...feed,data_date:'2026-10-22',market:{...feed.market,live_valid:true,live_count:900,live_coverage_pct:50,historical_readonly:true}},'2026-10-22').state,'close_today');
 assert.equal(marketFeedStatus({...feed,data_date:'2026-10-22',market:{...feed.market,live_valid:true,live_count:900,live_coverage_pct:10}},'2026-10-22').state,'close_today');
+assert.equal(marketFeedStatus({...feed,data_date:'2026-10-23'},'2026-10-22').state,'unverified');
+assert.equal(marketFeedStatus({...feed,source_data_date:'2026-10-20'},'2026-10-22').state,'unverified');
+assert.equal(marketFeedStatus({...feed,data_date:'invalid'},'2026-10-22').state,'unverified');
 console.log('PASS: JEI stock decision regression scenarios');
