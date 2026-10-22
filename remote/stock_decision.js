@@ -30,5 +30,16 @@
       flowVerified:false, // matching dates alone never verify institutional data
       caution:'支撐壓力為參考區間，非進出場保證；法人資料應標示其公布日期'};
   }
-  return {analyze};
+  function validateCloseFeed(feed,archive,code,today){
+    const day=feed&&feed.data_date,market=feed&&feed.market;
+    if(!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(day||'')||!today||day>today)return {ok:false,reason:'invalid_date'};
+    if(!/^[0-9]{4}$/.test(code||''))return {ok:false,reason:'invalid_code'};
+    if(!market||market.mode!=='今日收盤'||market.stale!==false||!Number.isFinite(market.close_count)||market.close_count<500)return {ok:false,reason:'unverified_market'};
+    if(feed.source_data_date&&feed.source_data_date!==day)return {ok:false,reason:'source_date_mismatch'};
+    if(!archive||archive.kind!=='official_daily_close'||!archive.days||!archive.days[day])return {ok:false,reason:'archive_missing'};
+    const price=archive.days[day][code];
+    if(!valid(price))return {ok:false,reason:'price_missing'};
+    return {ok:true,price,date:day,isToday:day===today};
+  }
+  return {analyze,validateCloseFeed};
 });
