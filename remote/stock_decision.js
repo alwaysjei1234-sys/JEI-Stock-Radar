@@ -41,6 +41,6 @@
     if(!valid(price))return {ok:false,reason:'price_missing'};
     return {ok:true,price,date:day,isToday:day===today};
   }
-  function marketFeedStatus(feed,today){const m=feed&&feed.market,day=feed&&feed.data_date;if(!m||!day)return {state:'unavailable'};if(!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(day)||!today||day>today||(feed.source_data_date&&feed.source_data_date!==day))return {state:'unverified',date:day};if(m.live_valid===true&&m.live_count>=500&&m.live_coverage_pct>=35&&m.stale===false&&m.historical_readonly!==true&&day===today)return {state:'live',date:day};if(m.mode==='今日收盤'&&m.stale===false&&m.close_count>=500&&day<=today)return {state:day===today?'close_today':'close_previous',date:day};return {state:'unverified',date:day};}
+  function marketFeedStatus(feed,today){const m=feed&&feed.market,day=feed&&feed.data_date;if(!m||!day)return {state:'unavailable'};if(!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(day)||!today||day>today||(feed.source_data_date&&feed.source_data_date!==day))return {state:'unverified',date:day};if(m.live_valid===true&&m.live_count>=500&&m.live_coverage_pct>=35&&m.stale===false&&m.historical_readonly!==true&&day===today)return {state:'live',date:day};if(m.live_valid===true)return {state:'unverified',date:day};if(m.mode==='今日收盤'&&m.stale===false&&m.close_count>=500&&day<=today)return {state:day===today?'close_today':'close_previous',date:day};return {state:'unverified',date:day};}
   return {analyze,validateCloseFeed,marketFeedStatus};
 });
