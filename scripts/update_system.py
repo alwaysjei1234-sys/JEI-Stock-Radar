@@ -1037,7 +1037,7 @@ def main():
                                 "盤中有效成交價與覆蓋率已達標" if live_valid else
                                 "交易時段外：僅供收盤資料參考" if not market_open else
                                 "MIS 查詢失敗或有效成交價覆蓋率不足")},
-                  "brief":f"{market_mode}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜JEI 每15分鐘更新"},
+                  "brief":f"{market_mode}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜行情時間以最近檢查時間為準"},
         "sectors":sectors,"stock_sectors":stock_sector,
         "universe":[{"code":x["code"],"name":x["name"],"market":x["market"]} for x in stocks if re.fullmatch(r"[1-9][0-9]{3}",x["code"])],
         "institutional":institutional,
