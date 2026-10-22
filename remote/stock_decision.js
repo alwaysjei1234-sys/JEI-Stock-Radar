@@ -9,6 +9,7 @@
   function analyze({price,support,resistance,asof,quoteDate,flowDate}={}){
     if(!valid(price))return {state:'missing_price',message:'缺少有效現價，停止產生交易判斷'};
     const hasSupport=valid(support),hasResistance=valid(resistance);
+    if(hasSupport&&hasResistance&&support>=resistance)return {state:'invalid_levels',message:'支撐價必須低於壓力價，請檢查資料來源',price,support,resistance,flowVerified:false};
     const pct=x=>Math.round((x/price-1)*10000)/100;
     let state='unverified',message='缺少經驗證的支撐壓力，暫不判定突破';
     if(hasResistance&&price>resistance){
