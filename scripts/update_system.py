@@ -216,6 +216,7 @@ def enrich_live(rows, asof=None):
         prefix="tse_" if x.get("market")=="TWSE" else "otc_"
         channels.append(prefix+x["code"]+".tw")
     got=0;errors=[]
+    stats={"requested_channels":len(channels),"returned_messages":0,"matched_codes":0,"rejected_date":0,"rejected_time":0,"rejected_price":0}
     # MIS is sensitive to oversized ex_ch queries/rate bursts. Use conservative
     # batches and retry failed/empty chunks at half size so a full-market scan
     # does not silently fall back to a stale daily snapshot.
@@ -244,10 +245,12 @@ def enrich_live(rows, asof=None):
             try:
                 got_rows,errs=fut.result();messages.extend(got_rows);errors.extend(errs)
             except Exception as e:errors.append(str(e))
+    stats["returned_messages"]=len(messages)
     for m in messages:
         code=str(m.get("c","")).strip()
         x=by_code.get(code)
         if not x:continue
+        stats["matched_codes"]+=1
         # MIS can return the prior session on holidays, before opening, or after outages.
         # Never overwrite official rows or count a quote without the exchange date for today.
         quote_day=re.sub(r"[^0-9]","",str(m.get("d","") or ""))
@@ -260,9 +263,16 @@ def enrich_live(rows, asof=None):
                               and (hh<13 or mm<=30))
         except (ValueError,TypeError):
             valid_trade_time=False
-        if quote_day!=expected_day or not valid_trade_time:continue
+        if quote_day!=expected_day:
+            stats["rejected_date"]+=1
+            continue
+        if not valid_trade_time:
+            stats["rejected_time"]+=1
+            continue
         prev=num(m.get("y"));price=live_price(m)
-        if price is None or price<=0 or prev is None or prev<=0:continue
+        if price is None or price<=0 or prev is None or prev<=0:
+            stats["rejected_price"]+=1
+            continue
         x["close"]=price;x["change"]=price-prev;x["pct"]=(price-prev)/prev*100.0
         o=num(m.get("o"));h=num(m.get("h"));l=num(m.get("l"));v=num(m.get("v"))
         if o and o>0:x["open"]=o
@@ -285,7 +295,7 @@ def enrich_live(rows, asof=None):
             y=num(idx[0].get("y"));z=live_price(idx[0])
             if z and y and y>0:taiex=(z-y)/y*100.0
     except Exception as e:errors.append("TAIEX:"+str(e))
-    return rows,got,taiex,errors
+    return rows,got,taiex,errors,stats
 
 def num(v):
     if v is None:return None
@@ -534,7 +544,7 @@ def main():
                 errors.append(f"TPEx OpenAPI快取落後，已強制重抓 {len(fresh_tpex)} 檔")
         except Exception as e:errors.append("TPEx當日補資料:"+str(e))
 
-    live_count=0;live_errors=[];taiex_live=None
+    live_count=0;live_errors=[];taiex_live=None;live_stats={}
     # Session classification and quote collection are different: do not call final MIS
     # snapshots a live trading session after 13:30, and never trust an old quote date.
     minutes=now.hour*60+now.minute
@@ -542,7 +552,7 @@ def main():
     quote_refresh_window=now.weekday()<5 and 525<=minutes<960  # 08:45-15:59
     post_close_refresh=now.weekday()<5 and 840<=minutes<960
     if quote_refresh_window:
-        try:rows,live_count,taiex_live,live_errors=enrich_live(rows)
+        try:rows,live_count,taiex_live,live_errors,live_stats=enrich_live(rows)
         except Exception as e:live_errors.append(str(e))
         if live_errors and live_count<100:errors.append("MIS盤中:"+(";".join(live_errors))[:120])
 
@@ -897,7 +907,7 @@ def main():
                     if monthly:files_by_code[code]=monthly
                 attach_verified_ohlcv(archived_patterns,files_by_code)
                 retained["patterns"]=archived_patterns
-            retained["market"]["live_diagnostics"]={"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":now.strftime("%Y-%m-%d %H:%M"),"valid_trades":live_count,"required_trades":500,"required_coverage_pct":35,"errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],"reason":("非行情更新時段" if not quote_refresh_window else "MIS 有效成交不足，保留已驗證歷史收盤")}
+            retained["market"]["live_diagnostics"]={"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":now.strftime("%Y-%m-%d %H:%M"),"valid_trades":live_count,"mis_stats":live_stats,"required_trades":500,"required_coverage_pct":35,"errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],"reason":("非行情更新時段" if not quote_refresh_window else "MIS 有效成交不足，保留已驗證歷史收盤")}
             OUT.write_text(json.dumps(retained,ensure_ascii=False,indent=2),encoding="utf-8")
             print(json.dumps({"status":"archived_close_only",
                               "data_date":retained["data_date"],
