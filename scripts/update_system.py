@@ -216,7 +216,7 @@ def enrich_live(rows, asof=None):
         prefix="tse_" if x.get("market")=="TWSE" else "otc_"
         channels.append(prefix+x["code"]+".tw")
     got=0;errors=[]
-    stats={"requested_channels":len(channels),"returned_messages":0,"matched_codes":0,"rejected_date":0,"rejected_time":0,"rejected_price":0}
+    stats={"requested_channels":len(channels),"returned_messages":0,"matched_codes":0,"rejected_date":0,"rejected_time":0,"rejected_price":0,"missing_last_trade":0,"missing_previous_close":0}
     # MIS is sensitive to oversized ex_ch queries/rate bursts. Use conservative
     # batches and retry failed/empty chunks at half size so a full-market scan
     # does not silently fall back to a stale daily snapshot.
@@ -272,6 +272,8 @@ def enrich_live(rows, asof=None):
         prev=num(m.get("y"));price=live_price(m)
         if price is None or price<=0 or prev is None or prev<=0:
             stats["rejected_price"]+=1
+            if price is None or price<=0:stats["missing_last_trade"]+=1
+            if prev is None or prev<=0:stats["missing_previous_close"]+=1
             continue
         x["close"]=price;x["change"]=price-prev;x["pct"]=(price-prev)/prev*100.0
         o=num(m.get("o"));h=num(m.get("h"));l=num(m.get("l"));v=num(m.get("v"))
