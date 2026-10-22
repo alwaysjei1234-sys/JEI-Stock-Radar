@@ -988,7 +988,7 @@ def main():
                 "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
         "market":{"status":market_status,"mode":market_mode,"last_checked_at":now.strftime("%Y-%m-%d %H:%M"),
                   "live_count":live_count,"close_count":len(stocks),"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source,"post_close_refresh":post_close_refresh,
-                  "live_diagnostics":{"attempted":quote_refresh_window,
+                  "live_diagnostics":{"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":now.strftime("%Y-%m-%d %H:%M"),
                       "valid_trades":live_count,"required_trades":500,
                       "required_coverage_pct":35,
                       "errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],
