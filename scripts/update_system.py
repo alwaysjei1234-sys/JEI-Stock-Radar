@@ -246,6 +246,31 @@ def enrich_live(rows, asof=None):
                 got_rows,errs=fut.result();messages.extend(got_rows);errors.extend(errs)
             except Exception as e:errors.append(str(e))
     stats["returned_messages"]=len(messages)
+    # Retry at most 100 symbols showing volume but no last trade.
+    incomplete=[m for m in messages if live_price(m) is None and
+                (num(m.get("v")) or 0)>0 and
+                str(m.get("c","")).isdigit() and len(str(m.get("c","")))==4]
+    stats["incomplete_with_volume"]=len(incomplete)
+    stats["retry_requested"]=0
+    stats["retry_recovered"]=0
+    retry_channels=[]
+    for m in incomplete[:100]:
+        code=str(m.get("c"))
+        row=by_code.get(code)
+        if row:
+            retry_channels.append(("tse_" if row.get("market")=="TWSE" else "otc_")+code+".tw")
+    stats["retry_requested"]=len(retry_channels)
+    replacements={}
+    for j in range(0,len(retry_channels),20):
+        try:
+            for quote in fetch_mis_channels(retry_channels[j:j+20]):
+                if live_price(quote) is not None:
+                    replacements[str(quote.get("c",""))]=quote
+        except Exception as exc:
+            errors.append("MIS retry: "+str(exc)[:100])
+    if replacements:
+        messages=[replacements.get(str(m.get("c","")),m) for m in messages]
+        stats["retry_recovered"]=len(replacements)
     for m in messages:
         code=str(m.get("c","")).strip()
         x=by_code.get(code)
