@@ -897,6 +897,7 @@ def main():
                     if monthly:files_by_code[code]=monthly
                 attach_verified_ohlcv(archived_patterns,files_by_code)
                 retained["patterns"]=archived_patterns
+            retained["market"]["live_diagnostics"]={"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":now.strftime("%Y-%m-%d %H:%M"),"valid_trades":live_count,"required_trades":500,"required_coverage_pct":35,"errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],"reason":("非行情更新時段" if not quote_refresh_window else "MIS 有效成交不足，保留已驗證歷史收盤")}
             OUT.write_text(json.dumps(retained,ensure_ascii=False,indent=2),encoding="utf-8")
             print(json.dumps({"status":"archived_close_only",
                               "data_date":retained["data_date"],
