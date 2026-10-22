@@ -39,6 +39,9 @@ jobs:
         run: python -m py_compile scripts/update_system.py
       - name: Build market feed
         run: python scripts/update_system.py
+      - name: Audit live quote coverage (diagnostic only)
+        continue-on-error: true
+        run: python scripts/audit_feed_health.py remote/system.json
       - name: Collect public research headlines
         run: python scripts/collect_news_rss.py
       - name: Publish JEI market files
