@@ -75,6 +75,10 @@ async function run(){
   await health.reload({waitUntil:'domcontentloaded'});
   assert.match(await health.locator('#holdingRows').innerText(),/2330/,'local holding persists after reload');
   assert.equal(healthRequests.some(url=>{try{return new URL(url).hostname!=='127.0.0.1'}catch{return true}}),false,'private holding page makes no external requests');
+  health.once('dialog',dialog=>dialog.dismiss());
+  await health.locator('#clearHoldings').click();
+  assert.equal(await health.evaluate(()=>JSON.parse(localStorage.getItem('jei-holding-health-private-v1')).length),1,'cancelled clear keeps the local holding');
+  health.once('dialog',dialog=>dialog.accept());
   await health.locator('#clearHoldings').click();
   assert.equal(await health.evaluate(()=>localStorage.getItem('jei-holding-health-private-v1')),null);
   assert.match(await health.locator('#holdingRows').innerText(),/尚未在此裝置建立/);
