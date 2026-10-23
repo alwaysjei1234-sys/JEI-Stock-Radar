@@ -48,7 +48,9 @@ async function run(){
   await page.locator('#feedGate').waitFor({state:'visible'});
   assert.match(await page.locator('#feedGate').innerText(),/行情|收盤|盤中/);
   assert.match(await page.locator('#quickRisk').innerText(),/大盤|前次收盤|風險/);
-  assert.match(await page.locator('#quickHold').innerText(),/Android App/);
+  assert.equal(await page.locator('#quickHold').isVisible(),false,'personal holdings summary is absent from visitor edition');
+  assert.equal(await page.locator('#totalPnl').isVisible(),false,'visitor never sees owner profit/loss metric');
+  assert.equal(await page.locator('#portfolioRisk').isVisible(),false,'visitor never sees owner risk metric');
   assert.match(await page.locator('#quickAttack').innerText(),/主攻/);
   assert.equal(await page.locator('#holdTriage').isVisible(),false,'private triage never shown on public browser');
   assert.equal(await page.locator('#holdToolbar').isVisible(),false,'private sort/filter controls never shown on public browser');
