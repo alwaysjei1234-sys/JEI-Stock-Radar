@@ -16,7 +16,7 @@ class LiveQuoteTests(unittest.TestCase):
         rows = [{"code": "2330", "market": "TWSE", "close": 100.0, "pct": 0.0}]
         quote = {"c": "2330", "d": "20261021", "t": "09:30:05", "z": "105", "y": "100"}
         with patch("scripts.update_system.fetch_mis_channels", return_value=[quote]):
-            result, count, _, errors = enrich_live(rows, asof=datetime(2026, 10, 21, 10, 0, tzinfo=TZ))
+            result, count, _, errors, _ = enrich_live(rows, asof=datetime(2026, 10, 21, 10, 0, tzinfo=TZ))
         self.assertEqual(count, 1)
         self.assertEqual(result[0]["close"], 105)
         self.assertTrue(result[0]["live"])
@@ -30,7 +30,7 @@ class LiveQuoteTests(unittest.TestCase):
             with self.subTest(changes=changes):
                 rows = [{"code": "2330", "market": "TWSE", "close": 100.0}]
                 with patch("scripts.update_system.fetch_mis_channels", return_value=[dict(base, **changes)]):
-                    result, count, _, _ = enrich_live(rows, asof=datetime(2026, 10, 21, 10, 0, tzinfo=TZ))
+                    result, count, _, _, _ = enrich_live(rows, asof=datetime(2026, 10, 21, 10, 0, tzinfo=TZ))
                 self.assertEqual(count, 0)
                 self.assertEqual(result[0]["close"], 100.0)
                 self.assertFalse(result[0].get("live", False))
