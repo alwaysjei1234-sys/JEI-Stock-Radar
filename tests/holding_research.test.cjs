@@ -9,6 +9,17 @@ assert.equal(research.freshness('2026-08-01', '2026-10-23', 45).state, 'stale');
 assert.equal(research.freshness('2026-10-24', '2026-10-23').state, 'unverified');
 assert.equal(research.validDay('2026-02-30'), false);
 
+const sourceDirectory = JSON.parse(fs.readFileSync(require.resolve('../remote/research_source_directory.json'), 'utf8'));
+const sourceLinks = research.sourceQueries(sourceDirectory, '2330');
+assert.ok(sourceLinks.length >= 10, 'research view should expose multiple independent source categories');
+assert.ok(sourceLinks.some(item => item.name.includes('第一金')));
+assert.ok(sourceLinks.some(item => item.name.includes('華南永昌')));
+assert.ok(sourceLinks.some(item => item.name.includes('元大')));
+assert.ok(sourceLinks.some(item => item.category === '論壇線索'));
+assert.ok(sourceLinks.every(item => new URL(item.href).protocol === 'https:'));
+assert.deepEqual(research.sourceQueries(sourceDirectory, '<script>'), [], 'invalid ticker must not form external search links');
+assert.equal(sourceLinks.find(item => item.name.includes('PTT')).href.includes('2330'), true);
+
 const snapshot = research.marketSnapshot({ data_date: '2026-10-22', market: { status: '收盤' }, risk: { score: 68, reasons: ['breadth'], institutional_net_lots: -120 } },
   { morning: { us_market: [{ name: 'NASDAQ', date: '2026-10-22', change_pct: -2.6 }] } }, '2026-10-23');
 assert.equal(snapshot.freshness.state, 'dated');

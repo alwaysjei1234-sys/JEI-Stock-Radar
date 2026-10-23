@@ -71,6 +71,11 @@ async function run(){
   assert.match(await health.locator('#researchTickerResult').innerText(),/月營收/);
   assert.match(await health.locator('#researchTickerResult').innerText(),/融資餘額/);
   assert.match(await health.locator('#researchTickerResult').innerText(),/官方估值快照/);
+  const researchLinks=health.locator('#researchSourceLinks a');
+  assert.ok(await researchLinks.count()>=10,'ticker lookup should expose several free source entry points');
+  assert.ok((await health.locator('#researchSourceLinks').innerText()).includes('華南永昌'));
+  assert.ok((await health.locator('#researchSourceLinks').innerText()).includes('第一金'));
+  assert.ok((await health.locator('#researchSourceLinks').innerText()).includes('論壇線索'));
   await health.locator('#scenarioPrice').fill('100');
   await health.locator('#scenarioBull').fill('120');
   await health.locator('#scenarioBaseLow').fill('95');

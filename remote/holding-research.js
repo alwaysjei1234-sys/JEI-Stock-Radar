@@ -103,6 +103,21 @@
       return { date, code, entry: Number(entry), exit: Number(exit), shares: Number(shares) };
     });
   }
+  function sourceQueries(directory, code) {
+    const ticker = String(code || '').trim().toUpperCase();
+    if (!/^[A-Z0-9.-]{1,12}$/.test(ticker)) return [];
+    const entries = directory && directory.schemaVersion === 1 && Array.isArray(directory.sources) ? directory.sources : [];
+    return entries.filter(item => item && typeof item.name === 'string' && typeof item.url === 'string')
+      .map(item => {
+        const template = typeof item.search === 'string' ? item.search : item.url;
+        const href = template.replaceAll('{ticker}', encodeURIComponent(ticker));
+        try {
+          const parsed = new URL(href);
+          if (parsed.protocol !== 'https:') return null;
+          return { name: item.name, category: item.category || '其他來源', access: item.access || '請確認原站條件', evidence: item.evidence || '', href: parsed.href };
+        } catch (_) { return null; }
+      }).filter(Boolean);
+  }
   function init(doc, fetcher) {
     const set = (id, text) => { const el = doc.getElementById(id); if (el) el.textContent = text; };
     const clearEphemeral = () => {
@@ -117,13 +132,15 @@
     if (lock) lock.addEventListener('click', clearEphemeral);
     const globalTarget = typeof window !== 'undefined' ? window : globalThis;
     if (globalTarget && globalTarget.addEventListener) globalTarget.addEventListener('pagehide', clearEphemeral);
-    let latestSystem = null, latestFree = null;
+    let latestSystem = null, latestFree = null, latestSources = null;
     if (fetcher) Promise.allSettled([fetcher('./system.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('market'); return r.json(); }),
       fetcher('./brief.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('brief'); return r.json(); }),
-      fetcher('./free_research.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('free research'); return r.json(); })]).then(results => {
+      fetcher('./free_research.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('free research'); return r.json(); }),
+      fetcher('./research_source_directory.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('research source directory'); return r.json(); })]).then(results => {
       const system = results[0].status === 'fulfilled' ? results[0].value : null;
       const brief = results[1].status === 'fulfilled' ? results[1].value : null;
       latestFree = results[2].status === 'fulfilled' ? results[2].value : null;
+      latestSources = results[3].status === 'fulfilled' ? results[3].value : null;
       if (!system) { set('researchMarketStatus', '公開市場 feed 讀取失敗；暫停市場即時判讀。'); return; }
       latestSystem = system;
       const snapshot = marketSnapshot(system, brief, dayInTaipei());
@@ -145,6 +162,19 @@
       if (!latestSystem) { set('researchTickerResult', '公開 feed 尚未完成同步；暫不分析。'); return; }
       const found = lookupStock(latestSystem, doc.getElementById('researchTicker').value, dayInTaipei());
       if (!found.ok) { set('researchTickerResult', found.message); return; }
+      const sourceContainer = doc.getElementById('researchSourceLinks');
+      if (sourceContainer) {
+        sourceContainer.replaceChildren();
+        const links = sourceQueries(latestSources, found.code);
+        if (!links.length) sourceContainer.textContent = '多來源目錄尚未載入；請稍後重試。';
+        else links.forEach(item => {
+          const card = doc.createElement('p');
+          const link = doc.createElement('a');
+          link.href = item.href; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = `${item.category}｜${item.name} ↗`;
+          const detail = doc.createElement('small'); detail.textContent = ` ${item.access}${item.evidence ? `。${item.evidence}` : ''}`;
+          card.append(link, doc.createElement('br'), detail); sourceContainer.append(card);
+        });
+      }
       const parts = [`${found.code} ${found.name}`, `JEI 快照資料日 ${found.date || '未知'}`, found.freshness.state === 'dated' ? '日期可用' : found.message || '日期待驗證', '非券商即時報價，不能視為下單訊號'];
       if (found.candidate) parts.push(`候選：${found.candidate.category} #${found.candidate.rank}｜模型分數 ${found.candidate.score ?? '缺值'}｜價格 ${found.candidate.price ?? '缺值'}${found.candidate.changePct == null ? '' : `｜漲跌 ${found.candidate.changePct}%`}`);
       else parts.push('今日公開候選清單未收錄；不代表基本面或投資價值判定。');
@@ -188,5 +218,5 @@
       if (el && output) el.addEventListener('input', () => set(output, el.value.trim() ? '已輸入手動研究線索；請自行核對原始公告，系統尚未驗證來源。' : '尚未輸入查證資料。'));
     });
   }
-  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, init });
+  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, sourceQueries, init });
 }));
