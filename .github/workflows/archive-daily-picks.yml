@@ -11,7 +11,11 @@ on:
     paths:
       - '.github/workflows/archive-daily-picks.yml'
       - 'scripts/export_official_closes.py'
+      - 'scripts/export_daily_picks.py'
+      - 'scripts/recover_archived_paper_day.py'
       - 'tests/test_export_official_closes.py'
+      - 'tests/test_export_daily_picks.py'
+      - 'tests/test_recover_archived_paper_day.py'
       - 'tests/test_offhours_archive.py'
       - 'data/pick_snapshots/*.json'
       - 'data/feed_closes/*.json'
