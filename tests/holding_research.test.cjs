@@ -19,6 +19,8 @@ assert.ok(sourceLinks.some(item => item.category === '論壇線索'));
 assert.ok(sourceLinks.every(item => new URL(item.href).protocol === 'https:'));
 assert.deepEqual(research.sourceQueries(sourceDirectory, '<script>'), [], 'invalid ticker must not form external search links');
 assert.equal(sourceLinks.find(item => item.name.includes('PTT')).href.includes('2330'), true);
+assert.match(sourceLinks.find(item => item.name.includes('Yahoo')).href,/2330\.TW\/news$/);
+assert.match(research.sourceQueries(sourceDirectory, '6488', 'otc').find(item => item.name.includes('Yahoo')).href,/6488\.TWO\/news$/);
 
 const snapshot = research.marketSnapshot({ data_date: '2026-10-22', market: { status: '收盤' }, risk: { score: 68, reasons: ['breadth'], institutional_net_lots: -120 } },
   { morning: { us_market: [{ name: 'NASDAQ', date: '2026-10-22', change_pct: -2.6 }] } }, '2026-10-23');

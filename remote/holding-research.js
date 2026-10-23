@@ -103,14 +103,15 @@
       return { date, code, entry: Number(entry), exit: Number(exit), shares: Number(shares) };
     });
   }
-  function sourceQueries(directory, code) {
+  function sourceQueries(directory, code, market = null) {
     const ticker = String(code || '').trim().toUpperCase();
     if (!/^[A-Z0-9.-]{1,12}$/.test(ticker)) return [];
     const entries = directory && directory.schemaVersion === 1 && Array.isArray(directory.sources) ? directory.sources : [];
     return entries.filter(item => item && typeof item.name === 'string' && typeof item.url === 'string')
       .map(item => {
         const template = typeof item.search === 'string' ? item.search : item.url;
-        const href = template.replaceAll('{ticker}', encodeURIComponent(ticker));
+        const exchange = market === 'otc' ? 'TWO' : 'TW';
+        const href = template.replaceAll('{ticker}', encodeURIComponent(ticker)).replaceAll('{market}', exchange);
         try {
           const parsed = new URL(href);
           if (parsed.protocol !== 'https:') return null;
@@ -162,10 +163,11 @@
       if (!latestSystem) { set('researchTickerResult', '公開 feed 尚未完成同步；暫不分析。'); return; }
       const found = lookupStock(latestSystem, doc.getElementById('researchTicker').value, dayInTaipei());
       if (!found.ok) { set('researchTickerResult', found.message); return; }
+      const evidence = lookupFreeEvidence(latestFree, found.code, dayInTaipei());
       const sourceContainer = doc.getElementById('researchSourceLinks');
       if (sourceContainer) {
         sourceContainer.replaceChildren();
-        const links = sourceQueries(latestSources, found.code);
+        const links = sourceQueries(latestSources, found.code, evidence && evidence.market);
         if (!links.length) sourceContainer.textContent = '多來源目錄尚未載入；請稍後重試。';
         else links.forEach(item => {
           const card = doc.createElement('p');
@@ -180,7 +182,6 @@
       else parts.push('今日公開候選清單未收錄；不代表基本面或投資價值判定。');
       parts.push(`族群 ${found.sector || '未分類'}｜族群分數 ${found.sectorScore ?? '缺值'}`);
       parts.push(found.institutional ? `三大法人淨額 ${found.institutional.total} 股｜${found.institutional.source}｜系統快照 ${found.institutional.snapshotDate}（來源公告日未獨立提供）` : '個股法人資料缺值');
-      const evidence = lookupFreeEvidence(latestFree, found.code, dayInTaipei());
       if (evidence && evidence.status) parts.push(evidence.status);
       if (evidence && evidence.revenue) {
         const item = evidence.revenue, dated = evidence.revenueFreshness.state === 'dated' ? '' : `（資料過期／日期未驗證 ${item.publishedAt || '未知'}）`;
