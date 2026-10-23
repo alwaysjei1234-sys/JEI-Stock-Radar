@@ -100,6 +100,9 @@ class OffhoursArchiveTests(unittest.TestCase):
             with self.subTest(day=day):
                 snapshot=json.loads(path.read_text(encoding="utf-8"))
                 self.assertEqual(snapshot.get("data_date"),day)
+                if day == "2026-10-22":
+                    self.assertEqual(snapshot.get("captured_at"),"2026-10-22 20:22")
+                    self.assertEqual(snapshot.get("source_feed_commit"),"f40ced6e")
                 self.assertTrue(all(p.get("as_of")==day for p in snapshot.get("picks",[])))
                 close_path=ROOT/"data/feed_closes"/(day+".json")
                 self.assertTrue(close_path.is_file(),f"missing close archive for {day}")
