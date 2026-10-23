@@ -56,6 +56,8 @@ jobs:
         run: node tests/forecast_audit.test.cjs
       - name: Target consensus
         run: node tests/target_consensus.test.cjs
+      - name: Private holding research workbench
+        run: node tests/holding_research.test.cjs
       - name: Research engine
         run: node tests/research_engine.test.cjs
       - name: Open or update failure issue

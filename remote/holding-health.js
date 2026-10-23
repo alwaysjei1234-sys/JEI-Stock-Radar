@@ -101,6 +101,7 @@
     const list = doc.getElementById('holdingRows');
     const status = doc.getElementById('holdingStatus');
     const summary = doc.getElementById('holdingSummary');
+    const researchPortfolio = doc.getElementById('researchPortfolio');
     const clearButton = doc.getElementById('clearHoldings');
     if (!unlockForm || !vault || !form || !list || !status || !summary || !clearButton) return;
 
@@ -129,6 +130,7 @@
       list.replaceChildren();
       if (!unlocked) {
         summary.textContent = '私人清單已鎖定';
+        if (researchPortfolio) researchPortfolio.textContent = '請先解鎖私人持股清單。';
         return;
       }
       if (!holdings.length) {
@@ -161,6 +163,9 @@
       const result = summarize(holdings);
       summary.textContent = '持有 ' + holdings.length + ' 檔｜投入成本 ' + money(result.cost) +
         (result.pricedCount ? '｜估算損益 ' + money(result.pnl) : '｜尚無手動市價，未計算損益');
+      if (researchPortfolio) researchPortfolio.textContent = holdings.length
+        ? '本機清單已解鎖：' + holdings.length + ' 檔｜投入成本 ' + money(result.cost) + '｜研究資料只保留在此裝置。'
+        : '私人清單目前為空；沒有任何持股資料可供八項健檢。';
     }
     async function persist(message) {
       try {
