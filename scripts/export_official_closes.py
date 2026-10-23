@@ -3,6 +3,7 @@ import argparse
 import json
 import math
 import re
+from datetime import date
 from pathlib import Path
 
 DEFAULT_INPUT = Path("remote/daily_prices.json")
@@ -10,13 +11,17 @@ MIN_QUOTES = 500
 
 
 def export_archive(daily, day):
-    if not re.fullmatch(r"\d{4}-\\d{2}-\\d{2}", str(day)):
+    try:
+        parsed_day = date.fromisoformat(str(day))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("交易日日期格式錯誤") from exc
+    if parsed_day.isoformat() != str(day):
         raise ValueError("交易日日期格式錯誤")
     if (not isinstance(daily, dict) or daily.get("schema") != 1 or
             daily.get("kind") != "official_daily_close" or
             not isinstance(daily.get("days"), dict)):
         raise ValueError("日價歷史檔不是官方收盤格式")
-    source = daily["days"].get(day)
+    source = daily["days"].get(str(day))
     if not isinstance(source, dict):
         raise ValueError("官方日價歷史檔缺少指定交易日")
     quotes = {}
@@ -34,10 +39,10 @@ def export_archive(daily, day):
     return {
         "schema": 1,
         "kind": "official_daily_close",
-        "data_date": day,
+        "data_date": str(day),
         "source": "remote/daily_prices.json: official daily closes",
         "coverage_count": len(quotes),
-        "days": {day: quotes},
+        "days": {str(day): quotes},
     }
 
 
