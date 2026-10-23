@@ -37,6 +37,7 @@ jobs:
       - name: Verify forward-only picked-stock analysis and no hindsight
         run: python -m unittest discover -s tests -p 'test_pick_validation.py' -v
       - name: Generate daily public paper-only benchmark
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event_name == 'schedule'
         run: python scripts/update_paper_performance.py
       - name: Freeze daily picks and generate 3-60 trading-day report
         run: python scripts/update_pick_validation.py
