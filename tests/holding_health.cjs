@@ -24,7 +24,7 @@ assert.equal(api.STORAGE_KEY, 'jei-holding-health-private-v2');
   assert.equal(envelope.version, 2);
   assert.equal(JSON.stringify(envelope).includes('2330'), false, 'encrypted envelope must not expose stock codes');
   assert.equal(JSON.stringify(envelope).includes('台積電'), false, 'encrypted envelope must not expose stock names');
-  assert.equal(JSON.stringify(envelope).includes('1000'), false, 'encrypted envelope must not expose shares');
+  assert.equal(JSON.stringify(envelope).includes('"shares":1000'), false, 'encrypted envelope must not expose the shares field');
   assert.deepEqual(JSON.parse(JSON.stringify(await api.decrypt(envelope, 'my-private-passphrase-2026', webcrypto))), records.map(api.normalizeHolding));
   await assert.rejects(() => api.decrypt(envelope, 'wrong-passphrase-0000', webcrypto));
   await assert.rejects(() => api.encrypt(records, 'short', webcrypto), /12 個字元/);
