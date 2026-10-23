@@ -32,7 +32,7 @@
   "market": {
     "status": "紅燈防守",
     "mode": "今日收盤",
-    "last_checked_at": "2026-10-23 17:28",
+    "last_checked_at": "2026-10-23 18:03",
     "live_count": 0,
     "close_count": 1955,
     "live_coverage_pct": 0.0,
@@ -43,7 +43,7 @@
       "attempted": false,
       "market_open": false,
       "quote_refresh_window": false,
-      "updater_time_taipei": "2026-10-23 17:28",
+      "updater_time_taipei": "2026-10-23 18:03",
       "valid_trades": 0,
       "mis_stats": {},
       "required_trades": 500,
@@ -54,7 +54,7 @@
     "brief": "今日收盤多因子市場｜加權 -1.81%｜廣度 21.7%｜中位數 -0.98%｜跌逾5% 197｜行情時間以最近檢查時間為準",
     "historical_readonly": true,
     "partial_live": {
-      "asof": "2026-10-23 17:28",
+      "asof": "2026-10-23 18:03",
       "verified_count": 0,
       "coverage_pct": 0.0,
       "complete": false,
@@ -24788,7 +24788,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 83,
-          "reason": "收盤突破前20日收盤高點 220.50；突破 9.98%｜未驗證成交量"
+          "reason": "收盤突破前20日收盤高點 220.50；突破 9.98%｜官方成交量 3.13 倍；量價同步突破",
+          "ohlcv": [
+            {
+              "date": "2026-09-18",
+              "open": 175.5,
+              "high": 177.5,
+              "low": 173.5,
+              "close": 175.0,
+              "volume": 75610
+            },
+            {
+              "date": "2026-09-21",
+              "open": 175.5,
+              "high": 176.0,
+              "low": 169.0,
+              "close": 170.5,
+              "volume": 208000
+            },
+            {
+              "date": "2026-09-22",
+              "open": 174.0,
+              "high": 177.0,
+              "low": 171.0,
+              "close": 172.0,
+              "volume": 48867
+            },
+            {
+              "date": "2026-09-23",
+              "open": 172.0,
+              "high": 173.5,
+              "low": 170.0,
+              "close": 170.5,
+              "volume": 54565
+            },
+            {
+              "date": "2026-09-24",
+              "open": 171.0,
+              "high": 172.0,
+              "low": 171.0,
+              "close": 172.0,
+              "volume": 10341
+            },
+            {
+              "date": "2026-09-29",
+              "open": 173.0,
+              "high": 176.0,
+              "low": 172.5,
+              "close": 174.5,
+              "volume": 66534
+            },
+            {
+              "date": "2026-09-30",
+              "open": 180.0,
+              "high": 181.0,
+              "low": 177.0,
+              "close": 179.5,
+              "volume": 93887
+            },
+            {
+              "date": "2026-10-01",
+              "open": 180.0,
+              "high": 197.0,
+              "low": 180.0,
+              "close": 194.5,
+              "volume": 444008
+            },
+            {
+              "date": "2026-10-02",
+              "open": 188.0,
+              "high": 193.0,
+              "low": 185.5,
+              "close": 187.0,
+              "volume": 154153
+            },
+            {
+              "date": "2026-10-05",
+              "open": 190.0,
+              "high": 192.0,
+              "low": 187.0,
+              "close": 188.0,
+              "volume": 122649
+            },
+            {
+              "date": "2026-10-06",
+              "open": 191.5,
+              "high": 193.0,
+              "low": 189.0,
+              "close": 191.0,
+              "volume": 67061
+            },
+            {
+              "date": "2026-10-07",
+              "open": 190.5,
+              "high": 206.0,
+              "low": 188.5,
+              "close": 195.5,
+              "volume": 260249
+            },
+            {
+              "date": "2026-10-12",
+              "open": 201.0,
+              "high": 201.5,
+              "low": 190.0,
+              "close": 192.5,
+              "volume": 255603
+            },
+            {
+              "date": "2026-10-13",
+              "open": 191.5,
+              "high": 211.5,
+              "low": 191.5,
+              "close": 211.5,
+              "volume": 550917
+            },
+            {
+              "date": "2026-10-14",
+              "open": 208.5,
+              "high": 215.5,
+              "low": 205.5,
+              "close": 208.0,
+              "volume": 276870
+            },
+            {
+              "date": "2026-10-15",
+              "open": 193.0,
+              "high": 202.0,
+              "low": 193.0,
+              "close": 199.0,
+              "volume": 177768
+            },
+            {
+              "date": "2026-10-16",
+              "open": 202.0,
+              "high": 202.0,
+              "low": 195.0,
+              "close": 197.0,
+              "volume": 72738
+            },
+            {
+              "date": "2026-10-19",
+              "open": 191.0,
+              "high": 198.0,
+              "low": 188.0,
+              "close": 194.5,
+              "volume": 102082
+            },
+            {
+              "date": "2026-10-20",
+              "open": 193.5,
+              "high": 207.0,
+              "low": 192.5,
+              "close": 200.5,
+              "volume": 148562
+            },
+            {
+              "date": "2026-10-21",
+              "open": 201.5,
+              "high": 220.5,
+              "low": 201.5,
+              "close": 220.5,
+              "volume": 362345
+            },
+            {
+              "date": "2026-10-22",
+              "open": 229.5,
+              "high": 242.5,
+              "low": 229.5,
+              "close": 242.5,
+              "volume": 556086
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 220.5,
+            "prior_20_avg_volume_shares": 177640.45,
+            "latest_volume_shares": 556086,
+            "volume_ratio": 3.13,
+            "price_breakout": true,
+            "volume_expansion": true,
+            "confirmed_price_volume_breakout": true
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "2465",
@@ -31165,7 +31347,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 80,
-          "reason": "5日波幅 1.4% < 前期 4.1% < 更早 25.6%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 1.4% < 前期 4.1% < 更早 25.6%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-09-18",
+              "open": 15.85,
+              "high": 15.9,
+              "low": 15.6,
+              "close": 15.6,
+              "volume": 170958
+            },
+            {
+              "date": "2026-09-21",
+              "open": 15.85,
+              "high": 15.85,
+              "low": 15.65,
+              "close": 15.75,
+              "volume": 35319
+            },
+            {
+              "date": "2026-09-22",
+              "open": 15.9,
+              "high": 15.9,
+              "low": 15.7,
+              "close": 15.8,
+              "volume": 47754
+            },
+            {
+              "date": "2026-09-23",
+              "open": 15.9,
+              "high": 16.0,
+              "low": 15.8,
+              "close": 15.8,
+              "volume": 177493
+            },
+            {
+              "date": "2026-09-24",
+              "open": 15.8,
+              "high": 15.95,
+              "low": 15.8,
+              "close": 15.95,
+              "volume": 17332
+            },
+            {
+              "date": "2026-09-29",
+              "open": 15.95,
+              "high": 16.15,
+              "low": 15.9,
+              "close": 16.0,
+              "volume": 98990
+            },
+            {
+              "date": "2026-09-30",
+              "open": 16.0,
+              "high": 16.7,
+              "low": 16.0,
+              "close": 16.7,
+              "volume": 356148
+            },
+            {
+              "date": "2026-10-01",
+              "open": 16.75,
+              "high": 17.0,
+              "low": 16.7,
+              "close": 17.0,
+              "volume": 215213
+            },
+            {
+              "date": "2026-10-02",
+              "open": 17.0,
+              "high": 18.7,
+              "low": 17.0,
+              "close": 18.7,
+              "volume": 1105002
+            },
+            {
+              "date": "2026-10-05",
+              "open": 20.55,
+              "high": 20.55,
+              "low": 20.0,
+              "close": 20.55,
+              "volume": 1209062
+            },
+            {
+              "date": "2026-10-06",
+              "open": 22.6,
+              "high": 22.6,
+              "low": 18.5,
+              "close": 18.85,
+              "volume": 7103667
+            },
+            {
+              "date": "2026-10-07",
+              "open": 18.5,
+              "high": 19.35,
+              "low": 18.0,
+              "close": 18.25,
+              "volume": 2030581
+            },
+            {
+              "date": "2026-10-12",
+              "open": 18.0,
+              "high": 18.15,
+              "low": 18.0,
+              "close": 18.1,
+              "volume": 395670
+            },
+            {
+              "date": "2026-10-13",
+              "open": 18.1,
+              "high": 18.95,
+              "low": 18.0,
+              "close": 18.5,
+              "volume": 513939
+            },
+            {
+              "date": "2026-10-14",
+              "open": 18.75,
+              "high": 18.75,
+              "low": 18.2,
+              "close": 18.35,
+              "volume": 274077
+            },
+            {
+              "date": "2026-10-15",
+              "open": 18.1,
+              "high": 18.35,
+              "low": 17.85,
+              "close": 18.15,
+              "volume": 385946
+            },
+            {
+              "date": "2026-10-16",
+              "open": 18.2,
+              "high": 18.55,
+              "low": 18.1,
+              "close": 18.1,
+              "volume": 124639
+            },
+            {
+              "date": "2026-10-19",
+              "open": 18.3,
+              "high": 18.3,
+              "low": 17.85,
+              "close": 18.1,
+              "volume": 246892
+            },
+            {
+              "date": "2026-10-20",
+              "open": 18.1,
+              "high": 18.15,
+              "low": 17.9,
+              "close": 17.9,
+              "volume": 200496
+            },
+            {
+              "date": "2026-10-21",
+              "open": 18.1,
+              "high": 18.15,
+              "low": 18.0,
+              "close": 18.0,
+              "volume": 139463
+            },
+            {
+              "date": "2026-10-22",
+              "open": 18.1,
+              "high": 18.2,
+              "low": 18.0,
+              "close": 18.0,
+              "volume": 134201
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 22.6,
+            "prior_20_avg_volume_shares": 742432.05,
+            "latest_volume_shares": 134201,
+            "volume_ratio": 0.18,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "2340",
@@ -32123,7 +32487,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 73,
-          "reason": "5日波幅 2.1% < 前期 8.9% < 更早 14.8%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 2.1% < 前期 8.9% < 更早 14.8%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-09-18",
+              "open": 566.0,
+              "high": 584.0,
+              "low": 561.0,
+              "close": 570.0,
+              "volume": 1904132
+            },
+            {
+              "date": "2026-09-21",
+              "open": 576.0,
+              "high": 576.0,
+              "low": 535.0,
+              "close": 544.0,
+              "volume": 1170824
+            },
+            {
+              "date": "2026-09-22",
+              "open": 552.0,
+              "high": 555.0,
+              "low": 534.0,
+              "close": 537.0,
+              "volume": 1174530
+            },
+            {
+              "date": "2026-09-23",
+              "open": 545.0,
+              "high": 561.0,
+              "low": 538.0,
+              "close": 543.0,
+              "volume": 737214
+            },
+            {
+              "date": "2026-09-24",
+              "open": 543.0,
+              "high": 548.0,
+              "low": 535.0,
+              "close": 542.0,
+              "volume": 458792
+            },
+            {
+              "date": "2026-09-29",
+              "open": 540.0,
+              "high": 553.0,
+              "low": 537.0,
+              "close": 546.0,
+              "volume": 438674
+            },
+            {
+              "date": "2026-09-30",
+              "open": 553.0,
+              "high": 566.0,
+              "low": 549.0,
+              "close": 560.0,
+              "volume": 806691
+            },
+            {
+              "date": "2026-10-01",
+              "open": 561.0,
+              "high": 616.0,
+              "low": 551.0,
+              "close": 616.0,
+              "volume": 1893247
+            },
+            {
+              "date": "2026-10-02",
+              "open": 616.0,
+              "high": 620.0,
+              "low": 602.0,
+              "close": 610.0,
+              "volume": 1491739
+            },
+            {
+              "date": "2026-10-05",
+              "open": 615.0,
+              "high": 665.0,
+              "low": 609.0,
+              "close": 634.0,
+              "volume": 1875540
+            },
+            {
+              "date": "2026-10-06",
+              "open": 640.0,
+              "high": 655.0,
+              "low": 612.0,
+              "close": 620.0,
+              "volume": 1345169
+            },
+            {
+              "date": "2026-10-07",
+              "open": 622.0,
+              "high": 646.0,
+              "low": 616.0,
+              "close": 632.0,
+              "volume": 1032120
+            },
+            {
+              "date": "2026-10-12",
+              "open": 655.0,
+              "high": 663.0,
+              "low": 606.0,
+              "close": 612.0,
+              "volume": 2173244
+            },
+            {
+              "date": "2026-10-13",
+              "open": 599.0,
+              "high": 607.0,
+              "low": 574.0,
+              "close": 578.0,
+              "volume": 1511126
+            },
+            {
+              "date": "2026-10-14",
+              "open": 595.0,
+              "high": 615.0,
+              "low": 585.0,
+              "close": 595.0,
+              "volume": 930612
+            },
+            {
+              "date": "2026-10-15",
+              "open": 572.0,
+              "high": 583.0,
+              "low": 560.0,
+              "close": 568.0,
+              "volume": 872909
+            },
+            {
+              "date": "2026-10-16",
+              "open": 582.0,
+              "high": 583.0,
+              "low": 565.0,
+              "close": 573.0,
+              "volume": 592221
+            },
+            {
+              "date": "2026-10-19",
+              "open": 555.0,
+              "high": 574.0,
+              "low": 548.0,
+              "close": 568.0,
+              "volume": 582783
+            },
+            {
+              "date": "2026-10-20",
+              "open": 567.0,
+              "high": 587.0,
+              "low": 563.0,
+              "close": 578.0,
+              "volume": 536511
+            },
+            {
+              "date": "2026-10-21",
+              "open": 592.0,
+              "high": 598.0,
+              "low": 577.0,
+              "close": 580.0,
+              "volume": 640648
+            },
+            {
+              "date": "2026-10-22",
+              "open": 585.0,
+              "high": 638.0,
+              "low": 581.0,
+              "close": 593.0,
+              "volume": 2375259
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 665.0,
+            "prior_20_avg_volume_shares": 1108436.3,
+            "latest_volume_shares": 2375259,
+            "volume_ratio": 2.14,
+            "price_breakout": false,
+            "volume_expansion": true,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "2367",
@@ -32796,7 +33342,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 71,
-          "reason": "5日波幅 3.0% < 前期 6.8% < 更早 14.0%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 3.0% < 前期 6.8% < 更早 14.0%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-09-18",
+              "open": 42.85,
+              "high": 42.85,
+              "low": 41.8,
+              "close": 42.3,
+              "volume": 4724595
+            },
+            {
+              "date": "2026-09-21",
+              "open": 42.3,
+              "high": 42.5,
+              "low": 41.3,
+              "close": 41.35,
+              "volume": 2115919
+            },
+            {
+              "date": "2026-09-22",
+              "open": 41.35,
+              "high": 41.5,
+              "low": 40.85,
+              "close": 40.9,
+              "volume": 1235623
+            },
+            {
+              "date": "2026-09-23",
+              "open": 41.05,
+              "high": 41.35,
+              "low": 40.95,
+              "close": 41.1,
+              "volume": 942345
+            },
+            {
+              "date": "2026-09-24",
+              "open": 41.05,
+              "high": 41.75,
+              "low": 40.6,
+              "close": 41.0,
+              "volume": 1284584
+            },
+            {
+              "date": "2026-09-29",
+              "open": 40.95,
+              "high": 41.3,
+              "low": 40.35,
+              "close": 40.35,
+              "volume": 1752598
+            },
+            {
+              "date": "2026-09-30",
+              "open": 40.5,
+              "high": 40.75,
+              "low": 40.35,
+              "close": 40.7,
+              "volume": 1377637
+            },
+            {
+              "date": "2026-10-01",
+              "open": 40.6,
+              "high": 42.0,
+              "low": 40.6,
+              "close": 41.65,
+              "volume": 3030280
+            },
+            {
+              "date": "2026-10-02",
+              "open": 41.8,
+              "high": 45.8,
+              "low": 41.8,
+              "close": 45.8,
+              "volume": 21275998
+            },
+            {
+              "date": "2026-10-05",
+              "open": 48.75,
+              "high": 48.75,
+              "low": 45.9,
+              "close": 46.35,
+              "volume": 23071356
+            },
+            {
+              "date": "2026-10-06",
+              "open": 46.4,
+              "high": 46.4,
+              "low": 44.55,
+              "close": 45.25,
+              "volume": 7655725
+            },
+            {
+              "date": "2026-10-07",
+              "open": 44.7,
+              "high": 44.95,
+              "low": 43.5,
+              "close": 43.55,
+              "volume": 6961563
+            },
+            {
+              "date": "2026-10-12",
+              "open": 43.0,
+              "high": 43.75,
+              "low": 42.7,
+              "close": 42.7,
+              "volume": 3978028
+            },
+            {
+              "date": "2026-10-13",
+              "open": 42.55,
+              "high": 42.65,
+              "low": 41.9,
+              "close": 42.3,
+              "volume": 3520790
+            },
+            {
+              "date": "2026-10-14",
+              "open": 42.6,
+              "high": 42.6,
+              "low": 41.95,
+              "close": 42.55,
+              "volume": 2993224
+            },
+            {
+              "date": "2026-10-15",
+              "open": 42.0,
+              "high": 43.65,
+              "low": 42.0,
+              "close": 42.4,
+              "volume": 4815880
+            },
+            {
+              "date": "2026-10-16",
+              "open": 42.5,
+              "high": 43.45,
+              "low": 42.5,
+              "close": 43.2,
+              "volume": 4870352
+            },
+            {
+              "date": "2026-10-19",
+              "open": 43.2,
+              "high": 43.7,
+              "low": 42.65,
+              "close": 42.75,
+              "volume": 3253529
+            },
+            {
+              "date": "2026-10-20",
+              "open": 42.3,
+              "high": 45.15,
+              "low": 42.3,
+              "close": 42.95,
+              "volume": 7986387
+            },
+            {
+              "date": "2026-10-21",
+              "open": 43.3,
+              "high": 43.75,
+              "low": 43.0,
+              "close": 43.7,
+              "volume": 4067543
+            },
+            {
+              "date": "2026-10-22",
+              "open": 44.1,
+              "high": 45.35,
+              "low": 43.9,
+              "close": 44.65,
+              "volume": 8265954
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 48.75,
+            "prior_20_avg_volume_shares": 5545697.8,
+            "latest_volume_shares": 8265954,
+            "volume_ratio": 1.49,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "6743",
@@ -32899,7 +33627,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 71,
-          "reason": "5日波幅 2.5% < 前期 10.4% < 更早 13.4%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 2.5% < 前期 10.4% < 更早 13.4%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-09-18",
+              "open": 29.2,
+              "high": 29.5,
+              "low": 28.95,
+              "close": 29.4,
+              "volume": 272413
+            },
+            {
+              "date": "2026-09-21",
+              "open": 29.6,
+              "high": 30.0,
+              "low": 29.35,
+              "close": 29.5,
+              "volume": 298316
+            },
+            {
+              "date": "2026-09-22",
+              "open": 29.55,
+              "high": 30.15,
+              "low": 29.3,
+              "close": 29.85,
+              "volume": 386921
+            },
+            {
+              "date": "2026-09-23",
+              "open": 30.0,
+              "high": 30.45,
+              "low": 29.9,
+              "close": 30.35,
+              "volume": 535714
+            },
+            {
+              "date": "2026-09-24",
+              "open": 30.2,
+              "high": 30.7,
+              "low": 30.05,
+              "close": 30.6,
+              "volume": 535034
+            },
+            {
+              "date": "2026-09-29",
+              "open": 30.6,
+              "high": 32.35,
+              "low": 30.6,
+              "close": 31.1,
+              "volume": 692999
+            },
+            {
+              "date": "2026-09-30",
+              "open": 31.3,
+              "high": 32.05,
+              "low": 30.95,
+              "close": 31.85,
+              "volume": 553663
+            },
+            {
+              "date": "2026-10-01",
+              "open": 32.0,
+              "high": 33.5,
+              "low": 31.8,
+              "close": 33.5,
+              "volume": 1118714
+            },
+            {
+              "date": "2026-10-02",
+              "open": 33.7,
+              "high": 36.45,
+              "low": 33.5,
+              "close": 35.45,
+              "volume": 1562415
+            },
+            {
+              "date": "2026-10-05",
+              "open": 35.5,
+              "high": 36.0,
+              "low": 34.95,
+              "close": 35.6,
+              "volume": 978174
+            },
+            {
+              "date": "2026-10-06",
+              "open": 35.75,
+              "high": 36.25,
+              "low": 35.6,
+              "close": 35.65,
+              "volume": 605482
+            },
+            {
+              "date": "2026-10-07",
+              "open": 35.65,
+              "high": 37.45,
+              "low": 35.65,
+              "close": 35.75,
+              "volume": 653665
+            },
+            {
+              "date": "2026-10-12",
+              "open": 35.4,
+              "high": 35.4,
+              "low": 32.3,
+              "close": 32.35,
+              "volume": 1400766
+            },
+            {
+              "date": "2026-10-13",
+              "open": 32.0,
+              "high": 32.55,
+              "low": 31.4,
+              "close": 32.25,
+              "volume": 620696
+            },
+            {
+              "date": "2026-10-14",
+              "open": 32.3,
+              "high": 33.0,
+              "low": 32.2,
+              "close": 32.5,
+              "volume": 296844
+            },
+            {
+              "date": "2026-10-15",
+              "open": 31.6,
+              "high": 32.5,
+              "low": 31.6,
+              "close": 32.5,
+              "volume": 526025
+            },
+            {
+              "date": "2026-10-16",
+              "open": 32.6,
+              "high": 33.4,
+              "low": 32.3,
+              "close": 32.5,
+              "volume": 356939
+            },
+            {
+              "date": "2026-10-19",
+              "open": 31.85,
+              "high": 32.1,
+              "low": 31.8,
+              "close": 31.85,
+              "volume": 564787
+            },
+            {
+              "date": "2026-10-20",
+              "open": 31.85,
+              "high": 33.2,
+              "low": 31.85,
+              "close": 32.65,
+              "volume": 452260
+            },
+            {
+              "date": "2026-10-21",
+              "open": 32.65,
+              "high": 33.4,
+              "low": 32.4,
+              "close": 32.65,
+              "volume": 410170
+            },
+            {
+              "date": "2026-10-22",
+              "open": 32.65,
+              "high": 33.1,
+              "low": 32.55,
+              "close": 33.0,
+              "volume": 281665
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 37.45,
+            "prior_20_avg_volume_shares": 641099.85,
+            "latest_volume_shares": 281665,
+            "volume_ratio": 0.44,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "5292",
@@ -33002,7 +33912,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 71,
-          "reason": "5日波幅 1.6% < 前期 2.4% < 更早 12.2%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 1.6% < 前期 2.4% < 更早 12.2%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-09-18",
+              "open": 216.5,
+              "high": 220.0,
+              "low": 216.5,
+              "close": 220.0,
+              "volume": 63191
+            },
+            {
+              "date": "2026-09-21",
+              "open": 219.5,
+              "high": 219.5,
+              "low": 215.0,
+              "close": 218.0,
+              "volume": 41600
+            },
+            {
+              "date": "2026-09-22",
+              "open": 217.0,
+              "high": 219.0,
+              "low": 215.0,
+              "close": 218.0,
+              "volume": 66003
+            },
+            {
+              "date": "2026-09-23",
+              "open": 217.0,
+              "high": 219.0,
+              "low": 210.0,
+              "close": 218.5,
+              "volume": 87229
+            },
+            {
+              "date": "2026-09-24",
+              "open": 217.0,
+              "high": 218.0,
+              "low": 215.5,
+              "close": 217.5,
+              "volume": 29227
+            },
+            {
+              "date": "2026-09-29",
+              "open": 217.0,
+              "high": 219.0,
+              "low": 215.5,
+              "close": 218.5,
+              "volume": 36861
+            },
+            {
+              "date": "2026-09-30",
+              "open": 216.5,
+              "high": 234.0,
+              "low": 216.5,
+              "close": 230.0,
+              "volume": 335629
+            },
+            {
+              "date": "2026-10-01",
+              "open": 228.5,
+              "high": 240.0,
+              "low": 228.5,
+              "close": 237.0,
+              "volume": 489503
+            },
+            {
+              "date": "2026-10-02",
+              "open": 236.0,
+              "high": 244.0,
+              "low": 234.0,
+              "close": 240.0,
+              "volume": 251935
+            },
+            {
+              "date": "2026-10-05",
+              "open": 240.0,
+              "high": 251.0,
+              "low": 240.0,
+              "close": 247.0,
+              "volume": 359880
+            },
+            {
+              "date": "2026-10-06",
+              "open": 248.5,
+              "high": 252.5,
+              "low": 245.0,
+              "close": 249.0,
+              "volume": 262421
+            },
+            {
+              "date": "2026-10-07",
+              "open": 248.5,
+              "high": 250.5,
+              "low": 237.5,
+              "close": 243.0,
+              "volume": 598168
+            },
+            {
+              "date": "2026-10-12",
+              "open": 238.5,
+              "high": 247.0,
+              "low": 236.0,
+              "close": 243.5,
+              "volume": 124630
+            },
+            {
+              "date": "2026-10-13",
+              "open": 242.5,
+              "high": 249.0,
+              "low": 241.0,
+              "close": 246.0,
+              "volume": 137298
+            },
+            {
+              "date": "2026-10-14",
+              "open": 249.0,
+              "high": 249.0,
+              "low": 244.0,
+              "close": 245.5,
+              "volume": 57390
+            },
+            {
+              "date": "2026-10-15",
+              "open": 245.0,
+              "high": 247.5,
+              "low": 237.5,
+              "close": 244.0,
+              "volume": 134866
+            },
+            {
+              "date": "2026-10-16",
+              "open": 249.0,
+              "high": 249.5,
+              "low": 243.0,
+              "close": 245.0,
+              "volume": 42990
+            },
+            {
+              "date": "2026-10-19",
+              "open": 241.0,
+              "high": 246.5,
+              "low": 240.5,
+              "close": 244.5,
+              "volume": 77350
+            },
+            {
+              "date": "2026-10-20",
+              "open": 243.0,
+              "high": 248.0,
+              "low": 243.0,
+              "close": 245.5,
+              "volume": 71852
+            },
+            {
+              "date": "2026-10-21",
+              "open": 245.5,
+              "high": 254.0,
+              "low": 245.5,
+              "close": 248.0,
+              "volume": 291281
+            },
+            {
+              "date": "2026-10-22",
+              "open": 248.0,
+              "high": 255.0,
+              "low": 244.5,
+              "close": 244.5,
+              "volume": 245502
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 254.0,
+            "prior_20_avg_volume_shares": 177965.2,
+            "latest_volume_shares": 245502,
+            "volume_ratio": 1.38,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "3013",
@@ -33105,7 +34197,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 69,
-          "reason": "5日波幅 2.0% < 前期 6.4% < 更早 11.1%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 2.0% < 前期 6.4% < 更早 11.1%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-09-18",
+              "open": 83.8,
+              "high": 83.8,
+              "low": 81.9,
+              "close": 82.8,
+              "volume": 1023134
+            },
+            {
+              "date": "2026-09-21",
+              "open": 82.7,
+              "high": 83.8,
+              "low": 82.1,
+              "close": 83.1,
+              "volume": 638436
+            },
+            {
+              "date": "2026-09-22",
+              "open": 84.1,
+              "high": 86.7,
+              "low": 83.1,
+              "close": 83.1,
+              "volume": 754735
+            },
+            {
+              "date": "2026-09-23",
+              "open": 83.6,
+              "high": 86.6,
+              "low": 83.6,
+              "close": 84.3,
+              "volume": 1063697
+            },
+            {
+              "date": "2026-09-24",
+              "open": 84.1,
+              "high": 84.5,
+              "low": 83.1,
+              "close": 84.5,
+              "volume": 569586
+            },
+            {
+              "date": "2026-09-29",
+              "open": 84.4,
+              "high": 85.0,
+              "low": 83.9,
+              "close": 84.0,
+              "volume": 637300
+            },
+            {
+              "date": "2026-09-30",
+              "open": 85.1,
+              "high": 91.4,
+              "low": 85.1,
+              "close": 86.8,
+              "volume": 2758145
+            },
+            {
+              "date": "2026-10-01",
+              "open": 87.1,
+              "high": 94.0,
+              "low": 85.8,
+              "close": 94.0,
+              "volume": 5259584
+            },
+            {
+              "date": "2026-10-02",
+              "open": 94.0,
+              "high": 94.3,
+              "low": 91.5,
+              "close": 92.7,
+              "volume": 4569107
+            },
+            {
+              "date": "2026-10-05",
+              "open": 94.2,
+              "high": 94.5,
+              "low": 92.5,
+              "close": 93.0,
+              "volume": 2856530
+            },
+            {
+              "date": "2026-10-06",
+              "open": 92.6,
+              "high": 96.8,
+              "low": 90.8,
+              "close": 95.0,
+              "volume": 6098792
+            },
+            {
+              "date": "2026-10-07",
+              "open": 96.3,
+              "high": 97.9,
+              "low": 93.7,
+              "close": 96.3,
+              "volume": 4384685
+            },
+            {
+              "date": "2026-10-12",
+              "open": 96.2,
+              "high": 96.2,
+              "low": 94.5,
+              "close": 95.2,
+              "volume": 2879706
+            },
+            {
+              "date": "2026-10-13",
+              "open": 94.0,
+              "high": 94.0,
+              "low": 89.0,
+              "close": 91.3,
+              "volume": 2726527
+            },
+            {
+              "date": "2026-10-14",
+              "open": 92.3,
+              "high": 99.3,
+              "low": 92.1,
+              "close": 97.4,
+              "volume": 5077528
+            },
+            {
+              "date": "2026-10-15",
+              "open": 95.3,
+              "high": 99.0,
+              "low": 94.4,
+              "close": 94.7,
+              "volume": 5980171
+            },
+            {
+              "date": "2026-10-16",
+              "open": 96.5,
+              "high": 98.5,
+              "low": 94.3,
+              "close": 95.0,
+              "volume": 3150953
+            },
+            {
+              "date": "2026-10-19",
+              "open": 94.0,
+              "high": 95.2,
+              "low": 91.8,
+              "close": 95.0,
+              "volume": 1997815
+            },
+            {
+              "date": "2026-10-20",
+              "open": 95.0,
+              "high": 98.4,
+              "low": 94.9,
+              "close": 95.6,
+              "volume": 4060079
+            },
+            {
+              "date": "2026-10-21",
+              "open": 97.3,
+              "high": 100.0,
+              "low": 96.5,
+              "close": 96.6,
+              "volume": 5158509
+            },
+            {
+              "date": "2026-10-22",
+              "open": 98.0,
+              "high": 98.8,
+              "low": 91.5,
+              "close": 91.5,
+              "volume": 2649804
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 100.0,
+            "prior_20_avg_volume_shares": 3082250.95,
+            "latest_volume_shares": 2649804,
+            "volume_ratio": 0.86,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "3533",
