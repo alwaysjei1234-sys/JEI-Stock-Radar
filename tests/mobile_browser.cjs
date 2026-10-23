@@ -37,6 +37,11 @@ async function run(){
     }})
   }));
 
+  // Serve the checked-in feed deterministically; external GitHub availability is not a UI test.
+  await page.route('https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/system.json**',async route=>{
+    const body=await fs.readFile(path.join(ROOT,'remote','system.json'),'utf8');
+    await route.fulfill({status:200,contentType:'application/json',body});
+  });
   await page.goto(base+'index.html',{waitUntil:'domcontentloaded'});
   await page.locator('#riskBox').waitFor({state:'visible'});
   await page.locator('#homeQuick').waitFor({state:'visible'});
@@ -48,7 +53,7 @@ async function run(){
   assert.equal(await page.locator('#holdTriage').isVisible(),false,'private triage never shown on public browser');
   assert.equal(await page.locator('#holdToolbar').isVisible(),false,'private sort/filter controls never shown on public browser');
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
-  await page.waitForFunction(()=>document.querySelector('#sysStatus').textContent.includes('feed 已連線'),{timeout:15000});
+  await page.waitForFunction(()=>/已連線/.test(document.querySelector('#sysStatus')?.textContent||''),null,{timeout:15000});
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
   // Weekend/holiday research is visible and dated, but no historical trade levels.
   await page.locator('[data-go="attack"]').first().click();
