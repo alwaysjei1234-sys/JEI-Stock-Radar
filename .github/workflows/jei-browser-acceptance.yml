@@ -4,12 +4,14 @@ on:
   pull_request:
     paths:
       - 'tests/mobile_browser.cjs'
+      - 'tests/fixtures/free_research.json'
       - 'remote/index.html'
       - 'remote/cash.html'
       - 'remote/paper.html'
       - 'remote/holding-health.html'
       - 'remote/holding-health.js'
       - 'remote/holding-research.js'
+      - 'remote/free_research.json'
       - 'tests/holding_health.cjs'
       - 'tests/holding_research.test.cjs'
       - '.github/workflows/jei-browser-acceptance.yml'
@@ -17,12 +19,14 @@ on:
     branches: [main]
     paths:
       - 'tests/mobile_browser.cjs'
+      - 'tests/fixtures/free_research.json'
       - 'remote/index.html'
       - 'remote/cash.html'
       - 'remote/paper.html'
       - 'remote/holding-health.html'
       - 'remote/holding-health.js'
       - 'remote/holding-research.js'
+      - 'remote/free_research.json'
       - 'tests/holding_health.cjs'
       - 'tests/holding_research.test.cjs'
       - '.github/workflows/jei-browser-acceptance.yml'

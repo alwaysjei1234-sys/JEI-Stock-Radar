@@ -4,6 +4,8 @@ const research = require('../remote/holding-research.js');
 
 assert.deepEqual(research.freshness('2026-10-22', '2026-10-23'), { state: 'dated', ageDays: 1 });
 assert.equal(research.freshness('2026-10-01', '2026-10-23').state, 'stale');
+assert.equal(research.freshness('2026-09-10', '2026-10-23', 45).state, 'dated');
+assert.equal(research.freshness('2026-08-01', '2026-10-23', 45).state, 'stale');
 assert.equal(research.freshness('2026-10-24', '2026-10-23').state, 'unverified');
 assert.equal(research.validDay('2026-02-30'), false);
 
@@ -21,6 +23,14 @@ assert.equal(stock.sectorScore, 77);
 assert.equal(stock.institutional.snapshotDate, '2026-10-22');
 assert.equal(research.lookupStock({}, '2330', '2026-10-23').freshness.state, 'unverified');
 assert.equal(research.lookupStock({}, '<img>', '2026-10-23').ok, false);
+const freeEvidence = research.lookupFreeEvidence({ schemaVersion: 1, generatedAt: '2026-10-23T00:00:00Z', sources: { revenue: 'official' }, markets: {
+  listed: { '2330': { revenue: { publishedAt: '2026-10-17', period: '2026-09-01', monthlyYoYPct: 20 }, margin: { marketDate: '2026-10-22', marginBuyBalance: 100, marginBuyChange: 5 }, valuation: { marketDate: '2026-10-22', pe: 21 } } }, otc: {}
+} }, '2330', '2026-10-23');
+assert.equal(freeEvidence.market, 'listed');
+assert.equal(freeEvidence.revenueFreshness.state, 'dated');
+assert.equal(freeEvidence.margin.marginBuyChange, 5);
+assert.equal(research.lookupFreeEvidence(null, '2330', '2026-10-23'), null);
+assert.equal(research.lookupFreeEvidence({ schemaVersion: 1, markets: { listed: {}, otc: {} } }, '2330', '2026-10-23').market, null);
 
 const plan = research.scenario({ price: 100, bull: 120, baseLow: 95, baseHigh: 105, bear: 90 });
 assert.equal(plan.ok, true);

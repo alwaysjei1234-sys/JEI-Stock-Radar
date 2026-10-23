@@ -13,7 +13,8 @@ const server=http.createServer(async(req,res)=>{
   const target=path.resolve(ROOT,'.'+decoded);
   if(!target.startsWith(ROOT+path.sep)){res.writeHead(403).end();return}
   try{
-    const bytes=await fs.readFile(target);
+    const source=decoded==='/remote/free_research.json' ? path.join(ROOT,'tests','fixtures','free_research.json') : target;
+    const bytes=await fs.readFile(source);
     res.writeHead(200,{'Content-Type':MIME[path.extname(target)]||'text/plain','Cache-Control':'no-store'});
     res.end(bytes);
   }catch{res.writeHead(404).end()}
@@ -61,13 +62,15 @@ async function run(){
   const health=await context.newPage();
   await health.goto(base+'holding-health.html',{waitUntil:'domcontentloaded'});
   assert.equal(await health.locator('main section').count(),8);
-  assert.match(await health.locator('body').innerText(),/尚未串接/);
+  assert.match(await health.locator('body').innerText(),/免費官方 feed|免費官方資料/);
   assert.match(await health.locator('body').innerText(),/訪客版不顯示個人持股/);
   await health.waitForFunction(()=>/台股資料日/.test(document.querySelector('#researchMarketStatus')?.textContent||''));
   await health.locator('#researchTicker').fill('1101');
   await health.locator('#researchTickerRun').click();
   assert.match(await health.locator('#researchTickerResult').innerText(),/1101 台泥/);
-  assert.match(await health.locator('#researchTickerResult').innerText(),/融資券/);
+  assert.match(await health.locator('#researchTickerResult').innerText(),/月營收/);
+  assert.match(await health.locator('#researchTickerResult').innerText(),/融資餘額/);
+  assert.match(await health.locator('#researchTickerResult').innerText(),/官方估值快照/);
   await health.locator('#scenarioPrice').fill('100');
   await health.locator('#scenarioBull').fill('120');
   await health.locator('#scenarioBaseLow').fill('95');

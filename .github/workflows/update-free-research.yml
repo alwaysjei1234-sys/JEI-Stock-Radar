@@ -1,0 +1,50 @@
+name: Update free official stock research data
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/update_free_research.py'
+      - 'tests/test_free_research.py'
+      - 'remote/system.json'
+      - '.github/workflows/update-free-research.yml'
+  workflow_dispatch:
+  schedule:
+    # TWSE and TPEx publish end-of-day data; refresh after market close on weekdays.
+    - cron: '0 12 * * 1-5'
+permissions:
+  contents: write
+concurrency:
+  group: jei-free-research-data
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Refresh free official TWSE and TPEx data
+        run: python3 scripts/update_free_research.py
+      - name: Validate generated public feed
+        run: python3 -m unittest discover -s tests -p 'test_free_research.py'
+      - name: Publish snapshot
+        run: |
+          if git diff --quiet -- remote/free_research.json; then
+            echo 'No public-data change.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add remote/free_research.json
+          git commit -m 'data: refresh free official stock research'
+          for attempt in 1 2 3; do
+            if git push; then exit 0; fi
+            echo "Concurrent main update; rebasing data commit (attempt $attempt)"
+            git fetch origin main
+            git rebase origin/main
+            sleep 3
+          done
+          echo 'Could not publish refreshed public research feed after 3 attempts.'
+          exit 1

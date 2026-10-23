@@ -12,10 +12,10 @@
     const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now || new Date());
     return ['year', 'month', 'day'].map(key => parts.find(part => part.type === key)?.value).join('-');
   }
-  function freshness(asOf, today) {
+  function freshness(asOf, today, maxAgeDays) {
     if (!validDay(asOf) || !validDay(today) || asOf > today) return { state: 'unverified', ageDays: null };
     const ageDays = Math.floor((Date.parse(today + 'T00:00:00Z') - Date.parse(asOf + 'T00:00:00Z')) / 86400000);
-    return { state: ageDays > 4 ? 'stale' : 'dated', ageDays };
+    return { state: ageDays > (Number.isSafeInteger(maxAgeDays) ? maxAgeDays : 4) ? 'stale' : 'dated', ageDays };
   }
   function marketSnapshot(system, brief, today) {
     const date = system && system.data_date;
@@ -55,6 +55,24 @@
       sector: sector || null, sectorScore: sectorState && Number.isFinite(Number(sectorState.score)) ? Number(sectorState.score) : null,
       institutional: institutional && Number.isFinite(Number(institutional.total)) ? { total: Number(institutional.total), source: institutional.source || '未標示來源', snapshotDate: stamp } : null,
       message: fresh.state === 'dated' ? null : '資料日期過期或無法驗證；不提供即時個股結論。' };
+  }
+  function lookupFreeEvidence(feed, code, today) {
+    const ticker = String(code || '').trim().toUpperCase();
+    if (!feed || feed.schemaVersion !== 1 || !/^[A-Z0-9.-]{1,12}$/.test(ticker)) return null;
+    const market = feed.markets && (feed.markets.listed && feed.markets.listed[ticker] ? 'listed' : feed.markets.otc && feed.markets.otc[ticker] ? 'otc' : null);
+    if (!market) return { market: null, revenue: null, margin: null, valuation: null, status: '免費官方 feed 未收錄此代號，請先確認股票市場別。' };
+    const record = feed.markets[market][ticker];
+    const revenue = record.revenue || null;
+    const margin = record.margin || null;
+    const valuation = record.valuation || null;
+    const financials = record.financials || null;
+    const revenueFreshness = freshness(revenue && revenue.publishedAt, today, 45);
+    const financialFreshness = freshness(financials && financials.publishedAt, today, 150);
+    const marginFreshness = freshness(margin && margin.marketDate, today);
+    const valuationFreshness = freshness(valuation && valuation.marketDate, today);
+    return { market, revenue, margin, valuation, financials, revenueFreshness, financialFreshness, marginFreshness, valuationFreshness,
+      sources: feed.sources || {}, generatedAt: feed.generatedAt || null,
+      status: !revenue && !margin && !valuation ? '官方免費資料尚未提供此股可用欄位。' : null };
   }
   function scenario(input) {
     const values = ['price', 'bull', 'baseLow', 'baseHigh', 'bear'].map(key => Number(input && input[key]));
@@ -99,11 +117,13 @@
     if (lock) lock.addEventListener('click', clearEphemeral);
     const globalTarget = typeof window !== 'undefined' ? window : globalThis;
     if (globalTarget && globalTarget.addEventListener) globalTarget.addEventListener('pagehide', clearEphemeral);
-    let latestSystem = null;
+    let latestSystem = null, latestFree = null;
     if (fetcher) Promise.allSettled([fetcher('./system.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('market'); return r.json(); }),
-      fetcher('./brief.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('brief'); return r.json(); })]).then(results => {
+      fetcher('./brief.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('brief'); return r.json(); }),
+      fetcher('./free_research.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('free research'); return r.json(); })]).then(results => {
       const system = results[0].status === 'fulfilled' ? results[0].value : null;
       const brief = results[1].status === 'fulfilled' ? results[1].value : null;
+      latestFree = results[2].status === 'fulfilled' ? results[2].value : null;
       if (!system) { set('researchMarketStatus', '公開市場 feed 讀取失敗；暫停市場即時判讀。'); return; }
       latestSystem = system;
       const snapshot = marketSnapshot(system, brief, dayInTaipei());
@@ -117,6 +137,8 @@
       const risk = system.risk || {};
       const flowText = [risk.institutional_net_lots != null ? `市場法人淨額 ${risk.institutional_net_lots} 股` : '', risk.institutional_sell_ratio != null ? `賣超家數比 ${risk.institutional_sell_ratio}%` : ''].filter(Boolean).join('｜');
       set('researchFlow', `${flowText || '法人資料缺值'}｜資料日 ${system.data_date || '未知'}；此為市場彙總，不等於個股法人，也不含融資券與大戶持股分布。`);
+      const freeCount = latestFree && latestFree.markets ? Object.keys(latestFree.markets.listed || {}).length + Object.keys(latestFree.markets.otc || {}).length : 0;
+      set('researchFreeStatus', latestFree ? `免費官方資料已同步｜${freeCount} 檔上市櫃｜更新 ${latestFree.generatedAt || '日期未知'}｜官方資料源日期以個股欄位為準。` : '免費官方財務 feed 尚未同步；此區不會改以付費或不明來源代替。');
     });
     const tickerButton = doc.getElementById('researchTickerRun');
     if (tickerButton) tickerButton.addEventListener('click', () => {
@@ -128,7 +150,26 @@
       else parts.push('今日公開候選清單未收錄；不代表基本面或投資價值判定。');
       parts.push(`族群 ${found.sector || '未分類'}｜族群分數 ${found.sectorScore ?? '缺值'}`);
       parts.push(found.institutional ? `三大法人淨額 ${found.institutional.total} 股｜${found.institutional.source}｜系統快照 ${found.institutional.snapshotDate}（來源公告日未獨立提供）` : '個股法人資料缺值');
-      parts.push('公司財報品質、同業估值、融資券、大戶分布、公告因果與券商預測需另查原始來源；八項清單會保留缺值。');
+      const evidence = lookupFreeEvidence(latestFree, found.code, dayInTaipei());
+      if (evidence && evidence.status) parts.push(evidence.status);
+      if (evidence && evidence.revenue) {
+        const item = evidence.revenue, dated = evidence.revenueFreshness.state === 'dated' ? '' : `（資料過期／日期未驗證 ${item.publishedAt || '未知'}）`;
+        parts.push(`月營收 ${item.period || '期間未知'}｜年增 ${item.monthlyYoYPct == null ? '缺值' : `${item.monthlyYoYPct}%`}｜累計年增 ${item.cumulativeYoYPct == null ? '缺值' : `${item.cumulativeYoYPct}%`}｜官方公告 ${item.publishedAt || '日期未知'}${dated}`);
+      }
+      if (evidence && evidence.financials) {
+        const item = evidence.financials, dated = evidence.financialFreshness.state === 'dated' ? '' : '（財報資料過期／日期未驗證）';
+        parts.push(`一般產業財報 ${item.period || '季度未知'}｜毛利率 ${item.grossMarginPct == null ? '缺值' : `${item.grossMarginPct}%`}｜營益率 ${item.operatingMarginPct == null ? '缺值' : `${item.operatingMarginPct}%`}｜母公司淨利率 ${item.parentNetMarginPct == null ? '缺值' : `${item.parentNetMarginPct}%`}｜EPS ${item.eps ?? '缺值'}｜負債比 ${item.debtRatioPct == null ? '缺值' : `${item.debtRatioPct}%`}｜流動比 ${item.currentRatioPct == null ? '缺值' : `${item.currentRatioPct}%`}｜每股淨值 ${item.bookValuePerShare ?? '缺值'}｜公告 ${item.publishedAt || '日期未知'}${dated}`);
+      }
+      if (evidence && evidence.margin) {
+        const item = evidence.margin;
+        parts.push(`融資餘額 ${item.marginBuyBalance ?? '缺值'}｜日增減 ${item.marginBuyChange ?? '缺值'}｜融券餘額 ${item.marginShortBalance ?? '缺值'}｜融資使用率 ${item.marginUsagePct == null ? '缺值' : `${item.marginUsagePct}%`}｜資料日 ${item.marketDate || '未知'}${evidence.marginFreshness.state === 'dated' ? '' : '（過期／未驗證）'}`);
+        if (item.sblShortBalance != null) parts.push(`借券賣出餘額 ${item.sblShortBalance}｜借券資料日 ${item.marketDate || '未知'}`);
+      }
+      if (evidence && evidence.valuation) {
+        const item = evidence.valuation;
+        parts.push(`官方估值快照 ${item.marketDate || '日期未知'}｜本益比 ${item.pe ?? '缺值'}｜殖利率 ${item.dividendYieldPct == null ? '缺值' : `${item.dividendYieldPct}%`}｜股價淨值比 ${item.pb ?? '缺值'}${evidence.valuationFreshness.state === 'dated' ? '' : '（過期／未驗證）'}`);
+      }
+      parts.push('這些免費指標是研究線索，不是品質評分或買賣訊號；跨產業財報口徑、現金流、同業比較、大戶持股變化與券商目標價仍須依官方公告逐項核對。');
       set('researchTickerResult', parts.join('｜'));
     });
     const scenarioButton = doc.getElementById('scenarioRun');
@@ -147,5 +188,5 @@
       if (el && output) el.addEventListener('input', () => set(output, el.value.trim() ? '已輸入手動研究線索；請自行核對原始公告，系統尚未驗證來源。' : '尚未輸入查證資料。'));
     });
   }
-  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, scenario, journalStats, parseJournal, init });
+  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, init });
 }));
