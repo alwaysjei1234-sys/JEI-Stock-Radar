@@ -128,6 +128,7 @@
       }
     });
     clearButton.addEventListener('click', () => {
+      if (typeof root.confirm === 'function' && !root.confirm('確定清除這個瀏覽器儲存的全部持股資料？')) return;
       holdings = [];
       try {
         storage.removeItem(STORAGE_KEY);
