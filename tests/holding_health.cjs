@@ -29,7 +29,7 @@ assert.equal(api.STORAGE_KEY, 'jei-holding-health-private-v2');
   await assert.rejects(() => api.decrypt(envelope, 'wrong-passphrase-0000', webcrypto));
   await assert.rejects(() => api.encrypt(records, 'short', webcrypto), /12 個字元/);
 
-  const totals = api.summarize(records);
+  const totals = api.summarize(records.map(api.normalizeHolding));
   assert.equal(totals.cost, 101500);
   assert.equal(totals.marketValue, 110000);
   assert.equal(totals.pnl, 10000);
