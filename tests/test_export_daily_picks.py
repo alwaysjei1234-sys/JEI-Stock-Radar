@@ -42,7 +42,7 @@ class DailyPickExportTests(unittest.TestCase):
 
     def test_missing_capture_time_remains_explicitly_missing(self):
         result=extract({"data_date":"2026-10-22","attack":[]})
-        self.assertIsNone(result["captured_at")
+        self.assertIsNone(result["captured_at"])
 
 if __name__=="__main__":
     unittest.main()
