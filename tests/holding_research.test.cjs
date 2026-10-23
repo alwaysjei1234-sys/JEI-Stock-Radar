@@ -43,4 +43,7 @@ assert.equal(research.journalStats([{ date: 'bad', code: 'x', entry: 1, exit: 2,
 const source = fs.readFileSync('remote/holding-research.js', 'utf8');
 assert.doesNotMatch(source, /localStorage|sessionStorage|sendBeacon|XMLHttpRequest/);
 assert.match(source, /fetcher\('\.\/system\.json'/);
+const elements = new Map();
+const fakeDocument = { getElementById(id) { if (!elements.has(id)) elements.set(id, { value: '', textContent: '', addEventListener() {} }); return elements.get(id); }, querySelectorAll() { return []; } };
+assert.doesNotThrow(() => research.init(fakeDocument, null), 'research page initializes without relying on a closed-over browser root');
 console.log('PASS dated market context, scenario validation, in-memory journal metrics and private-data boundaries');

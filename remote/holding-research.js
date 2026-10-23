@@ -97,7 +97,8 @@
     };
     const lock = doc.getElementById('lockHoldings');
     if (lock) lock.addEventListener('click', clearEphemeral);
-    if (root.addEventListener) root.addEventListener('pagehide', clearEphemeral);
+    const globalTarget = typeof window !== 'undefined' ? window : globalThis;
+    if (globalTarget && globalTarget.addEventListener) globalTarget.addEventListener('pagehide', clearEphemeral);
     let latestSystem = null;
     if (fetcher) Promise.allSettled([fetcher('./system.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('market'); return r.json(); }),
       fetcher('./brief.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('brief'); return r.json(); })]).then(results => {
