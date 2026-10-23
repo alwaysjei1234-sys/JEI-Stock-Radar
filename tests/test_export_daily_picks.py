@@ -32,5 +32,17 @@ class DailyPickExportTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             extract({"data_date":"2026-10-16"},limit=0)
 
+    def test_snapshot_records_capture_time_not_last_checked_time(self):
+        feed={"data_date":"2026-10-22","updated_at":"2026-10-22 20:22",
+              "market":{"last_checked_at":"2026-10-23 23:09"},
+              "attack":[{"code":"2330"}]}
+        result=extract(feed)
+        self.assertEqual(result["captured_at"],"2026-10-22 20:22")
+        self.assertEqual(result["picks"][0]["as_of"],"2026-10-22")
+
+    def test_missing_capture_time_remains_explicitly_missing(self):
+        result=extract({"data_date":"2026-10-22","attack":[]})
+        self.assertIsNone(result["captured_at")
+
 if __name__=="__main__":
     unittest.main()
