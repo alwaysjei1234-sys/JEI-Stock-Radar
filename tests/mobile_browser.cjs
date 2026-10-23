@@ -55,6 +55,10 @@ async function run(){
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>/已連線/.test(document.querySelector('#sysStatus')?.textContent||''),null,{timeout:15000});
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
+  const health=await context.newPage();
+  await health.goto(base+'holding-health.html',{waitUntil:'domcontentloaded'});
+  assert.equal(await health.locator('main section').count(),8);
+  await health.close();
   // Weekend/holiday research is visible and dated, but no historical trade levels.
   await page.locator('[data-go="attack"]').first().click();
   await page.evaluate(()=>{
