@@ -1,9 +1,9 @@
 name: JEI Daily Paper Strategy Benchmark
 on:
   schedule:
-    # 20:25 primary run and 23:30 Taipei retry on weekdays; the retry catches delayed official closes.
+    # 20:25 primary run; 23:50 Taipei retry allows the 23:30 close archive job to finish first.
     - cron: '25 12 * * 1-5'
-    - cron: '30 15 * * 1-5'
+    - cron: '50 15 * * 1-5'
   workflow_dispatch:
   push:
     branches: [ "main" ]
@@ -12,6 +12,10 @@ on:
       - 'scripts/update_pick_validation.py'
       - 'remote/pick_validation.html'
       - 'tests/test_pick_validation.py'
+      - 'tests/test_export_official_closes.py'
+      - 'tests/test_offhours_archive.py'
+      - 'scripts/export_official_closes.py'
+      - '.github/workflows/archive-daily-picks.yml'
       - '.github/workflows/update-paper-performance.yml'
 
 permissions:
@@ -39,6 +43,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_pick_validation.py' -v
       - name: Verify standalone picked-stock generator import path
         run: PYTHONPATH=. python -c 'import scripts.update_pick_validation'
+      - name: Verify full-market official close exporter
+        run: python -m unittest discover -s tests -p 'test_export_official_closes.py' -v
       - name: Check whether official feed is from today's completed session
         id: session
         shell: bash
