@@ -86,13 +86,32 @@ class OffhoursArchiveTests(unittest.TestCase):
         self.assertIn("if retained is not None:",source)
         self.assertIn('"status":"archived_close_only"',source)
 
-    def test_close_workflows_have_late_retry_for_delayed_feed(self):
-        retry = "- cron: '30 15 * * 1-5'"
-        for path in (".github/workflows/archive-daily-picks.yml",
-                     ".github/workflows/update-paper-performance.yml"):
-            with self.subTest(workflow=path):
-                text=(ROOT/path).read_text(encoding="utf-8")
-                self.assertIn(retry,text)
+    def test_close_workflows_retry_in_archive_then_paper_order(self):
+        archive=(ROOT/".github/workflows/archive-daily-picks.yml").read_text(encoding="utf-8")
+        paper=(ROOT/".github/workflows/update-paper-performance.yml").read_text(encoding="utf-8")
+        self.assertIn("- cron: '30 15 * * 1-5'",archive)
+        self.assertIn("- cron: '50 15 * * 1-5'",paper)
+        self.assertNotIn("- cron: '30 15 * * 1-5'",paper)
+
+    def test_every_pick_snapshot_has_full_official_close_archive(self):
+        snapshots=ROOT/"data/pick_snapshots"
+        for path in sorted(snapshots.glob("????-??-??.json")):
+            day=path.stem
+            with self.subTest(day=day):
+                snapshot=json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(snapshot.get("data_date"),day)
+                self.assertTrue(all(p.get("as_of")==day for p in snapshot.get("picks",[])))
+                close_path=ROOT/"data/feed_closes"/(day+".json")
+                self.assertTrue(close_path.is_file(),f"missing close archive for {day}")
+                archive=json.loads(close_path.read_text(encoding="utf-8"))
+                self.assertEqual(archive.get("schema"),1)
+                self.assertEqual(archive.get("kind"),"official_daily_close")
+                self.assertEqual(archive.get("data_date"),day)
+                self.assertIn(day,archive.get("days",{}))
+                quotes=archive["days"][day]
+                coverage=sum(isinstance(v,(int,float)) and not isinstance(v,bool) and v>0 for v in quotes.values())
+                self.assertGreaterEqual(coverage,500)
+                self.assertEqual(archive.get("coverage_count"),coverage)
 
 if __name__=="__main__":
     unittest.main()
