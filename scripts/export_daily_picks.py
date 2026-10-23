@@ -35,7 +35,9 @@ def extract(feed, limit=10):
             picks.append(pick)
             if len(seen) >= limit:
                 break
+    captured_at = feed.get("updated_at")
     return {"schema_version": 1, "data_date": as_of,
+            "captured_at": captured_at,
             "snapshot_policy": "one immutable file per trading date",
             "picks": picks}
 
