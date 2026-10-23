@@ -31,6 +31,7 @@ jobs:
         run: python3 -m unittest discover -s tests -p 'test_free_research.py'
       - name: Publish snapshot
         run: |
+          git add -N remote/free_research.json
           if git diff --quiet -- remote/free_research.json; then
             echo 'No public-data change.'
             exit 0

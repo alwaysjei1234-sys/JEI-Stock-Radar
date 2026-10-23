@@ -5,15 +5,16 @@ import unittest
 from pathlib import Path
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "update_free_research.py"
+SNAPSHOT_PATH = Path(__file__).resolve().parents[1] / "remote" / "free_research.json"
 SPEC = importlib.util.spec_from_file_location("free_research", MODULE_PATH)
 module = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(module)
 
 
 class FreeResearchTests(unittest.TestCase):
+    @unittest.skipUnless(SNAPSHOT_PATH.exists(), "snapshot is generated and strictly validated by update-free-research workflow")
     def test_published_snapshot_contains_only_public_normalized_records(self):
-        path = Path(__file__).resolve().parents[1] / "remote" / "free_research.json"
-        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
         self.assertEqual(payload["schemaVersion"], 1)
         self.assertEqual(len(payload["sources"]), 10)
         self.assertGreater(len(payload["markets"]["listed"]), 1000)
