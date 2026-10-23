@@ -10,7 +10,7 @@ MIN_QUOTES = 500
 
 
 def export_archive(daily, day):
-    if not re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}", str(day)):
+    if not re.fullmatch(r"\d{4}-\\d{2}-\\d{2}", str(day)):
         raise ValueError("交易日日期格式錯誤")
     if (not isinstance(daily, dict) or daily.get("schema") != 1 or
             daily.get("kind") != "official_daily_close" or
@@ -53,7 +53,7 @@ def main():
     # Exclusive create keeps dated official price records immutable.
     with args.output.open("x", encoding="utf-8") as handle:
         json.dump(archive, handle, ensure_ascii=False, indent=2)
-        handle.write("\\n")
+        handle.write("\n")
     print(f"Archived {archive['coverage_count']} official closes for {args.day}")
 
 
