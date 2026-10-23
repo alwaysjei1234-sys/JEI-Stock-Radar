@@ -86,5 +86,13 @@ class OffhoursArchiveTests(unittest.TestCase):
         self.assertIn("if retained is not None:",source)
         self.assertIn('"status":"archived_close_only"',source)
 
+    def test_close_workflows_have_late_retry_for_delayed_feed(self):
+        retry = "- cron: '30 15 * * 1-5'"
+        for path in (".github/workflows/archive-daily-picks.yml",
+                     ".github/workflows/update-paper-performance.yml"):
+            with self.subTest(workflow=path):
+                text=(ROOT/path).read_text(encoding="utf-8")
+                self.assertIn(retry,text)
+
 if __name__=="__main__":
     unittest.main()
