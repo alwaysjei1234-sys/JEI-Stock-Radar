@@ -41,7 +41,7 @@ jobs:
         shell: bash
         run: |
           TODAY=$(TZ=Asia/Taipei date +%F)
-          FEED=$(python -c 'import json;print(json.load(open("remote/system.json",encoding="utf-8")).get("data_date",""))')
+          FEED=$(python -c 'import json;f=json.load(open("remote/system.json",encoding="utf-8"));print(f.get("data_date","") if (f.get("market") or {}).get("mode")=="今日收盤" else "")')
           if [ "$TODAY" = "$FEED" ]; then
             echo "active=true" >> "$GITHUB_OUTPUT"
           else
