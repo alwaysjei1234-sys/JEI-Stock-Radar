@@ -55,8 +55,7 @@ async function run(){
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>/已連線/.test(document.querySelector('#sysStatus')?.textContent||''),null,{timeout:15000});
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
-  assert.equal(await page.locator('[data-private-only]').isVisible(),false,'owner holdings link never shown to public visitors');
-  assert.equal(await page.locator('[data-private-only]:visible').count(),0,'owner-only nav and links stay hidden in visitor edition');
+  assert.equal(await page.locator('[data-private-only]:visible').count(),0,'owner-only navigation and links stay hidden in visitor edition');
   const health=await context.newPage();
   await health.goto(base+'holding-health.html',{waitUntil:'domcontentloaded'});
   assert.equal(await health.locator('main section').count(),8);
