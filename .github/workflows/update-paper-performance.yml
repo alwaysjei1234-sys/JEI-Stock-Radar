@@ -36,12 +36,26 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_paper_performance.py' -v
       - name: Verify forward-only picked-stock analysis and no hindsight
         run: python -m unittest discover -s tests -p 'test_pick_validation.py' -v
+      - name: Check whether official feed is from today's completed session
+        id: session
+        shell: bash
+        run: |
+          TODAY=$(TZ=Asia/Taipei date +%F)
+          FEED=$(python -c 'import json;print(json.load(open("remote/system.json",encoding="utf-8")).get("data_date",""))')
+          if [ "$TODAY" = "$FEED" ]; then
+            echo "active=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "active=false" >> "$GITHUB_OUTPUT"
+            echo "No completed same-day feed: $FEED vs $TODAY; skip paper update."
+          fi
       - name: Generate daily public paper-only benchmark
-        if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event_name == 'schedule'
+        if: steps.session.outputs.active == 'true'
         run: python scripts/update_paper_performance.py
       - name: Freeze daily picks and generate 3-60 trading-day report
+        if: steps.session.outputs.active == 'true'
         run: python scripts/update_pick_validation.py
       - name: Publish paper benchmark and immutable picked-stock validation
+        if: steps.session.outputs.active == 'true'
         run: |
           git add -N remote/strategy_performance.json remote/pick_history.json remote/pick_validation.json
           if git diff --quiet -- remote/strategy_performance.json remote/pick_history.json remote/pick_validation.json; then
