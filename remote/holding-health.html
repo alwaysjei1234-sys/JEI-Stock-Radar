@@ -1,1 +1,27 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JEI 持股健檢｜八大重點</title><style>:root{color-scheme:dark;font:16px system-ui,"Noto Sans TC",sans-serif;background:#06101b;color:#eef8ff}body{max-width:960px;margin:auto;padding:18px;line-height:1.6}a{color:#7bd9ff}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}section{background:#0d2438;border:1px solid #27516e;border-radius:14px;padding:15px}h2{font-size:18px}small{color:#ffd166}.note{border:1px solid #27516e;border-radius:12px;padding:12px;margin:18px 0}</style></head><body><a href="./index.html">← 返回 JEI 雷達</a><h1>持股健檢 8 大重點</h1><p>不只看漲跌，而是看懂背後的原因。</p><div class="note">第一階段：健檢架構與資料驗證規則。未接入的資料一律標示「待驗證」，不製造買賣訊號。私人持股成本、股數與損益不得公開提交 GitHub。</div><main><section><h2>1｜持股健檢表</h2><p>買進理由、成本、部位比重、核心／衛星／觀察名單</p><small>資料狀態：待驗證／待整合</small></section><section><h2>2｜拆解財報品質</h2><p>營收、毛利率、EPS、自由現金流、存貨與應收帳款</p><small>資料狀態：待驗證／待整合</small></section><section><h2>3｜產業比較分析</h2><p>同業獲利能力、產品競爭力、產能訂單、估值</p><small>資料狀態：待驗證／待整合</small></section><section><h2>4｜法人籌碼檢查</h2><p>外資、投信、自營商、融資券、大戶持股與成交量</p><small>資料狀態：待驗證／待整合</small></section><section><h2>5｜上漲前先看訊號</h2><p>基本面、產業消息、重大公告、量價突破</p><small>資料狀態：待驗證／待整合</small></section><section><h2>6｜三種情境規劃</h2><p>續強／震盪／跌破，各自定義觀察與風控條件</p><small>資料狀態：待驗證／待整合</small></section><section><h2>7｜檢視交易紀錄</h2><p>追高與過早停利、勝率、盈虧比、最大回撤</p><small>資料狀態：待驗證／待整合</small></section><section><h2>8｜每日持股與復盤清單</h2><p>持股健檢、候選名單、續抱理由、風險與重新評估</p><small>資料狀態：待驗證／待整合</small></section></main><p>本頁為持股研究框架，不代表八類資料已完成自動串接，亦非買賣保證。</p></body></html>
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#06101b"><title>JEI 持股健檢｜八大重點</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui,"Noto Sans TC",sans-serif;background:#06101b;color:#eef8ff}*{box-sizing:border-box}body{max-width:960px;margin:auto;padding:18px;line-height:1.6}a{color:#7bd9ff}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}section,.local{background:#0d2438;border:1px solid #27516e;border-radius:14px;padding:15px}h2{font-size:18px}small{color:#ffd166}.note{border:1px solid #27516e;border-radius:12px;padding:12px;margin:18px 0}.local{margin:16px 0;border-color:#338a70}.local h2{margin-top:0}.privacy{color:#9be5c8;font-size:13px}.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px}.form label{font-size:13px;color:#b9cede}.form input{width:100%;margin-top:4px;padding:11px;border:1px solid #41647e;border-radius:9px;background:#071b2a;color:#fff;font-size:16px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}.actions button,.holding button{border:1px solid #3983a8;border-radius:9px;padding:10px 13px;background:#12649a;color:#fff;font-weight:800;font-size:14px}.actions .danger,.holding button{background:#482b32;border-color:#85515b}.summary{margin:12px 0;font-weight:800;color:#8fe3c3}.status{min-height:24px;color:#ffe09d;font-size:13px}.holding{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #284b63;padding:9px 0}.holding p{margin:3px 0 0;color:#b9cede;font-size:13px}.empty{color:#9bb5c8;font-size:14px}
+@media(max-width:520px){body{padding:14px}.holding{align-items:flex-start}.holding button{padding:8px 10px}}
+</style></head><body><a href="./index.html">← 返回 JEI 雷達</a><h1>持股健檢 8 大重點</h1><p>不只看漲跌，而是看懂背後的原因。</p>
+<div class="note">第一階段：健檢架構與資料驗證規則。未接入的資料一律標示「待驗證」，不製造買賣訊號。私人持股成本、股數與損益不得公開提交 GitHub。</div>
+<section class="local" aria-labelledby="privateTitle"><h2 id="privateTitle">本機私人持股清單</h2><p>資料只存於目前裝置的瀏覽器，不會傳送到 JEI 或 GitHub。市價需自行輸入，估算損益只供個人參考，不是即時行情。</p>
+<form id="holdingForm"><div class="form">
+<label>股票代號<input id="holdingCode" required maxlength="12" autocomplete="off" placeholder="例如 2330"></label>
+<label>名稱<input id="holdingName" maxlength="40" autocomplete="off" placeholder="選填"></label>
+<label>平均成本<input id="holdingCost" required type="number" min="0.0001" step="any" inputmode="decimal" placeholder="每股成本"></label>
+<label>持有股數<input id="holdingShares" required type="number" min="1" step="1" inputmode="numeric" placeholder="股數"></label>
+<label>手動市價<input id="holdingPrice" type="number" min="0.0001" step="any" inputmode="decimal" placeholder="選填"></label>
+</div><div class="actions"><button type="submit">新增持股</button><button class="danger" id="clearHoldings" type="button">清除此裝置資料</button></div></form>
+<div class="summary" id="holdingSummary" aria-live="polite"></div><div id="holdingRows"></div><p class="status" id="holdingStatus" role="status" aria-live="polite">資料僅留在本機瀏覽器。</p></section>
+<main>
+<section><h2>1｜持股健檢表</h2><p>買進理由、成本、部位比重、核心／衛星／觀察名單</p><small>研究資料：待驗證／待整合</small></section>
+<section><h2>2｜拆解財報品質</h2><p>營收、毛利率、EPS、自由現金流、存貨與應收帳款</p><small>資料狀態：待驗證／待整合</small></section>
+<section><h2>3｜產業比較分析</h2><p>同業獲利能力、產品競爭力、產能訂單、估值</p><small>資料狀態：待驗證／待整合</small></section>
+<section><h2>4｜法人籌碼檢查</h2><p>外資、投信、自營商、融資券、大戶持股與成交量</p><small>資料狀態：待驗證／待整合</small></section>
+<section><h2>5｜上漲前先看訊號</h2><p>基本面、產業消息、重大公告、量價突破</p><small>資料狀態：待驗證／待整合</small></section>
+<section><h2>6｜三種情境規劃</h2><p>續強／震盪／跌破，各自定義觀察與風控條件</p><small>資料狀態：待驗證／待整合</small></section>
+<section><h2>7｜檢視交易紀錄</h2><p>追高與過早停利、勝率、盈虧比、最大回撤</p><small>資料狀態：待驗證／待整合</small></section>
+<section><h2>8｜每日持股與復盤清單</h2><p>持股健檢、候選名單、續抱理由、風險與重新評估</p><small>資料狀態：待驗證／待整合</small></section>
+</main><p>本頁為持股研究框架，不代表八類研究資料已完成自動串接，亦非買賣保證。</p>
+<script src="./holding-health.js" defer></script></body></html>
