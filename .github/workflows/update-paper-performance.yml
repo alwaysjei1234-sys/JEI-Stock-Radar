@@ -1,8 +1,9 @@
 name: JEI Daily Paper Strategy Benchmark
 on:
   schedule:
-    # 20:25 Taipei time, weekdays; official daily closes must already be available.
+    # 20:25 primary run and 23:30 Taipei retry on weekdays; the retry catches delayed official closes.
     - cron: '25 12 * * 1-5'
+    - cron: '30 15 * * 1-5'
   workflow_dispatch:
   push:
     branches: [ "main" ]
