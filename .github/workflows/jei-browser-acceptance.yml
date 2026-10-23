@@ -9,7 +9,6 @@ on:
       - 'remote/paper.html'
       - 'remote/holding-health.html'
       - 'remote/holding-health.js'
-      - 'tests/holding_health.cjs'
       - '.github/workflows/jei-browser-acceptance.yml'
   push:
     branches: [main]
@@ -18,9 +17,6 @@ on:
       - 'remote/index.html'
       - 'remote/cash.html'
       - 'remote/paper.html'
-      - 'remote/holding-health.html'
-      - 'remote/holding-health.js'
-      - 'tests/holding_health.cjs'
       - '.github/workflows/jei-browser-acceptance.yml'
 
 permissions:

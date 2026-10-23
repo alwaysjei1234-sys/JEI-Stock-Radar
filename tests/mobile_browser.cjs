@@ -75,6 +75,7 @@ async function run(){
   await health.waitForFunction(()=>/估算損益 10,000/.test(document.querySelector('#holdingSummary')?.textContent||''));
   assert.equal(await health.locator('#holdingRows img').count(),0,'user-entered names render as text, never HTML');
   assert.match(await health.locator('#holdingStatus').innerText(),/本機瀏覽器/);
+  assert.equal(await health.evaluate(()=>localStorage.getItem('jei-holding-health-private-v1')),null,'legacy plaintext key must be absent after encryption');
   assert.equal(await health.evaluate(()=>{
     const text=localStorage.getItem('jei-holding-health-private-v2')||'';
     return text.includes('2330')||text.includes('onerror')||text.includes('"shares":1000');

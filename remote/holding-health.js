@@ -117,6 +117,7 @@
       holdings = [];
       passphrase = '';
       unlocked = false;
+      form.reset();
       vault.hidden = true;
       unlockForm.hidden = false;
       if (passField) passField.value = '';
@@ -186,6 +187,7 @@
           holdings = await decrypt(envelope, candidate, cryptoApi);
         } else {
           const firstSetup = storage.getItem(LEGACY_KEY) == null;
+          validatePassphrase(candidate);
           if (firstSetup) {
             validatePassphrase(candidate);
             if (candidate !== confirmField.value) throw new Error('兩次輸入的私人密語不一致');
