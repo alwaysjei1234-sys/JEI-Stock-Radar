@@ -31,8 +31,9 @@ jobs:
           set -euo pipefail
           FEED_DATE=$(python -c 'import json;print(json.load(open("remote/system.json",encoding="utf-8"))["data_date"])')
           TAIPEI_DATE=$(TZ=Asia/Taipei date +%F)
-          if [ "$FEED_DATE" != "$TAIPEI_DATE" ]; then
-            echo "No same-day completed feed ($FEED_DATE vs $TAIPEI_DATE); skip."
+          CLOSE_MODE=$(python -c 'import json;f=json.load(open("remote/system.json",encoding="utf-8"));print((f.get("market") or {}).get("mode",""))')
+          if [ "$FEED_DATE" != "$TAIPEI_DATE" ] || [ "$CLOSE_MODE" != "今日收盤" ]; then
+            echo "No verified same-day close ($FEED_DATE vs $TAIPEI_DATE; mode=$CLOSE_MODE); skip."
             echo "created=false" >> "$GITHUB_OUTPUT"
           else
             TARGET="data/pick_snapshots/$FEED_DATE.json"
