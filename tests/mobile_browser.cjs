@@ -60,6 +60,24 @@ async function run(){
   assert.equal(await health.locator('main section').count(),8);
   assert.match(await health.locator('body').innerText(),/待驗證/);
   assert.match(await health.locator('body').innerText(),/私人持股/);
+  const healthRequests=[];
+  health.on('request',request=>healthRequests.push(request.url()));
+  await health.locator('#holdingCode').fill('2330');
+  await health.locator('#holdingName').fill('<img src=x onerror=alert(1)>');
+  await health.locator('#holdingCost').fill('100');
+  await health.locator('#holdingShares').fill('1000');
+  await health.locator('#holdingPrice').fill('110');
+  await health.locator('#holdingForm button[type="submit"]').click();
+  assert.match(await health.locator('#holdingSummary').innerText(),/估算損益 10,000/);
+  assert.equal(await health.locator('#holdingRows img').count(),0,'user-entered names render as text, never HTML');
+  assert.match(await health.locator('#holdingStatus').innerText(),/不會上傳/);
+  assert.equal(await health.evaluate(()=>JSON.parse(localStorage.getItem('jei-holding-health-private-v1')).length),1);
+  await health.reload({waitUntil:'domcontentloaded'});
+  assert.match(await health.locator('#holdingRows').innerText(),/2330/,'local holding persists after reload');
+  assert.equal(healthRequests.some(url=>/^https?:/.test(url)),false,'private holding page makes no external requests');
+  await health.locator('#clearHoldings').click();
+  assert.equal(await health.evaluate(()=>localStorage.getItem('jei-holding-health-private-v1')),null);
+  assert.match(await health.locator('#holdingRows').innerText(),/尚未在此裝置建立/);
   await health.close();
   // Weekend/holiday research is visible and dated, but no historical trade levels.
   await page.locator('[data-go="attack"]').first().click();
