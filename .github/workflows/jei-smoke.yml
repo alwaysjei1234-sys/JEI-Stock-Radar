@@ -19,6 +19,8 @@ jobs:
           node-version: '22'
       - name: Frontend and privacy smoke checks
         run: node tests/smoke.cjs
+      - name: Private local holding health checks
+        run: node tests/holding_health.cjs
       - name: Dashboard and Android bridge smoke checks
         run: node scripts/jei-smoke.mjs
       - name: AI chat failure recovery
