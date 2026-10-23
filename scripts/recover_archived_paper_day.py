@@ -5,7 +5,12 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from scripts.update_paper_performance import advance
+try:
+    from scripts.update_paper_performance import advance
+except ModuleNotFoundError as exc:
+    if exc.name not in ("scripts", "scripts.update_paper_performance"):
+        raise
+    from update_paper_performance import advance
 
 ROOT = Path(__file__).resolve().parents[1]
 STATE_PATH = ROOT / "remote/strategy_performance.json"
