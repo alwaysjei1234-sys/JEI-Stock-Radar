@@ -178,7 +178,7 @@ check('Private AI token setup is reachable and does not consume model quota',()=
 });
 
 check('Exchange quote dates and 13:30 close boundary are enforced',()=>{
- assert.ok(py.includes('if quote_day!=expected_day or not valid_trade_time:continue'));
+ assert.ok(py.includes('if quote_day!=expected_day:')&&py.includes('if not valid_trade_time:'));
  assert.ok(py.includes('(hh<13 or mm<=30)'));
  assert.ok(py.includes('live_valid=market_open and live_count>=500'));
  assert.ok(py.includes('market_mode="資料過期" if stale_source'));
