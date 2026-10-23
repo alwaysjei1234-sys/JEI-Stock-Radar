@@ -166,6 +166,19 @@ check('Off-hours official close observation is readable but never trusted as liv
  assert.ok(html.includes('歷史收盤觀察榜'));
  assert.ok(html.includes('const historical=!trusted&&isRecentCloseObservation(system,now)'));
 });
+check('Weekday typhoon and exchange-holiday closes stay historical, never actionable',()=>{
+ const trusted=html.match(/^function isTrustedFeed\(.*$/m)?.[0];
+ const recent=html.match(/function isRecentCloseObservation\(feed=system,now=new Date\(\)\)\{[\s\S]*?\n\}/)?.[0];
+ assert.ok(trusted&&recent,'feed date gates must exist');
+ const ctx={};vm.runInNewContext(trusted+'\n'+recent+';globalThis.trusted=isTrustedFeed;globalThis.recent=isRecentCloseObservation;',ctx);
+ const prior={data_date:'2026-10-22',updated_at:'2026-10-22 20:22',market:{mode:'今日收盤',stale:false,close_count:1955}};
+ const typhoonClosure=new Date('2026-10-23T05:00:00Z');
+ const makeUpHoliday=new Date('2026-10-26T01:00:00Z');
+ assert.equal(ctx.trusted(prior,typhoonClosure),false,'Friday suspension cannot be treated as a current close');
+ assert.equal(ctx.recent(prior,typhoonClosure),true,'last verified close remains available as historical context');
+ assert.equal(ctx.trusted(prior,makeUpHoliday),false,'Monday holiday cannot be treated as a current close');
+ assert.equal(ctx.recent(prior,makeUpHoliday),true,'multi-day holiday retains a dated prior close');
+});
 check('Private AI token setup is reachable and does not consume model quota',()=>{
  assert.ok(html.includes('id="aiBackendToken" type="password"'),'private token field must be visible');
  assert.ok(html.includes('id="aiTokenStatus"'));
