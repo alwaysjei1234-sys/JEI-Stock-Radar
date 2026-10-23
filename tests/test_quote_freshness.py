@@ -25,7 +25,7 @@ class QuoteFreshnessTests(unittest.TestCase):
             return [{"c": "2330", "n": "台積電", "d": quote_day,
                      "t": "10:15:00", "y": "900", "z": "920", "v": "4500"}]
         with patch.object(MOD, "fetch_mis_channels", side_effect=fake_mis):
-            result, count, taiex, errors = MOD.enrich_live([stock], asof=self.ASOF)
+            result, count, taiex, errors, _ = MOD.enrich_live([stock], asof=self.ASOF)
         return result[0], count, taiex, errors
 
     def test_yesterday_quote_never_overwrites_official_close(self):
