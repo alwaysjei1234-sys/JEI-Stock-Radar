@@ -36,6 +36,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_paper_performance.py' -v
       - name: Verify forward-only picked-stock analysis and no hindsight
         run: python -m unittest discover -s tests -p 'test_pick_validation.py' -v
+      - name: Verify standalone picked-stock generator import path
+        run: PYTHONPATH=. python -c 'import scripts.update_pick_validation'
       - name: Check whether official feed is from today's completed session
         id: session
         shell: bash
@@ -53,6 +55,8 @@ jobs:
         run: python scripts/update_paper_performance.py
       - name: Freeze daily picks and generate 3-60 trading-day report
         if: steps.session.outputs.active == 'true'
+        env:
+          PYTHONPATH: .
         run: python scripts/update_pick_validation.py
       - name: Publish paper benchmark and immutable picked-stock validation
         if: steps.session.outputs.active == 'true'
