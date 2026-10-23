@@ -2,8 +2,9 @@ name: JEI immutable daily pick archive
 
 on:
   schedule:
-    # 19:30 Asia/Taipei on weekdays, after TWSE/TPEX closing feeds.
+    # 19:30 primary run and 23:30 Taipei retry on weekdays; preserve snapshots only from a verified same-day close.
     - cron: '30 11 * * 1-5'
+    - cron: '30 15 * * 1-5'
   workflow_dispatch:
 
 permissions:
