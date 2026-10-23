@@ -171,7 +171,7 @@ const JEI_PRIVATE_APP = typeof JEINative !== 'undefined' && (location.protocol =
 document.addEventListener('DOMContentLoaded',()=>{
  document.querySelectorAll('[data-private-only]').forEach(el=>el.style.display=JEI_PRIVATE_APP?'block':'none');
  if(!JEI_PRIVATE_APP){
-  document.querySelectorAll('[data-go="hold"],[data-go="rotate"],[onclick*="go(\\'hold\\')"]').forEach(el=>el.style.display='none');
+  document.querySelectorAll('[data-go="hold"],[data-go="rotate"]').forEach(el=>el.style.display='none');
   document.querySelectorAll('#hold,#rotate').forEach(el=>{el.style.display='none';el.setAttribute('aria-hidden','true')});
  }
 });
