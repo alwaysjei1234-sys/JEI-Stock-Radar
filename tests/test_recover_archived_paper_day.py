@@ -15,6 +15,7 @@ DAY2 = "2026-10-22"
 def archive(day, base):
     quotes = {f"{1000+i:04d}": float(base+i) for i in range(600)}
     quotes["2330"] = float(base)
+    quotes["2317"] = float(base)
     return {"schema": 1, "kind": "official_daily_close", "data_date": day,
             "coverage_count": len(quotes), "days": {day: quotes}}
 
