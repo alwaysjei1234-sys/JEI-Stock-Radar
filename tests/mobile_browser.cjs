@@ -58,6 +58,8 @@ async function run(){
   const health=await context.newPage();
   await health.goto(base+'holding-health.html',{waitUntil:'domcontentloaded'});
   assert.equal(await health.locator('main section').count(),8);
+  assert.match(await health.locator('body').innerText(),/待驗證/);
+  assert.match(await health.locator('body').innerText(),/私人持股/);
   await health.close();
   // Weekend/holiday research is visible and dated, but no historical trade levels.
   await page.locator('[data-go="attack"]').first().click();
