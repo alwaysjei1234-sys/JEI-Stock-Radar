@@ -51,10 +51,15 @@ def sector_news_summary(items):
     for sector in SECTOR_TERMS:
         relevant = [item for item in items if sector in item.get("sectors", [])]
         hosts = sorted({item.get("publisher_host", "") for item in relevant if item.get("publisher_host")})
+        # Require at least three independent publishers before any consensus label.
+        # Yahoo-hosted RSS links are a single distribution channel, not 3 sources.
+        enough_sources = len(hosts) >= 3
         sectors[sector] = {"headlines": len(relevant), "publisher_hosts": hosts,
                            "distinct_publisher_hosts": len(hosts),
+                           "minimum_independent_sources": 3,
+                           "independent_sources_confirmed": enough_sources,
                            "research_institutions_verified": 0,
-                           "status": "news_leads_only_not_independent_research"}
+                           "status": "multi_source_news_lead_not_verified_research" if enough_sources else "insufficient_independent_sources"}
     return sectors
 
 def collect(categories=("tw_market",), opener=None):
