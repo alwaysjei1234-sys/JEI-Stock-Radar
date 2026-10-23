@@ -64,6 +64,13 @@ on:
       - 'scripts/run_archived_paper_pipeline.py'
       - 'tests/test_archived_paper_pipeline.py'
       - '.github/workflows/archive-daily-picks.yml'
+      - 'scripts/export_official_closes.py'
+      - 'scripts/recover_archived_paper_day.py'
+      - 'tests/test_export_official_closes.py'
+      - 'tests/test_recover_archived_paper_day.py'
+      - 'data/pick_snapshots/*.json'
+      - 'data/feed_closes/*.json'
+      - '.github/workflows/update-paper-performance.yml'
       - '.github/workflows/acceptance-feed.yml'
   pull_request:
     paths:
@@ -127,6 +134,13 @@ on:
       - 'scripts/run_archived_paper_pipeline.py'
       - 'tests/test_archived_paper_pipeline.py'
       - '.github/workflows/archive-daily-picks.yml'
+      - 'scripts/export_official_closes.py'
+      - 'scripts/recover_archived_paper_day.py'
+      - 'tests/test_export_official_closes.py'
+      - 'tests/test_recover_archived_paper_day.py'
+      - 'data/pick_snapshots/*.json'
+      - 'data/feed_closes/*.json'
+      - '.github/workflows/update-paper-performance.yml'
       - '.github/workflows/acceptance-feed.yml'
   workflow_dispatch:
   schedule:
