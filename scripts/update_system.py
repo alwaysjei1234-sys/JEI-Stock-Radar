@@ -575,8 +575,10 @@ def main():
     # Session classification and quote collection are different: do not call final MIS
     # snapshots a live trading session after 13:30, and never trust an old quote date.
     minutes=now.hour*60+now.minute
-    market_open=now.weekday()<5 and 540<=minutes<810  # 09:00-13:29 Asia/Taipei
-    quote_refresh_window=now.weekday()<5 and 525<=minutes<960  # 08:45-15:59
+    # Weekdays are only potential sessions: a typhoon closure or holiday must
+    # also pass the exchange-date checks below before quotes become actionable.
+    market_open=now.weekday()<5 and 540<=minutes<810  # candidate window, not proof of a session
+    quote_refresh_window=now.weekday()<5 and 525<=minutes<960
     post_close_refresh=now.weekday()<5 and 840<=minutes<960
     if quote_refresh_window:
         try:rows,live_count,taiex_live,live_errors,live_stats=enrich_live(rows)
