@@ -1278,7 +1278,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
      rows.push('<tr style="border-top:1px solid #183e5c"><td style="text-align:left;padding:7px 3px">'+esc(label)+'</td><td>'+days+'</td><td>'+esc(v.completed)+'</td><td>'+pct(v.win_rate_pct)+'</td><td>'+pct(v.avg_estimated_net_pct)+'</td><td>'+pct(v.worst_estimated_net_pct)+'</td></tr>');
     }
    }
-   overview.textContent+='｜已成熟 '+rows.length+' 組；未到期追蹤 '+pendingTotal+' 筆、缺價 '+missingTotal+' 筆（未到期不列為 0%）';
+   overview.textContent+='｜已成熟 '+rows.length+' 組；未到期週期追蹤 '+pendingTotal+' 項次、缺價 '+missingTotal+' 項次（未到期不列為 0%）';
    detailsSummary.textContent='查看已完成的策略／週期明細（'+rows.length+' 組）';
    body.innerHTML=rows.length?rows.join(''):'<tr><td colspan="6" style="padding:12px;text-align:left;color:#8ca8bd">目前沒有可驗證的已完成績效；不得將缺值視為零報酬。</td></tr>';
   }catch(e){status.textContent='資料同步失敗';overview.textContent='無法取得績效報告：'+e.message;body.replaceChildren()}
