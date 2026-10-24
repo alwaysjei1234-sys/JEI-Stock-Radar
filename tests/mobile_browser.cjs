@@ -65,6 +65,10 @@ async function run(){
   assert.deepEqual(await page.locator('#jeiPickRows tr td:nth-child(2)').allTextContents(),['3','3','3','3','3'],'only mature 3-day results are displayed');
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
   assert.equal(await page.locator('[data-private-only]:visible').count(),0,'owner-only navigation and links stay hidden in visitor edition');
+  await page.locator('[data-go="attack"]').first().click();
+  assert.match(await page.locator('#attackList').innerText(),/族群未分類（中性計分）|族群資料未涵蓋/);
+  assert.doesNotMatch(await page.locator('#attackList').innerText(),/其他熱度 50/,'unmeasured sector heat must not look like a market observation');
+  await page.locator('[data-go="home"]').first().click();
   const health=await context.newPage();
   await health.goto(base+'holding-health.html',{waitUntil:'domcontentloaded'});
   assert.equal(await health.locator('main section').count(),8);
