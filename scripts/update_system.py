@@ -425,10 +425,18 @@ def score_row(s,mode,risk,sector_score,heat_penalty=0):
     return int(round(clamp(score,0,99)))
 
 def item(s,score,reason,mode,risk,sector,sector_score):
+    sector_label="族群未分類" if sector=="未分類" else (sector or "族群未分類")
     x={"code":s["code"],"name":s["name"],"score":score,"reason":reason,"price":s["close"],
-       "change_pct":round(s["pct"],2),"market":s["market"],"sector":sector or "其他","sector_score":sector_score}
+       "change_pct":round(s["pct"],2),"market":s["market"],"sector":sector_label,"sector_score":sector_score}
     x.update(price_plan(s,mode,risk))
     return x
+
+def sector_evidence(sector,score):
+    # 50 is the neutral model input when the stock is outside our tracked baskets;
+    # it is not measured sector heat and must not be presented as such.
+    if sector=="未分類":
+        return "族群資料未涵蓋（中性計分）"
+    return f"{sector}熱度 {score}"
 
 def load_history():
     try:
@@ -688,7 +696,7 @@ def main():
     tradable=[x for x in stocks if x["value"]>=30000000]
 
     def secinfo(s):
-        sec=stock_sector.get(s["code"],"其他")
+        sec=stock_sector.get(s["code"],"未分類")
         return sec,sector_scores.get(sec,50)
 
     hist_for_heat=load_history()
@@ -751,7 +759,7 @@ def main():
     attack=[]
     for score,s,sec,ss,r5,r10,r20,hp in attack_pool[:10]:
         chase="｜接近漲停，勿追高" if s["pct"]>=8.5 else ""
-        reason=f"{sec}熱度 {ss}｜漲幅 {s['pct']:.2f}%｜收盤位置 {position(s)*100:.0f}%｜成交值 {s['value']/1e8:.1f} 億{chase}"
+        reason=f"{sector_evidence(sec,ss)}｜漲幅 {s['pct']:.2f}%｜收盤位置 {position(s)*100:.0f}%｜成交值 {s['value']/1e8:.1f} 億{chase}"
         attack.append(item(s,score,reason,"attack",risk,sec,ss))
 
     attack_codes={x["code"] for x in attack[:5]}
@@ -760,14 +768,14 @@ def main():
     next_list=[]
     for score,s,sec,ss,r5,r10,r20,hp in next_pool[:10]:
         setup=round(clamp(ss*.42+position(s)*100*.28+clamp((math.log10(max(s.get("value",1),1))-7)*12,0,100)*.18+(100-min(100,hp*5))*.12,0,99))
-        reason=f"準備發動 {setup}分｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "過熱降權")
+        reason=f"準備發動 {setup}分｜{sector_evidence(sec,ss)}｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "過熱降權")
         next_list.append(item(s,score,reason,"next",risk,sec,ss))
 
     monster_pool.sort(key=lambda x:(x[0],x[1]["pct"],x[1]["value"]),reverse=True)
     monster=[]
     for score,s,sec,ss,r5,r10,r20,hp in monster_pool[:10]:
         phase="異常資金提前卡位" if s["pct"]<5 else "強勢加速"
-        reason=f"{phase}｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜成交值 {s['value']/1e8:.1f}億｜收盤位置 {position(s)*100:.0f}%｜"+("低過熱" if hp<4 else "過熱警戒")
+        reason=f"{phase}｜{sector_evidence(sec,ss)}｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜成交值 {s['value']/1e8:.1f}億｜收盤位置 {position(s)*100:.0f}%｜"+("低過熱" if hp<4 else "過熱警戒")
         monster.append(item(s,score,reason,"monster",risk,sec,ss))
 
     # 明日妖股：偏重「尚未完全噴出、收盤強、量能足、族群不弱」的隔日爆發候選。
@@ -784,7 +792,7 @@ def main():
     tomorrow_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
     tomorrow_monster=[]
     for score,s,sec,ss,r5,r10,r20,hp in tomorrow_pool[:10]:
-        reason=f"隔日爆發候選｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜收盤位置 {position(s)*100:.0f}%｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "控追價")
+        reason=f"隔日爆發候選｜{sector_evidence(sec,ss)}｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜收盤位置 {position(s)*100:.0f}%｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "控追價")
         tomorrow_monster.append(item(s,score,reason,"next",risk,sec,ss))
 
     # 未來妖股：找 1~4 週題材/族群仍有延伸性、但短線尚未過熱的提前觀察名單。
@@ -803,7 +811,7 @@ def main():
     future_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
     future_monster=[]
     for score,s,sec,ss,r5,r10,r20,hp in future_pool[:12]:
-        reason=f"1–4週價量潛力觀察｜{sec} {ss}分｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜20日 {fmt_ret(r20)}｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "控制追價")
+        reason=f"1–4週價量潛力觀察｜{sector_evidence(sec,ss)}｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜20日 {fmt_ret(r20)}｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "控制追價")
         future_monster.append(item(s,score,reason,"next",risk,sec,ss))
 
     # Transparent outside-industry research is context, never an unearned stock

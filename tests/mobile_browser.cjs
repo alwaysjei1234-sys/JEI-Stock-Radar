@@ -57,6 +57,12 @@ async function run(){
   assert.equal(await page.locator('#holdToolbar').isVisible(),false,'private sort/filter controls never shown on public browser');
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>/已連線/.test(document.querySelector('#sysStatus')?.textContent||''),null,{timeout:15000});
+  await page.waitForFunction(()=>document.querySelector('#jeiPickSync')?.textContent.includes('官方收盤'),null,{timeout:15000});
+  assert.equal(await page.locator('#jeiPickDetails').evaluate(el=>el.open),false,'long performance breakdown starts collapsed');
+  assert.match(await page.locator('#jeiPickDetailsSummary').innerText(),/已完成的策略／週期明細（5 組）/);
+  assert.match(await page.locator('#jeiPickOverview').innerText(),/未到期不列為 0%/);
+  assert.equal(await page.locator('#jeiPickRows tr').count(),5,'only five matured 3-day strategy results are shown');
+  assert.deepEqual(await page.locator('#jeiPickRows tr td:nth-child(2)').allTextContents(),['3','3','3','3','3'],'only mature 3-day results are displayed');
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
   assert.equal(await page.locator('[data-private-only]:visible').count(),0,'owner-only navigation and links stay hidden in visitor edition');
   const health=await context.newPage();
