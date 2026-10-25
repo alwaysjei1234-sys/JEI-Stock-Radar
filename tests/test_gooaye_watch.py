@@ -22,8 +22,11 @@ class GooayeWatchTests(unittest.TestCase):
         self.assertNotIn("description", episodes[0])
 
     def test_summary_date_is_parsed_without_storing_summary_content(self):
-        payload = watch.build_watch(self.rss, self.page, datetime(2026, 10, 25, tzinfo=timezone.utc))
+        apple = json.dumps({"resultCount": 1, "results": [{"trackName": "EP708 | 🦷 風雨求平安", "releaseDate": "2026-10-24T00:00:00Z", "trackViewUrl": "https://podcasts.apple.com/tw/podcast/ep708"}]}).encode()
+        payload = watch.build_watch(self.rss, self.page, datetime(2026, 10, 25, tzinfo=timezone.utc), apple)
         self.assertEqual(payload["summaryPage"]["lastUpdated"], "2026-06-29")
+        self.assertEqual(payload["episodes"][0]["title"], "EP708 | 🦷 風雨求平安")
+        self.assertEqual(payload["episodes"][0]["appleUrl"], "https://podcasts.apple.com/tw/podcast/ep708")
         self.assertFalse(payload["summaryPage"]["contentCopied"])
         self.assertTrue(payload["podcast"]["metadataOnly"])
         self.assertFalse(payload["podcast"]["descriptionsStored"])

@@ -193,7 +193,10 @@
         try {
           const url = new URL(item.url);
           if (url.protocol !== 'https:') throw new Error('unsafe URL');
-          anchor.href = url.href; anchor.target = '_blank'; anchor.rel = 'noopener noreferrer'; anchor.textContent = `${item.episode || ''} ${item.title} ↗`.trim();
+          const destination = item.appleUrl || url.href;
+          const safeDestination = new URL(destination);
+          if (safeDestination.protocol !== 'https:') throw new Error('unsafe catalog URL');
+          anchor.href = safeDestination.href; anchor.target = '_blank'; anchor.rel = 'noopener noreferrer'; anchor.textContent = `${item.episode || ''} ${item.title} ↗`.trim();
         } catch (_) { anchor.textContent = `${item.episode || ''} ${item.title}`.trim(); }
         const meta = doc.createElement('small'); meta.textContent = `｜發布 ${item.publishedAt}`;
         row.append(anchor, meta); episodesTarget.append(row);

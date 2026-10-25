@@ -14,6 +14,7 @@ from typing import Any
 
 
 RSS_URL = "https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml"
+APPLE_LOOKUP_URL = "https://itunes.apple.com/lookup?id=1500839292&entity=podcastEpisode&limit=20&country=TW"
 SUMMARY_URL = "https://cocoboomboom.com/gooaye.html"
 OUTPUT = Path(__file__).resolve().parents[1] / "remote" / "gooaye_watch.json"
 USER_AGENT = "JEI-Stock-Radar/1.0 (public podcast feed metadata; contact: repository owner)"
@@ -83,8 +84,47 @@ def parse_rss(payload: bytes, limit: int = 8) -> list[dict[str, Any]]:
     return episodes
 
 
-def build_watch(rss_payload: bytes, page_payload: bytes, checked_at: datetime | None = None) -> dict[str, Any]:
+def enrich_episode_titles(episodes: list[dict[str, Any]], payload: bytes | None) -> list[dict[str, Any]]:
+    """Use Apple's public catalog title field only; ignore descriptions and all promo text."""
+    if not payload:
+        return episodes
+    try:
+        catalog = json.loads(payload.decode("utf-8"))
+        results = catalog.get("results", [])
+    except (UnicodeDecodeError, json.JSONDecodeError, AttributeError):
+        return episodes
+    by_episode: dict[str, dict[str, Any]] = {}
+    for row in results:
+        if not isinstance(row, dict):
+            continue
+        name = str(row.get("trackName", "")).strip()
+        match = re.search(r"\bEP\s*(\d+)\b", name, re.IGNORECASE)
+        if not match:
+            continue
+        apple_url = str(row.get("trackViewUrl", ""))
+        release_date = str(row.get("releaseDate", ""))[:10]
+        by_episode[f"EP{match.group(1)}"] = {
+            "title": name[:160],
+            "appleUrl": apple_url if apple_url.startswith("https://") else None,
+            "publishedAt": release_date if re.fullmatch(r"\d{4}-\d{2}-\d{2}", release_date) else None,
+        }
+    result = []
+    for episode in episodes:
+        merged = dict(episode)
+        apple = by_episode.get(str(episode.get("episode", "")))
+        if apple:
+            merged["title"] = apple["title"]
+            if apple["appleUrl"]:
+                merged["appleUrl"] = apple["appleUrl"]
+            if apple["publishedAt"]:
+                merged["publishedAt"] = apple["publishedAt"]
+        result.append(merged)
+    return result
+
+
+def build_watch(rss_payload: bytes, page_payload: bytes, checked_at: datetime | None = None, apple_payload: bytes | None = None) -> dict[str, Any]:
     episodes = parse_rss(rss_payload)
+    episodes = enrich_episode_titles(episodes, apple_payload)
     checked = (checked_at or datetime.now(timezone.utc)).astimezone(timezone.utc)
     page_date = parse_summary_date(page_payload.decode("utf-8", errors="replace"))
     return {
@@ -101,6 +141,7 @@ def build_watch(rss_payload: bytes, page_payload: bytes, checked_at: datetime | 
         },
         "podcast": {
             "rssUrl": RSS_URL,
+            "catalogUrl": APPLE_LOOKUP_URL,
             "publisher": "SoundOn RSS",
             "metadataOnly": True,
             "descriptionsStored": False,
@@ -113,7 +154,11 @@ def build_watch(rss_payload: bytes, page_payload: bytes, checked_at: datetime | 
 def main() -> None:
     rss_payload = fetch(RSS_URL)
     page_payload = fetch(SUMMARY_URL)
-    data = build_watch(rss_payload, page_payload)
+    try:
+        apple_payload = fetch(APPLE_LOOKUP_URL)
+    except RuntimeError:
+        apple_payload = None
+    data = build_watch(rss_payload, page_payload, apple_payload=apple_payload)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Updated public podcast metadata: {len(data['episodes'])} episodes; summary date {data['summaryPage']['lastUpdated'] or 'unavailable'}")
