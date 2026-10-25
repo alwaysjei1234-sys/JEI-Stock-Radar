@@ -103,7 +103,7 @@ async function run(){
   assert.match(await health.locator('#videoWatchRows').innerText(),/財女珍妮|M觀點/);
   assert.equal(await health.locator('#videoChannelDirectory p').count(),29,'all visible channels from the image are listed');
   assert.ok(await health.locator('#videoWatchRows a').count()>=2,'new video entries link to original YouTube pages');
-  assert.match(await health.locator('#videoChannelDirectory').innerText(),/官方來源|搜尋核對/);
+  assert.match(await health.locator('#videoChannelDirectory').textContent(),/官方來源|搜尋核對/);
   await health.locator('#scenarioPrice').fill('100');
   await health.locator('#scenarioBull').fill('120');
   await health.locator('#scenarioBaseLow').fill('95');
