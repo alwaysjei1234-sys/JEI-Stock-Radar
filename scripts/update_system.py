@@ -156,16 +156,22 @@ def fetch_latest_offhours_close(rows, now, previous_data_date):
         try:
             twse=fetch_twse_daily(day.strftime("%Y%m%d"))
             tpex=fetch_tpex_daily(day)
-            if len(twse)<500 or len(tpex)<500:
-                continue
-            if any(normalize_exchange_date(x.get("date"))!=day_key for x in twse):
+            twse_count=len(twse)
+            tpex_count=len(tpex)
+            twse_dates=sorted({normalize_exchange_date(x.get("date")) for x in twse if x.get("date")})
+            if twse_count<500 or tpex_count<500 or twse_dates!={day_key}:
+                print(json.dumps({"offhours_close_attempt":day_key,"twse_count":twse_count,
+                                  "tpex_count":tpex_count,"twse_dates":twse_dates},ensure_ascii=False))
                 continue
             for row in tpex:
                 row["date"]=day_key
                 row["market"]="TPEX"
             base=[x for x in rows if x.get("market") not in ("TWSE","TPEX")]
+            print(json.dumps({"offhours_close_selected":day_key,"twse_count":twse_count,
+                              "tpex_count":tpex_count},ensure_ascii=False))
             return base+twse+tpex,day_key
-        except Exception:
+        except Exception as exc:
+            print(json.dumps({"offhours_close_error":day_key,"error":f"{type(exc).__name__}: {str(exc)[:140]}"},ensure_ascii=False))
             continue
     return rows,None
 
