@@ -574,7 +574,7 @@ check('Intraday dashboard evidence and AI reject unsupported institutional exits
 });
 
 
-check('Android 3.9.9 native background worker rejects stale feeds, quote substitutions and weekends',()=>{
+check('Android native background worker rejects stale feeds, quote substitutions and weekends',()=>{
  const fs=require('fs');
  const worker=fs.readFileSync('app/src/main/java/com/jei/stockradar/RiskWorker.java','utf8');
  const activity=fs.readFileSync('app/src/main/java/com/jei/stockradar/MainActivity.java','utf8');
@@ -604,8 +604,13 @@ check('Android 3.9.9 native background worker rejects stale feeds, quote substit
  assert.ok(worker.includes('recordRiskEvent(prefs, "market"'));
  assert.ok(activity.includes('public String loadRiskEvents()'));
  assert.ok(activity.includes('public void setRiskNotificationEnabled(boolean enabled)'));
- assert.ok(gradle.includes('versionCode 36'));
- assert.ok(gradle.includes("versionName '3.9.12'"));
+ const manifest=JSON.parse(fs.readFileSync('remote/update.json','utf8'));
+ const code=gradle.match(/versionCode\\s+(\\d+)/);
+ const name=gradle.match(/versionName\\s+'([^']+)'/);
+ assert.ok(code&&name,'Android version must be defined');
+ assert.equal(Number(manifest.versionCode),Number(code[1]),'update manifest must match APK version code');
+ assert.equal(String(manifest.versionName).split(/\\s+/)[0],name[1],'update manifest must match APK version name');
+ assert.ok(html.includes(`const UI_VERSION='${manifest.uiVersion}';`),'remote UI version must match update manifest');
 });
 check('Native history UI escapes risk titles and syncs opt-out with Android Worker',()=>{
  assert.ok(html.includes('id="nativeAlertHistory"'));
