@@ -13,8 +13,12 @@ const server=http.createServer(async(req,res)=>{
   const target=path.resolve(ROOT,'.'+decoded);
   if(!target.startsWith(ROOT+path.sep)){res.writeHead(403).end();return}
   try{
-    const source=decoded==='/remote/free_research.json' ? path.join(ROOT,'tests','fixtures','free_research.json') :
-      decoded==='/remote/daily_news_watch.json' ? path.join(ROOT,'tests','fixtures','daily_news_watch.json') : target;
+    const fixtureRoutes={
+      '/remote/free_research.json':'free_research.json',
+      '/remote/daily_news_watch.json':'daily_news_watch.json',
+      '/remote/video_upload_watch.json':'video_upload_watch.json'
+    };
+    const source=fixtureRoutes[decoded] ? path.join(ROOT,'tests','fixtures',fixtureRoutes[decoded]) : target;
     const bytes=await fs.readFile(source);
     res.writeHead(200,{'Content-Type':MIME[path.extname(target)]||'text/plain','Cache-Control':'no-store'});
     res.end(bytes);
@@ -94,6 +98,12 @@ async function run(){
   assert.ok(await health.locator('#dailyNewsThemes a').count()>=3,'news signals link back to source articles');
   assert.match(await health.locator('#dailyNewsThemes').innerText(),/美股／半導體連動|地緣政治／能源/);
   assert.doesNotMatch(await health.locator('#dailyNewsThemes').innerText(),/原文新聞標題|搬運摘要/,'derived news panel does not republish article text');
+  await health.waitForFunction(()=>/已核實 RSS 頻道 8\/8/.test(document.querySelector('#videoWatchStatus')?.textContent||''));
+  assert.equal(await health.locator('#videoWatchRows p').count(),2,'latest video metadata appears as a reading queue');
+  assert.match(await health.locator('#videoWatchRows').innerText(),/財女珍妮|M觀點/);
+  assert.equal(await health.locator('#videoChannelDirectory p').count(),29,'all visible channels from the image are listed');
+  assert.ok(await health.locator('#videoWatchRows a').count()>=2,'new video entries link to original YouTube pages');
+  assert.match(await health.locator('#videoChannelDirectory').innerText(),/官方來源|搜尋核對/);
   await health.locator('#scenarioPrice').fill('100');
   await health.locator('#scenarioBull').fill('120');
   await health.locator('#scenarioBaseLow').fill('95');

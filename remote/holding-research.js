@@ -239,6 +239,55 @@
     }
     return { ok: true, count: themes.length, reportDate: day };
   }
+  function renderVideoUploadWatch(doc, statusTarget, videosTarget, directoryTarget, feed, sources) {
+    if (videosTarget) videosTarget.replaceChildren();
+    if (!feed || feed.schemaVersion !== 1 || !Array.isArray(feed.videos)) {
+      if (statusTarget) statusTarget.textContent = 'YouTube 新片索引尚未同步；不從標題推測影片觀點。';
+      return { ok: false, count: 0 };
+    }
+    const sourceCount = Number(feed.sourceCount) || 0;
+    const successes = Number(feed.successfulSourceCount) || 0;
+    const failed = Array.isArray(feed.failedSources) ? feed.failedSources.length : Math.max(0, sourceCount - successes);
+    if (statusTarget) statusTarget.textContent = `已核實 RSS 頻道 ${successes}/${sourceCount}｜讀取失敗 ${failed}｜最近同步 ${feed.checkedAt || '未知'}｜最新片 ${feed.videos[0]?.publishedAt || '未知'}｜僅標題索引，未讀影片內容。`;
+    const videos = feed.videos.slice(0, 20);
+    if (videosTarget) {
+      if (!videos.length) videosTarget.textContent = '目前沒有可用的新片 metadata。';
+      videos.forEach(item => {
+        if (!item || typeof item.title !== 'string' || typeof item.channel !== 'string') return;
+        const row = doc.createElement('p');
+        const meta = doc.createElement('small');
+        meta.textContent = `[${item.level || '頻道'}] ${item.channel}｜${item.publishedAt || '日期未驗證'} `;
+        const link = doc.createElement('a');
+        try {
+          const url = new URL(item.url);
+          if (url.protocol !== 'https:' || url.hostname !== 'www.youtube.com') throw new Error('unsafe video link');
+          link.href = url.href; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = `${item.title} ↗`;
+        } catch (_) { link.textContent = item.title; }
+        row.append(meta, link);
+        videosTarget.append(row);
+      });
+    }
+    const channels = sources && Array.isArray(sources.channels) ? sources.channels : [];
+    if (directoryTarget) {
+      directoryTarget.replaceChildren();
+      if (!channels.length) directoryTarget.textContent = '來源目錄尚未同步。';
+      channels.forEach(item => {
+        if (!item || typeof item.name !== 'string') return;
+        const row = doc.createElement('p');
+        const label = doc.createElement('strong');
+        label.textContent = `${item.level || '頻道'}｜${item.name}：${item.focus || '投資研究'} `;
+        row.append(label);
+        try {
+          const url = new URL(item.url);
+          if (url.protocol !== 'https:') throw new Error('unsafe source URL');
+          const link = doc.createElement('a'); link.href = url.href; link.target = '_blank'; link.rel = 'noopener noreferrer';
+          link.textContent = item.verifiedOfficial ? '官方來源 ↗' : '搜尋核對 ↗'; row.append(link);
+        } catch (_) { /* keep untrusted directory URLs as plain text */ }
+        directoryTarget.append(row);
+      });
+    }
+    return { ok: true, count: videos.length, directoryCount: channels.length, successes, sourceCount };
+  }
   function init(doc, fetcher) {
     const set = (id, text) => { const el = doc.getElementById(id); if (el) el.textContent = text; };
     const clearEphemeral = () => {
@@ -259,7 +308,9 @@
       fetcher('./free_research.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('free research'); return r.json(); }),
       fetcher('./research_source_directory.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('research source directory'); return r.json(); }),
       fetcher('./gooaye_watch.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('Gooaye watch'); return r.json(); }),
-      fetcher('./daily_news_watch.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('Daily news watch'); return r.json(); })]).then(results => {
+      fetcher('./daily_news_watch.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('Daily news watch'); return r.json(); }),
+      fetcher('./video_upload_watch.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('Video upload watch'); return r.json(); }),
+      fetcher('./video_research_sources.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('Video sources'); return r.json(); })]).then(results => {
       const system = results[0].status === 'fulfilled' ? results[0].value : null;
       const brief = results[1].status === 'fulfilled' ? results[1].value : null;
       latestBrief = brief;
@@ -269,6 +320,9 @@
       renderGooayeWatch(doc, doc.getElementById('gooayeWatchStatus'), doc.getElementById('gooayeEpisodes'), gooayeFeed, dayInTaipei());
       const dailyNews = results[5].status === 'fulfilled' ? results[5].value : null;
       renderDailyNewsWatch(doc, doc.getElementById('dailyNewsWatchStatus'), doc.getElementById('dailyNewsThemes'), dailyNews);
+      const videoFeed = results[6].status === 'fulfilled' ? results[6].value : null;
+      const videoSources = results[7].status === 'fulfilled' ? results[7].value : null;
+      renderVideoUploadWatch(doc, doc.getElementById('videoWatchStatus'), doc.getElementById('videoWatchRows'), doc.getElementById('videoChannelDirectory'), videoFeed, videoSources);
       if (!system) { renderSourceStatus(doc, doc.getElementById('researchSourceStatus'), null, latestFree, latestFree && latestFree.generatedAt); set('researchMarketStatus', '公開市場 feed 讀取失敗；暫停市場即時判讀。'); return; }
       latestSystem = system;
       const snapshot = marketSnapshot(system, brief, dayInTaipei());
@@ -364,5 +418,5 @@
       if (el && output) el.addEventListener('input', () => set(output, el.value.trim() ? '已輸入手動研究線索；請自行核對原始公告，系統尚未驗證來源。' : '尚未輸入查證資料。'));
     });
   }
-  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, sourceQueries, buildResearchBrief, renderSourceStatus, renderGooayeWatch, renderDailyNewsWatch, init });
+  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, sourceQueries, buildResearchBrief, renderSourceStatus, renderGooayeWatch, renderDailyNewsWatch, renderVideoUploadWatch, init });
 }));

@@ -1,0 +1,45 @@
+name: Update finance YouTube channel review queue
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'remote/video_research_sources.json'
+      - 'scripts/update_video_upload_watch.py'
+      - 'tests/test_video_upload_watch.py'
+      - 'tests/fixtures/youtube_channel_feed.xml'
+      - '.github/workflows/update-video-upload-watch.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 09:45 Asia/Taipei; official public RSS only, no API key.
+    - cron: '45 1 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: jei-video-upload-watch
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test RSS metadata parser and outage handling
+        run: python3 -m unittest discover -s tests -p 'test_video_upload_watch.py'
+      - name: Read official public channel RSS feeds
+        run: python3 scripts/update_video_upload_watch.py
+      - name: Validate snapshot and publish changed uploads
+        run: |
+          python3 -m unittest discover -s tests -p 'test_video_upload_watch.py'
+          python3 -m json.tool remote/video_upload_watch.json >/dev/null
+          git add remote/video_upload_watch.json
+          if git diff --cached --quiet; then
+            echo 'No new video metadata.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'data: refresh finance YouTube upload queue'
+          git push

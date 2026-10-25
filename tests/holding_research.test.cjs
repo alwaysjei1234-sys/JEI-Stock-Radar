@@ -117,4 +117,15 @@ assert.match(newsStatus.textContent, /2026-10-24.*8 則焦點/);
 assert.equal(newsThemes.children.length, 1);
 assert.equal(newsThemes.children[0].children.filter(node => node.tag === 'a').length, 1, 'news links are HTTPS only');
 assert.equal(research.renderDailyNewsWatch(newsDoc, newsStatus, newsThemes, null).ok, false, 'missing news feed fails closed');
+const videoRows = { children: [], replaceChildren() { this.children = []; }, append(node) { this.children.push(node); } };
+const videoDir = { children: [], replaceChildren() { this.children = []; }, append(node) { this.children.push(node); } };
+const videoStatus = { textContent: '' };
+const videoResult = research.renderVideoUploadWatch(newsDoc, videoStatus, videoRows, videoDir, {
+  schemaVersion: 1, sourceCount: 1, successfulSourceCount: 1, checkedAt: '2026-10-25T09:45:00+08:00',
+  videos: [{ channel: 'M觀點', level: '中階', title: 'AI 市場觀察', publishedAt: '2026-10-24', url: 'https://www.youtube.com/watch?v=AbCdEf12345' }]
+}, { channels: [{ name: 'M觀點', level: '中階', focus: '科技', url: 'https://www.youtube.com/@mviewpoint', verifiedOfficial: true }] });
+assert.equal(videoResult.ok, true);
+assert.equal(videoRows.children.length, 1);
+assert.equal(videoDir.children.length, 1);
+assert.match(videoStatus.textContent, /未讀影片內容/);
 console.log('PASS dated market context, scenario validation, in-memory journal metrics and private-data boundaries');
