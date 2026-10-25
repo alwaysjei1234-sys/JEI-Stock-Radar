@@ -15,6 +15,9 @@ assert.ok(sourceLinks.length >= 10, 'research view should expose multiple indepe
 assert.ok(sourceLinks.some(item => item.name.includes('第一金')));
 assert.ok(sourceLinks.some(item => item.name.includes('華南永昌')));
 assert.ok(sourceLinks.some(item => item.name.includes('元大')));
+assert.ok(sourceLinks.some(item => item.name.includes('XQ 全球贏家')));
+assert.ok(sourceLinks.some(item => item.name.includes('籌碼K線')));
+assert.ok(sourceLinks.some(item => item.name.includes('PChome') && item.category.includes('選股')));
 assert.ok(sourceLinks.some(item => item.category === '論壇線索'));
 assert.ok(sourceLinks.every(item => new URL(item.href).protocol === 'https:'));
 assert.deepEqual(research.sourceQueries(sourceDirectory, '<script>'), [], 'invalid ticker must not form external search links');
@@ -55,7 +58,7 @@ const renderedRows = [];
 const statusTarget = { replaceChildren() { renderedRows.length = 0; }, append(row) { renderedRows.push(row); } };
 const fakeTableDocument = { createElement() { return { append() {}, textContent: '' }; } };
 research.renderSourceStatus(fakeTableDocument, statusTarget, snapshot, null);
-assert.equal(renderedRows.length, 11, 'source status should include connected, manual-only and unavailable datasets');
+assert.equal(renderedRows.length, 12, 'source status should include connected, manual-only and unavailable datasets');
 
 const plan = research.scenario({ price: 100, bull: 120, baseLow: 95, baseHigh: 105, bear: 90 });
 assert.equal(plan.ok, true);
