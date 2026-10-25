@@ -76,6 +76,24 @@ class FreeResearchTests(unittest.TestCase):
         self.assertEqual(ratios["eps"], 12.3)
         self.assertIsNone(module.financial_rows([{"公司代號": "2330", "營業收入": "0"}], [])["2330"]["grossMarginPct"])
 
+    def test_financial_rows_do_not_mix_quarters(self):
+        income = [{
+            "年度": "115", "季別": "2", "出表日期": "1151023", "公司代號": "2330", "公司名稱": "台積電",
+            "營業收入": "1000", "營業毛利（毛損）淨額": "550", "營業利益（損失）": "400",
+            "淨利（淨損）歸屬於母公司業主": "300", "基本每股盈餘（元）": "12.3",
+        }]
+        older_balance = [{
+            "年度": "115", "季別": "1", "出表日期": "1150701", "公司代號": "2330", "公司名稱": "台積電",
+            "資產總計": "5000", "負債總計": "2000", "流動資產": "1500", "流動負債": "1000", "每股參考淨值": "88.8",
+        }]
+        record = module.financial_rows(income, older_balance)["2330"]
+        self.assertEqual(record["period"], "2026-Q2")
+        self.assertEqual(record["grossMarginPct"], 55)
+        self.assertEqual(record["eps"], 12.3)
+        self.assertIsNone(record["debtRatioPct"])
+        self.assertIsNone(record["currentRatioPct"])
+        self.assertIsNone(record["bookValuePerShare"])
+
     def test_snapshot_contains_both_markets_sources_and_only_public_data(self):
         fixtures = {
             module.SOURCES["twseRevenue"]: [{"公司代號": "2330", "公司名稱": "台積電", "資料年月": "11509", "出表日期": "1151017", "營業收入-去年同月增減(%)": "20"}],

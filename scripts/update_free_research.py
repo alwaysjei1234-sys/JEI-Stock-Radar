@@ -158,22 +158,47 @@ def valuation_rows(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
 
 
 def financial_rows(income_rows: list[dict[str, Any]], balance_rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
-    """Normalize latest general-industry quarterly income/balance statement rows."""
+    """Normalize the latest same-company, same-quarter income/balance rows only."""
     def get(row: dict[str, Any], *keys: str) -> Any:
         return next((row.get(key) for key in keys if row.get(key) not in (None, "")), None)
 
-    income_by_code = {}
-    balance_by_code = {}
-    for destination, rows in ((income_by_code, income_rows), (balance_by_code, balance_rows)):
+    def period(row: dict[str, Any]) -> tuple[int, int] | None:
+        year = get(row, "年度", "Year")
+        season = get(row, "季別", "Season")
+        try:
+            year_number = int(str(year))
+            year_number = year_number + 1911 if year_number < 1911 else year_number
+            quarter = int(str(season))
+        except (TypeError, ValueError):
+            return None
+        return (year_number, quarter) if 1 <= quarter <= 4 else None
+
+    def index(rows: list[dict[str, Any]]) -> dict[tuple[str, tuple[int, int]], dict[str, Any]]:
+        result = {}
         for row in rows:
             code = str(get(row, "公司代號", "SecuritiesCompanyCode") or "").strip().upper()
-            if code:
-                destination[code] = row
+            key = period(row)
+            if not code or key is None:
+                continue
+            identity = (code, key)
+            previous = result.get(identity)
+            current_date = roc_date(get(row, "出表日期", "Date")) or ""
+            previous_date = roc_date(get(previous, "出表日期", "Date")) if previous else None
+            if previous is None or current_date >= (previous_date or ""):
+                result[identity] = row
+        return result
+
+    income_by_period = index(income_rows)
+    balance_by_period = index(balance_rows)
+    latest_period_by_code = {}
+    for code, key in set(income_by_period) | set(balance_by_period):
+        if key > latest_period_by_code.get(code, (0, 0)):
+            latest_period_by_code[code] = key
 
     result = {}
-    for code in income_by_code.keys() | balance_by_code.keys():
-        income = income_by_code.get(code, {})
-        balance = balance_by_code.get(code, {})
+    for code, key in latest_period_by_code.items():
+        income = income_by_period.get((code, key), {})
+        balance = balance_by_period.get((code, key), {})
         revenue = number(get(income, "營業收入", "OperatingRevenue"))
         gross = number(get(income, "營業毛利（毛損）淨額", "營業毛利（毛損）", "GrossProfit"))
         operating = number(get(income, "營業利益（損失）", "OperatingIncome"))
@@ -182,17 +207,13 @@ def financial_rows(income_rows: list[dict[str, Any]], balance_rows: list[dict[st
         liabilities = number(get(balance, "負債總計", "TotalLiabilities"))
         current_assets = number(get(balance, "流動資產", "CurrentAssets"))
         current_liabilities = number(get(balance, "流動負債", "CurrentLiabilities"))
-        year = get(income, "年度", "Year") or get(balance, "年度", "Year")
-        season = get(income, "季別", "Season") or get(balance, "季別", "Season")
-        try:
-            year_label = str(int(str(year)) + 1911) if int(str(year)) < 1911 else str(int(str(year)))
-        except (TypeError, ValueError):
-            year_label = None
-        report_date = roc_date(get(income, "出表日期", "Date") or get(balance, "出表日期", "Date"))
+        year_label, season = key
+        dates = [roc_date(get(row, "出表日期", "Date")) for row in (income, balance)]
+        dates = [value for value in dates if value]
         result[code] = {
             "industryCoverage": "general_industry",
-            "period": f"{year_label}-Q{season}" if year_label and str(season).isdigit() else None,
-            "publishedAt": report_date,
+            "period": f"{year_label}-Q{season}",
+            "publishedAt": max(dates) if dates else None,
             "grossMarginPct": round(gross / revenue * 100, 4) if gross is not None and revenue else None,
             "operatingMarginPct": round(operating / revenue * 100, 4) if operating is not None and revenue else None,
             "parentNetMarginPct": round(net / revenue * 100, 4) if net is not None and revenue else None,
