@@ -13,7 +13,8 @@ const server=http.createServer(async(req,res)=>{
   const target=path.resolve(ROOT,'.'+decoded);
   if(!target.startsWith(ROOT+path.sep)){res.writeHead(403).end();return}
   try{
-    const source=decoded==='/remote/free_research.json' ? path.join(ROOT,'tests','fixtures','free_research.json') : target;
+    const source=decoded==='/remote/free_research.json' ? path.join(ROOT,'tests','fixtures','free_research.json') :
+      decoded==='/remote/daily_news_watch.json' ? path.join(ROOT,'tests','fixtures','daily_news_watch.json') : target;
     const bytes=await fs.readFile(source);
     res.writeHead(200,{'Content-Type':MIME[path.extname(target)]||'text/plain','Cache-Control':'no-store'});
     res.end(bytes);
@@ -87,6 +88,12 @@ async function run(){
   assert.ok((await health.locator('#researchSourceLinks').innerText()).includes('華南永昌'));
   assert.ok((await health.locator('#researchSourceLinks').innerText()).includes('第一金'));
   assert.ok((await health.locator('#researchSourceLinks').innerText()).includes('論壇線索'));
+  await health.waitForFunction(()=>/來源版面日期 2026-10-24/.test(document.querySelector('#dailyNewsWatchStatus')?.textContent||''));
+  assert.match(await health.locator('#dailyNewsWatchStatus').innerText(),/收錄 8 則焦點/);
+  assert.equal(await health.locator('#dailyNewsThemes p').count(),3,'daily finance news themes render on the owner research page');
+  assert.ok(await health.locator('#dailyNewsThemes a').count()>=3,'news signals link back to source articles');
+  assert.match(await health.locator('#dailyNewsThemes').innerText(),/美股／半導體連動|地緣政治／能源/);
+  assert.doesNotMatch(await health.locator('#dailyNewsThemes').innerText(),/原文新聞標題|搬運摘要/,'derived news panel does not republish article text');
   await health.locator('#scenarioPrice').fill('100');
   await health.locator('#scenarioBull').fill('120');
   await health.locator('#scenarioBaseLow').fill('95');

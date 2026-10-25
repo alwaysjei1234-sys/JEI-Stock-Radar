@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": {"name": "旺來台股情報站", "url": "https://daily-tw.up.railway.app/"},
+  "checkedAt": "2026-10-25T09:15:00+08:00",
+  "reportDate": "2026-10-24",
+  "storyCount": 8,
+  "categoryCounts": {"美股": 3, "台股": 3, "國際": 2},
+  "themes": [
+    {"id": "us_semiconductors", "label": "美股／半導體連動", "articleCount": 3, "references": [{"id": "a1", "publishedAt": "10/24 06:04", "category": "美股", "publisher": "工商時報", "url": "https://example.com/us-market"}]},
+    {"id": "geopolitics_energy", "label": "地緣政治／能源", "articleCount": 2, "references": [{"id": "a2", "publishedAt": "10/24 04:10", "category": "國際", "publisher": "鉅亨網", "url": "https://example.com/energy"}]},
+    {"id": "taiwan_market_flow", "label": "台股／法人資金", "articleCount": 3, "references": [{"id": "a3", "publishedAt": "10/24 05:00", "category": "台股", "publisher": "中時新聞網", "url": "https://example.com/flow"}]}
+  ],
+  "references": [],
+  "interpretation": "測試資料"
+}

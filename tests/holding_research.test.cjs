@@ -102,4 +102,19 @@ assert.match(fs.readFileSync('remote/holding-health.html', 'utf8'), /researchDai
 const elements = new Map();
 const fakeDocument = { getElementById(id) { if (!elements.has(id)) elements.set(id, { value: '', textContent: '', addEventListener() {} }); return elements.get(id); }, querySelectorAll() { return []; } };
 assert.doesNotThrow(() => research.init(fakeDocument, null), 'research page initializes without relying on a closed-over browser root');
+const newsElements = [];
+const newsDoc = { createElement(tag) { const node = { tag, textContent: '', children: [], append(...items) { this.children.push(...items); }, setAttribute() {} }; newsElements.push(node); return node; } };
+const newsStatus = { textContent: '' }, newsThemes = { children: [], replaceChildren() { this.children = []; }, append(node) { this.children.push(node); } };
+const newsResult = research.renderDailyNewsWatch(newsDoc, newsStatus, newsThemes, {
+  schemaVersion: 1, reportDate: '2026-10-24', checkedAt: '2026-10-25T09:15:00+08:00', storyCount: 8,
+  categoryCounts: { 美股: 3 }, themes: [{ id: 'us_semiconductors', label: '美股／半導體連動', articleCount: 3, references: [
+    { publisher: '工商時報', publishedAt: '10/24 06:00', url: 'https://example.com/article' },
+    { publisher: '不安全來源', url: 'javascript:alert(1)' }
+  ] }]
+});
+assert.equal(newsResult.ok, true);
+assert.match(newsStatus.textContent, /2026-10-24.*8 則焦點/);
+assert.equal(newsThemes.children.length, 1);
+assert.equal(newsThemes.children[0].children.filter(node => node.tag === 'a').length, 1, 'news links are HTTPS only');
+assert.equal(research.renderDailyNewsWatch(newsDoc, newsStatus, newsThemes, null).ok, false, 'missing news feed fails closed');
 console.log('PASS dated market context, scenario validation, in-memory journal metrics and private-data boundaries');

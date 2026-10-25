@@ -204,6 +204,41 @@
     }
     return { ok: true, count: episodes.length, summaryFreshness: age };
   }
+  function renderDailyNewsWatch(doc, statusTarget, themesTarget, feed) {
+    if (themesTarget) themesTarget.replaceChildren();
+    if (!feed || feed.schemaVersion !== 1 || !Array.isArray(feed.themes)) {
+      if (statusTarget) statusTarget.textContent = '每日財經新聞索引尚未同步；不以舊新聞推測當前市場。';
+      return { ok: false, count: 0 };
+    }
+    const checked = feed.checkedAt || '未知', day = feed.reportDate || '未驗證';
+    const categories = Object.entries(feed.categoryCounts || {}).map(([key, count]) => `${key} ${Number(count) || 0}`).join('｜');
+    if (statusTarget) statusTarget.textContent = `來源版面日期 ${day}｜收錄 ${Number(feed.storyCount) || 0} 則焦點｜最近同步 ${checked}${categories ? `｜分類：${categories}` : ''}`;
+    const themes = feed.themes.slice(0, 5);
+    if (themesTarget) {
+      if (!themes.length) themesTarget.textContent = '目前沒有可分類的市場主題。';
+      themes.forEach(theme => {
+        if (!theme || typeof theme.label !== 'string') return;
+        const row = doc.createElement('p');
+        const label = doc.createElement('strong');
+        label.textContent = `${theme.label}｜${Number(theme.articleCount) || 0} 則線索 `;
+        row.append(label);
+        const refs = Array.isArray(theme.references) ? theme.references.slice(0, 3) : [];
+        refs.forEach((item, index) => {
+          if (!item || typeof item.url !== 'string') return;
+          try {
+            const url = new URL(item.url);
+            if (url.protocol !== 'https:') return;
+            const link = doc.createElement('a');
+            link.href = url.href; link.target = '_blank'; link.rel = 'noopener noreferrer';
+            link.textContent = `${index ? ' · ' : ''}${item.publisher || '原始報導'} ${item.publishedAt || ''} ↗`;
+            row.append(link);
+          } catch (_) { /* ignore malformed upstream links */ }
+        });
+        themesTarget.append(row);
+      });
+    }
+    return { ok: true, count: themes.length, reportDate: day };
+  }
   function init(doc, fetcher) {
     const set = (id, text) => { const el = doc.getElementById(id); if (el) el.textContent = text; };
     const clearEphemeral = () => {
@@ -223,7 +258,8 @@
       fetcher('./brief.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('brief'); return r.json(); }),
       fetcher('./free_research.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('free research'); return r.json(); }),
       fetcher('./research_source_directory.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('research source directory'); return r.json(); }),
-      fetcher('./gooaye_watch.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('Gooaye watch'); return r.json(); })]).then(results => {
+      fetcher('./gooaye_watch.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('Gooaye watch'); return r.json(); }),
+      fetcher('./daily_news_watch.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('Daily news watch'); return r.json(); })]).then(results => {
       const system = results[0].status === 'fulfilled' ? results[0].value : null;
       const brief = results[1].status === 'fulfilled' ? results[1].value : null;
       latestBrief = brief;
@@ -231,6 +267,8 @@
       latestSources = results[3].status === 'fulfilled' ? results[3].value : null;
       const gooayeFeed = results[4].status === 'fulfilled' ? results[4].value : null;
       renderGooayeWatch(doc, doc.getElementById('gooayeWatchStatus'), doc.getElementById('gooayeEpisodes'), gooayeFeed, dayInTaipei());
+      const dailyNews = results[5].status === 'fulfilled' ? results[5].value : null;
+      renderDailyNewsWatch(doc, doc.getElementById('dailyNewsWatchStatus'), doc.getElementById('dailyNewsThemes'), dailyNews);
       if (!system) { renderSourceStatus(doc, doc.getElementById('researchSourceStatus'), null, latestFree, latestFree && latestFree.generatedAt); set('researchMarketStatus', '公開市場 feed 讀取失敗；暫停市場即時判讀。'); return; }
       latestSystem = system;
       const snapshot = marketSnapshot(system, brief, dayInTaipei());
@@ -326,5 +364,5 @@
       if (el && output) el.addEventListener('input', () => set(output, el.value.trim() ? '已輸入手動研究線索；請自行核對原始公告，系統尚未驗證來源。' : '尚未輸入查證資料。'));
     });
   }
-  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, sourceQueries, buildResearchBrief, renderSourceStatus, renderGooayeWatch, init });
+  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, sourceQueries, buildResearchBrief, renderSourceStatus, renderGooayeWatch, renderDailyNewsWatch, init });
 }));

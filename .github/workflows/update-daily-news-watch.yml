@@ -1,0 +1,44 @@
+name: Update daily Taiwan finance news signals
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/update_daily_news_watch.py'
+      - 'tests/test_daily_news_watch.py'
+      - 'tests/fixtures/daily_tw_news.html'
+      - '.github/workflows/update-daily-news-watch.yml'
+  workflow_dispatch:
+  schedule:
+    # Read the public board daily at 09:15 Asia/Taipei; no account or API key is used.
+    - cron: '15 1 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: jei-daily-tw-news-watch
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test public board parser
+        run: python3 -m unittest discover -s tests -p 'test_daily_news_watch.py'
+      - name: Read board and derive linked market themes
+        run: python3 scripts/update_daily_news_watch.py
+      - name: Validate feed and publish changed source signals
+        run: |
+          python3 -m unittest discover -s tests -p 'test_daily_news_watch.py'
+          python3 -m json.tool remote/daily_news_watch.json >/dev/null
+          git add remote/daily_news_watch.json
+          if git diff --cached --quiet; then
+            echo 'No source signal changes.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'data: refresh daily Taiwan finance news signals'
+          git push
