@@ -2,24 +2,205 @@
   "schemaVersion": 1,
   "policy": "Free to open does not mean licensed for republication. JEI links to original pages and search results; it does not mirror broker reports or forum posts.",
   "sources": [
-    {"id":"cathay","name":"國泰證期｜個股／市場研究報告","category":"券商研報","access":"公開報告目錄；個別報告請在原站確認","url":"https://www.cathayfut.com.tw/F_research.aspx?callshow=autoRp9","search":"https://www.google.com/search?q=site%3Acathayfut.com.tw%2FF_research.aspx+{ticker}","evidence":"券商研究；保留報告發布日、作者、目標價與適用期間。","automation":"只提供原站查詢連結，不下載或重刊全文。"},
-    {"id":"fubon","name":"富邦投顧｜台股報告","category":"券商研報","access":"公開研究頁；各報告閱讀條件以原站為準","url":"https://fubonresearch.fubon.com/Research/","search":"https://www.google.com/search?q=site%3Afubonresearch.fubon.com%2FResearch+{ticker}","evidence":"券商研究；將觀點與已證實公司事實分開。","automation":"只提供原站查詢連結，不下載或重刊全文。"},
-    {"id":"kgi","name":"凱基投顧｜研究報告","category":"券商研報","access":"公開報告目錄；點閱／下載條件以原站為準","url":"https://investment.kgisia.com.tw/portal/Report/Index","search":"https://www.google.com/search?q=site%3Ainvestment.kgisia.com.tw%2Fportal%2FReport+{ticker}","evidence":"券商研究；核對發布日期及個股標的，不把市場晨報當個股評等。","automation":"只提供原站查詢連結，不下載或重刊全文。"},
-    {"id":"yuanta","name":"元大投顧｜公開快訊與研究入口","category":"券商研報","access":"部分快訊公開；個股研究報告僅會員客戶，非公開內容不納入","url":"https://www.yuanta-consulting.com.tw/","search":"https://www.google.com/search?q=site%3Ayuanta-consulting.com.tw+{ticker}","evidence":"公開頁可作市場線索；會員專屬報告需由使用者自行透過合法帳戶查閱。","automation":"不繞過登入、驗證碼或會員限制。"},
-    {"id":"first-capital","name":"第一金投顧｜晨訊、個股與美股報告","category":"券商研報","access":"官方研究入口；部分內容可能需要會員登入","url":"https://www.fcmi.com.tw/","search":"https://www.google.com/search?q=site%3Afcmi.com.tw+{ticker}","evidence":"報告類型包含晨訊、個股、週報與美股日報；記錄原始發布日與標的。","automation":"使用原站會員權限，不分享或重刊會員內容。"},
-    {"id":"huanan","name":"華南永昌證券｜個股研究出版","category":"券商研報","access":"官方研究入口；會員報告依帳戶權限查閱","url":"https://sim.entrust.com.tw/entrustIA/publish/stockInfo.do?com_type=","search":"https://www.google.com/search?q=site%3Asim.entrust.com.tw%2FentrustIA%2Fpublish+{ticker}","evidence":"券商個股研究資料；逐篇核對發布日期、標的與目標期間。","automation":"使用原站會員權限，不繞過驗證，也不轉載報告全文。"},
-    {"id":"xq","name":"XQ 全球贏家｜個股資訊與免費選股工具","category":"免費選股／籌碼研究","access":"提供免費個人版與部分免費選股；部分進階籌碼／策略模組須付費，依功能頁確認","url":"https://www.xq.com.tw/","search":"https://www.google.com/search?q=site%3Axq.com.tw+{ticker}+個股+籌碼","evidence":"交叉核對價量、基本面與籌碼條件；XQ 的選股條件不等於已驗證的主力買進。","automation":"只連官方網站／搜尋結果，不抓取需登入或付費模組內容。"},
-    {"id":"chipk","name":"籌碼K線｜個股與籌碼觀察","category":"免費選股／籌碼研究","access":"App 可免費下載使用；專業版及部分日報、分點等功能需訂閱，免費額度依原站當前方案","url":"https://www.cmoney.tw/app/landing_page/chipk/","search":"https://www.google.com/search?q=site%3Acmoney.tw+籌碼K線+{ticker}","evidence":"可作法人／分點與籌碼變化的第二來源線索；和 TWSE／TPEx 官方法人資料分開呈現。","automation":"不登入、不抓付費或會員專屬內容；回原站核對日期與定義。"},
-    {"id":"pchome","name":"PChome 股市｜免費快速選股與市場資訊","category":"免費選股／市場資訊","access":"免費會員可使用選股、自選股及多項市場資訊；行情資訊與再利用依會員條款","url":"https://pchome.megatime.com.tw/choice/sto2","search":"https://www.google.com/search?q=site%3Apchome.megatime.com.tw+{ticker}+選股+籌碼","evidence":"交叉核對選股條件、法人與融資融券資訊；平台摘要不取代官方公告。","automation":"只提供原站查詢連結，不鏡像行情、不抓取會員資料。"},
-    {"id":"yahoo-news","name":"Yahoo 股市｜個股新聞／研究報告 RSS","category":"免費新聞／RSS","access":"RSS 可免費個人及非商業使用；需保留出處，遵守原站條款","url":"https://tw.stock.yahoo.com/rss-help","search":"https://tw.stock.yahoo.com/quote/{ticker}.{market}/news","evidence":"新聞標題與發布時間；引用須保留來源，不等同原始公告。","automation":"僅呈現連結及短標題來源資訊；不轉載全文。"},
-    {"id":"cnyes","name":"鉅亨網｜台股與國際財經","category":"免費新聞／國際","access":"公開新聞及免費電子報；內容權利依原站條款","url":"https://www.cnyes.com/twstock","search":"https://www.google.com/search?q=site%3Acnyes.com+{ticker}","evidence":"媒體報導與市場觀點；確認消息是否有公告或其他獨立來源佐證。","automation":"使用原文連結；不重刊全文。"},
-    {"id":"mops","name":"公開資訊觀測站｜重大訊息與財報","category":"官方事實查證","access":"免費公開查詢","url":"https://mops.twse.com.tw/mops/","search":"https://www.google.com/search?q=site%3Amops.twse.com.tw+{ticker}","evidence":"重大訊息、財報與法定揭露優先作為公司事實來源。","automation":"可用官方結構化資料；保留公告日期及來源。"},
-    {"id":"twse-report","name":"證交所｜研究報告與 RSS 說明","category":"官方制度／資料","access":"免費閱讀；RSS 內容僅供閱讀且著作權仍屬合法權利人","url":"https://www.twse.com.tw/zh/products/publication/report.html","search":"https://www.google.com/search?q=site%3Atwse.com.tw+{ticker}+研究報告","evidence":"制度、交易資訊與官方出版品；RSS 不能視為可自由再散布授權。","automation":"以連結及官方 OpenAPI 為主。"},
-    {"id":"ptt-stock","name":"PTT Stock｜投資人討論","category":"論壇線索","access":"公開討論串；可能有刪文、偏誤、利益衝突或未證實說法","url":"https://www.ptt.cc/bbs/Stock/index.html","search":"https://www.ptt.cc/bbs/Stock/search?q={ticker}","evidence":"只列待核實觀點／傳聞；不得計入券商共識或已證實事件。","automation":"不擷取大量貼文或推斷交易訊號；逐則回到原文和官方資料查證。"},
-    {"id":"dcard-stock","name":"Dcard 股票板｜投資人討論","category":"論壇線索","access":"公開內容依網站使用規範；討論內容未經證實","url":"https://www.dcard.tw/f/stock","search":"https://www.dcard.tw/search?query={ticker}","evidence":"只列待核實觀點／傳聞；不可與正式研究或公告等權重處理。","automation":"只提供原站搜尋，不爬取或重刊內容。"},
-    {"id":"cmoney-forum","name":"CMoney 股市爆料同學會｜討論區","category":"論壇線索","access":"公開可讀範圍依平台規範；含個人觀點與可能利益衝突","url":"https://www.cmoney.tw/forum/","search":"https://www.google.com/search?q=site%3Acmoney.tw%2Fforum+{ticker}","evidence":"只當候選線索；需與公告、財報及獨立媒體來源交叉查證。","automation":"只提供原站搜尋，不爬取或重刊內容。"},
-    {"id":"daily-tw-news-board","name":"旺來台股情報站｜每日焦點與券商摘要","category":"每日新聞／市場情境","access":"公開免註冊；JEI 每日讀取一次，呈現自行分類標籤與原始報導連結，不重刊新聞摘要或券商報告","url":"https://daily-tw.up.railway.app/","search":"https://daily-tw.up.railway.app/","evidence":"台股、美股、國際、產業及券商觀點做為研究線索；新聞報導和券商點名需回到原始來源、官方行情及公司公告交叉驗證。","automation":"每日 09:15（台北）更新事件數量、分類、衍生主題與原始報導來源。"},
-    {"id":"gooaye-digest","name":"股癌近期集數摘要｜Cocoboomboom","category":"Podcast 研究索引","access":"公開摘要頁；頁面條款保留著作權，未經書面授權不複製、公開展示或改作","url":"https://cocoboomboom.com/gooaye.html","search":"https://cocoboomboom.com/gooaye.html","evidence":"只作原文入口；頁面目前標示更新日 2026-06-29，需先確認是否過期。","automation":"僅每日檢查頁面更新日期及 RSS 集數 metadata，不儲存摘要、描述或逐字稿。"},
-    {"id":"gooaye-podcast","name":"Gooaye 股癌｜SoundOn RSS／Apple 公開目錄","category":"Podcast 集數索引","access":"公開 RSS 與 Apple Podcast 目錄之集數標題、發布日期與原始連結；不保存節目描述或音訊","url":"https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml","search":"https://podcasts.apple.com/tw/podcast/gooaye-%E8%82%A1%E7%99%8C/id1500839292","evidence":"集數標題僅供定位；不等於主持人推薦個股或已驗證的公司事實。","automation":"每日更新 RSS／Apple 公開目錄 metadata；不抓取音訊、逐字稿或 description。"}
+    {
+      "id": "cathay",
+      "name": "國泰證期｜個股／市場研究報告",
+      "category": "券商研報",
+      "access": "公開報告目錄；個別報告請在原站確認",
+      "url": "https://www.cathayfut.com.tw/F_research.aspx?callshow=autoRp9",
+      "search": "https://www.google.com/search?q=site%3Acathayfut.com.tw%2FF_research.aspx+{ticker}",
+      "evidence": "券商研究；保留報告發布日、作者、目標價與適用期間。",
+      "automation": "只提供原站查詢連結，不下載或重刊全文。"
+    },
+    {
+      "id": "fubon",
+      "name": "富邦投顧｜台股報告",
+      "category": "券商研報",
+      "access": "公開研究頁；各報告閱讀條件以原站為準",
+      "url": "https://fubonresearch.fubon.com/Research/",
+      "search": "https://www.google.com/search?q=site%3Afubonresearch.fubon.com%2FResearch+{ticker}",
+      "evidence": "券商研究；將觀點與已證實公司事實分開。",
+      "automation": "只提供原站查詢連結，不下載或重刊全文。"
+    },
+    {
+      "id": "kgi",
+      "name": "凱基投顧｜研究報告",
+      "category": "券商研報",
+      "access": "公開報告目錄；點閱／下載條件以原站為準",
+      "url": "https://investment.kgisia.com.tw/portal/Report/Index",
+      "search": "https://www.google.com/search?q=site%3Ainvestment.kgisia.com.tw%2Fportal%2FReport+{ticker}",
+      "evidence": "券商研究；核對發布日期及個股標的，不把市場晨報當個股評等。",
+      "automation": "只提供原站查詢連結，不下載或重刊全文。"
+    },
+    {
+      "id": "yuanta",
+      "name": "元大投顧｜公開快訊與研究入口",
+      "category": "券商研報",
+      "access": "部分快訊公開；個股研究報告僅會員客戶，非公開內容不納入",
+      "url": "https://www.yuanta-consulting.com.tw/",
+      "search": "https://www.google.com/search?q=site%3Ayuanta-consulting.com.tw+{ticker}",
+      "evidence": "公開頁可作市場線索；會員專屬報告需由使用者自行透過合法帳戶查閱。",
+      "automation": "不繞過登入、驗證碼或會員限制。"
+    },
+    {
+      "id": "first-capital",
+      "name": "第一金投顧｜晨訊、個股與美股報告",
+      "category": "券商研報",
+      "access": "官方研究入口；部分內容可能需要會員登入",
+      "url": "https://www.fcmi.com.tw/",
+      "search": "https://www.google.com/search?q=site%3Afcmi.com.tw+{ticker}",
+      "evidence": "報告類型包含晨訊、個股、週報與美股日報；記錄原始發布日與標的。",
+      "automation": "使用原站會員權限，不分享或重刊會員內容。"
+    },
+    {
+      "id": "huanan",
+      "name": "華南永昌證券｜個股研究出版",
+      "category": "券商研報",
+      "access": "官方研究入口；會員報告依帳戶權限查閱",
+      "url": "https://sim.entrust.com.tw/entrustIA/publish/stockInfo.do?com_type=",
+      "search": "https://www.google.com/search?q=site%3Asim.entrust.com.tw%2FentrustIA%2Fpublish+{ticker}",
+      "evidence": "券商個股研究資料；逐篇核對發布日期、標的與目標期間。",
+      "automation": "使用原站會員權限，不繞過驗證，也不轉載報告全文。"
+    },
+    {
+      "id": "xq",
+      "name": "XQ 全球贏家｜個股資訊與免費選股工具",
+      "category": "免費選股／籌碼研究",
+      "access": "提供免費個人版與部分免費選股；部分進階籌碼／策略模組須付費，依功能頁確認",
+      "url": "https://www.xq.com.tw/",
+      "search": "https://www.google.com/search?q=site%3Axq.com.tw+{ticker}+個股+籌碼",
+      "evidence": "交叉核對價量、基本面與籌碼條件；XQ 的選股條件不等於已驗證的主力買進。",
+      "automation": "只連官方網站／搜尋結果，不抓取需登入或付費模組內容。"
+    },
+    {
+      "id": "chipk",
+      "name": "籌碼K線｜個股與籌碼觀察",
+      "category": "免費選股／籌碼研究",
+      "access": "App 可免費下載使用；專業版及部分日報、分點等功能需訂閱，免費額度依原站當前方案",
+      "url": "https://www.cmoney.tw/app/landing_page/chipk/",
+      "search": "https://www.google.com/search?q=site%3Acmoney.tw+籌碼K線+{ticker}",
+      "evidence": "可作法人／分點與籌碼變化的第二來源線索；和 TWSE／TPEx 官方法人資料分開呈現。",
+      "automation": "不登入、不抓付費或會員專屬內容；回原站核對日期與定義。"
+    },
+    {
+      "id": "pchome",
+      "name": "PChome 股市｜免費快速選股與市場資訊",
+      "category": "免費選股／市場資訊",
+      "access": "免費會員可使用選股、自選股及多項市場資訊；行情資訊與再利用依會員條款",
+      "url": "https://pchome.megatime.com.tw/choice/sto2",
+      "search": "https://www.google.com/search?q=site%3Apchome.megatime.com.tw+{ticker}+選股+籌碼",
+      "evidence": "交叉核對選股條件、法人與融資融券資訊；平台摘要不取代官方公告。",
+      "automation": "只提供原站查詢連結，不鏡像行情、不抓取會員資料。"
+    },
+    {
+      "id": "yahoo-news",
+      "name": "Yahoo 股市｜個股新聞／研究報告 RSS",
+      "category": "免費新聞／RSS",
+      "access": "RSS 可免費個人及非商業使用；需保留出處，遵守原站條款",
+      "url": "https://tw.stock.yahoo.com/rss-help",
+      "search": "https://tw.stock.yahoo.com/quote/{ticker}.{market}/news",
+      "evidence": "新聞標題與發布時間；引用須保留來源，不等同原始公告。",
+      "automation": "僅呈現連結及短標題來源資訊；不轉載全文。"
+    },
+    {
+      "id": "cnyes",
+      "name": "鉅亨網｜台股與國際財經",
+      "category": "免費新聞／國際",
+      "access": "公開新聞及免費電子報；內容權利依原站條款",
+      "url": "https://www.cnyes.com/twstock",
+      "search": "https://www.google.com/search?q=site%3Acnyes.com+{ticker}",
+      "evidence": "媒體報導與市場觀點；確認消息是否有公告或其他獨立來源佐證。",
+      "automation": "使用原文連結；不重刊全文。"
+    },
+    {
+      "id": "mops",
+      "name": "公開資訊觀測站｜重大訊息與財報",
+      "category": "官方事實查證",
+      "access": "免費公開查詢",
+      "url": "https://mops.twse.com.tw/mops/",
+      "search": "https://www.google.com/search?q=site%3Amops.twse.com.tw+{ticker}",
+      "evidence": "重大訊息、財報與法定揭露優先作為公司事實來源。",
+      "automation": "可用官方結構化資料；保留公告日期及來源。"
+    },
+    {
+      "id": "twse-report",
+      "name": "證交所｜研究報告與 RSS 說明",
+      "category": "官方制度／資料",
+      "access": "免費閱讀；RSS 內容僅供閱讀且著作權仍屬合法權利人",
+      "url": "https://www.twse.com.tw/zh/products/publication/report.html",
+      "search": "https://www.google.com/search?q=site%3Atwse.com.tw+{ticker}+研究報告",
+      "evidence": "制度、交易資訊與官方出版品；RSS 不能視為可自由再散布授權。",
+      "automation": "以連結及官方 OpenAPI 為主。"
+    },
+    {
+      "id": "ptt-stock",
+      "name": "PTT Stock｜投資人討論",
+      "category": "論壇線索",
+      "access": "公開討論串；可能有刪文、偏誤、利益衝突或未證實說法",
+      "url": "https://www.ptt.cc/bbs/Stock/index.html",
+      "search": "https://www.ptt.cc/bbs/Stock/search?q={ticker}",
+      "evidence": "只列待核實觀點／傳聞；不得計入券商共識或已證實事件。",
+      "automation": "不擷取大量貼文或推斷交易訊號；逐則回到原文和官方資料查證。"
+    },
+    {
+      "id": "dcard-stock",
+      "name": "Dcard 股票板｜投資人討論",
+      "category": "論壇線索",
+      "access": "公開內容依網站使用規範；討論內容未經證實",
+      "url": "https://www.dcard.tw/f/stock",
+      "search": "https://www.dcard.tw/search?query={ticker}",
+      "evidence": "只列待核實觀點／傳聞；不可與正式研究或公告等權重處理。",
+      "automation": "只提供原站搜尋，不爬取或重刊內容。"
+    },
+    {
+      "id": "cmoney-forum",
+      "name": "CMoney 股市爆料同學會｜討論區",
+      "category": "論壇線索",
+      "access": "公開可讀範圍依平台規範；含個人觀點與可能利益衝突",
+      "url": "https://www.cmoney.tw/forum/",
+      "search": "https://www.google.com/search?q=site%3Acmoney.tw%2Fforum+{ticker}",
+      "evidence": "只當候選線索；需與公告、財報及獨立媒體來源交叉查證。",
+      "automation": "只提供原站搜尋，不爬取或重刊內容。"
+    },
+    {
+      "id": "daily-tw-news-board",
+      "name": "旺來台股情報站｜每日焦點與券商摘要",
+      "category": "每日新聞／市場情境",
+      "access": "公開免註冊；JEI 每日讀取一次，呈現自行分類標籤與原始報導連結，不重刊新聞摘要或券商報告",
+      "url": "https://daily-tw.up.railway.app/",
+      "search": "https://daily-tw.up.railway.app/",
+      "evidence": "台股、美股、國際、產業及券商觀點做為研究線索；新聞報導和券商點名需回到原始來源、官方行情及公司公告交叉驗證。",
+      "automation": "每日 09:15（台北）更新事件數量、分類、衍生主題與原始報導來源。"
+    },
+    {
+      "id": "gooaye-digest",
+      "name": "股癌近期集數摘要｜Cocoboomboom",
+      "category": "Podcast 研究索引",
+      "access": "公開摘要頁；頁面條款保留著作權，未經書面授權不複製、公開展示或改作",
+      "url": "https://cocoboomboom.com/gooaye.html",
+      "search": "https://cocoboomboom.com/gooaye.html",
+      "evidence": "只作原文入口；頁面目前標示更新日 2026-06-29，需先確認是否過期。",
+      "automation": "僅每日檢查頁面更新日期及 RSS 集數 metadata，不儲存摘要、描述或逐字稿。"
+    },
+    {
+      "id": "gooaye-podcast",
+      "name": "Gooaye 股癌｜SoundOn RSS／Apple 公開目錄",
+      "category": "Podcast 集數索引",
+      "access": "公開 RSS 與 Apple Podcast 目錄之集數標題、發布日期與原始連結；不保存節目描述或音訊",
+      "url": "https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml",
+      "search": "https://podcasts.apple.com/tw/podcast/gooaye-%E8%82%A1%E7%99%8C/id1500839292",
+      "evidence": "集數標題僅供定位；不等於主持人推薦個股或已驗證的公司事實。",
+      "automation": "每日更新 RSS／Apple 公開目錄 metadata；不抓取音訊、逐字稿或 description。"
+    },
+    {
+      "id": "ai-stock-map",
+      "name": "AI 智慧產業地圖｜每日焦點與個股頁",
+      "category": "每日市場／產業交叉查證",
+      "access": "公開頁人工查閱；部分功能為 Premium，以原站方案及條款為準",
+      "url": "https://aistockmap.com/?activeTab=daily",
+      "search": "https://aistockmap.com/c/{ticker}/",
+      "evidence": "比較跨市場指數、題材／新聞、法人與資券等摘要；記錄資料日，AI 觀點和衍生指標須回查 TWSE／TPEx／MOPS／原始新聞，不當作官方事實。",
+      "automation": "只提供使用者主動點擊的原站入口；站方條款要求未經書面同意不得腳本大量擷取或重製，JEI 不自動讀取或鏡像。"
+    }
   ]
 }

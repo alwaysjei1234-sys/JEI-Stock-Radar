@@ -16,6 +16,7 @@ assert.ok(sourceLinks.some(item => item.name.includes('第一金')));
 assert.ok(sourceLinks.some(item => item.name.includes('華南永昌')));
 assert.ok(sourceLinks.some(item => item.name.includes('元大')));
 assert.ok(sourceLinks.some(item => item.name.includes('XQ 全球贏家')));
+assert.ok(sourceLinks.some(item => item.name.includes('AI 智慧產業地圖') && item.category.includes('交叉查證')));
 assert.ok(sourceLinks.some(item => item.name.includes('籌碼K線')));
 assert.ok(sourceLinks.some(item => item.name.includes('PChome') && item.category.includes('選股')));
 assert.ok(sourceLinks.some(item => item.name.includes('Cocoboomboom') && item.category.includes('Podcast')));
