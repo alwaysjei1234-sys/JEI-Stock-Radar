@@ -293,12 +293,11 @@
   function init(doc, fetcher) {
     const set = (id, text) => { const el = doc.getElementById(id); if (el) el.textContent = text; };
     const clearEphemeral = () => {
-      ['financialEvidence', 'peerEvidence', 'catalystFact', 'catalystInference', 'catalystRumor', 'scenarioPrice', 'scenarioBull', 'scenarioBaseLow', 'scenarioBaseHigh', 'scenarioBear', 'tradeJournal', 'dailyConstraints', 'researchTicker'].forEach(id => {
+      ['scenarioPrice', 'scenarioBull', 'scenarioBaseLow', 'scenarioBaseHigh', 'scenarioBear', 'tradeJournal', 'dailyConstraints', 'researchTicker'].forEach(id => {
         const el = doc.getElementById(id); if (el) el.value = '';
       });
       doc.querySelectorAll('.checklist input[type="checkbox"]').forEach(el => { el.checked = false; });
       ['financialStatus', 'scenarioResult', 'journalResult', 'researchTickerResult'].forEach(id => set(id, '研究暫存已清除。'));
-      set('catalystFact', '');
     };
     const lock = doc.getElementById('lockHoldings');
     if (lock) lock.addEventListener('click', clearEphemeral);
@@ -337,6 +336,35 @@
       const articles = brief && brief.morning && Array.isArray(brief.morning.news) ? brief.morning.news.slice(0, 3) : [];
       latestNews = articles;
       set('researchNews', articles.length ? `國際／市場新聞摘要（標題未經 JEI 逐篇查證，不等於事件因果）：${articles.map(item => `${item.title || '未命名'}｜${item.source || '來源未知'}｜${item.published_at || '日期未知'}`).join('；')}` : '新聞摘要缺值，請查閱公司公告與原始國際來源。');
+      const catalystTarget = doc.getElementById('researchCatalystStatus');
+      if (catalystTarget) {
+        catalystTarget.replaceChildren();
+        if (!articles.length) {
+          catalystTarget.textContent = '目前沒有可核實的公開新聞來源；本輪不推測個股上漲原因，也不要求手動補填。';
+        } else {
+          articles.forEach(item => {
+            const row = doc.createElement('div');
+            const title = doc.createElement('div');
+            title.textContent = item.title || '未命名公開新聞';
+            const meta = doc.createElement('small');
+            meta.textContent = `${item.source || '來源未標示'}｜${item.published_at || '日期未提供'}；僅為待查線索`;
+            row.append(title, meta);
+            const rawUrl = item.url || item.link || '';
+            try {
+              const url = new URL(String(rawUrl));
+              if (url.protocol === 'https:') {
+                const link = doc.createElement('a');
+                link.href = url.href;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.textContent = '開啟原始來源 ↗';
+                row.append(doc.createElement('br'), link);
+              }
+            } catch (_) { /* show the dated item without an unverified link */ }
+            catalystTarget.appendChild(row);
+          });
+        }
+      }
       const risk = system.risk || {};
       const flowText = [risk.institutional_net_lots != null ? `市場法人淨額 ${risk.institutional_net_lots} 股` : '', risk.institutional_sell_ratio != null ? `賣超家數比 ${risk.institutional_sell_ratio}%` : ''].filter(Boolean).join('｜');
       set('researchFlow', `${flowText || '法人資料缺值'}｜資料日 ${system.data_date || '未知'}；此為市場彙總，不等於個股法人，也不含融資券與大戶持股分布。`);
