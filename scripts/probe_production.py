@@ -80,6 +80,12 @@ CASES = [
     ("/remote/system.json", "Market Feed", lambda x: isinstance(x, dict) and "market" in x and "data_date" in x),
     ("/remote/index.html", "Home UI", lambda x: isinstance(x, str) and "JEI_REMOTE_UI_V3" in x),
     ("/remote/update.json", "Android Update", health_manifest),
+    ("/index.html", "Home Link", lambda x: isinstance(x, str) and "<html" in x.lower()),
+    ("/strategy.html", "Strategy Page", lambda x: isinstance(x, str) and "<html" in x.lower()),
+    ("/industry_research.html", "Industry Research Page", lambda x: isinstance(x, str) and "<html" in x.lower()),
+    ("/cash.html", "Performance Page", lambda x: isinstance(x, str) and "<html" in x.lower()),
+    ("/holding-health.html", "Holdings Page", lambda x: isinstance(x, str) and "<html" in x.lower()),
+    ("/pick_validation.html", "Pick Validation Page", lambda x: isinstance(x, str) and "<html" in x.lower()),
 ]
 
 
