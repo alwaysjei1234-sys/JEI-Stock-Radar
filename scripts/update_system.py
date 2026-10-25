@@ -503,8 +503,8 @@ def validated_previous_close(previous, now, max_age_days=7):
     if not isinstance(previous, dict) or now.tzinfo is None:
         return None
     market=previous.get("market")
-    if (not isinstance(market, dict) or market.get("mode")!="今日收盤"
-            or market.get("stale") is not False
+    if (not isinstance(market, dict) or market.get("mode") not in ("今日收盤","最近收盤")
+            or (market.get("stale") is not False and market.get("historical_readonly") is not True)
             or isinstance(market.get("close_count"), bool)
             or not isinstance(market.get("close_count"), (int,float))
             or market["close_count"] < 500):
@@ -518,7 +518,9 @@ def validated_previous_close(previous, now, max_age_days=7):
         return None
     now=now.astimezone(TZ)
     lag_days=(now.date()-verified_day).days
-    if not 0<=lag_days<=max_age_days or stamp.date()!=verified_day:
+    if not 0<=lag_days<=max_age_days:
+        return None
+    if stamp.date()!=verified_day and market.get("historical_readonly") is not True:
         return None
     if stamp.hour*60+stamp.minute < 13*60+30 or stamp>now:
         return None
@@ -526,7 +528,7 @@ def validated_previous_close(previous, now, max_age_days=7):
         return None
     # Old snapshots are never counted as live trades on the new calendar day.
     out=dict(previous)
-    out["market"]={**market,"historical_readonly":verified_day!=now.date(),
+    out["market"]={**market,"stale":verified_day!=now.date(),"historical_readonly":verified_day!=now.date(),
                    "last_checked_at":now.strftime("%Y-%m-%d %H:%M")}
     return out
 
@@ -978,7 +980,7 @@ def main():
     try:
         previous_feed=json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
         candidate_date=previous_feed.get("data_date") if isinstance(previous_feed,dict) else None
-        if isinstance(candidate_date,str) and re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}",candidate_date):
+        if isinstance(candidate_date,str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}",candidate_date):
             previous_data_date=candidate_date
     except (OSError,ValueError,TypeError):
         pass
@@ -1137,7 +1139,7 @@ def main():
                 "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000),
                 "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
         "market":{"status":market_status,"mode":market_mode,"last_checked_at":now.strftime("%Y-%m-%d %H:%M"),
-                  "live_count":live_count,"close_count":len(stocks),"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source,"historical_readonly":raw_date!=today_iso,"post_close_refresh":post_close_refresh,
+                  "live_count":live_count,"close_count":len(stocks),"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source or raw_date!=today_iso,"historical_readonly":raw_date!=today_iso,"post_close_refresh":post_close_refresh,
                   "live_diagnostics":{"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":now.strftime("%Y-%m-%d %H:%M"),
                       "valid_trades":live_count,"mis_stats":live_stats,"required_trades":500,
                       "required_coverage_pct":35,
