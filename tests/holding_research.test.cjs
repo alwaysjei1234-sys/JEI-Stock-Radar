@@ -44,6 +44,18 @@ assert.equal(freeEvidence.revenueFreshness.state, 'dated');
 assert.equal(freeEvidence.margin.marginBuyChange, 5);
 assert.equal(research.lookupFreeEvidence(null, '2330', '2026-10-23'), null);
 assert.equal(research.lookupFreeEvidence({ schemaVersion: 1, markets: { listed: {}, otc: {} } }, '2330', '2026-10-23').market, null);
+const briefRows = research.buildResearchBrief(stock, freeEvidence, snapshot, [{ title: '市場消息', source: '測試來源', published_at: '2026-10-22' }]);
+assert.equal(briefRows.length, 8, 'ticker report should provide the eight research checkpoints');
+assert.ok(briefRows.every(row => row.title && row.status && row.source && row.asOf && row.detail), 'every checkpoint should expose status, provenance and date');
+assert.match(briefRows[1].detail, /風險背景/);
+assert.match(briefRows[7].detail, /待查線索/);
+const missingBrief = research.buildResearchBrief(research.lookupStock({}, '2330', '2026-10-23'), null, research.marketSnapshot({}, null, '2026-10-23'));
+assert.ok(missingBrief.every(row => /缺值|未驗證/.test(row.status)), 'missing feeds must remain explicit and never turn into a fabricated conclusion');
+const renderedRows = [];
+const statusTarget = { replaceChildren() { renderedRows.length = 0; }, append(row) { renderedRows.push(row); } };
+const fakeTableDocument = { createElement() { return { append() {}, textContent: '' }; } };
+research.renderSourceStatus(fakeTableDocument, statusTarget, snapshot, null);
+assert.equal(renderedRows.length, 11, 'source status should include connected, manual-only and unavailable datasets');
 
 const plan = research.scenario({ price: 100, bull: 120, baseLow: 95, baseHigh: 105, bear: 90 });
 assert.equal(plan.ok, true);
@@ -66,6 +78,8 @@ assert.equal(research.journalStats([{ date: 'bad', code: 'x', entry: 1, exit: 2,
 const source = fs.readFileSync('remote/holding-research.js', 'utf8');
 assert.doesNotMatch(source, /localStorage|sessionStorage|sendBeacon|XMLHttpRequest/);
 assert.match(source, /fetcher\('\.\/system\.json'/);
+assert.match(fs.readFileSync('remote/holding-health.html', 'utf8'), /researchSourceStatus/);
+assert.match(fs.readFileSync('remote/holding-health.html', 'utf8'), /researchDailyBrief/);
 const elements = new Map();
 const fakeDocument = { getElementById(id) { if (!elements.has(id)) elements.set(id, { value: '', textContent: '', addEventListener() {} }); return elements.get(id); }, querySelectorAll() { return []; } };
 assert.doesNotThrow(() => research.init(fakeDocument, null), 'research page initializes without relying on a closed-over browser root');
