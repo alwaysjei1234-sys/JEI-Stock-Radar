@@ -65,8 +65,13 @@ function render(){
  $('sample').textContent=String(stats.completed||0);
  $('wins').textContent=fmt(stats.win_rate_pct);
  $('average').textContent=fmt(stats.avg_estimated_net_pct);
- $('comparison').textContent='已完成 '+(stats.completed||0)+' 筆｜待到期 '+(stats.pending||0)+' 筆｜缺有效收盤價 '+(stats.missing_price||0)+' 筆｜中位數 '+fmt(stats.median_estimated_net_pct)+'｜最差 '+fmt(stats.worst_estimated_net_pct)+'。'+
- ((stats.completed||0)<10?' 有效樣本少於10筆，暫不判斷哪種選股策略最好。':'可開始觀察，但仍須跨市場狀態驗證。');
+ const completed=Number(stats.completed)||0,average=Number(stats.avg_estimated_net_pct);
+ const cautions=[];
+ if(completed<30)cautions.push('樣本尚未達30筆，只能視為早期觀察，不能判定策略有效。');
+ else cautions.push('樣本數達30筆仍不代表策略已驗證，仍須跨市場狀態與基準比較。');
+ if(Number.isFinite(average)&&average<0)cautions.push('目前成熟樣本的平均估算淨報酬為負，策略尚未通過初步績效觀察。');
+ if((stats.missing_price||0)>0)cautions.push('有到期但缺少有效收盤價的樣本，不列入勝負。');
+ $('comparison').textContent='已完成 '+completed+' 筆｜待到期 '+(stats.pending||0)+' 筆｜缺有效收盤價 '+(stats.missing_price||0)+' 筆｜中位數 '+fmt(stats.median_estimated_net_pct)+'｜最差 '+fmt(stats.worst_estimated_net_pct)+'。'+cautions.join(' ');
  const body=$('pickRows');body.replaceChildren();
  for(const x of records){
   const outcome=(x.outcomes||[]).find(z=>z.trading_days===h)||{status:'pending'};
