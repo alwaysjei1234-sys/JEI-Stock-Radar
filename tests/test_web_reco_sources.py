@@ -35,6 +35,7 @@ class PublicResearchSourceTests(unittest.TestCase):
         self.assertEqual(len(hits), 1)
         self.assertEqual(hits[0]["evidence_level"], "publicly_shared_secondary")
         self.assertTrue(hits[0]["url"].startswith("https://vocus.cc/"))
+        self.assertEqual(hits[0]["link"], hits[0]["url"])
         self.assertEqual(module.public_shared_report_hits(
             "3406", "玉晶光",
             now=datetime(2026, 12, 1, 12, 0, tzinfo=ZoneInfo("Asia/Taipei"))), [])
