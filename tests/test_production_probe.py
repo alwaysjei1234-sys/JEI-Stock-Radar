@@ -72,6 +72,8 @@ class ProductionProbeTests(unittest.TestCase):
                 return 200, "JEI_REMOTE_UI_V3", ""
             if path == "/remote/update.json":
                 return 200, '{"versionCode":34,"url":"https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/releases/download/jei-latest/JEI_Stock_Radar_V3.apk"}', ""
+            if path in {"/index.html", "/strategy.html", "/industry_research.html", "/cash.html", "/holding-health.html", "/pick_validation.html"}:
+                return 200, "<!doctype html><html></html>", ""
             raise AssertionError(path)
 
         with tempfile.TemporaryDirectory() as tmp:
