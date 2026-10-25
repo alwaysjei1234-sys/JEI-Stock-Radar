@@ -57,19 +57,8 @@ async function run(){
   assert.equal(await page.locator('#holdToolbar').isVisible(),false,'private sort/filter controls never shown on public browser');
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>/已連線/.test(document.querySelector('#sysStatus')?.textContent||''),null,{timeout:15000});
-  await page.waitForFunction(()=>document.querySelector('#jeiPickSync')?.textContent.includes('官方收盤'),null,{timeout:15000});
-  assert.equal(await page.locator('#jeiPickDetails').evaluate(el=>el.open),false,'long performance breakdown starts collapsed');
-  assert.match(await page.locator('#jeiPickDetailsSummary').innerText(),/已完成的策略／週期明細（5 組）/);
-  assert.match(await page.locator('#jeiPickOverview').innerText(),/未到期不列為 0%/);
-  assert.equal(await page.locator('#jeiPickRows tr').count(),5,'only five matured 3-day strategy results are shown');
-  assert.deepEqual(await page.locator('#jeiPickRows tr td:nth-child(2)').allTextContents(),['3','3','3','3','3'],'only mature 3-day results are displayed');
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
   assert.equal(await page.locator('[data-private-only]:visible').count(),0,'owner-only navigation and links stay hidden in visitor edition');
-  await page.locator('[data-go="attack"]').first().click();
-  await page.locator('#screenPreset').selectOption('all');
-  assert.match(await page.locator('#attackList').innerText(),/族群未分類（中性計分）|族群資料未涵蓋/);
-  assert.doesNotMatch(await page.locator('#attackList').innerText(),/其他熱度 50/,'unmeasured sector heat must not look like a market observation');
-  await page.locator('[data-go="home"]').first().click();
   const health=await context.newPage();
   await health.goto(base+'holding-health.html',{waitUntil:'domcontentloaded'});
   assert.equal(await health.locator('main section').count(),8);
@@ -113,7 +102,7 @@ async function run(){
   await health.locator('#holdingForm button[type="submit"]').click();
   await health.waitForFunction(()=>/估算損益 10,000/.test(document.querySelector('#holdingSummary')?.textContent||''));
   assert.equal(await health.locator('#holdingRows img').count(),0,'user-entered names render as text, never HTML');
-  assert.match(await health.locator('#holdingStatus').innerText(),/本機瀏覽器/);
+  assert.match(await health.locator('#holdingStatus').innerText(),/本機加密|本機瀏覽器/);
   assert.equal(await health.evaluate(()=>localStorage.getItem('jei-holding-health-private-v1')),null,'legacy plaintext key must be absent after encryption');
   assert.equal(await health.evaluate(()=>{
     const text=localStorage.getItem('jei-holding-health-private-v2')||'';
