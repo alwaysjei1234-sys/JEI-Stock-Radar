@@ -32,6 +32,12 @@ const snapshot = research.marketSnapshot({ data_date: '2026-10-22', market: { st
   { morning: { us_market: [{ name: 'NASDAQ', date: '2026-10-22', change_pct: -2.6 }] } }, '2026-10-23');
 assert.equal(snapshot.freshness.state, 'dated');
 assert.equal(snapshot.usFreshness.state, 'dated');
+const crossMarketSnapshot = research.marketSnapshot({ data_date: '2026-10-22', market: { status: '收盤' }, risk: {} },
+  { morning: { us_market: [{ name: 'NASDAQ', date: '2026-10-22', change_pct: -2.6 }],
+    global_market: [{ name: '費城半導體', date: '2026-10-23', change_pct: 0.44 }, { name: 'WTI 原油', date: '2026-10-23', change_pct: 3.82 }] } }, '2026-10-24');
+assert.equal(crossMarketSnapshot.usDate, '2026-10-22', 'global quote dates must not make the US core freshness look newer');
+assert.equal(crossMarketSnapshot.indices.length, 3, 'cross-market context should render beside the three core US indexes');
+assert.equal(crossMarketSnapshot.indices[1].name, '費城半導體');
 assert.match(snapshot.linkage, /風險背景/);
 assert.equal(research.marketSnapshot({}, null, '2026-10-23').freshness.state, 'unverified');
 const stock = research.lookupStock({ data_date: '2026-10-22', universe: [{ code: '2330', name: '台積電' }], attack: [{ code: '2330', name: '台積電', score: 80, price: 1500, change_pct: 2 }], stock_sectors: { '2330': '半導體' }, sectors: [{ name: '半導體', score: 77 }], institutional: { '2330': { total: 1000, source: 'TWSE T86' } } }, '2330', '2026-10-23');

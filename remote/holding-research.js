@@ -22,8 +22,10 @@
     const fresh = freshness(date, today);
     const risk = system && system.risk || {};
     const market = system && system.market || {};
-    const indices = brief && brief.morning && Array.isArray(brief.morning.us_market) ? brief.morning.us_market : [];
-    const latestUS = indices.map(x => x.date).filter(validDay).sort().pop() || null;
+    const usIndices = brief && brief.morning && Array.isArray(brief.morning.us_market) ? brief.morning.us_market : [];
+    const globalIndices = brief && brief.morning && Array.isArray(brief.morning.global_market) ? brief.morning.global_market : [];
+    const indices = [...usIndices, ...globalIndices];
+    const latestUS = usIndices.map(x => x.date).filter(validDay).sort().pop() || null;
     const usFresh = freshness(latestUS, today);
     const nasdaq = indices.find(x => /nasdaq/i.test(x.name || ''));
     let linkage = '資料不足，無法判斷美股對台股的短線方向';

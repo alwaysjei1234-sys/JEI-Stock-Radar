@@ -20,6 +20,11 @@ FEED=ROOT/"remote/system.json"
 PAPER=ROOT/"remote/strategy_performance.json"
 OUTPUT=ROOT/"remote/brief.json"
 US_SYMBOLS=(("^GSPC","S&P 500"),("^IXIC","NASDAQ"),("^DJI","道瓊"))
+GLOBAL_SYMBOLS=(
+    ("^SOX","費城半導體"),("^VIX","VIX 恐慌指數"),("TSM","台積電 ADR"),
+    ("CL=F","WTI 原油"),("DX-Y.NYB","美元指數"),("USDTWD=X","美元／新台幣"),
+    ("^N225","日經 225"),("^KS11","韓國綜合"),
+)
 
 def get_url(url):
     req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 JEI-Stock-Radar/1.0"})
@@ -57,28 +62,37 @@ def quality(feed,edition,now):
         return False,"早報異常：開盤前不應已有今日收盤"
     return True,"官方收盤基準日 "+raw+"；非即時行情"
 
-def fetch_us(now):
+def fetch_market_symbols(symbols,now):
     quotes=[]
-    for code,label in US_SYMBOLS:
+    for code,label in symbols:
         try:
             url="https://query1.finance.yahoo.com/v8/finance/chart/"+urllib.parse.quote(code,safe="")+"?range=10d&interval=1d"
             result=json.loads(get_url(url))["chart"]["result"][0]
+            meta=result.get("meta") or {}
+            market_tz=ZoneInfo(str(meta.get("exchangeTimezoneName") or "America/New_York"))
             stamps=result.get("timestamp") or []
             closes=result["indicators"]["quote"][0]["close"] or []
             entries=[]
             for stamp,price in zip(stamps,closes):
                 p=num(price)
                 if p and p>0:
-                    day=datetime.fromtimestamp(stamp,timezone.utc).astimezone(NEW_YORK).date()
+                    day=datetime.fromtimestamp(stamp,timezone.utc).astimezone(market_tz).date()
                     entries.append((day,p))
             if len(entries)<2: continue
             day,price=entries[-1]
-            if not 0 <= (now.astimezone(NEW_YORK).date()-day).days <= 5: continue
+            current_market_day=now.astimezone(market_tz).date()
+            if not 0 <= (current_market_day-day).days <= 5: continue
             change=(price/entries[-2][1]-1)*100
-            quotes.append({"name":label,"date":day.isoformat(),"close":round(price,2),"change_pct":round(change,2)})
+            quotes.append({"name":label,"date":day.isoformat(),"close":round(price,2),"change_pct":round(change,2),"source":"Yahoo Finance"})
         except (OSError,KeyError,IndexError,TypeError,ValueError):
             continue
     return quotes
+
+def fetch_us(now):
+    return fetch_market_symbols(US_SYMBOLS,now)
+
+def fetch_global(now):
+    return fetch_market_symbols(GLOBAL_SYMBOLS,now)
 
 def fetch_news(now):
     headlines={}
@@ -131,7 +145,7 @@ def paper_block(paper,day):
             entries.append(f"{clean(item.get('name') or key,28)}｜估算權益 {val:,.0f} 元｜相對初始 {percent((val/principal-1)*100)}")
     return {"title":"四策略模擬復盤","items":entries[:6]}
 
-def generate(edition,now,feed,paper,us_fn=fetch_us,news_fn=fetch_news):
+def generate(edition,now,feed,paper,us_fn=fetch_us,global_fn=fetch_global,news_fn=fetch_news):
     good,note=quality(feed,edition,now)
     report={
        "edition":edition,"date":now.date().isoformat(),
@@ -139,7 +153,7 @@ def generate(edition,now,feed,paper,us_fn=fetch_us,news_fn=fetch_news):
        "status":"ready" if good else "pending","note":note,
        "source_date":str(feed.get("data_date") or ""),
        "title":"JEI 開盤前早報" if edition=="morning" else "JEI 盤後復盤",
-       "blocks":[],"us_market":[],"news":[],
+       "blocks":[],"us_market":[],"global_market":[],"news":[],
        "report_url":"https://jei-stock-radar.vercel.app/remote/brief.html",
        "privacy":"只用公開市場資料，不含私人持股與成本"
     }
@@ -150,7 +164,10 @@ def generate(edition,now,feed,paper,us_fn=fetch_us,news_fn=fetch_news):
     if edition=="morning":
         report["us_market"]=us_fn(now)
         us_entries=[f"{x['name']}｜美東 {x['date']} 收盤 {x['close']:,.2f}｜{percent(x['change_pct'])}" for x in report["us_market"]]
-        report["blocks"].insert(0,{"title":"全球市場｜最近可驗證美股收盤","items":us_entries or ["美股報價暫無可信來源，不推測漲跌。"]})
+        report["blocks"].insert(0,{"title":"全球市場｜美股核心指數","items":us_entries or ["美股報價暫無可信來源，不推測漲跌。"]})
+        report["global_market"]=global_fn(now)
+        global_entries=[f"{x['name']}｜市場日 {x['date']} 收盤 {x['close']:,.2f}｜{percent(x['change_pct'])}｜{x.get('source','來源待確認')}" for x in report["global_market"]]
+        report["blocks"].insert(1,{"title":"跨市場風險指標｜各市場日期分開","items":global_entries or ["跨市場報價暫無可信來源，不以舊值補足。"]})
         report["news"]=news_fn(now)
         report["blocks"].append({"title":"重要新聞","items":[f"近期新聞標題 {len(report['news'])} 則；請點連結看原文。新聞標題不等於利多利空。"]})
     else:

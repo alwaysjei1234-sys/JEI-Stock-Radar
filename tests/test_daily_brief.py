@@ -42,6 +42,32 @@ class BriefTests(unittest.TestCase):
         self.assertIn("暫無可信來源",str(report))
         self.assertNotIn("NEVER_PUBLIC",str(report))
 
+    def test_cross_market_quotes_use_exchange_timezone_and_keep_dates(self):
+        now=datetime(2026,10,25,10,0,tzinfo=ZoneInfo("Asia/Taipei"))
+        responses={}
+        for code,tz,stamps in [
+            ("^SOX","America/New_York",[datetime(2026,10,22,20,tzinfo=ZoneInfo("UTC")).timestamp(),datetime(2026,10,23,20,tzinfo=ZoneInfo("UTC")).timestamp()]),
+            ("^N225","Asia/Tokyo",[datetime(2026,10,22,6,tzinfo=ZoneInfo("UTC")).timestamp(),datetime(2026,10,23,6,tzinfo=ZoneInfo("UTC")).timestamp()])
+        ]:
+            responses[code]={"chart":{"result":[{"meta":{"exchangeTimezoneName":tz},"timestamp":stamps,"indicators":{"quote":[{"close":[100,101]}]}}],"error":None}}
+        def fake_get_url(url):
+            for code,payload in responses.items():
+                if urllib.parse.quote(code,safe="") in url: return json.dumps(payload)
+            raise OSError("symbol unavailable")
+        with unittest.mock.patch.object(b,"get_url",side_effect=fake_get_url):
+            quotes=b.fetch_market_symbols((("^SOX","費城半導體"),("^N225","日經 225"),("^BAD","無效")),now)
+        self.assertEqual([(x["name"],x["date"]) for x in quotes],[("費城半導體","2026-10-23"),("日經 225","2026-10-23")])
+        self.assertTrue(all(x["source"]=="Yahoo Finance" for x in quotes))
+
+    def test_morning_separates_core_us_and_cross_market_quotes(self):
+        at=datetime(2026,10,24,9,0,tzinfo=ZoneInfo("Asia/Taipei"))
+        feed=dict(FEED,data_date="2026-10-23")
+        global_quotes=[{"name":"費城半導體","date":"2026-10-23","close":10779.46,"change_pct":0.44,"source":"Yahoo Finance"}]
+        report=b.generate("morning",at,feed,PAPER,us_fn=lambda n: [],global_fn=lambda n: global_quotes,news_fn=lambda n: [])
+        self.assertEqual(report["global_market"],global_quotes)
+        self.assertIn("跨市場風險指標",str(report["blocks"]))
+        self.assertIn("市場日 2026-10-23",str(report["blocks"]))
+
     def test_line_is_explicitly_opt_in(self):
         report=b.generate("close",CLOSE,FEED,PAPER)
         user="U"+"a"*32
