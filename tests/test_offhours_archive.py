@@ -61,7 +61,7 @@ class OffhoursArchiveTests(unittest.TestCase):
             {**base,"updated_at":"2026-10-16 10:00"},
             {**base,"updated_at":"2026-10-18 17:10"},
             {**base,"market":{**base["market"],"stale":True}},
-            {**base,"market":{**base["market"],"stale":True,"historical_readonly":True},"updated_at":"2026-10-18 07:29"},
+            {**base,"market":{**base["market"],"stale":True,"historical_readonly":True},"updated_at":"2026-10-18 16:29"},
             {**base,"market":{**base["market"],"mode":"盤中即時"}},
             {**base,"market":{**base["market"],"close_count":499}},
             {**base,"market":{**base["market"],"close_count":True}},
