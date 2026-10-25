@@ -74,7 +74,7 @@ class FreeResearchTests(unittest.TestCase):
         self.assertEqual(ratios["debtRatioPct"], 40)
         self.assertEqual(ratios["currentRatioPct"], 150)
         self.assertEqual(ratios["eps"], 12.3)
-        self.assertIsNone(module.financial_rows([{"公司代號": "2330", "營業收入": "0"}], [])["2330"]["grossMarginPct"])
+        self.assertNotIn("2330", module.financial_rows([{"公司代號": "2330", "營業收入": "0"}], []))
 
     def test_financial_rows_do_not_mix_quarters(self):
         income = [{
