@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "imageLabelledChannels": 30,
   "visibleChannels": 29,
-  "note": "圖片標示 30 個頻道，但可讀到 29 個名稱（9+11+9），第 30 個名稱不在圖片可見範圍；未臆測補名。目前只排程讀取 8 個經實際請求確認可用的官方公開 RSS。其他提供搜尋入口，先核對官方身份／RSS 可用性再納入。",
+  "note": "圖片標示 30 個頻道，但可讀到 29 個名稱（9+11+9），第 30 個名稱不在圖片可見範圍；未臆測補名。目前只有 1 個候選 RSS 通過端點存取測試，且會核對 feed channel ID；其餘端點回 404 或身分不符，保留來源入口。",
   "policy": "只同步官方 YouTube 公開 RSS 的標題、日期和連結；不下載影片或字幕、不保存逐字稿。標題只用來找片，不能當成影片結論。",
   "channels": [
     {
@@ -57,8 +57,9 @@
       "channelId": "UCv496KjsTSTpJ4sGfHZ8_Qw",
       "url": "https://www.youtube.com/channel/UCv496KjsTSTpJ4sGfHZ8_Qw",
       "verifiedOfficial": true,
-      "rssEnabled": true,
-      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCv496KjsTSTpJ4sGfHZ8_Qw"
+      "rssEnabled": false,
+      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCv496KjsTSTpJ4sGfHZ8_Qw",
+      "rssStatus": "2026-10-25 實際執行 RSS 回 404；保留官方入口，暫停自動讀取。"
     },
     {
       "id": "yt-06",
@@ -90,8 +91,9 @@
       "channelId": "UC99pEneQfxE8Tg3uNa9QXEw",
       "url": "https://www.youtube.com/channel/UC99pEneQfxE8Tg3uNa9QXEw",
       "verifiedOfficial": true,
-      "rssEnabled": true,
-      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UC99pEneQfxE8Tg3uNa9QXEw"
+      "rssEnabled": false,
+      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UC99pEneQfxE8Tg3uNa9QXEw",
+      "rssStatus": "2026-10-25 實際執行 RSS 回 404；保留官方入口，暫停自動讀取。"
     },
     {
       "id": "yt-09",
@@ -112,8 +114,9 @@
       "channelId": "UCT3uWFvKLVpRnEealmRwvrw",
       "url": "https://www.youtube.com/channel/UCT3uWFvKLVpRnEealmRwvrw",
       "verifiedOfficial": true,
-      "rssEnabled": true,
-      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCT3uWFvKLVpRnEealmRwvrw"
+      "rssEnabled": false,
+      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCT3uWFvKLVpRnEealmRwvrw",
+      "rssStatus": "2026-10-25 實際執行 RSS 回 404；保留官方入口，暫停自動讀取。"
     },
     {
       "id": "yt-11",
@@ -157,8 +160,9 @@
       "channelId": "UC25CsqDNQv6CdzDq_hsazIw",
       "url": "https://www.youtube.com/channel/UC25CsqDNQv6CdzDq_hsazIw",
       "verifiedOfficial": true,
-      "rssEnabled": true,
-      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UC25CsqDNQv6CdzDq_hsazIw"
+      "rssEnabled": false,
+      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UC25CsqDNQv6CdzDq_hsazIw",
+      "rssStatus": "2026-10-25 實際執行 RSS 回 404；保留官方入口，暫停自動讀取。"
     },
     {
       "id": "yt-15",
@@ -168,8 +172,9 @@
       "channelId": "UCLbdUFB1vHhDeDsj5aRhDjg",
       "url": "https://www.youtube.com/channel/UCLbdUFB1vHhDeDsj5aRhDjg",
       "verifiedOfficial": true,
-      "rssEnabled": true,
-      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCLbdUFB1vHhDeDsj5aRhDjg"
+      "rssEnabled": false,
+      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCLbdUFB1vHhDeDsj5aRhDjg",
+      "rssStatus": "2026-10-25 實際執行 RSS 回 404；保留官方入口，暫停自動讀取。"
     },
     {
       "id": "yt-16",
@@ -224,8 +229,9 @@
       "channelId": "UCbRtQVBa61mbCZnK6YekjnQ",
       "url": "https://www.youtube.com/@mirrormediamoney",
       "verifiedOfficial": true,
-      "rssEnabled": true,
-      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCbRtQVBa61mbCZnK6YekjnQ"
+      "rssEnabled": false,
+      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCbRtQVBa61mbCZnK6YekjnQ",
+      "rssStatus": "2026-10-25 實際執行 RSS 回 404；保留官方入口，暫停自動讀取。"
     },
     {
       "id": "yt-21",
@@ -269,8 +275,9 @@
       "channelId": "UCazMK3kn3KkkTM6JsHhI_-g",
       "url": "https://www.youtube.com/channel/UCazMK3kn3KkkTM6JsHhI_-g",
       "verifiedOfficial": true,
-      "rssEnabled": true,
-      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCazMK3kn3KkkTM6JsHhI_-g"
+      "rssEnabled": false,
+      "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCazMK3kn3KkkTM6JsHhI_-g",
+      "rssStatus": "2026-10-25 實際執行 RSS 回 404；保留官方入口，暫停自動讀取。"
     },
     {
       "id": "yt-25",

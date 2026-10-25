@@ -37,8 +37,10 @@ def _fetch_channel(channel: dict[str, Any]) -> tuple[dict[str, Any], list[dict[s
                 root = ET.fromstring(response.read())
             feed_id = root.findtext("atom:id", namespaces=NS) or ""
             expected = channel["channelId"]
-            if feed_id and not feed_id.endswith(expected):
-                raise ValueError(f"RSS channel id mismatch: expected yt:channel:{expected}, received {feed_id or '(missing)'}")
+            normalized_feed_id = feed_id.removeprefix("yt:channel:")
+            accepted_ids = {expected, expected.removeprefix("UC")}
+            if feed_id and normalized_feed_id not in accepted_ids:
+                raise ValueError(f"RSS channel id mismatch: expected {expected}, received {feed_id or '(missing)'}")
             videos: list[dict[str, str]] = []
             for entry in root.findall("atom:entry", NS)[:3]:
                 video_id = entry.findtext("yt:videoId", namespaces=NS) or ""
