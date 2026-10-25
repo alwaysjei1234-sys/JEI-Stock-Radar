@@ -443,10 +443,6 @@
       const fmt = value => value == null ? '—' : Number.isFinite(value) ? Math.round(value * 100) / 100 : '無虧損樣本';
       set('journalResult', stats.count ? `${stats.count} 筆有效交易｜毛勝率 ${fmt(stats.winRate)}%｜平均獲利 ${fmt(stats.avgWin)}｜平均虧損 ${fmt(stats.avgLoss)}｜毛獲利因子 ${fmt(stats.profitFactor)}｜累積序列最大回撤 ${fmt(stats.maxDrawdown)}。未扣費稅，樣本不代表未來。` : '沒有有效交易資料；請使用日期,代號,進場價,出場價,股數格式。');
     });
-    ['financialEvidence', 'peerEvidence'].forEach(id => {
-      const el = doc.getElementById(id), output = id === 'financialEvidence' ? 'financialStatus' : null;
-      if (el && output) el.addEventListener('input', () => set(output, el.value.trim() ? '已輸入手動研究線索；請自行核對原始公告，系統尚未驗證來源。' : '尚未輸入查證資料。'));
-    });
   }
   return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, sourceQueries, buildResearchBrief, renderSourceStatus, renderGooayeWatch, renderDailyNewsWatch, renderVideoUploadWatch, init });
 }));
