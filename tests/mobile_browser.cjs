@@ -368,7 +368,7 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('最後報告更新'));
   assert.equal(await page.locator('#asOf').innerText(),'2026-10-16');
   assert.equal(await page.locator('#total').innerText(),'2');
-  assert.match(await page.locator('#comparison').innerText(),/有效樣本少於10筆/);
+  assert.match(await page.locator('#comparison').innerText(),/樣本尚未達30筆/);
   assert.match(await page.locator('#pickRows').innerText(),/5.52%/);
   assert.equal(await page.locator('#pickRows script').count(),0,'untrusted pick names are text only');
   await page.locator('#horizon').selectOption('7');
