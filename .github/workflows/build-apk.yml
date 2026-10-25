@@ -9,6 +9,7 @@ on:
       - 'build.gradle'
       - 'settings.gradle'
       - 'gradle.properties'
+      - 'tests/**'
       - '.github/workflows/build-apk.yml'
   workflow_dispatch:
   schedule:
