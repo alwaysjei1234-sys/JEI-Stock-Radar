@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#06101b">
-<title>JEI 專屬選股雷達</title>
+<title>JEI Stock Radar｜公開訪客版</title>
 <style>
 :root{--bg:#06101b;--panel:#0a1b2b;--panel2:#0d2438;--line:#183e5c;--txt:#eff8ff;--mut:#8ca8bd;--blue:#2b8fe5;--cyan:#5bd3ff;--green:#41d8a1;--yellow:#ffd166;--orange:#ff9f43;--red:#ff6070;--purple:#b99cff;--shadow:0 12px 34px rgba(0,0,0,.27)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:radial-gradient(circle at 80% -10%,#103b5c 0,#06101b 35%);color:var(--txt);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}body{padding-bottom:92px}.wrap{max-width:1180px;margin:auto;padding:14px}.top{display:flex;gap:10px;align-items:center;justify-content:space-between}.brand{font-weight:950;font-size:22px;letter-spacing:.2px}.brand i{font-style:normal;color:var(--cyan)}.sub{font-size:11px;color:var(--mut);margin-top:3px}.online{display:flex;gap:6px;align-items:center;padding:7px 10px;background:#0b2031;border:1px solid var(--line);border-radius:999px;font-size:11px}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}.dot.off{background:var(--red);box-shadow:0 0 10px var(--red)}
@@ -59,7 +59,7 @@
   .updateBanner{font-size:14px;padding:12px}
   .btab{font-size:11px}.btab b{font-size:20px}
 }
-.heatmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin-top:12px}.heatTile{border:1px solid rgba(255,255,255,.16);border-radius:13px;padding:13px 10px;text-align:left;min-height:92px;color:#fff;cursor:pointer;font:inherit}.heatTile b{display:block;font-size:15px;line-height:1.4}.heatTile span{display:block;font-size:21px;font-weight:750;margin-top:7px}.heatTile small{display:block;opacity:.85;font-size:12px;margin-top:3px}.heatTile.up{background:#71343d}.heatTile.down{background:#246b58}.heatTile.flat{background:#344254}.heatTile:focus-visible{outline:3px solid #78c8ff}
+.heatmap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row dense;gap:6px;margin-top:12px}.heatTile{grid-column:span 1;overflow:hidden;min-width:0;border:1px solid rgba(255,255,255,.16);border-radius:13px;padding:13px 10px;text-align:left;min-height:92px;color:#fff;cursor:pointer;font:inherit}.heatTile b{display:block;font-size:15px;line-height:1.4}.heatTile span{display:block;font-size:21px;font-weight:750;margin-top:7px}.heatTile small{display:block;opacity:.85;font-size:12px;margin-top:3px}.heatTile.up{background:#71343d}.heatTile.down{background:#246b58}.heatTile.flat{background:#344254}.heatTile.featured{grid-column:span 2;min-height:130px}.heatTile.featured b{font-size:17px}.heatTile.featured span{font-size:25px}@media(max-width:480px){.heatmap{grid-template-columns:repeat(3,minmax(0,1fr))}.heatTile{padding:10px 7px;min-height:88px}.heatTile b{font-size:12px}.heatTile span{font-size:16px}.heatTile small{font-size:10px}.heatTile.featured{grid-column:span 2}}.heatTile:focus-visible{outline:3px solid #78c8ff}
 .screener{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px;margin-top:12px}.screener label{font-size:13px;color:#b7c8d6}.screener input,.screener select{display:block;box-sizing:border-box;width:100%;margin-top:6px;padding:11px;border:1px solid #42576b;background:#0b2030;color:#fff;border-radius:10px;font-size:15px}
 .paper-entry{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .paper-entry .panelTitle{margin-bottom:4px}
@@ -84,21 +84,35 @@
 .strategy-controls button.active{background:#1c78c5;border-color:#5bbdff;color:#fff}
 .strategy-note{line-height:1.65;color:#b1cbdd;font-size:12px}
 @media(min-width:760px){.strategy-controls{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.jei-explore{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:9px 0 12px}.jei-explore a,.jei-explore button{display:flex;align-items:center;justify-content:center;min-height:44px;text-align:center;text-decoration:none;color:var(--txt);background:#112b42;border:1px solid var(--line);border-radius:12px;font:700 12px system-ui,sans-serif;padding:7px 3px}.jei-explore a:focus-visible,.jei-explore button:focus-visible{outline:2px solid var(--cyan)}@media(max-width:410px){.jei-explore{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pattern-plan{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#0b2031}.pattern-plan-row{margin-top:11px;padding:11px;border-radius:10px;background:#122b42;border:1px solid #21435c}.pattern-plan-row b{display:block;font-size:15px}.pattern-plan-row .sub{margin-top:5px;line-height:1.5}
+.pattern-ref-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}.pattern-ref-levels>div{background:#0b2031;border-radius:8px;padding:8px 5px;text-align:center}.pattern-ref-levels small{display:block;font-size:10px;color:#b6c7d6}.pattern-ref-levels b{display:block;margin-top:4px;font-size:15px}
+.jei-home-hub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.jei-home-hub button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;min-height:94px;padding:13px;border:1px solid #29465d;border-radius:16px;background:linear-gradient(135deg,#172e48,#102235);color:#e8f4ff;text-align:left;font:inherit;cursor:pointer}.jei-home-hub button span{font-size:21px}.jei-home-hub button b{font-size:17px}.jei-home-hub button small{font-size:12px;color:#a9c1d2}.jei-home-hub button:focus-visible{outline:2px solid #36d5eb}@media(min-width:650px){.jei-home-hub{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.pattern-detail{margin-top:9px;border-top:1px solid #2a4a62;padding-top:8px}.pattern-detail summary{cursor:pointer;color:#81d8ff;font-size:12px;font-weight:700}.pattern-detail p{margin:7px 0 0}
+.pattern-close-chart{display:block;width:100%;height:auto;max-height:132px;margin-top:10px;border:1px solid #25465d;border-radius:9px;background:#091c2c}
+.pattern-trend-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.pattern-trend-stats>div{padding:8px 4px;text-align:center;border-radius:8px;background:#112b42}.pattern-trend-stats small{display:block;font-size:10px;color:#b5c9d9}.pattern-trend-stats b{display:block;margin-top:4px;font-size:14px}
+.pattern-chart-button{display:block;width:100%;padding:0;margin:0;border:0;background:transparent;cursor:pointer}.pattern-chart-button:focus-visible{outline:2px solid #65cfff;border-radius:9px}.pattern-chart-inspect{font-size:11px;color:#a9c7dc;margin-top:5px}.pattern-point-list{margin-top:7px;padding:9px;border:1px solid #2b4b64;border-radius:9px;max-height:190px;overflow:auto;font-size:12px;line-height:1.8}.pattern-point-list[hidden]{display:none}
+.pattern-chart-legend{font-size:11px;color:#c3d7e6;margin-top:7px;line-height:1.5}
+.pattern-trend-readout{margin-top:10px;padding:10px;border-radius:10px;background:#132e43;border:1px solid #2c536b}.pattern-trend-readout>b{display:block;font-size:14px;color:#d7ecf8}.pattern-trend-readout .sub{margin-top:5px}
+.pattern-momentum{margin-top:8px;padding:10px;border-radius:10px;border:1px solid #294b62;background:#10273a}.pattern-momentum>b{font-size:13px;color:#d6ecfa}.pattern-momentum .sub{margin-top:5px}
+.pattern-ohlcv-panel{margin-top:10px;padding:10px;border:1px solid #28536c;border-radius:12px;background:#0b2435}.pattern-ohlcv-panel>b{font-size:13px;color:#e4f3ff}.pattern-ohlcv-panel svg{margin-top:8px}
 </style>
 </head>
 <body>
 <!-- JEI_REMOTE_UI_V2 --><!-- JEI_REMOTE_UI_V3 -->
 <div class="wrap">
+  <div class="panel" role="note" style="color:#b9cede">公開訪客版：只顯示市場與選股資訊；不載入或顯示任何人的私人持股。</div>
   <div class="top"><div><div class="brand">JEI 選股雷達 <i>V3.9</i></div><div class="sub">先看風險，再看持股與明日機會</div></div><div class="online"><span id="netDot" class="dot"></span><span id="netText">連線中</span></div></div>
   <div id="updateBanner" class="updateBanner"><span id="updateText">有新版系統</span><button onclick="openUpdate()">更新</button></div>
   <div id="riskBox" class="risk green"><div class="riskTop"><div><div id="riskTitle" class="riskTitle">🟢 大逃殺預警：等待同步</div><div id="riskTime" class="sub">先同步 JEI 雲端資料</div></div><div id="riskScore" class="riskScore">--</div></div><div id="riskReasons" class="riskReasons risk-collapsed">市場警戒永遠優先於買進訊號。</div><button id="riskExpand" class="risk-more" onclick="toggleRiskDetails()" type="button" aria-expanded="false">展開風險原因 ▾</button></div>
   <div class="panel paper-entry"><div><div class="panelTitle">📈 現股模擬績效</div><div class="sub">與真實持股分開；只追蹤、無實際委託</div></div><a class="paper-open" href="./cash.html">查看績效 →</a></div>
-  <div class="actions main-shortcuts"><button class="btn primary" onclick="refreshAll(true)">↻ 更新</button><button class="btn" onclick="go('hold')">💼 持股</button><button class="btn" onclick="go('attack')">🔥 主攻</button><button class="btn" onclick="go('tomorrowMonster')">🌙 明日</button></div>
-  <div class="metrics dashboard-metrics"><div class="metric"><div class="k">市場訊號</div><div id="marketState" class="v cyanTxt">同步中</div></div><div class="metric"><div class="k">建議現金</div><div id="cashLevel" class="v">--</div></div><div class="metric"><div class="k">持股損益</div><div id="totalPnl" class="v">--</div></div><div class="metric"><div class="k">持股風險</div><div id="portfolioRisk" class="v">--</div></div></div><div id="updatedAgo" class="data-age">資料更新：等待同步</div><div id="feedGate" class="feedGate" role="status" aria-live="polite">行情檢查中｜未驗證訊號不作為買賣依據</div>
+  <div class="actions main-shortcuts"><button class="btn primary" onclick="refreshAll(true)">↻ 更新</button><button class="btn" data-private-only onclick="go('hold')">💼 持股</button><button class="btn" onclick="go('attack')">🔥 主攻</button><button class="btn" onclick="go('tomorrowMonster')">🌙 明日</button></div>
+  <div class="jei-explore" aria-label="進階研究與盤勢工具"><a href="./industry_research.html">🔎 產業研報</a><button type="button" onclick="go('sector')">🌊 族群熱度</button><button type="button" onclick="go('patterns')">📐 型態選股</button><a href="./strategy.html">📊 策略驗證</a></div>
+  <div class="metrics dashboard-metrics"><div class="metric"><div class="k">市場訊號</div><div id="marketState" class="v cyanTxt">同步中</div></div><div class="metric"><div class="k">模型現金參考</div><div id="cashLevel" class="v">--</div></div><div class="metric" data-private-only><div class="k">持股損益</div><div id="totalPnl" class="v">--</div></div><div class="metric" data-private-only><div class="k">持股風險</div><div id="portfolioRisk" class="v">--</div></div></div><div class="data-age">現金比例僅為市場風險分層參考，未依個人資產、投資期限或風險承受度校準。</div><div id="updatedAgo" class="data-age">資料更新：等待同步</div><div id="feedGate" class="feedGate" role="status" aria-live="polite">行情檢查中｜未驗證訊號不作為買賣依據</div>
   <div class="tabs"><div class="tab active" data-go="home">總覽</div><div class="tab" data-go="hold">我的持股</div><div class="tab" data-go="attack">今日主攻</div><div class="tab" data-go="monster">突然妖股</div><div class="tab" data-go="tomorrowMonster">明日妖股</div><div class="tab" data-go="futureMonster">未來妖股</div><div class="tab" data-go="webReco">網路推薦</div><div class="tab" data-go="rotate">持股換股</div><div class="tab" data-go="flow">資金流</div><div class="tab" data-go="sector">族群熱度</div><div class="tab" data-go="patterns">四策略</div><div class="tab" data-go="backtest">回測</div><div class="tab" data-go="settings">更新系統</div></div>
   <section id="home" class="section active">
-    <h2>今日重點</h2><div id="homeQuick" class="panel" aria-live="polite"><div class="panelTitle">⚡ 今日三件事</div><div id="quickRisk" class="quickline">大盤：等待有效行情</div><div id="quickHold" class="quickline">持股：等待手機行情</div><div id="quickAlert" class="quickline" hidden>警戒：等待手機行情</div><div id="quickPressure" class="quickline" hidden>價量與族群：等待證據</div><div id="quickAttack" class="quickline">主攻：等待有效名單</div></div><details class="panel home-extra"><summary>展開市場解讀依據</summary><div class="panel" style="margin-top:9px"><div class="panelTitle">先風控・再選股</div><div id="homeSummary" class="small mut">市場風險 → 持股處理 → 今日主攻 → 明日觀察</div></div>
-    <div class="panel"><div class="panelTitle">市場資金摘要</div><div id="marketBrief" class="small mut">等待 JEI 系統資料...</div></div></details>
+    <h2>今日重點</h2><div class="jei-home-hub" aria-label="JEI 快速市場總覽"><button type="button" onclick="go('sector')"><span>🌊</span><b>資金熱浪</b><small>族群強弱</small></button><button type="button" onclick="go('attack')"><span>🎯</span><b>今日主攻</b><small>候選與風控</small></button><button type="button" onclick="go('patterns')"><span>📐</span><b>型態選股</b><small>歷史收盤驗證</small></button><button type="button" onclick="go('monster')"><span>⚡</span><b>異動雷達</b><small>妖股觀察</small></button></div><div id="homeQuick" class="panel" aria-live="polite"><div class="panelTitle">⚡ 今日三件事</div><div id="quickRisk" class="quickline">大盤：等待有效行情</div><div id="quickHold" class="quickline" data-private-only>持股：等待手機行情</div><div id="quickAlert" class="quickline" hidden>警戒：等待手機行情</div><div id="quickPressure" class="quickline" hidden>價量與族群：等待證據</div><div id="quickAttack" class="quickline">主攻：等待有效名單</div></div><details class="panel home-extra"><summary>展開市場解讀依據</summary><div class="panel" style="margin-top:9px"><div class="panelTitle">先風控・再選股</div><div id="homeSummary" class="small mut">市場風險 → 持股處理 → 今日主攻 → 明日觀察</div></div>
+    <div class="panel"><div class="panelTitle">市場資金摘要</div><div id="marketBrief" class="small mut">等待 JEI 系統資料...</div><div id="liveDiagnostics" class="small mut" style="margin-top:8px;white-space:pre-line">盤中行情診斷：等待資料</div></div></details>
     <div class="panel"><div class="panelTitle">優先處理</div><div id="priorityList" class="empty">資料同步後顯示今天最需要處理的持股與候選股。</div></div><div class="panel"><div class="panelTitle">最強族群 TOP 3</div><div id="sectorTop" class="small mut">等待族群資料...</div></div><div class="panel"><div class="panelTitle">☀ 開盤早報・🌙 盤後復盤</div><div class="sub">每個交易日自動更新公開市場研究；資料不足時明確標示，不以舊價冒充今日。</div><a class="btn primary" style="display:inline-block;margin-top:10px;text-decoration:none" href="https://jei-stock-radar.vercel.app/remote/brief.html">開啟 JEI 投資研究室 →</a></div>
   </section>
   <section id="hold" class="section"><h2>💰 我的持股｜風控優先</h2>
@@ -126,7 +140,7 @@
   <section id="next" class="section"><h2>🎯 下一棒 TOP</h2><div id="nextList" class="panel"></div></section>
   <section id="monster" class="section"><h2>🚀 突然妖股雷達</h2><div id="monsterList" class="panel"></div></section>
   <section id="tomorrowMonster" class="section"><h2>🌙 明日妖股候選</h2><div class="panel"><div class="sub">偏重收盤強勢、量能、族群熱度與低過熱；是候選排序，不代表保證隔日漲停。</div><div id="tomorrowMonsterList" style="margin-top:8px"></div></div></section>
-  <section id="futureMonster" class="section"><h2>🔭 未來妖股觀察</h2><div class="panel"><div class="sub">偏重 1–4 週族群延伸、趨勢與資金條件，提前找可能發動但尚未過熱的標的。</div><div id="futureMonsterList" style="margin-top:8px"></div></div></section>
+  <section id="futureMonster" class="section"><h2>🔭 未來妖股觀察</h2><div class="panel"><div class="sub">此榜主要使用 1–4 週價量與族群條件，不能視為未來產業主流已確認；研究機構交叉驗證另外提供可核對來源與風險。</div><a href="./industry_research.html" style="display:block;margin:10px 0;padding:11px;border:1px solid #2a739e;border-radius:8px;color:#7ad9ff;text-decoration:none;font-weight:650">📚 查看各家產業研究與未來主流證據 →</a><div id="futureMonsterList" style="margin-top:8px"></div></div></section>
   <section id="webReco" class="section"><h2>🌐 網路共識推薦</h2><div class="panel"><div class="panelTitle">外部資訊 × 法人資金 × JEI 交叉驗證</div><div id="webRecoStamp" class="sub">等待網路資料...</div><div class="sub" style="margin-top:6px">綜合公開投顧/研報、財經媒體、網友公開討論與法人資金；不照抄單一老師報牌。網路聲量高但資金轉弱或已過熱，會直接降分。</div><div id="webRecoList" style="margin-top:10px"></div></div></section>
   <section id="rotate" class="section"><h2>🔄 我的持股換股觀察</h2><div class="panel"><div class="panelTitle">持股較弱 vs 候選較強</div><div id="privateRotate" class="triage-summary">等待驗證持股與今日候選資料</div><div class="sub">僅比較模型排名，不代表建議立即賣出或買入；同時檢查市場風險、流動性與交易成本。</div></div><div class="panel"><div class="panelTitle">其他輪動候選</div><div id="rotateList" style="margin-top:8px"></div></div></section>
   <section id="flow" class="section"><h2>🌊 資金流向</h2><div id="flowList" class="panel"></div></section><section id="sector" class="section"><h2>🌡 族群熱度與資金主線</h2><div class="panel"><div class="panelTitle">📊 族群熱力圖｜依當次資料快照</div><div class="sub">顏色代表族群平均漲跌幅，方塊大小固定；不是即時資金流量。點選方塊可查看族群詳情。</div><label for="heatSort" class="sub">排序方式</label><select id="heatSort" aria-label="族群熱力圖排序"><option value="score">熱度分數</option><option value="gain">平均漲幅</option><option value="loss">平均跌幅</option><option value="breadth">上漲家數比例</option></select><div id="sectorHeatmap" class="heatmap" aria-label="族群熱力圖"></div></div><div id="sectorList" class="panel"></div></section>
@@ -143,7 +157,7 @@
       <div id="patternResults" style="margin-top:10px"></div>
     </div></section>
   <section id="backtest" class="section"><h2>📊 JEI 命中率與回測</h2><div id="backtestBox" class="panel"><div class="empty">等待歷史資料累積</div></div></section>
-  <section id="chat" class="section"><h2>💬 JEI AI 對話中心</h2><div class="panel chatWrap"><div class="sub">多 AI 會診已改為「零付費優先」：Gemini 免費層、Groq 免費層與 OpenRouter 免費模型。免費額度用完只會略過，不會轉成付費。</div><div class="aiModes"><button id="modeLocal" class="aiMode active" onclick="setAiMode('local')">JEI 快速</button><button id="modeSingle" class="aiMode" onclick="setAiMode('single')">單一免費 AI</button><button id="modePanel" class="aiMode" onclick="setAiMode('panel')">🧠 免費多 AI 會診</button></div><div id="aiProviders" class="aiProviders"><button class="aiProvider on" data-provider="gemini_free" onclick="toggleProvider(this)"><span class="pDot"></span>Gemini Free</button><button class="aiProvider on" data-provider="groq_oss" onclick="toggleProvider(this)"><span class="pDot"></span>GPT-OSS 120B</button><button class="aiProvider on" data-provider="groq_qwen" onclick="toggleProvider(this)"><span class="pDot"></span>Qwen 3.8</button><button class="aiProvider on" data-provider="openrouter_free" onclick="toggleProvider(this)"><span class="pDot"></span>OpenRouter Free</button><button class="aiProvider" data-provider="ollama_cloud" onclick="toggleProvider(this)"><span class="pDot"></span>Ollama Cloud</button></div><div id="aiCloudHint" class="sub">JEI 快速模式不使用任何外部 AI 額度。</div><div id="aiStatusBar" class="aiStatusBar"><span class="chip">免費 AI 檢查中</span></div><div class="quickAsk"><button onclick="askQuick('現在大盤風險？')">大盤風險</button><button onclick="askQuick('明日妖股前三名')">明日妖股</button><button onclick="askQuick('未來妖股前三名')">未來妖股</button><button onclick="askQuick('網路推薦前三名')">網路推薦</button><button onclick="askQuick('我的持股哪檔風險最高？')">持股風險</button><button onclick="askQuick('幫我把目前持股分成續抱、警戒、優先減碼')">持股分級</button></div><div class="chatTools"><button onclick="testAiCloud(false)">測試 AI</button><button onclick="clearChat()">清除對話</button></div><div id="chatLog" class="chatLog"></div><div class="chatInput"><input id="chatBox" placeholder="直接問：漢磊明天怎麼看？永擎該停利嗎？" onkeydown="if(event.key==='Enter')sendChat()"><button id="chatSendBtn" onclick="sendChat()">送出</button></div></div></section>
+  <section id="chat" class="section"><h2>💬 JEI AI 對話中心</h2><div class="panel chatWrap"><div class="sub">多 AI 會診已改為「零付費優先」：Gemini 免費層、Groq 免費層與 OpenRouter 免費模型。免費額度用完只會略過，不會轉成付費。</div><div class="aiModes"><button id="modeLocal" class="aiMode active" onclick="setAiMode('local')">JEI 快速</button><button id="modeSingle" class="aiMode" onclick="setAiMode('single')">單一免費 AI</button><button id="modePanel" class="aiMode" onclick="setAiMode('panel')">🧠 免費多 AI 會診</button></div><div id="aiProviders" class="aiProviders"><button class="aiProvider on" data-provider="gemini_free" onclick="toggleProvider(this)"><span class="pDot"></span>Gemini Free</button><button class="aiProvider on" data-provider="groq_oss" onclick="toggleProvider(this)"><span class="pDot"></span>GPT-OSS 120B</button><button class="aiProvider on" data-provider="groq_qwen" onclick="toggleProvider(this)"><span class="pDot"></span>Qwen 3.8</button><button class="aiProvider on" data-provider="openrouter_free" onclick="toggleProvider(this)"><span class="pDot"></span>OpenRouter Free</button><button class="aiProvider" data-provider="ollama_cloud" onclick="toggleProvider(this)"><span class="pDot"></span>Ollama Cloud</button></div><div id="aiCloudHint" class="sub">JEI 快速模式不使用任何外部 AI 額度。</div><div id="aiStatusBar" class="aiStatusBar"><span class="chip">免費 AI 檢查中</span></div><div class="quickAsk"><button onclick="askQuick('現在大盤風險？')">大盤風險</button><button onclick="askQuick('明日妖股前三名')">明日妖股</button><button onclick="askQuick('未來妖股前三名')">未來妖股</button><button onclick="askQuick('網路推薦前三名')">網路推薦</button><button onclick="askQuick('我的持股哪檔風險最高？')">持股風險</button><button onclick="askQuick('幫我把目前持股分成續抱、警戒、優先減碼')">持股分級</button></div><div class="chatTools"><button onclick="go('settings');setTimeout(()=>document.getElementById('geminiFreeKey')?.scrollIntoView({behavior:'smooth',block:'center'}),120)">🔑 設定 Gemini / OpenRouter Key</button><button onclick="testAiCloud(false)">測試 AI</button><button onclick="clearChat()">清除對話</button></div><div id="chatLog" class="chatLog"></div><div class="chatInput"><input id="chatBox" placeholder="直接問：漢磊明天怎麼看？永擎該停利嗎？" onkeydown="if(event.key==='Enter')sendChat()"><button id="chatSendBtn" onclick="sendChat()">送出</button></div></div></section>
   <section id="settings" class="section"><h2>⚙ 更新系統與連線</h2><div class="panel"><div class="panelTitle">系統狀態</div><div id="sysStatus" class="small mut">檢查中...</div><div class="statusline"><span class="chip" id="appVer">APP --</span><span class="chip" id="uiVer">UI --</span><span class="chip">遠端UI：已啟用</span></div><div class="actions" style="grid-template-columns:1fr 1fr;margin-top:10px"><button class="btn primary" onclick="refreshRemoteUI()">更新介面</button><button class="btn" onclick="checkUpdate()">檢查APP版本</button></div></div><div class="panel"><div class="panelTitle">🆓 免費多 AI 設定</div><div class="aiSetup"><input id="geminiFreeKey" type="password" placeholder="Gemini 免費 API Key"><input id="groqFreeKey" type="password" placeholder="Groq 免費 API Key（同時供 GPT-OSS / Qwen 使用）"><input id="openrouterFreeKey" type="password" placeholder="OpenRouter 免費 API Key"><div class="sub">Ollama Cloud 為可選服務：先在 Vercel 設定 OLLAMA_API_KEY 才可勾選，不會自動加入會診；免費方案只有試用額度，使用前請確認帳戶未加值。</div><div class="actions" style="grid-template-columns:1fr 1fr;margin:0"><button class="btn primary" onclick="saveFreeAiKeys()">儲存免費 AI</button><button class="btn" onclick="testAiCloud(false)">檢查免費 AI</button></div><div id="aiCloudStatus" class="sub">免費 Key 只存這支手機/瀏覽器，送出問題時才透過你的 JEI 中繼層使用；不啟用 Vercel AI Gateway，也不會自動轉付費。</div><div class="sub">可只設定其中一組；設定越多，多 AI 會診的獨立意見越多。免費額度用完會自動略過該模型。</div><div class="quickAsk"><button onclick="openExternal('https://aistudio.google.com/apikey')">申請 Gemini Key</button><button onclick="openExternal('https://console.groq.com/keys')">申請 Groq Key</button><button onclick="openExternal('https://openrouter.ai/settings/keys')">申請 OpenRouter Key</button><button onclick="openExternal('https://ollama.com/settings/keys')">申請 Ollama Key</button></div><div class="aiSetup" id="aiPrivateSetup" style="margin-top:12px;border-top:1px solid #29465b;padding-top:12px"><label for="aiBackendToken" class="sub">🔐 JEI 私人連線碼（AI 雲端存取必填，與免費 API Key 不同）</label><input id="aiBackendToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="請貼上 JEI 私人連線碼"><input id="aiBackendUrl" type="hidden"><div class="actions" style="grid-template-columns:1fr 1fr;margin:0"><button type="button" class="btn primary" onclick="saveAiCloud()">儲存連線碼</button><button type="button" class="btn" onclick="verifyAiToken()">測試連線碼</button></div><div id="aiTokenStatus" class="sub" role="status" aria-live="polite">私人連線碼僅保存在本機設定，不會出現在公開選股資料或程式庫；可用「測試連線碼」確認是否通過驗證，不會呼叫付費模型。</div></div></div></div><div class="panel"><div class="panelTitle">資料連結</div><div class="small mut">行情：台灣證交所 MIS 公開行情接口<br>JEI 排名 / 風險：GitHub 遠端 feed（交易時段每15分鐘排程更新）<br>持股：本機私有儲存<br>介面：每次啟動自動抓最新版本，離線時使用內建版。</div></div></section>
 </div>
 <div id="toast" class="toast"></div>
@@ -154,12 +168,13 @@ const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],tomorrow_monster:[],future_monster:[],rotate:[],flow:[],sectors:[],stock_sectors:{},universe:[]}, updateManifest=null, refreshTimer=null, systemTimer=null, lastMarketAt='',liveScanReceived=0;
 // Privacy boundary: public web browsers never load or render a personal portfolio.
 const JEI_PRIVATE_APP = typeof JEINative !== 'undefined' && (location.protocol === 'file:' || location.hostname === 'jei-stock-radar.vercel.app');
-if(!JEI_PRIVATE_APP){
- document.addEventListener('DOMContentLoaded',()=>{
-  document.querySelectorAll('[data-go="hold"],[data-go="rotate"],[onclick*="go(\'hold\')"]').forEach(el=>el.style.display='none');
+document.addEventListener('DOMContentLoaded',()=>{
+ document.querySelectorAll('[data-private-only]').forEach(el=>{el.hidden=!JEI_PRIVATE_APP;el.style.display=JEI_PRIVATE_APP?(el.tagName==='A'?'block':''):'none'});
+ if(!JEI_PRIVATE_APP){
+  document.querySelectorAll('[data-go="hold"],[data-go="rotate"]').forEach(el=>el.style.display='none');
   document.querySelectorAll('#hold,#rotate').forEach(el=>{el.style.display='none';el.setAttribute('aria-hidden','true')});
- });
-}
+ }
+});
 const $=id=>document.getElementById(id); const money=n=>Number.isFinite(n)?Math.round(n).toLocaleString('zh-TW'):'--'; const nativeOk=()=>typeof JEINative!=='undefined';
 function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
 function loadHoldings(){if(!JEI_PRIVATE_APP){holdings=[];return;}try{const s=nativeOk()?JEINative.loadHoldings():localStorage.getItem('holdings');holdings=s?JSON.parse(s):DEFAULT_HOLDINGS.map(x=>({code:x[0],name:x[1],cost:x[2],shares:x[3]}));if(!s)persistHoldings()}catch(e){holdings=DEFAULT_HOLDINGS.map(x=>({code:x[0],name:x[1],cost:x[2],shares:x[3]}))}renderHoldings()}
@@ -172,7 +187,7 @@ function toggleRiskDetails(){
  const collapsed=el.classList.toggle('risk-collapsed');
  b.textContent=collapsed?'展開風險原因 ▾':'收合風險原因 ▴';b.setAttribute('aria-expanded',String(!collapsed));
 }
-function renderSystem(){const r=system.risk||{},m=system.market||{},lv=['green','yellow','orange','red'].includes(r.level)?r.level:'green',liveBad=!isTrustedFeed(),closeCount=Number.isFinite(+m.close_count)?+m.close_count:(Array.isArray(system.universe)?system.universe.length:0),feedCount=m.live_valid?`盤中即時 ${m.live_count||0}檔`:`${m.mode||'今日收盤'} ${closeCount}檔`;$('riskBox').className='risk '+(liveBad?'yellow':lv);$('riskTitle').textContent=liveBad?'⚪ 大逃殺預警：行情未驗證，暫停判讀':`${riskEmoji(lv)} 大逃殺預警：${r.label||'等待同步'}`;$('riskScore').textContent=liveBad?'--':(Number.isFinite(+r.score)?`${r.score}/100`:'--');$('riskTime').textContent=system.updated_at?`JEI 更新 ${system.updated_at}｜行情 ${system.data_date||'--'}｜${feedCount}`:'等待 JEI feed';$('riskReasons').textContent=liveBad?'資料未驗證，不提供今日風險與買賣結論':((r.reasons&&r.reasons.length)?r.reasons.join('｜'):'市場警戒永遠優先於買進訊號。');$('cashLevel').textContent=liveBad?'--':(r.cash||'--');$('marketState').textContent=liveBad?'行情待驗證':(m.status||'同步中');$('marketBrief').textContent=m.brief||'等待 JEI 系統資料...';$('homeSummary').textContent=system.summary||'大盤風險 → 族群強弱 → 個股動能 → 持股成本與移動風控';renderUpdateStamp();updateFeedGate();const stale='今日有效行情尚未驗證，榜單暫停，避免用過期資料誤判';updateFeedFreshness();renderAttackScreener();renderPatternRadar();renderRank('nextList',system.next,liveBad?stale:'今日尚未產生下一棒名單');renderRank('monsterList',system.monster,liveBad?stale:'目前沒有符合條件的突然妖股');renderRank('tomorrowMonsterList',system.tomorrow_monster,liveBad?stale:'目前沒有符合條件的明日妖股候選');renderRank('futureMonsterList',system.future_monster,liveBad?stale:'目前沒有符合條件的未來妖股觀察名單');renderRank('rotateList',system.rotate,liveBad?stale:'目前沒有明確換股訊號');renderFlow();renderSectors();renderSectorHeatmap();renderBacktest();renderPriority();renderWebReco();renderHoldings();renderHomeQuick()}
+function renderSystem(){const r=system.risk||{},m=system.market||{},lv=['green','yellow','orange','red'].includes(r.level)?r.level:'green',historical=!isTrustedFeed()&&isRecentCloseObservation(),liveBad=!isTrustedFeed()&&!historical,closeCount=Number.isFinite(+m.close_count)?+m.close_count:(Array.isArray(system.universe)?system.universe.length:0),feedCount=m.live_valid?`盤中即時 ${m.live_count||0}檔`:`${m.mode||'今日收盤'} ${closeCount}檔`;$('riskBox').className='risk '+(liveBad?'yellow':lv);$('riskTitle').textContent=liveBad?'⚪ 大逃殺預警：行情未驗證，暫停判讀':historical?`${riskEmoji(lv)} 前次收盤風險觀察：${r.label||'等待同步'}`:`${riskEmoji(lv)} 大逃殺預警：${r.label||'等待同步'}`;$('riskScore').textContent=liveBad?'--':(Number.isFinite(+r.score)?`${r.score}/100`:'--');$('riskTime').textContent=system.updated_at?`JEI 更新 ${system.updated_at}｜行情 ${system.data_date||'--'}｜${feedCount}`:'等待 JEI feed';$('riskReasons').textContent=liveBad?'資料未驗證，不提供今日風險與買賣結論':((r.reasons&&r.reasons.length)?r.reasons.join('｜'):'市場警戒永遠優先於買進訊號。');$('cashLevel').textContent=liveBad?'--':historical?(r.cash||'--')+'（前次收盤）':(r.cash||'--');$('marketState').textContent=liveBad?'行情待驗證':historical?(m.status||'震盪')+'・歷史收盤':(m.status||'同步中');$('marketBrief').textContent=m.brief||'等待 JEI 系統資料...';const diag=m.live_diagnostics||{},valid=Number.isFinite(+diag.valid_trades)?+diag.valid_trades:(Number(m.live_count)||0),required=Number(diag.required_trades)||500,coverage=Number(m.live_coverage_pct)||0,reason=diag.reason||'舊版資料尚無診斷資訊',errs=Array.isArray(diag.errors)?diag.errors:[];$('liveDiagnostics').textContent='盤中行情診斷｜'+(m.live_valid?'✓ 已驗證':'未通過／非盤中')+'\n有效成交價 '+valid+'/'+required+' 檔門檻｜覆蓋率 '+coverage.toFixed(1)+'%（要求 ≥35%）\n'+reason+(errs.length?'\n來源錯誤：'+errs.slice(0,3).join('；'):'');$('homeSummary').textContent=system.summary||'大盤風險 → 族群強弱 → 個股動能 → 持股成本與移動風控';renderUpdateStamp();updateFeedGate();const stale='今日有效行情尚未驗證，榜單暫停，避免用過期資料誤判';updateFeedFreshness();renderAttackScreener();renderPatternRadar();renderRank('nextList',system.next,liveBad?stale:'今日尚未產生下一棒名單');renderRank('monsterList',system.monster,liveBad?stale:'目前沒有符合條件的突然妖股');renderRank('tomorrowMonsterList',system.tomorrow_monster,liveBad?stale:'目前沒有符合條件的明日妖股候選');renderRank('futureMonsterList',system.future_monster,liveBad?stale:'目前沒有符合條件的未來妖股觀察名單');renderRank('rotateList',system.rotate,liveBad?stale:'目前沒有明確換股訊號');renderFlow();renderSectors();renderSectorHeatmap();renderBacktest();renderPriority();renderWebReco();renderHoldings();renderHomeQuick()}
 function isTrustedFeed(feed=system,now=new Date()){const m=feed?.market||{},date=String(feed?.data_date||''),parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(now),dp=Object.fromEntries(parts.map(p=>[p.type,p.value])),day=`${dp.year}-${dp.month}-${dp.day}`,minutes=Number(dp.hour)*60+Number(dp.minute),weekday=['Mon','Tue','Wed','Thu','Fri'].includes(dp.weekday),stamp=Date.parse(String(feed?.updated_at||'').replace(' ','T')+'+08:00'),lag=now.getTime()-stamp;if(date!==day||m.stale!==false||!weekday||!Number.isFinite(stamp)||lag< -120000)return false;if(m.mode==='今日收盤'){const closedAt=Date.parse(date+'T13:30:00+08:00');return minutes>=810&&Number(m.close_count)>=500&&stamp>=closedAt;}if(m.mode!=='盤中即時'||m.live_valid!==true||Number(m.live_count)<500||minutes<540||minutes>=810)return false;return lag<=35*60000;}
 function isRecentCloseObservation(feed=system,now=new Date()){
  const m=feed?.market||{},day=String(feed?.data_date||''),updated=String(feed?.updated_at||'');
@@ -219,7 +234,7 @@ function loadScreenPrefs(){
 $('screenPreset').addEventListener('change',applyScreenPreset);
 ['screenScore','screenPriceMax','screenRiseMax','screenQuery','screenSector','screenOrder'].forEach(id=>$(id)?.addEventListener('input',()=>{$('screenPreset').value='custom';persistScreenPrefs();renderAttackScreener()}));
 function escapeMarketText(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
-function renderRank(id,arr,empty){const el=$(id);if(!el)return;const actionable=['attackList','nextList','monsterList','tomorrowMonsterList','futureMonsterList','rotateList'].includes(id),archive=actionable&&!isTrustedFeed()&&isRecentCloseObservation();if(actionable&&!isTrustedFeed()&&!archive){arr=[];empty='有效行情尚未驗證，暫停顯示候選榜單';}if(!Array.isArray(arr)||!arr.length){el.replaceChildren();const div=document.createElement('div');div.className='empty';div.textContent=String(empty||'沒有資料');el.appendChild(div);return;}el.innerHTML=(archive?'<div class="sub yellowTxt" style="padding:9px 3px">📅 '+escapeMarketText(system.data_date)+' 歷史收盤觀察榜｜非當日即時訊號，進出場價位已隱藏</div>':'')+arr.map((x,i)=>{const safe=escapeMarketText;const plan=!archive&&x.entry_low!=null?`<div class="rSub">參考區 ${safe(x.entry_low)}～${safe(x.entry_high)}｜防守 ${safe(x.defense)}｜目標 ${safe(x.target1)} / ${safe(x.target2)}</div>`:'';const score=Number(x.score);return `<div class="listRow"><div class="rank">#${i+1}</div><div><div class="rName">${safe(x.code)} ${safe(x.name)} <span class="tiny mut">${safe(x.sector)}</span></div><div class="rSub">${safe(x.reason||x.status)}</div>${plan}</div><div class="score ${Number.isFinite(score)&&score>=85?'greenTxt':'cyanTxt'}">${safe(x.score??'--')}</div></div>`;}).join('');}
+function renderRank(id,arr,empty){const el=$(id);if(!el)return;const actionable=['attackList','nextList','monsterList','tomorrowMonsterList','futureMonsterList','rotateList'].includes(id),archive=actionable&&!isTrustedFeed()&&isRecentCloseObservation();if(actionable&&!isTrustedFeed()&&!archive){arr=[];empty='有效行情尚未驗證，暫停顯示候選榜單';}if(!Array.isArray(arr)||!arr.length){el.replaceChildren();const div=document.createElement('div');div.className='empty';div.textContent=String(empty||'沒有資料');el.appendChild(div);return;}el.innerHTML=(archive?'<div class="sub yellowTxt" style="padding:9px 3px">📅 '+escapeMarketText(system.data_date)+' 歷史收盤觀察榜｜非當日即時訊號，進出場價位已隱藏</div>':'')+arr.map((x,i)=>{const safe=escapeMarketText;const plan=!archive&&x.entry_low!=null?`<div class="rSub">參考區 ${safe(x.entry_low)}～${safe(x.entry_high)}｜防守 ${safe(x.defense)}｜目標 ${safe(x.target1)} / ${safe(x.target2)}</div>`:'';const evidence=id==='futureMonsterList'&&x.research_status?`<div class="rSub">📚 ${safe(x.research_status)}</div>`:'';const score=Number(x.score);return `<div class="listRow"><div class="rank">#${i+1}</div><div><div class="rName">${safe(x.code)} ${safe(x.name)} <span class="tiny mut">${safe(x.sector)}</span></div><div class="rSub">${safe(x.reason||x.status)}</div>${evidence}${plan}</div><div class="score ${Number.isFinite(score)&&score>=85?'greenTxt':'cyanTxt'}">${safe(x.score??'--')}</div></div>`;}).join('');}
 let activePatternStrategy='breakout';
 document.querySelectorAll('[data-pattern]').forEach(button=>button.addEventListener('click',()=>{
  activePatternStrategy=button.dataset.pattern;renderPatternRadar();
@@ -238,6 +253,125 @@ function renderPatternRadar(){
  const all=Array.isArray(p.signals?.[activePatternStrategy])?p.signals[activePatternStrategy]:[];
  stamp.textContent=(historical?'前次官方收盤 '+p.data_date+'｜歷史觀察，非今日進場推薦':'官方收盤 '+p.data_date)+'｜'+label+' '+all.length+' 檔｜有效歷史樣本 '+(p.coverage||0)+' 檔｜不代表成交或報酬';
  renderRank('patternResults',all,'今日此策略沒有達標候選，不以虛構股票補榜');
+ const plan=document.createElement('div');plan.className='pattern-plan';
+ const heading=document.createElement('div');heading.className='panelTitle';heading.textContent='📋 候選個股觀察卡｜非委託建議';plan.appendChild(heading);
+ const note=document.createElement('div');note.className='sub';note.textContent='僅有官方收盤價與策略理由；尚未具備完整高低價、ATR、成交量驗證，不產生虛構的進場帶、防守價或 R/R。';plan.appendChild(note);
+ all.slice(0,8).forEach(x=>{
+  const card=document.createElement('div');card.className='pattern-plan-row';
+  const name=document.createElement('b');name.textContent=String(x.name||'')+' '+String(x.code||'');card.appendChild(name);
+  const meta=document.createElement('div');meta.className='sub';meta.textContent='收盤 '+(Number.isFinite(Number(x.price))?Number(x.price).toFixed(2):'--')+'｜強度 '+String(x.score??'--')+'｜'+String(x.data_date||p.data_date||'日期未知');card.appendChild(meta);
+  const reason=document.createElement('div');reason.className='sub';reason.textContent=String(x.reason||'無策略說明');card.appendChild(reason);
+  const levels=x.reference_levels;
+  if(levels&&[levels.prior_20_close_high,levels.prior_20_close_low,levels.prior_20_close_mean].every(v=>Number.isFinite(Number(v))&&Number(v)>0)){
+   const refs=document.createElement('div');refs.className='pattern-ref-levels';
+   [['20日收盤高點',levels.prior_20_close_high],['20日收盤均價',levels.prior_20_close_mean],['20日收盤低點',levels.prior_20_close_low]].forEach(([title,value])=>{
+    const item=document.createElement('div');const label=document.createElement('small');label.textContent=title;const number=document.createElement('b');number.textContent=Number(value).toFixed(2);item.append(label,number);refs.appendChild(item);
+   });card.appendChild(refs);
+  }
+  const status=document.createElement('div');status.className='sub';status.textContent='收盤參考位不等於可成交價｜進場帶：待量價驗證｜防守價：待 ATR/結構驗證｜R/R：尚不可計算';card.appendChild(status);
+  const series=Array.isArray(x.close_series)?x.close_series:[];
+  if(series.length>=2&&series.every(point=>Number.isFinite(Number(point.close))&&Number(point.close)>0)){
+   const chart=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   chart.setAttribute('viewBox','0 0 320 112');chart.setAttribute('role','img');
+   chart.setAttribute('aria-label',String(x.name||x.code)+'歷史收盤價走勢，非日內K線');
+   chart.classList.add('pattern-close-chart');
+   const values=series.map(point=>Number(point.close));
+   const low=Math.min(...values),high=Math.max(...values),spread=high-low||1;
+   const coordinates=values.map((value,i)=>[8+i*304/(values.length-1),102-(value-low)/spread*88]);
+   const line=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+   line.setAttribute('points',coordinates.map(point=>point.map(n=>n.toFixed(2)).join(',')).join(' '));
+   line.setAttribute('fill','none');line.setAttribute('stroke',values.at(-1)>=values[0]?'#ef7777':'#66cbb2');
+   line.setAttribute('stroke-width','2.8');line.setAttribute('stroke-linecap','round');line.setAttribute('stroke-linejoin','round');
+   chart.appendChild(line);
+   const movingAverage=(period,color)=>{
+    if(values.length<period)return;
+    const points=[];
+    for(let i=period-1;i<values.length;i++){
+     const average=values.slice(i-period+1,i+1).reduce((a,b)=>a+b,0)/period;
+     points.push([8+i*304/(values.length-1),102-(average-low)/spread*88]);
+    }
+    const avgLine=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    avgLine.setAttribute('points',points.map(point=>point.map(n=>n.toFixed(2)).join(',')).join(' '));
+    avgLine.setAttribute('fill','none');avgLine.setAttribute('stroke',color);avgLine.setAttribute('stroke-width','1.7');avgLine.setAttribute('stroke-dasharray','5 3');chart.appendChild(avgLine);
+   };
+   movingAverage(5,'#f8d56c');movingAverage(10,'#80baff');
+   const latest=coordinates[coordinates.length-1];const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('cx',latest[0].toFixed(2));dot.setAttribute('cy',latest[1].toFixed(2));dot.setAttribute('r','4');dot.setAttribute('fill','#fff');chart.appendChild(dot);
+   const tooltip=document.createElement('div');tooltip.className='pattern-chart-inspect';tooltip.textContent='點選走勢圖，查看各交易日收盤價';
+   const inspect=document.createElement('button');inspect.type='button';inspect.className='pattern-chart-button';inspect.setAttribute('aria-label','查看'+String(x.name||x.code)+'逐日收盤價');inspect.appendChild(chart);
+   const pointList=document.createElement('div');pointList.className='pattern-point-list';pointList.hidden=true;
+   series.forEach((point,i)=>{const row=document.createElement('div');row.textContent=String(point.date||'日期未知')+'　'+values[i].toFixed(2);pointList.appendChild(row);});
+   inspect.addEventListener('click',()=>{pointList.hidden=!pointList.hidden;tooltip.textContent=pointList.hidden?'點選走勢圖，查看各交易日收盤價':'逐日官方收盤價（共 '+series.length+' 筆）';inspect.setAttribute('aria-expanded',String(!pointList.hidden));});
+   inspect.setAttribute('aria-expanded','false');card.append(inspect,tooltip,pointList);
+   const legend=document.createElement('div');legend.className='pattern-chart-legend';legend.textContent='— 收盤價　┄ 5日均線（黃）　┄ 10日均線（藍）';card.appendChild(legend);
+   const stats=document.createElement('div');stats.className='pattern-trend-stats';
+   const first=values[0],last=values[values.length-1],change=(last/first-1)*100;
+   const prior=values.slice(0,-1),mean=prior.reduce((a,b)=>a+b,0)/prior.length;
+   [['區間變化',(change>=0?'+':'')+change.toFixed(2)+'%'],['末日收盤',last.toFixed(2)],['對前期均價',(last>=mean?'+':'')+((last/mean-1)*100).toFixed(2)+'%']].forEach(([name,value])=>{
+    const cell=document.createElement('div');const k=document.createElement('small');k.textContent=name;const v=document.createElement('b');v.textContent=value;cell.append(k,v);stats.appendChild(cell);
+   });card.appendChild(stats);
+   const ma5=values.slice(-5).reduce((a,b)=>a+b,0)/5;
+   const ma10=values.slice(-10).reduce((a,b)=>a+b,0)/10;
+   const prevMa5=values.slice(-6,-1).reduce((a,b)=>a+b,0)/5;
+   const above5=last>ma5,above10=last>ma10,aligned=ma5>ma10;
+   const trend=document.createElement('div');trend.className='pattern-trend-readout';
+   const headline=document.createElement('b');headline.textContent='均線狀態：'+(above5&&above10&&aligned?'短線偏強':!above5&&!above10&&!aligned?'短線偏弱':'多空交錯');trend.appendChild(headline);
+   const description=document.createElement('div');description.className='sub';description.textContent='收盤 '+(above5?'高於':'不高於')+' MA5｜'+(above10?'高於':'不高於')+' MA10｜MA5 '+(aligned?'高於':'不高於')+' MA10｜MA5 '+(ma5>prevMa5?'上彎':ma5<prevMa5?'下彎':'持平');trend.appendChild(description);
+   const figures=document.createElement('div');figures.className='sub';figures.textContent='MA5 '+ma5.toFixed(2)+'｜MA10 '+ma10.toFixed(2)+'｜僅收盤價趨勢，非買賣訊號';trend.appendChild(figures);
+   const momentum=document.createElement('div');momentum.className='pattern-momentum';
+   const delta5=(last/values[values.length-6]-1)*100;
+   const delta10=(last/values[values.length-11]-1)*100;
+   const changes=values.slice(1).map((v,i)=>v-values[i]);
+   const gains=changes.slice(-14).reduce((sum,d)=>sum+Math.max(d,0),0)/14;
+   const losses=changes.slice(-14).reduce((sum,d)=>sum+Math.max(-d,0),0)/14;
+   const rsi=losses===0?(gains===0?50:100):100-100/(1+gains/losses);
+   const momentumLabel=document.createElement('b');momentumLabel.textContent='價格動能｜僅歷史收盤';momentum.appendChild(momentumLabel);
+   const momentumText=document.createElement('div');momentumText.className='sub';momentumText.textContent='近5交易日 '+(delta5>=0?'+':'')+delta5.toFixed(2)+'%｜近10交易日 '+(delta10>=0?'+':'')+delta10.toFixed(2)+'%｜RSI(14) '+rsi.toFixed(1);momentum.appendChild(momentumText);
+   const caution=document.createElement('div');caution.className='sub';caution.textContent='RSI 為14筆收盤變動的簡單平均版本（非 Wilder 平滑）；不代表超買必跌或超賣必漲。';momentum.appendChild(caution);
+   card.append(trend,momentum);
+   const chartNote=document.createElement('div');chartNote.className='sub';chartNote.textContent='官方收盤走勢｜'+String(series[0].date||'')+' 至 '+String(series.at(-1).date||'')+'｜不是開高低收 K 線';card.appendChild(chartNote);
+  }
+  const candles=Array.isArray(x.ohlcv)?x.ohlcv:[];
+  const validCandles=candles.length>=10&&candles.length<=120&&candles.every((c,i)=>{
+   const o=Number(c.open),h=Number(c.high),l=Number(c.low),v=Number(c.volume),close=Number(c.close);
+   return /^\\d{4}-\\d{2}-\\d{2}$/.test(String(c.date||''))&&(!i||String(c.date)>String(candles[i-1].date))
+    &&[o,h,l,close,v].every(Number.isFinite)&&o>0&&h>0&&l>0&&close>0&&v>=0&&Number.isInteger(v)
+    &&l<=Math.min(o,close)&&h>=Math.max(o,close);
+  })&&x.ohlcv_source_verified===true&&x.ohlcv_adjusted_for_corporate_actions===false;
+  if(validCandles){
+   const section=document.createElement('div');section.className='pattern-ohlcv-panel';
+   const heading=document.createElement('b');heading.textContent='官方原始日 K 線｜'+candles.length+' 日';section.appendChild(heading);
+   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 320 170');svg.setAttribute('role','img');svg.setAttribute('aria-label','未還原日K線與成交股數柱狀圖');svg.classList.add('pattern-close-chart');
+   const low=Math.min(...candles.map(c=>Number(c.low))),high=Math.max(...candles.map(c=>Number(c.high))),range=high-low||1;
+   const maxVol=Math.max(1,...candles.map(c=>Number(c.volume)));
+   const priceY=p=>8+(high-p)/range*108;
+   const make=(name,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',name);Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,String(v)));svg.appendChild(el);return el;};
+   candles.forEach((c,i)=>{
+    const xPos=8+(i+.5)*304/candles.length,up=Number(c.close)>=Number(c.open),color=up?'#ef7777':'#66cbb2',width=Math.max(1.4,304/candles.length*.58);
+    make('line',{x1:xPos,y1:priceY(Number(c.high)),x2:xPos,y2:priceY(Number(c.low)),stroke:color,'stroke-width':1.3});
+    make('rect',{x:xPos-width/2,y:Math.min(priceY(Number(c.open)),priceY(Number(c.close))),width,height:Math.max(1,Math.abs(priceY(Number(c.open))-priceY(Number(c.close)))),fill:color});
+    make('rect',{x:xPos-width/2,y:164-Number(c.volume)/maxVol*34,width,height:Number(c.volume)/maxVol*34,fill:color,opacity:.7});
+   });
+   section.appendChild(svg);
+   const vp=x.volume_price_observation;
+   if(vp&&Number.isFinite(Number(vp.prior_20_high))){
+    const label=document.createElement('div');label.className='sub';
+    const ratio=vp.volume_ratio===null?'量比無法計算':('量比 '+Number(vp.volume_ratio).toFixed(2)+' 倍');
+    label.textContent=(vp.confirmed_price_volume_breakout?'量價突破已驗證':vp.price_breakout?'價格突破，量能未確認':'尚未確認量價突破')+'｜'+ratio+'｜前20日高點 '+Number(vp.prior_20_high).toFixed(2);
+    section.appendChild(label);
+   }
+   const note=document.createElement('div');note.className='sub';note.textContent='紅漲綠跌｜成交量單位：股｜未還原除權息｜'+String(candles[0].date)+' 至 '+String(candles.at(-1).date);section.appendChild(note);
+   card.appendChild(section);
+  }else{
+   const pending=document.createElement('div');pending.className='sub';pending.textContent='日 K 線與成交量：等待已驗證 OHLCV 資料，暫不繪製模擬 K 線';card.appendChild(pending);
+  }
+  const details=document.createElement('details');details.className='pattern-detail';
+  const summary=document.createElement('summary');summary.textContent='查看資料依據與驗證限制 ▾';details.appendChild(summary);
+  const provenance=document.createElement('p');provenance.className='sub';provenance.textContent='策略：'+label+'｜歷史收盤樣本 '+String(x.basis_sessions??'--')+' 日｜訊號日期 '+String(x.data_date||p.data_date||'未知');details.appendChild(provenance);
+  const limitation=document.createElement('p');limitation.className='sub';limitation.textContent='參考價僅由訊號日以前的收盤資料計算；不含盤中高低點、委託簿、成交量確認或獨立基本面佐證。';details.appendChild(limitation);
+  card.appendChild(details);
+  plan.appendChild(card);
+ });
+ el.appendChild(plan);
 }
 function renderWebReco(){
  const a=system.web_recommendations||[],stamp=system.web_recommendations_updated_at||'尚未更新';
@@ -246,14 +380,20 @@ function renderWebReco(){
  const safe=escapeMarketText;
  el.innerHTML=a.map((x,i)=>{
   const funds=Number.isFinite(+x.fund_lots)?((+x.fund_lots>=0?'+':'')+(+x.fund_lots).toLocaleString('zh-TW')+'張'):'--';
-  const tags=[`投顧/研報 ${x.analyst_mentions??0}`,`網友 ${x.community_mentions??0}`,`法人 ${funds}`,`JEI ${x.jei_score??'--'}`].map(t=>`<span class="chip">${safe(t)}</span>`).join('');
-  const src=Array.isArray(x.source_labels)&&x.source_labels.length?'<div class="rSub">來源：'+x.source_labels.map(safe).join('、')+'</div>':'';
+  const tags=[`公開研究線索 ${x.public_report_mentions??x.analyst_mentions??0}`,`網友討論 ${x.community_mentions??0}`,`法人 ${funds}`,`JEI ${x.jei_score??'--'}`].map(t=>`<span class="chip">${safe(t)}</span>`).join('');
+  const src=Array.isArray(x.source_labels)&&x.source_labels.length?'<div class="rSub">媒體／討論來源：'+x.source_labels.map(safe).join('、')+'</div>':'';
+  const reports=(Array.isArray(x.public_report_sources)?x.public_report_sources:[]).map(r=>{
+   let href='';try{const u=new URL(String(r.url||''));if(u.protocol==='https:'||u.protocol==='http:')href=u.href}catch(_){}
+   return href?`<a class="rSub" href="${safe(href)}" target="_blank" rel="noopener noreferrer">${safe(r.title||'公開研究來源')}｜${safe(r.source||'原始來源')}${r.published_at?'｜'+safe(r.published_at):'｜發布日期未提供'}</a>`:'';
+  }).join('');
+  let searchHref='';try{const u=new URL(String(x.public_report_search_url||''));if(u.protocol==='https:')searchHref=u.href}catch(_){}
+  const reportSearch=searchHref?`<a class="rSub" href="${safe(searchHref)}" target="_blank" rel="noopener noreferrer">搜尋 ${safe(x.code||'')} ${safe(x.name||'')} 的公開分享研究摘要；請回原文核對日期與內容 →</a>`:'';
   const caution=x.caution?`<div class="rSub yellowTxt">⚠ ${safe(x.caution)}</div>`:'';
-  return `<div class="stockCard"><div class="stockTop"><div><div class="stockName">#${i+1} ${safe(x.code||'')} ${safe(x.name||'')}</div><div class="rSub">${safe(x.reason||'')}</div></div><div class="score ${(+x.score>=85?'greenTxt':'cyanTxt')}">${safe(x.score??'--')}</div></div><div class="statusline">${tags}</div>${src}${caution}</div>`
+  return `<div class="stockCard"><div class="stockTop"><div><div class="stockName">#${i+1} ${safe(x.code||'')} ${safe(x.name||'')}</div><div class="rSub">${safe(x.reason||'')}</div></div><div class="score ${(+x.score>=85?'greenTxt':'cyanTxt')}">${safe(x.score??'--')}</div></div><div class="statusline">${tags}</div>${src}${reports}${reportSearch}${caution}</div>`
  }).join('')
 }
 function renderFlow(){const a=(isTrustedFeed()||isRecentCloseObservation())?system.flow:[],safe=escapeMarketText;if(!Array.isArray(a)||!a.length){$('flowList').innerHTML='<div class="empty">今日行情未驗證，暫停資金流判讀</div>';return}$('flowList').innerHTML=a.map(x=>`<div class="listRow"><div class="rank">${safe(x.icon||'•')}</div><div><div class="rName">${safe(x.name)}</div><div class="rSub">${safe(x.note)}</div></div><div class="score">${safe(x.score??'')}</div></div>`).join('')}
-function renderSectorHeatmap(){const el=$('sectorHeatmap');if(!el)return;el.replaceChildren();const sectors=(isTrustedFeed()||isRecentCloseObservation())&&Array.isArray(system.sectors)?system.sectors:[];if(!sectors.length){el.textContent='等待族群資料';return;}const mode=$('heatSort')?.value||'score';const ordered=[...sectors].sort((a,b)=>{const key=mode==='gain'||mode==='loss'?'avg_pct':mode==='breadth'?'breadth':'score';const av=Number(a[key]),bv=Number(b[key]);return (mode==='loss'?1:-1)*((Number.isFinite(av)?av:-999)-(Number.isFinite(bv)?bv:-999));});ordered.slice(0,24).forEach(x=>{const pct=Number(x.avg_pct),tile=document.createElement('button');tile.type='button';tile.className='heatTile '+(!Number.isFinite(pct)||Math.abs(pct)<0.05?'flat':pct>0?'up':'down');const title=document.createElement('b');title.textContent=String(x.name||'未分類');const change=document.createElement('span');change.textContent=Number.isFinite(pct)?(pct>0?'+':'')+pct.toFixed(2)+'%':'--';const info=document.createElement('small');info.textContent='熱度 '+(Number.isFinite(+x.score)?x.score:'--')+'｜上漲比 '+(Number.isFinite(+x.breadth)?x.breadth+'%':'--');tile.append(title,change,info);tile.addEventListener('click',()=>{const target=$('sectorList');if(target)target.scrollIntoView({behavior:'smooth',block:'start'});toast(String(x.name||'族群')+'｜熱度 '+(x.score??'--'));});el.appendChild(tile);});}
+function renderSectorHeatmap(){const el=$('sectorHeatmap');if(!el)return;el.replaceChildren();const sectors=(isTrustedFeed()||isRecentCloseObservation())&&Array.isArray(system.sectors)?system.sectors:[];if(!sectors.length){el.textContent='等待族群資料';return;}const mode=$('heatSort')?.value||'score';const ordered=[...sectors].sort((a,b)=>{const key=mode==='gain'||mode==='loss'?'avg_pct':mode==='breadth'?'breadth':'score';const av=Number(a[key]),bv=Number(b[key]);return (mode==='loss'?1:-1)*((Number.isFinite(av)?av:-999)-(Number.isFinite(bv)?bv:-999));});ordered.slice(0,24).forEach((x,i)=>{const pct=Number(x.avg_pct),tile=document.createElement('button');tile.type='button';tile.className='heatTile '+(i<3?'featured ':'')+(!Number.isFinite(pct)||Math.abs(pct)<0.05?'flat':pct>0?'up':'down');const title=document.createElement('b');title.textContent=String(x.name||'未分類');const change=document.createElement('span');change.textContent=Number.isFinite(pct)?(pct>0?'+':'')+pct.toFixed(2)+'%':'--';const info=document.createElement('small');info.textContent='熱度 '+(Number.isFinite(+x.score)?x.score:'--')+'｜上漲比 '+(Number.isFinite(+x.breadth)?x.breadth+'%':'--');tile.append(title,change,info);tile.addEventListener('click',()=>{const target=$('sectorList');if(target)target.scrollIntoView({behavior:'smooth',block:'start'});toast(String(x.name||'族群')+'｜熱度 '+(x.score??'--'));});el.appendChild(tile);});}
 document.getElementById('heatSort')?.addEventListener('change',renderSectorHeatmap);
 function renderSectors(){
  const a=(isTrustedFeed()||isRecentCloseObservation())?(system.sectors||[]):[],safe=escapeMarketText;
@@ -600,15 +740,15 @@ function renderHoldings(){
 }
 function renderHomeQuick(){
  const risk=$('quickRisk'),hold=$('quickHold'),attack=$('quickAttack');if(!risk||!hold||!attack)return;
- const trusted=isTrustedFeed(),r=system.risk||{};
- risk.textContent=trusted?'大盤：'+(r.label||'待判讀')+'｜風險 '+(r.score??'--')+'/100':'大盤：今日行情待驗證，先不採納買進訊號';
+ const trusted=isTrustedFeed(),historical=!trusted&&isRecentCloseObservation(),r=system.risk||{};
+ risk.textContent=trusted?'大盤：'+(r.label||'待判讀')+'｜風險 '+(r.score??'--')+'/100':historical?'前次收盤（'+String(system.data_date||'')+'）：'+(r.label||'待判讀')+'｜風險 '+(r.score??'--')+'/100（非即時）':'大盤：有效行情待更新，暫停即時買進訊號';
  if(!JEI_PRIVATE_APP){hold.textContent='持股：僅在 Android App 本機查看';}
  else{
   const triage=buildPrivatePortfolioTriage(),urgent=triage.filter(x=>['defense','profit'].includes(x.category.id)),pending=triage.filter(x=>x.category.id==='pending');
   hold.textContent=!holdings.length?'持股：尚未匯入持股':urgent.length?'持股：'+urgent.length+' 檔優先檢查｜'+urgent.slice(0,2).map(x=>x.h.name).join('、'):pending.length===triage.length?'持股：等待今日有效資料，暫停買賣判讀':'持股：'+(triage.length-pending.length)+' 檔已分級｜優先防守訊號 0 檔';
  }
- const top=trusted&&Array.isArray(system.attack)?system.attack[0]:null;
- attack.textContent=top?'主攻觀察：'+String(top.code||'')+' '+String(top.name||'')+'｜JEI '+String(top.score??'--')+'分':'主攻：今日有效名單尚未產生';
+ const top=(trusted||historical)&&Array.isArray(system.attack)?system.attack[0]:null;
+ attack.textContent=top?(historical?'前次收盤主攻觀察：':'主攻觀察：')+String(top.code||'')+' '+String(top.name||'')+'｜JEI '+String(top.score??'--')+'分':'主攻：有效名單尚未產生';
 }
 function exportHoldingsData(){
  const code='JEI-HOLDINGS:'+holdings.map(h=>[h.code,h.name,h.cost,h.shares].join(',')).join(';');
@@ -716,7 +856,7 @@ window.JEI_STATIC={
 };
 function showFeedStatus(){const m=system.market||{},c=Number.isFinite(+m.close_count)?+m.close_count:(Array.isArray(system.universe)?system.universe.length:0);if(!tradingWindow()){const verified=isTrustedFeed(),historical=isRecentCloseObservation();$('netDot').classList.toggle('off',!verified&&!historical);$('netText').textContent=verified?'今日已收盤 '+c+'檔':historical?'前次收盤 '+String(system.data_date||''):'行情待更新';}}
 function refreshMarket(){
- if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}
+ if(!tradingWindow()){seedMarketFromSystem();refreshOfficialCloses();showFeedStatus();return}
  if(nativeOk()){
   const codes=liveCodes();liveScanReceived=0;
   if(!codes.length){$('netText').textContent='等待 JEI 股票清單';return}
@@ -813,7 +953,7 @@ function setAiMode(mode){
  else $('aiCloudHint').textContent='多 AI 會診：原免費模型平行分析；Ollama Cloud 需在 Vercel 設定金鑰後手動勾選，會消耗 Ollama 額度。';
 }
 function toggleProvider(btn){
- if(aiMode==='local'||btn.classList.contains('unavailable'))return;
+ if(aiMode==='local')return; // Allow choosing an unconfigured model; sending still filters unavailable providers.
  btn.classList.toggle('on');
  if(!document.querySelector('.aiProvider.on'))btn.classList.add('on');
  persistAiProviders()
@@ -833,7 +973,7 @@ function renderAiHealth(j){
    aiProviderStatus[p]={...s,available:ok};
    if(ok)available++;
    b.classList.toggle('ready',ok);b.classList.toggle('unavailable',!ok);
-   b.title=ok?((s.via||'免費 API')+'｜'+(s.model||'')):(p==='ollama_cloud'?'請先在 Vercel 設定 OLLAMA_API_KEY':'請到「更新」設定免費 API Key');
+   b.title=ok?((s.via||'免費 API')+'｜'+(s.model||'')):(p==='ollama_cloud'?'尚未連線：請先在 Vercel 設定 OLLAMA_API_KEY；可先選取':'尚未連線：請到「更新」設定免費 API Key；可先選取');
    chips.push('<span class="chip '+(ok?'ok':'warn')+'">'+AI_LABELS[p]+' '+(ok?'✓':'需Key')+'</span>')
  });
  chips.unshift('<span class="chip ok">付費 Gateway 關閉 ✓</span>');
@@ -845,7 +985,14 @@ function testAiCloud(silent=true){
  fetch(u+(u.includes('?')?'&':'?')+'health='+Date.now(),{method:'GET',cache:'no-store'})
   .then(r=>r.json().then(j=>({ok:r.ok,j})))
   .then(({ok,j})=>{if(!ok)throw new Error(j?.error||'HTTP error');renderAiHealth(j);if(!silent){const n=Object.values(aiProviderStatus).filter(x=>x&&x.available).length;toast(n?'免費 AI 已設定 '+n+' 個模型':'請先申請至少一組免費 Key')}})
-  .catch(e=>{aiHealthLoaded=false;$('aiStatusBar').innerHTML='<span class="chip warn">JEI 中繼離線</span>';if($('aiCloudStatus'))$('aiCloudStatus').textContent='JEI 中繼連線失敗｜'+e.message;if(!silent)toast('JEI 連線失敗')})
+  .catch(e=>{
+   // Do not keep stale provider readiness from a previous successful health check.
+   aiHealthLoaded=false;aiProviderStatus={};
+   document.querySelectorAll('.aiProvider').forEach(b=>{b.classList.remove('ready');b.classList.add('unavailable');b.title='JEI 中繼連線失敗，無法確認模型狀態';});
+   $('aiStatusBar').innerHTML='<span class="chip warn">JEI 中繼離線｜模型狀態未確認</span>';
+   if($('aiCloudStatus'))$('aiCloudStatus').textContent='JEI 中繼連線失敗｜'+e.message;
+   if(!silent)toast('JEI 連線失敗')
+  })
 }
 function importAiSetupFromHash(){
  try{
@@ -874,10 +1021,17 @@ function loadAiCloud(){
  testAiCloud(true)
 }
 function saveFreeAiKeys(){
- settingSet('free_gemini_key',($('geminiFreeKey')?.value||'').trim());
- settingSet('free_groq_key',($('groqFreeKey')?.value||'').trim());
- settingSet('free_openrouter_key',($('openrouterFreeKey')?.value||'').trim());
- testAiCloud(true);toast('免費 AI 設定已儲存')
+ const keys=[['geminiFreeKey','free_gemini_key'],['groqFreeKey','free_groq_key'],['openrouterFreeKey','free_openrouter_key']];
+ for(const [id,key] of keys){
+  const field=$(id);if(!field)continue;
+  const value=field.value.trim();
+  // Empty fields must not silently erase previously saved API keys.
+  if(value)settingSet(key,value);
+ }
+ const saved=keys.filter(([,key])=>!!settingGet(key)).length;
+ if(!saved){toast('尚未輸入免費 API Key');return}
+ testAiCloud(true);
+ toast('已儲存 '+saved+' 組免費 AI Key，請到 AI 對話中心測試')
 }
 function openExternal(u){if(nativeOk()&&typeof JEINative.openUrl==='function')JEINative.openUrl(u);else window.open(u,'_blank','noopener')}
 function saveAiCloud(){
@@ -930,12 +1084,29 @@ function renderAiConsultResult(raw){
  let j;try{j=JSON.parse(raw)}catch(e){failAiConsult('伺服器回傳不是有效的 AI JSON（可能是登入頁面）');return}
  finishAiConsult();
  const answers=j.answers||[];
- if(answers.length)answers.forEach(x=>chatSay('bot',`【${x.label||x.provider}｜${x.model||'AI'}】\n${x.text||'無回覆'}`));
- if(j.consensus)chatSay('bot',`【JEI 多 AI 綜合結論】\n${j.consensus}`);
+ const aiSeconds=x=>x&&typeof x.duration_ms==='number'&&Number.isFinite(x.duration_ms)&&x.duration_ms>=0?'｜'+(x.duration_ms/1000).toFixed(1)+'秒':'';
+ if(answers.length)answers.forEach(x=>chatSay('bot',`【${x.label||x.provider}｜${x.model||'AI'}${aiSeconds(x)}】\n${x.text||'無回覆'}`));
+ if(j.consensus&&answers.length)chatSay('bot',`【JEI 多 AI 綜合結論】\n${j.consensus}`);
  const failed=j.failed||[];
- if(failed.length)chatSay('bot','部分免費 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,100)+'）').join('、'));
+ // A configured API key is not proof that a provider actually responded.
+ // Preserve health-check key readiness, but show last-request outcome separately.
+ if(answers.length||failed.length){
+  const passed=new Set(answers.map(x=>x.provider));
+  const errors=new Set(failed.map(x=>x.provider));
+  document.querySelectorAll('.aiProvider').forEach(b=>{
+   const p=b.dataset.provider;
+   if(passed.has(p))b.title='本次會診成功回覆'+aiSeconds(answers.find(x=>x.provider===p));
+   else if(errors.has(p))b.title='本次會診失敗：'+String(failed.find(x=>x.provider===p)?.error||'連線失敗').slice(0,120);
+  });
+  const result=answers.map(x=>(x.label||x.provider)+' ✓'+aiSeconds(x)).concat(failed.map(x=>(x.label||x.provider)+' ✕'+aiSeconds(x)));
+  chatSay('bot','本次模型實測：'+result.join('、'));
+ }
+ if(failed.length)chatSay('bot','部分免費 AI 未完成：'+failed.map(x=>(x.label||x.provider)+'（'+String(x.error||'連線失敗').slice(0,100)+aiSeconds(x)+'）').join('、'));
+ if(typeof j.duration_ms==='number'&&Number.isFinite(j.duration_ms)&&j.duration_ms>=0)chatSay('bot','⏱ 本次 AI 會診總耗時：'+(j.duration_ms/1000).toFixed(1)+'秒');
  const skipped=(j.skipped||[]).map(x=>x.label||x.provider);
  if(skipped.length)chatSay('bot','尚未設定免費 Key：'+skipped.join('、'));
+ if(!answers.length&&failed.length)chatSay('bot','本次 AI 均未成功回覆；請依上方各模型錯誤檢查額度、模型名稱或網路後再試。');
+ if(!answers.length&&!failed.length)chatSay('bot','沒有取得 AI 回覆，請先確認 JEI 私人連線碼與免費 Key。');
 }
 function sendAiConsult(q){
  if(aiPending){toast('上一個 AI 會診還在處理');return}
@@ -948,7 +1119,7 @@ function sendAiConsult(q){
  const hist=chatHistory.slice(0,-1).slice(-10).map(x=>({role:x.who==='me'?'user':'assistant',content:x.text}));
  const payload={question:q,mode:aiMode,providers,free_keys:freeAiKeys(),context:aiContext(q),history:hist};
  aiPending=true;if($('chatSendBtn'))$('chatSendBtn').disabled=true;
- aiWatchdog=setTimeout(()=>{if(aiAbort)aiAbort.abort();failAiConsult('等候 AI 回覆超過 120 秒，已恢復輸入。請檢查網路及免費額度。')},120000);
+ aiWatchdog=setTimeout(()=>{if(aiAbort)aiAbort.abort();failAiConsult('等候 AI 回覆超過 58 秒，已恢復輸入。可能是免費模型忙碌或網路逾時；請查看各模型狀態後重試。')},58000);
  chatSay('bot',aiMode==='panel'?'🧠 免費多 AI 會診中：'+providers.map(p=>AI_LABELS[p]).join('＋')+'…':'正在詢問 '+AI_LABELS[providers[0]]+'…');
  try{
   if(nativeOk()&&typeof JEINative.consultAI==='function')JEINative.consultAI(url,JSON.stringify(payload),token);
@@ -1057,9 +1228,9 @@ function sendChat(){
 }
 function refreshSystem(){
  if(nativeOk()){JEINative.refreshSystem();return}
- fetch('/remote/system.json?ts='+Date.now(),{cache:'no-store'})
+ fetch('https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/system.json?ts='+Date.now(),{cache:'no-store'})
   .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
-  .then(j=>{system=j||{};system.holdings=JEI_PRIVATE_APP?(system.holdings||{}):{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI Vercel feed 已連線｜'+(system.updated_at||'無時間')})
+  .then(j=>{system=j||{};system.holdings=JEI_PRIVATE_APP?(system.holdings||{}):{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI GitHub 即時資料已連線｜'+(system.updated_at||'無時間')})
   .catch(e=>{$('sysStatus').textContent='JEI feed 暫時無法連線｜'+e.message;$('netDot').classList.add('off');$('netText').textContent='資料離線'})
 }
 function checkUpdate(){
@@ -1083,6 +1254,128 @@ window.JEI_NATIVE={
  onAIConsultResult(raw){renderAiConsultResult(raw)},
  onAIConsultError(e){failAiConsult(e)}
 };
-function init(){loadScreenPrefs();importAiSetupFromHash();loadHoldAlertSettings();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible')refreshMarket()},120000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
+function init(){loadScreenPrefs();importAiSetupFromHash();loadHoldAlertSettings();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshMarket();if(tradingWindow())refreshSystem()}},60000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshAll(false)});init();
-</script></body></html>
+</script><section id="jeiPickPerformance" style="max-width:1180px;margin:14px auto;padding:16px;border:1px solid #183e5c;border-radius:16px;background:#0a1b2b;color:#eff8ff;font-family:system-ui,sans-serif">
+<h2 style="margin:0 0 8px;font-size:18px">選股績效驗證 <small id="jeiPickSync" style="font-size:12px;color:#8ca8bd">載入中</small></h2>
+<p id="jeiPickOverview" style="font-size:13px;color:#8ca8bd">正在讀取官方收盤績效紀錄…</p>
+<details id="jeiPickDetails" style="margin-top:8px"><summary id="jeiPickDetailsSummary" style="cursor:pointer;color:#8bd2ff;padding:8px 0">查看已完成的策略／週期明細</summary><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;text-align:right"><thead><tr><th style="text-align:left">策略</th><th>交易日</th><th>已完成</th><th>勝率</th><th>平均淨報酬</th><th>最差淨報酬</th></tr></thead><tbody id="jeiPickRows"></tbody></table></div></details>
+<p style="font-size:11px;color:#8ca8bd">依封存推薦與官方收盤價回測；非實際成交或保證報酬。缺價與未到期不計勝負。</p>
+</section>
+<script>
+(function(){
+ const names={attack:'主攻',next:'下一棒',monster:'妖股',tomorrow_monster:'明日妖股',future_monster:'未來妖股'};
+ const esc=x=>String(x==null?'—':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const pct=x=>x==null?'—':Number(x).toFixed(2)+'%';
+ async function syncPicks(){
+  const status=document.getElementById('jeiPickSync'),overview=document.getElementById('jeiPickOverview'),body=document.getElementById('jeiPickRows'),detailsSummary=document.getElementById('jeiPickDetailsSummary');
+  try{
+   const res=await fetch('/remote/pick_validation.json?ts='+Date.now(),{cache:'no-store'});
+   if(!res.ok)throw Error('HTTP '+res.status);
+   const data=await res.json();
+   if(!data||!data.groups||!Array.isArray(data.picks))throw Error('績效資料格式錯誤');
+   const dup=data.duplicate_signal_summary;
+   const actualCount=data.picks.length;
+   const declaredCount=Number(data.total_frozen_picks);
+   if(!Number.isInteger(declaredCount)||declaredCount!==actualCount)throw Error('封存筆數不一致，暫停顯示績效');
+   const invalid=data.picks.some(p=>!p||!p.id||!p.day||!p.code||!Array.isArray(p.outcomes));
+   if(invalid)throw Error('封存推薦缺少必要欄位');
+   const ids=new Set(data.picks.map(p=>p.id));
+   const outcomesInvalid=data.picks.some(p=>p.outcomes.some(o=>!o||!Number.isInteger(o.trading_days)||!['complete','pending','missing_price'].includes(o.status)||
+    (o.status==='complete'&&(!Number.isFinite(o.estimated_net_return_pct)||!o.end_day))));
+   if(outcomesInvalid)throw Error('績效明細含有無效狀態或報酬');
+   if(ids.size!==actualCount)throw Error('封存推薦識別碼重複');
+   const official=Date.parse(String(data.latest_official_day||'')+'T00:00:00+08:00');
+   const age=Number.isFinite(official)?Math.floor((Date.now()-official)/86400000):null;
+   const stale=age===null||age>4;
+   const future=age!==null&&age<0;
+   if(future)throw Error('官方收盤日期晚於目前時間，暫停顯示績效');
+   status.textContent=(stale?'⚠ 資料可能過期｜':'')+'官方收盤 '+(data.latest_official_day||'未知')+'｜產生 '+(data.updated_at||'未知');
+   overview.textContent='封存 '+actualCount+' 筆推薦'+(dup?'｜不重複訊號 '+dup.unique_day_symbol_signals+'｜跨分類重複 '+dup.cross_category_duplicates:'｜新版風險欄位待更新');
+   const rows=[];let pendingTotal=0,missingTotal=0;
+   for(const [key,label] of Object.entries(names)){
+    for(const days of [3,7,15,20,30,40,60]){
+     const v=data.groups[key]&&data.groups[key][String(days)];if(!v)continue;
+     pendingTotal+=Number(v.pending)||0;missingTotal+=Number(v.missing_price)||0;
+     if(Number(v.completed)<=0)continue;
+     rows.push('<tr style="border-top:1px solid #183e5c"><td style="text-align:left;padding:7px 3px">'+esc(label)+'</td><td>'+days+'</td><td>'+esc(v.completed)+'</td><td>'+pct(v.win_rate_pct)+'</td><td>'+pct(v.avg_estimated_net_pct)+'</td><td>'+pct(v.worst_estimated_net_pct)+'</td></tr>');
+    }
+   }
+   overview.textContent+='｜已成熟 '+rows.length+' 組；未到期週期追蹤 '+pendingTotal+' 項次、缺價 '+missingTotal+' 項次（未到期不列為 0%）';
+   detailsSummary.textContent='查看已完成的策略／週期明細（'+rows.length+' 組）';
+   body.innerHTML=rows.length?rows.join(''):'<tr><td colspan="6" style="padding:12px;text-align:left;color:#8ca8bd">目前沒有可驗證的已完成績效；不得將缺值視為零報酬。</td></tr>';
+  }catch(e){status.textContent='資料同步失敗';overview.textContent='無法取得績效報告：'+e.message;body.replaceChildren()}
+ }
+ window.JEI_refreshPickPerformance=syncPicks;
+ syncPicks();document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncPicks()});
+ setInterval(()=>{if(!document.hidden)syncPicks()},300000);
+})();
+</script>
+<section id="jeiBrokerConsensus" style="max-width:1180px;margin:14px auto;padding:16px;border:1px solid #183e5c;border-radius:16px;background:#0a1b2b;color:#eff8ff;font-family:system-ui,sans-serif">
+<h2 style="margin:0 0 8px;font-size:18px">券商目標價共識 <small style="color:#8ca8bd;font-size:11px">研究輔助｜非保證報酬</small></h2>
+<p style="font-size:12px;color:#8ca8bd">輸入有來源的券商報告；不自動產生未驗證的目標價。</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><input id="jeiTargetPrice" type="number" min="0" step="any" placeholder="已驗證股價" aria-label="股價" style="flex:1;min-width:110px;background:#081928;border:1px solid #24506e;border-radius:10px;color:white;padding:10px"><input id="jeiTargetReports" type="text" placeholder="券商,目標價,YYYY-MM-DD；每筆用分號隔開" aria-label="券商報告" style="flex:3;min-width:220px;background:#081928;border:1px solid #24506e;border-radius:10px;color:white;padding:10px"><button id="jeiTargetRun" style="background:#237fc9;border:0;border-radius:10px;color:white;padding:10px">計算</button></div>
+<p id="jeiTargetResult" aria-live="polite" style="font-size:13px;line-height:1.7;color:#b7cde0">等待輸入已查證的報告資料。</p></section>
+<script src="/remote/target_consensus.js" onerror="document.getElementById('jeiTargetResult').textContent='券商共識模組載入失敗：請檢查網路或部署路徑'"></script>
+<script>
+(function(){
+ const btn=document.getElementById('jeiTargetRun'),out=document.getElementById('jeiTargetResult');
+ btn.addEventListener('click',function(){
+  if(!window.JEITargetConsensus){out.textContent='目標價計算模組未載入，請稍後重試';return;}
+  const raw=document.getElementById('jeiTargetReports').value.trim();
+  const reports=raw?raw.split(/[;；\n]+/).map(line=>{const p=line.split(/[,，]+/).map(x=>x.trim());return {broker:p[0],target:p[1]!==''?Number(p[1]):NaN,date:p[2]};}):[];
+  const priceRaw=document.getElementById('jeiTargetPrice').value;
+  const price=priceRaw===''?null:Number(priceRaw);
+  const today=new Date();const asOf=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+  const r=window.JEITargetConsensus.calc({price,asOf,reports});
+  const fmt=v=>v===null?'待驗證':Number(v).toFixed(2);
+  out.textContent='有效券商 '+r.count+' 家｜平均 '+fmt(r.mean)+'｜中位數 '+fmt(r.median)+'｜區間 '+fmt(r.min)+'～'+fmt(r.max)+'｜相對輸入股價 '+(r.upsidePct===null?'待驗證':fmt(r.upsidePct)+'%')+'｜分歧 '+(r.dispersionPct===null?'待驗證':fmt(r.dispersionPct)+'%')+(r.warnings.length?'｜注意：'+r.warnings.join('、'):'')+'。資料由使用者輸入，尚未獨立查證。';
+ });
+})();
+</script>
+<section style="max-width:1180px;margin:14px auto;padding:16px;border:1px solid #183e5c;border-radius:16px;background:#0a1b2b;color:#eff8ff;font-family:system-ui,sans-serif">
+<h2 style="font-size:18px;margin:0 0 8px">券商預測驗證 <small style="font-size:11px;color:#8ca8bd">手動驗證工具</small></h2>
+<p style="font-size:12px;color:#8ca8bd">請輸入有來源的預測與官方歷史收盤資料；不會自動假設券商已達標。</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<input id="jeiAuditTarget" type="number" min="0" step="any" placeholder="券商目標價" aria-label="目標價" style="flex:1;min-width:95px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<input id="jeiAuditDate" type="date" aria-label="預測日期" style="flex:1;min-width:130px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<input id="jeiAuditCloses" placeholder="日期,收盤價；日期,收盤價" aria-label="歷史收盤價" style="flex:2;min-width:180px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<button id="jeiAuditRun" style="padding:10px;background:#237fc9;color:white;border:0;border-radius:9px">驗證</button></div>
+<p id="jeiAuditOutput" aria-live="polite" style="font-size:13px;color:#b7cde0">尚未執行驗證</p></section>
+<script src="/remote/forecast_audit.js" onerror="document.getElementById('jeiAuditOutput').textContent='預測驗證模組載入失敗：請檢查網路或部署路徑'"></script>
+<script>
+(function(){
+ const button=document.getElementById('jeiAuditRun'),out=document.getElementById('jeiAuditOutput');
+ button.addEventListener('click',function(){
+  if(!window.JEIForecastAudit){out.textContent='驗證模組尚未載入';return;}
+  const targetText=document.getElementById('jeiAuditTarget').value;
+  const target=targetText===''?NaN:Number(targetText);
+  const date=document.getElementById('jeiAuditDate').value;
+  const closes=document.getElementById('jeiAuditCloses').value.split(/[;；\n]+/).map(v=>{
+   const p=v.split(/[,，]/);return {date:(p[0]||'').trim(),close:p[1]&&p[1].trim()!==''?Number(p[1]):NaN};
+  });
+  const now=new Date(),today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+  const result=window.JEIForecastAudit.evaluate({target,date,months:12},closes,today);
+  const labels={invalid:'輸入資料無效',hit:'已觀察到達標',miss:'到期未達標',pending:'仍在觀察',missing_price:'缺少到期附近有效收盤價'};
+  out.textContent=(labels[result.state]||'未知狀態')+(result.deadline?'｜預測到期 '+result.deadline:'')+'｜輸入資料未經官方來源驗證。';
+ });
+})();
+</script>
+
+<section id="jeiDecisionCard" style="max-width:1180px;margin:14px auto;padding:16px;border:1px solid #183e5c;border-radius:16px;background:#0a1b2b;color:#eff8ff;font-family:system-ui,sans-serif">
+<h2 style="font-size:18px;margin:0 0 8px">📍 個股支撐壓力判讀 <small style="font-size:11px;color:#8ca8bd">手動參考值・不代表即時行情</small></h2>
+<p style="font-size:12px;color:#8ca8bd">輸入有來源的現價、支撐與壓力；突破後不再將舊壓力誤稱為上方壓力。法人資料日期須獨立核對。</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<input id="jeiDecisionCode" inputmode="numeric" maxlength="4" placeholder="股票代號（例如 2449）" aria-label="股票代號" style="flex:1;min-width:135px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<button id="jeiDecisionLoad" style="padding:10px;background:#155d85;color:white;border:0;border-radius:9px">帶入已驗證收盤</button>
+<input id="jeiDecisionPrice" type="number" min="0" step="any" placeholder="現價" aria-label="現價" style="flex:1;min-width:95px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<input id="jeiDecisionSupport" type="number" min="0" step="any" placeholder="支撐價（選填）" aria-label="支撐價" style="flex:1;min-width:115px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<input id="jeiDecisionResistance" type="number" min="0" step="any" placeholder="壓力價（選填）" aria-label="壓力價" style="flex:1;min-width:115px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<input id="jeiDecisionFlowDate" type="date" aria-label="法人資料日期" style="flex:1;min-width:140px;padding:10px;background:#081928;color:white;border:1px solid #24506e;border-radius:9px">
+<button id="jeiDecisionRun" style="padding:10px;background:#237fc9;color:white;border:0;border-radius:9px">分析</button></div>
+<p id="jeiDecisionOutput" aria-live="polite" style="font-size:13px;color:#b7cde0">等待輸入有效價格</p>
+</section>
+<script src="/remote/stock_decision.js"></script>
+<script>(function(){const btn=document.getElementById('jeiDecisionRun'),out=document.getElementById('jeiDecisionOutput');document.getElementById('jeiDecisionLoad').addEventListener('click',async function(){const out=document.getElementById('jeiDecisionOutput'),code=document.getElementById('jeiDecisionCode').value.trim();if(!/^\d{4}$/.test(code)){out.textContent='請輸入四位數股票代號';return;}try{const [feedResp,archiveResp]=await Promise.all([fetch('/remote/system.json',{cache:'no-store'}),fetch('/remote/daily_prices.json',{cache:'no-store'})]);if(!feedResp.ok||!archiveResp.ok)throw Error('資料來源無法讀取');const feed=await feedResp.json(),archive=await archiveResp.json();const nowParts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const taipeiToday=['year','month','day'].map(k=>nowParts.find(x=>x.type===k)?.value).join('-');const quoteStatus=window.JEIStockDecision&&window.JEIStockDecision.marketFeedStatus(feed,taipeiToday);const verified=window.JEIStockDecision&&window.JEIStockDecision.validateCloseFeed(feed,archive,code,taipeiToday);if(!verified||!verified.ok){out.textContent='官方收盤驗證未通過（'+(verified?.reason||'module_missing')+'），拒絕帶入';return;}const {date:day,price}=verified;const listed=[...(feed.attack||[]),...(feed.next||[]),...(feed.monster||[]),...(feed.tomorrow_monster||[]),...(feed.future_monster||[])].find(x=>x.code===code);document.getElementById('jeiDecisionPrice').value=price;document.getElementById('jeiDecisionSupport').value=(listed&&Number.isFinite(listed.defense)&&listed.defense>0)?listed.defense:'';document.getElementById('jeiDecisionResistance').value='';out.textContent=(quoteStatus?.state==='live'?'盤中行情另有來源，但此欄仍僅帶入官方收盤。｜':quoteStatus?.state==='unverified'?'行情來源未驗證，僅提供已核對的歷史收盤。｜':'')+code+'｜'+day+(day===taipeiToday?' 當日':' 前次')+'官方收盤 '+price+' 已帶入（非即時價）；支撐若有值為 JEI 風控參考，壓力需另行輸入。非盤中即時報價。';}catch(e){out.textContent='載入失敗：'+e.message;}});btn.addEventListener('click',function(){if(!window.JEIStockDecision){out.textContent='分析模組載入失敗';return;}const number=id=>{const v=document.getElementById(id).value;return v===''?null:Number(v)};const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const asof=['year','month','day'].map(k=>parts.find(p=>p.type===k)?.value).join('-');const r=window.JEIStockDecision.analyze({price:number('jeiDecisionPrice'),support:number('jeiDecisionSupport'),resistance:number('jeiDecisionResistance'),asof,flowDate:document.getElementById('jeiDecisionFlowDate').value});const fmt=(v)=>v===null?'未提供':v+'%';out.textContent=r.message+'｜距支撐 '+fmt(r.supportDistancePct)+'｜距原壓力 '+fmt(r.resistanceDistancePct)+'｜'+(r.flowDate?(r.flowFresh?'法人日期為今日（資料仍需查證）':'法人資料非今日，勿當即時資訊'):'法人資料日期未提供')+'｜手動參考值，未驗證來源';});})();</script>
+<div style="position:fixed;right:12px;bottom:12px;z-index:2000"><a href="./holding-health.html" data-private-only style="display:none;padding:12px 16px;border-radius:14px;background:#123d59;color:#fff;border:1px solid #55b5e4;text-decoration:none;box-shadow:0 8px 24px #0008;font:600 15px system-ui">持股健檢 8 項 ↗</a></div>
+</body></html>
