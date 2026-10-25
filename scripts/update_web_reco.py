@@ -37,7 +37,8 @@ def google_news(query):
         link = clean_text(item.findtext("link"))
         source_el = item.find("source")
         source = clean_text(source_el.text if source_el is not None else "")
-        out.append({"title": title, "desc": desc, "link": link, "source": source})
+        published_at = clean_text(item.findtext("pubDate"))
+        out.append({"title": title, "desc": desc, "link": link, "source": source, "published_at": published_at})
     return out
 
 def normalize_name(name):
@@ -107,16 +108,16 @@ def main():
         return
 
     query_groups = {
-        "analyst": [
-            "台股 投顧 分析師 推薦 買進評等 when:2d",
-            "台股 研報 目標價 個股 when:2d",
+        "public_reports": [
+            "台股 個股研究報告 公開摘要 分析師 when:2d",
+            "台股 公開分享 券商研究報告 個股 目標價 when:2d",
         ],
         "market": [
             "台股 強勢股 熱門股 資金 法人 when:1d",
             "台股 AI PCB CPO 半導體 個股 when:1d",
         ],
     }
-    news = {"analyst": [], "market": []}
+    news = {"public_reports": [], "market": []}
     errors = []
     for kind, queries in query_groups.items():
         for q in queries:
@@ -144,12 +145,14 @@ def main():
         community[code] = cmoney_sentiment(code)
 
     recs = []
+    report_terms = re.compile(r"研究報告|研究摘要|券商報告|目標價|投資評等|分析師|個股報告|公開分享")
     for code, p in pool.items():
         name = p.get("name") or code
-        analyst_hits = [x for x in news["analyst"] if matches(x["title"]+" "+x["desc"], code, name)]
+        matched_public = [x for x in news["public_reports"] if matches(x["title"]+" "+x["desc"], code, name)]
+        report_hits = [x for x in matched_public if report_terms.search(x["title"]+" "+x["desc"])]
         market_hits = [x for x in news["market"] if matches(x["title"]+" "+x["desc"], code, name)]
         sentiment, community_mentions = community.get(code, (None, 0))
-        if not analyst_hits and not market_hits and not community_mentions:
+        if not report_hits and not market_hits and not community_mentions:
             continue
 
         fund = float(p.get("fund_lots") or 0)
@@ -158,7 +161,7 @@ def main():
         try: chg = float(chg)
         except Exception: chg = None
 
-        analyst_score = min(35, len(analyst_hits)*11 + len(market_hits)*4)
+        analyst_score = min(35, len(report_hits)*11 + len(market_hits)*4)
         community_score = 16 if sentiment == "樂觀" else (2 if sentiment == "悲觀" else (6 if community_mentions else 0))
         fund_score = clamp(9 + (math.log10(abs(fund)+1)*3.3 if fund >= 0 else -math.log10(abs(fund)+1)*4.0), 0, 20)
         jei_score = clamp(jei/10, 0, 10)
@@ -178,7 +181,7 @@ def main():
 
         score = int(round(clamp(28 + analyst_score + community_score + fund_score + jei_score - penalty, 0, 99)))
         sources = []
-        for x in analyst_hits + market_hits:
+        for x in report_hits + market_hits:
             label = x.get("source") or "Google News"
             if label and label not in sources:
                 sources.append(label)
@@ -186,7 +189,7 @@ def main():
             sources.append("CMoney股市爆料同學會")
 
         parts = []
-        if analyst_hits: parts.append(f"投顧/研報 {len(analyst_hits)}項")
+        if report_hits: parts.append(f"公開研究線索 {len(report_hits)}項")
         if market_hits: parts.append(f"財經媒體 {len(market_hits)}項")
         if sentiment: parts.append(f"網友風向{sentiment}")
         parts.append(f"法人 {fund:+,.0f}張")
@@ -195,7 +198,17 @@ def main():
         recs.append({
             "code": code, "name": name, "score": score,
             "price": p.get("price"), "change_pct": chg,
-            "analyst_mentions": len(analyst_hits),
+            "public_report_mentions": len(report_hits),
+            "public_report_sources": [
+                {
+                    "title": x.get("title", ""),
+                    "source": x.get("source", ""),
+                    "url": x.get("link", ""),
+                    "published_at": x.get("published_at", ""),
+                }
+                for x in report_hits[:4] if x.get("link")
+            ],
+            "analyst_mentions": len(report_hits),
             "community_mentions": community_mentions,
             "fund_lots": round(fund), "jei_score": int(jei) if jei else None,
             "reason": "｜".join(parts),
@@ -212,7 +225,7 @@ def main():
         data["web_recommendations_updated_at"] = now
         data["web_recommendations_status"] = {
             "ok": True,
-            "summary": "自動彙整：Google News投顧/研報與財經媒體＋CMoney公開網友風向＋TWSE/TPEx法人資金；樣本式共識，不等於全網篇數",
+            "summary": "自動彙整公開網路研究摘要／分享線索、財經媒體、CMoney公開討論與TWSE/TPEx法人資金；每筆研究線索附原文與日期，樣本式共識不等於全網篇數",
             "method": "外部聲量為主、法人資金與JEI交叉驗證；過熱/法人背離自動扣分",
             "errors": errors[:4],
         }
