@@ -141,6 +141,34 @@ def fetch_tpex_daily(date_obj):
         raise RuntimeError(f"TPEx daily_close_quotes coverage too low: {len(unique)} valid symbols")
     return list(unique.values())
 
+def fetch_latest_offhours_close(rows, now, previous_data_date):
+    """Backfill a newer shared TWSE/TPEx official close after the live session."""
+    minutes=now.hour*60+now.minute
+    if now.weekday()<5 and 540<=minutes<810:
+        return rows,None
+    for offset in range(0,8):
+        day=now.date()-timedelta(days=offset)
+        day_key=day.isoformat()
+        if day.weekday()>=5:
+            continue
+        if previous_data_date and day_key<=previous_data_date:
+            break
+        try:
+            twse=fetch_twse_daily(day.strftime("%Y%m%d"))
+            tpex=fetch_tpex_daily(day)
+            if len(twse)<500 or len(tpex)<500:
+                continue
+            if any(normalize_exchange_date(x.get("date"))!=day_key for x in twse):
+                continue
+            for row in tpex:
+                row["date"]=day_key
+                row["market"]="TPEX"
+            base=[x for x in rows if x.get("market") not in ("TWSE","TPEX")]
+            return base+twse+tpex,day_key
+        except Exception:
+            continue
+    return rows,None
+
 def backfill_twse_history(history, now, min_days=20, max_otc_fetches=0):
     """Keep the main market feed fast. Historical network backfill is handled separately."""
     snaps={str(x.get("date")):x for x in history if isinstance(x,dict) and x.get("date")}
@@ -602,6 +630,16 @@ def main():
     rows=[x for x in rows if x["code"] and x["close"]]
 
     now=datetime.now(TZ)
+    today_iso=now.strftime("%Y-%m-%d")
+    previous_data_date=None
+    try:
+        previous_feed=json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
+        candidate_date=previous_feed.get("data_date") if isinstance(previous_feed,dict) else None
+        if isinstance(candidate_date,str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}",candidate_date):
+            previous_data_date=candidate_date
+    except (OSError,ValueError,TypeError):
+        pass
+    rows,offhours_close=fetch_latest_offhours_close(rows,now,previous_data_date)
     today_ymd=now.strftime("%Y%m%d")
     today_roc=f"{now.year-1911:03d}{now.month:02d}{now.day:02d}"
     source_dates={re.sub(r"[^0-9]","",str(x.get("date",""))) for x in rows if x.get("date")}
