@@ -140,9 +140,11 @@ async function run(){
     const text=localStorage.getItem('jei-holding-health-private-v2')||'';
     return text.includes('2026-10-01')||text.includes('2330,100,110,10');
   }),false,'research scenarios and pasted trade journal are not persisted in browser storage');
-  await health.locator('#financialEvidence').fill('private note should clear');
+  for(const id of ['financialEvidence','peerEvidence','catalystFact','catalystInference','catalystRumor']){
+    assert.equal(await health.locator('#'+id).count(),0,'public evidence gaps must not require manual data entry');
+  }
+  assert.match(await health.locator('#researchCatalystStatus').innerText(),/公開新聞來源|原始來源|缺值/);
   await health.locator('#lockHoldings').click();
-  assert.equal(await health.locator('#financialEvidence').inputValue(),'','locking clears temporary private research notes');
   assert.match(await health.locator('#researchPortfolio').innerText(),/請先解鎖/);
   await health.locator('#privatePassphrase').fill('test-private-passphrase-2026');
   await health.locator('#unlockButton').click();
