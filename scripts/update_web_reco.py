@@ -103,6 +103,32 @@ def cmoney_sentiment(code):
 
 PUBLIC_REPORT_TERMS = re.compile(r"研究報告|研究摘要|研究簡報|券商報告|投資報告|個股報告|公開分享")
 
+PUBLIC_SHARED_REPORTS = [
+    {
+        "code": "3406", "name": "玉晶光",
+        "title": "2026/10/16 券商個股報告整理｜退役操盤人的投研筆記",
+        "source": "Vocus｜公開分享的券商報告摘要",
+        "url": "https://vocus.cc/article/6ad238a4fd89780001ad2c66",
+        "published_at": "2026-10-16",
+        "evidence_level": "publicly_shared_secondary",
+    },
+]
+
+def public_shared_report_hits(code, name, now=None, max_age_days=30):
+    now = now or datetime.now(TZ)
+    hits = []
+    for item in PUBLIC_SHARED_REPORTS:
+        if item.get("code") != str(code) or not matches(item.get("title"), code, name):
+            continue
+        try:
+            published = datetime.strptime(item.get("published_at", ""), "%Y-%m-%d").date()
+            age = (now.date() - published).days
+        except (TypeError, ValueError):
+            continue
+        if 0 <= age <= max_age_days and item.get("url", "").startswith("https://"):
+            hits.append(dict(item))
+    return hits
+
 
 def public_research_hits(items, code, name):
     """Keep public research references distinct from ordinary financial news."""
@@ -160,7 +186,7 @@ def main():
     recs = []
     for code, p in pool.items():
         name = p.get("name") or code
-        report_hits = public_research_hits(news["public_reports"], code, name)
+        report_hits = public_research_hits(news["public_reports"], code, name) + public_shared_report_hits(code, name)
         market_hits = [x for x in news["market"] if matches(x["title"]+" "+x["desc"], code, name)]
         sentiment, community_mentions = community.get(code, (None, 0))
         if not report_hits and not market_hits and not community_mentions:
@@ -172,7 +198,7 @@ def main():
         try: chg = float(chg)
         except Exception: chg = None
 
-        analyst_score = min(35, len(report_hits)*11 + len(market_hits)*4)
+        analyst_score = min(35, len(report_hits)*6 + len(market_hits)*4)
         community_score = 16 if sentiment == "樂觀" else (2 if sentiment == "悲觀" else (6 if community_mentions else 0))
         fund_score = clamp(9 + (math.log10(abs(fund)+1)*3.3 if fund >= 0 else -math.log10(abs(fund)+1)*4.0), 0, 20)
         jei_score = clamp(jei/10, 0, 10)
@@ -222,7 +248,7 @@ def main():
             "public_report_search_url": "https://www.google.com/search?" + urllib.parse.urlencode({
                 "q": f'"{code}" "{name}" 台股 研究報告 公開分享 摘要'
             }),
-            "analyst_mentions": len(report_hits),
+            "analyst_mentions": sum(1 for x in report_hits if x.get("primary_source") is True),
             "community_mentions": community_mentions,
             "fund_lots": round(fund), "jei_score": int(jei) if jei else None,
             "reason": "｜".join(parts),
