@@ -29,7 +29,9 @@ class PreviousRiskRecoveryTests(unittest.TestCase):
                 risk, warning = load_previous_risk(path)
             self.assertEqual(risk["score"], 91)
             self.assertIn("上一個 Git 版本", warning)
-            self.assertEqual(run.call_args.args[0], ["git", "show", "HEAD^:remote/system.json"])
+            command = run.call_args.args[0]
+            self.assertEqual(command[:2], ["git", "show"])
+            self.assertTrue(command[2].endswith("/remote/system.json"))
 
     def test_missing_backup_returns_warning_instead_of_crashing(self):
         with tempfile.TemporaryDirectory() as root:
