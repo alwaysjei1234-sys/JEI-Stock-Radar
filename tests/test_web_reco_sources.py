@@ -27,6 +27,19 @@ class PublicResearchSourceTests(unittest.TestCase):
         ]
         self.assertEqual(module.public_research_hits(items, "2330", "台積電"), [])
 
+    def test_recent_publicly_shared_broker_summary_is_linked_as_secondary_research(self):
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        now = datetime(2026, 10, 25, 12, 0, tzinfo=ZoneInfo("Asia/Taipei"))
+        hits = module.public_shared_report_hits("3406", "玉晶光", now=now)
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0]["evidence_level"], "publicly_shared_secondary")
+        self.assertTrue(hits[0]["url"].startswith("https://vocus.cc/"))
+        self.assertEqual(module.public_shared_report_hits(
+            "3406", "玉晶光",
+            now=datetime(2026, 12, 1, 12, 0, tzinfo=ZoneInfo("Asia/Taipei"))), [])
+        self.assertEqual(module.public_shared_report_hits("2330", "台積電", now=now), [])
+
 
 if __name__ == "__main__":
     unittest.main()
