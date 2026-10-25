@@ -1,0 +1,52 @@
+name: Update Gooaye podcast source index
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/update_gooaye_watch.py'
+      - 'tests/test_gooaye_watch.py'
+      - 'remote/gooaye_watch.json'
+      - '.github/workflows/update-gooaye-watch.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 09:00 Asia/Taipei; collect public RSS metadata and check summary-page date only.
+    - cron: '0 1 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: jei-gooaye-watch
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test metadata-only parser
+        run: python3 -m unittest discover -s tests -p 'test_gooaye_watch.py'
+      - name: Refresh public RSS metadata and summary-page date
+        run: python3 scripts/update_gooaye_watch.py
+      - name: Validate feed and publish changes
+        run: |
+          python3 -m unittest discover -s tests -p 'test_gooaye_watch.py'
+          python3 -m json.tool remote/gooaye_watch.json >/dev/null
+          git add remote/gooaye_watch.json
+          if git diff --cached --quiet; then
+            echo 'No podcast metadata change.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'data: refresh Gooaye episode index'
+          for attempt in 1 2 3; do
+            if git push; then exit 0; fi
+            echo "Concurrent main update; rebasing metadata commit (attempt $attempt)"
+            git fetch origin main
+            git rebase origin/main
+            sleep 3
+          done
+          echo 'Could not publish metadata after 3 attempts.'
+          exit 1

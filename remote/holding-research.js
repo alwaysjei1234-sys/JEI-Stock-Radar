@@ -162,6 +162,7 @@
       ['台指期／夜盤', '正式來源尚未接入', '未提供／未驗證；不推估數值'],
       ['券商研究報告', '券商原站查詢入口', '僅連結／人工查閱；會員報告不抓取、不彙造共識'],
       ['XQ／籌碼K線／PChome', '第三方免費研究入口', '依原站免費權限查閱；部分模組付費，JEI 不擷取會員或付費資料'],
+      ['股癌節目與摘要頁', 'SoundOn 公開 RSS＋Cocoboomboom 原頁', '每日更新集數索引／摘要頁日期；不複製摘要或推測個股推薦'],
       ['新聞／論壇', '原站搜尋連結及 JEI 公開摘要', '新聞待查證；論壇僅線索，不等同公司事實'],
       ['私人持股風險', '使用者裝置本機加密資料', '解鎖後本機計算；不進入公開 feed、GitHub 或伺服器']
     ];
@@ -170,6 +171,35 @@
       row.forEach(value => { const td = doc.createElement('td'); td.textContent = value; tr.append(td); });
       target.append(tr);
     });
+  }
+  function renderGooayeWatch(doc, statusTarget, episodesTarget, feed, today) {
+    if (episodesTarget) episodesTarget.replaceChildren();
+    if (!feed || feed.schemaVersion !== 1) {
+      if (statusTarget) statusTarget.textContent = '尚未取得公開 Podcast 集數索引；不以舊摘要推測最新觀點。';
+      return { ok: false, count: 0 };
+    }
+    const summary = feed.summaryPage || {};
+    const age = freshness(summary.lastUpdated, today, 14);
+    const summaryLabel = summary.checked === false ? '摘要頁更新日期檢查失敗' : age.state === 'dated' ? '摘要頁近期有更新' : age.state === 'stale' ? '摘要頁已過期' : '摘要頁日期未驗證';
+    const checked = feed.checkedAt || '未知';
+    if (statusTarget) statusTarget.textContent = `${summaryLabel}｜頁面標示更新 ${summary.lastUpdated || '未知'}｜最近檢查 ${checked}｜RSS 最近集數 ${feed.latestPublishedAt || '未知'}。目前同步的是集數索引，不是節目逐字稿或投資觀點。`;
+    const episodes = Array.isArray(feed.episodes) ? feed.episodes.slice(0, 8) : [];
+    if (episodesTarget) {
+      if (!episodes.length) episodesTarget.textContent = 'RSS 尚無可用集數；保留原狀態，不補造標題。';
+      episodes.forEach(item => {
+        if (!item || typeof item.title !== 'string' || typeof item.publishedAt !== 'string') return;
+        const row = doc.createElement('p');
+        const anchor = doc.createElement('a');
+        try {
+          const url = new URL(item.url);
+          if (url.protocol !== 'https:') throw new Error('unsafe URL');
+          anchor.href = url.href; anchor.target = '_blank'; anchor.rel = 'noopener noreferrer'; anchor.textContent = `${item.episode || ''} ${item.title} ↗`.trim();
+        } catch (_) { anchor.textContent = `${item.episode || ''} ${item.title}`.trim(); }
+        const meta = doc.createElement('small'); meta.textContent = `｜發布 ${item.publishedAt}`;
+        row.append(anchor, meta); episodesTarget.append(row);
+      });
+    }
+    return { ok: true, count: episodes.length, summaryFreshness: age };
   }
   function init(doc, fetcher) {
     const set = (id, text) => { const el = doc.getElementById(id); if (el) el.textContent = text; };
@@ -189,12 +219,15 @@
     if (fetcher) Promise.allSettled([fetcher('./system.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('market'); return r.json(); }),
       fetcher('./brief.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('brief'); return r.json(); }),
       fetcher('./free_research.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('free research'); return r.json(); }),
-      fetcher('./research_source_directory.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('research source directory'); return r.json(); })]).then(results => {
+      fetcher('./research_source_directory.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('research source directory'); return r.json(); }),
+      fetcher('./gooaye_watch.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('Gooaye watch'); return r.json(); })]).then(results => {
       const system = results[0].status === 'fulfilled' ? results[0].value : null;
       const brief = results[1].status === 'fulfilled' ? results[1].value : null;
       latestBrief = brief;
       latestFree = results[2].status === 'fulfilled' ? results[2].value : null;
       latestSources = results[3].status === 'fulfilled' ? results[3].value : null;
+      const gooayeFeed = results[4].status === 'fulfilled' ? results[4].value : null;
+      renderGooayeWatch(doc, doc.getElementById('gooayeWatchStatus'), doc.getElementById('gooayeEpisodes'), gooayeFeed, dayInTaipei());
       if (!system) { renderSourceStatus(doc, doc.getElementById('researchSourceStatus'), null, latestFree, latestFree && latestFree.generatedAt); set('researchMarketStatus', '公開市場 feed 讀取失敗；暫停市場即時判讀。'); return; }
       latestSystem = system;
       const snapshot = marketSnapshot(system, brief, dayInTaipei());
@@ -290,5 +323,5 @@
       if (el && output) el.addEventListener('input', () => set(output, el.value.trim() ? '已輸入手動研究線索；請自行核對原始公告，系統尚未驗證來源。' : '尚未輸入查證資料。'));
     });
   }
-  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, sourceQueries, buildResearchBrief, renderSourceStatus, init });
+  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, sourceQueries, buildResearchBrief, renderSourceStatus, renderGooayeWatch, init });
 }));

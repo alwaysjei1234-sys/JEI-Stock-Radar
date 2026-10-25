@@ -18,6 +18,8 @@ assert.ok(sourceLinks.some(item => item.name.includes('元大')));
 assert.ok(sourceLinks.some(item => item.name.includes('XQ 全球贏家')));
 assert.ok(sourceLinks.some(item => item.name.includes('籌碼K線')));
 assert.ok(sourceLinks.some(item => item.name.includes('PChome') && item.category.includes('選股')));
+assert.ok(sourceLinks.some(item => item.name.includes('Cocoboomboom') && item.category.includes('Podcast')));
+assert.ok(sourceLinks.some(item => item.name.includes('SoundOn') && item.category.includes('Podcast')));
 assert.ok(sourceLinks.some(item => item.category === '論壇線索'));
 assert.ok(sourceLinks.every(item => new URL(item.href).protocol === 'https:'));
 assert.deepEqual(research.sourceQueries(sourceDirectory, '<script>'), [], 'invalid ticker must not form external search links');
@@ -58,7 +60,21 @@ const renderedRows = [];
 const statusTarget = { replaceChildren() { renderedRows.length = 0; }, append(row) { renderedRows.push(row); } };
 const fakeTableDocument = { createElement() { return { append() {}, textContent: '' }; } };
 research.renderSourceStatus(fakeTableDocument, statusTarget, snapshot, null);
-assert.equal(renderedRows.length, 12, 'source status should include connected, manual-only and unavailable datasets');
+assert.equal(renderedRows.length, 13, 'source status should include connected, manual-only and unavailable datasets');
+const watchStatus = { textContent: '' }, renderedEpisodes = [];
+const episodeContainer = { replaceChildren() { renderedEpisodes.length = 0; }, append(item) { renderedEpisodes.push(item); }, set textContent(value) { this.message = value; } };
+const dom = { createElement(tag) { return { tag, children: [], append(...items) { this.children.push(...items); }, textContent: '', href: '' }; } };
+const watchState = research.renderGooayeWatch(dom, watchStatus, episodeContainer, {
+  schemaVersion: 1, checkedAt: '2026-10-25T01:00:00Z', latestPublishedAt: '2026-10-24',
+  summaryPage: { lastUpdated: '2026-06-29', checked: true },
+  episodes: [{ title: 'EP708 | 測試標題', episode: 'EP708', publishedAt: '2026-10-24', url: 'https://player.soundon.fm/p/ep708' },
+    { title: 'unsafe', episode: 'EP707', publishedAt: '2026-10-23', url: 'javascript:alert(1)' }]
+}, '2026-10-25');
+assert.equal(watchState.summaryFreshness.state, 'stale');
+assert.match(watchStatus.textContent, /摘要頁已過期/);
+assert.equal(renderedEpisodes.length, 2);
+assert.match(renderedEpisodes[0].children[0].href, /^https:\/\//);
+assert.equal(renderedEpisodes[1].children[0].href, '', 'non-HTTPS episode links must not be rendered as active links');
 
 const plan = research.scenario({ price: 100, bull: 120, baseLow: 95, baseHigh: 105, bear: 90 });
 assert.equal(plan.ok, true);
