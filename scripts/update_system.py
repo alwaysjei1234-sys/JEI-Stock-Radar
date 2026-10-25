@@ -24,6 +24,28 @@ HISTORY=Path("remote/history.json")
 DAILY_PRICES=Path("remote/daily_prices.json")
 TZ=ZoneInfo("Asia/Taipei")
 
+
+def normalize_exchange_date(value):
+    digits=re.sub(r"[^0-9]","",str(value or ""))
+    if len(digits)==7:  # ROC yyyMMdd
+        return f"{int(digits[:3])+1911:04d}-{digits[3:5]}-{digits[5:7]}"
+    if len(digits)==8:  # Gregorian yyyyMMdd
+        return f"{digits[:4]}-{digits[4:6]}-{digits[6:8]}"
+    return None
+
+def latest_shared_close_date(twse_dates,tpex_dates,today,previous,market_open,now_date):
+    """Use a newer, date-matched exchange close on off-hours refreshes only."""
+    shared=set(twse_dates)&set(tpex_dates)
+    if not shared:return None
+    candidate=max(shared)
+    if candidate==today:return candidate
+    if market_open or candidate>today or (previous and candidate<=previous):return None
+    try:
+        age=(datetime.strptime(now_date,"%Y-%m-%d").date()-datetime.strptime(candidate,"%Y-%m-%d").date()).days
+    except ValueError:
+        return None
+    return candidate if 0<=age<=7 else None
+
 SECTOR_BASKETS={
     "AI伺服器/散熱":["2345","2382","3231","6669","3017","3324","3653","2059"],
     "PCB/載板":["3037","3189","8046","2368","2383","6274","6213","1815","8039"],
@@ -909,17 +931,25 @@ def main():
     # had already been refreshed to today, because TPEx rows happened to appear first.
     today_iso=now.strftime("%Y-%m-%d")
     today_roc=f"{now.year-1911:03d}{now.month:02d}{now.day:02d}"
-    today_iso_compact=re.sub(r"[^0-9]","",today_iso)
     def market_dates(market):
-        return {re.sub(r"[^0-9]","",str(x.get("date",""))) for x in rows if x.get("market")==market and x.get("date")}
+        return {day for x in rows if x.get("market")==market and x.get("date")
+                if (day:=normalize_exchange_date(x.get("date")))}
     final_twse_dates=market_dates("TWSE")
     final_tpex_dates=market_dates("TPEX")
-    twse_today=(today_roc in final_twse_dates or today_iso_compact in final_twse_dates)
-    tpex_today=(today_roc in final_tpex_dates or today_iso_compact in final_tpex_dates)
-    source_is_today=twse_today and tpex_today
+    previous_data_date=None
+    try:
+        previous_feed=json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
+        candidate_date=previous_feed.get("data_date") if isinstance(previous_feed,dict) else None
+        if isinstance(candidate_date,str) and re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}",candidate_date):
+            previous_data_date=candidate_date
+    except (OSError,ValueError,TypeError):
+        pass
+    latest_close_date=latest_shared_close_date(
+        final_twse_dates,final_tpex_dates,today_iso,previous_data_date,market_open,today_iso)
+    source_is_today=latest_close_date is not None
     if source_is_today:
-        source_data_date=today_roc
-        raw_date=today_iso
+        source_data_date=latest_close_date
+        raw_date=latest_close_date
     else:
         twse_latest=max(final_twse_dates) if final_twse_dates else "未知"
         tpex_latest=max(final_tpex_dates) if final_tpex_dates else "未知"
@@ -1010,10 +1040,10 @@ def main():
         reasons=[f"行情來源日期 {source_data_date or '未知'}，不是今天；今日風險與選股訊號暫停判讀"]
         sectors=[]
         flow=[]
-    market_mode="資料過期" if stale_source else ("盤中即時" if live_valid else ("盤中資料不足" if market_open else "今日收盤"))
-    date_key=now.strftime("%Y-%m-%d")
+    market_mode="資料過期" if stale_source else ("盤中即時" if live_valid else ("盤中資料不足" if market_open else ("今日收盤" if raw_date==today_iso else "最近收盤")))
+    date_key=raw_date if re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}",str(raw_date)) else now.strftime("%Y-%m-%d")
     history=hist_for_heat
-    official_close_verified=(source_is_today and market_mode=="今日收盤"
+    official_close_verified=(source_is_today and market_mode in ("今日收盤","最近收盤")
                              and not market_open and now.hour*60+now.minute>=810)
     if official_close_verified:
         # Only a verified exchange close may create or replace a backtest day.
@@ -1069,7 +1099,7 @@ def main():
                 "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000),
                 "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
         "market":{"status":market_status,"mode":market_mode,"last_checked_at":now.strftime("%Y-%m-%d %H:%M"),
-                  "live_count":live_count,"close_count":len(stocks),"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source,"post_close_refresh":post_close_refresh,
+                  "live_count":live_count,"close_count":len(stocks),"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source,"historical_readonly":raw_date!=today_iso,"post_close_refresh":post_close_refresh,
                   "live_diagnostics":{"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":now.strftime("%Y-%m-%d %H:%M"),
                       "valid_trades":live_count,"mis_stats":live_stats,"required_trades":500,
                       "required_coverage_pct":35,
