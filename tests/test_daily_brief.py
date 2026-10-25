@@ -1,6 +1,8 @@
 import unittest
 import json
 import tempfile
+import urllib.parse
+import unittest.mock
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -37,7 +39,7 @@ class BriefTests(unittest.TestCase):
         at=CLOSE.replace(hour=8)
         self.assertEqual(b.generate("morning",at,FEED,PAPER)["status"],"pending")
         feed=dict(FEED,data_date="2026-10-15")
-        report=b.generate("morning",at,feed,PAPER,us_fn=lambda n: [],news_fn=lambda n: [])
+        report=b.generate("morning",at,feed,PAPER,us_fn=lambda n: [],global_fn=lambda n: [],news_fn=lambda n: [])
         self.assertEqual(report["status"],"ready")
         self.assertIn("暫無可信來源",str(report))
         self.assertNotIn("NEVER_PUBLIC",str(report))
