@@ -191,7 +191,7 @@ function renderSystem(){const r=system.risk||{},m=system.market||{},lv=['green',
 function isTrustedFeed(feed=system,now=new Date()){const m=feed?.market||{},date=String(feed?.data_date||''),parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(now),dp=Object.fromEntries(parts.map(p=>[p.type,p.value])),day=`${dp.year}-${dp.month}-${dp.day}`,minutes=Number(dp.hour)*60+Number(dp.minute),weekday=['Mon','Tue','Wed','Thu','Fri'].includes(dp.weekday),stamp=Date.parse(String(feed?.updated_at||'').replace(' ','T')+'+08:00'),lag=now.getTime()-stamp;if(date!==day||m.stale!==false||!weekday||!Number.isFinite(stamp)||lag< -120000)return false;if(m.mode==='今日收盤'){const closedAt=Date.parse(date+'T13:30:00+08:00');return minutes>=810&&Number(m.close_count)>=500&&stamp>=closedAt;}if(m.mode!=='盤中即時'||m.live_valid!==true||Number(m.live_count)<500||minutes<540||minutes>=810)return false;return lag<=35*60000;}
 function isRecentCloseObservation(feed=system,now=new Date()){
  const m=feed?.market||{},day=String(feed?.data_date||''),updated=String(feed?.updated_at||'');
- if(m.stale!==false||m.mode!=='今日收盤'||Number(m.close_count)<500||!/^\d{4}-\d{2}-\d{2}$/.test(day))return false;
+ if((m.stale!==false&&m.historical_readonly!==true)||!['今日收盤','最近收盤'].includes(m.mode)||Number(m.close_count)<500||!/^\d{4}-\d{2}-\d{2}$/.test(day))return false;
  const closeAt=Date.parse(day+'T13:30:00+08:00'),stamp=Date.parse(updated.replace(' ','T')+'+08:00');
  const age=now.getTime()-closeAt;
  return Number.isFinite(closeAt)&&Number.isFinite(stamp)&&stamp>=closeAt&&age>=0&&age<=7*86400000;
