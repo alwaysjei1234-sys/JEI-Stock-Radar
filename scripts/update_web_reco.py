@@ -118,7 +118,7 @@ def public_shared_report_hits(code, name, now=None, max_age_days=30):
     now = now or datetime.now(TZ)
     hits = []
     for item in PUBLIC_SHARED_REPORTS:
-        if item.get("code") != str(code) or not matches(item.get("title"), code, name):
+        if item.get("code") != str(code):
             continue
         try:
             published = datetime.strptime(item.get("published_at", ""), "%Y-%m-%d").date()
