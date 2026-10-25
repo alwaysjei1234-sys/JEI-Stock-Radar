@@ -618,15 +618,32 @@ function exportHoldingsData(){
 }
 function importHoldingsData(){
  try{
-  const raw=$('importHoldings').value.trim().replace(/^JEI-HOLDINGS:/i,'');
+  const raw=$('importHoldings').value.trim().replace(/^\\uFEFF/,'').replace(/^JEI-HOLDINGS:/i,'');
   if(!raw){toast('請貼上 JEI 持股匯入碼');return}
-  let a;
-  if(raw.startsWith('[')){a=JSON.parse(raw)}
-  else{a=raw.split(';').map(x=>x.trim()).filter(Boolean).map(x=>{const p=x.split(',').map(v=>v.trim());return{code:p[0],name:p[1]||p[0],cost:+p[2],shares:+p[3]}})}
-  a=a.filter(x=>x&&String(x.code||'').match(/^[0-9A-Za-z]{2,8}$/)&&+x.cost>0&&+x.shares>0).map(x=>({code:String(x.code),name:String(x.name||x.code),cost:+x.cost,shares:+x.shares}));
-  if(!a.length){toast('匯入碼格式不正確');return}
-  holdings=a;persistHoldings();renderHoldings();refreshMarket();$('importHoldings').value='';toast('已匯入 '+a.length+' 檔持股')
- }catch(e){toast('匯入失敗，請檢查格式')}
+  let rows;
+  if(raw.startsWith('[')||raw.startsWith('{')){
+   const parsed=JSON.parse(raw);
+   if(Array.isArray(parsed))rows=parsed;
+   else if(parsed&&typeof parsed==='object'){
+    rows=[...(Array.isArray(parsed.holdings)?parsed.holdings:[]),...(Array.isArray(parsed.other_assets)?parsed.other_assets:[])];
+   }else rows=[];
+  }else{
+   rows=raw.split(';').map(x=>x.trim()).filter(Boolean).map(x=>{
+    const p=x.split(',').map(v=>v.trim());
+    return{code:p[0],name:p[1]||p[0],cost:p[2],shares:p[3]};
+   });
+  }
+  const numberValue=v=>Number(String(v??'').replace(/,/g,'').trim());
+  const a=rows.map(x=>{
+   const code=String(x?.code??x?.symbol??x?.ticker??x?.代號??'').trim().toUpperCase();
+   const name=String(x?.name??x?.stockName??x?.名稱??code).trim()||code;
+   const cost=numberValue(x?.cost??x?.avgCost??x?.averageCost??x?.成本);
+   const shares=numberValue(x?.shares??x?.quantity??x?.qty??x?.股數??x?.數量);
+   return{code,name,cost,shares};
+  }).filter(x=>/^[0-9A-Z]{2,8}$/.test(x.code)&&Number.isFinite(x.cost)&&x.cost>0&&Number.isFinite(x.shares)&&x.shares>0);
+  if(!a.length){toast('未匯入：找不到有效持股資料；請確認代號、成本、股數完整');return}
+  holdings=a;persistHoldings();renderHoldings();refreshMarket();$('importHoldings').value='';toast('持股已匯入本機：'+a.length+' 檔')
+ }catch(e){toast('匯入失敗：JSON 格式錯誤或欄位無法讀取')}
 }
 function saveHolding(){if(!JEI_PRIVATE_APP)return;const code=$('editCode').value.trim().toUpperCase(),name=$('editName').value.trim()||code,cost=+$('editCost').value,shares=+$('editShares').value;if(!code||!cost||!shares){toast('請填代號、成本、股數');return}const i=holdings.findIndex(x=>x.code===code),o={code,name,cost,shares};if(i>=0)holdings[i]=o;else holdings.push(o);persistHoldings();renderHoldings();refreshMarket();toast('持股已存手機')}
 function removeHolding(){if(!JEI_PRIVATE_APP)return;const c=$('editCode').value.trim().toUpperCase();if(!c)return;holdings=holdings.filter(x=>x.code!==c);persistHoldings();renderHoldings();toast('已刪除 '+c)}
