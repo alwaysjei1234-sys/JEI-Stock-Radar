@@ -237,7 +237,7 @@ check('Day-trade legacy scanner accepts valid dated prices and refuses stale sig
  assert.equal(ctx.verify({...live,market:{...live.market,stale:true}},at),false,'stale flag');
  assert.equal(ctx.verify({...live,market:{...live.market,live_valid:false}},at),false,'unverified live');
  assert.equal(ctx.verify({...live,data_date:'2026-10-13'},at),false,'prior day');
- assert.ok(!paper.includes(String.raw`\\d`),'double-escaped digit regex blocks all real stock codes');
+ assert.ok(!paper.includes(String.raw`\d`),'double-escaped digit regex blocks all real stock codes');
  assert.ok(paper.includes(String.raw`/^\d{4,6}$/.test(p.code)`));
  assert.ok(paper.includes(String.raw`/^\d{4,6}$/.test(code)`));
  assert.ok(paper.includes("const valid=validFeedDate(feed)"));
@@ -605,11 +605,11 @@ check('Android native background worker rejects stale feeds, quote substitutions
  assert.ok(activity.includes('public String loadRiskEvents()'));
  assert.ok(activity.includes('public void setRiskNotificationEnabled(boolean enabled)'));
  const manifest=JSON.parse(fs.readFileSync('remote/update.json','utf8'));
- const code=gradle.match(/versionCode\\s+(\\d+)/);
- const name=gradle.match(/versionName\\s+'([^']+)'/);
+ const code=gradle.match(/versionCode\s+(\d+)/);
+ const name=gradle.match(/versionName\s+'([^']+)'/);
  assert.ok(code&&name,'Android version must be defined');
  assert.equal(Number(manifest.versionCode),Number(code[1]),'update manifest must match APK version code');
- assert.equal(String(manifest.versionName).split(/\\s+/)[0],name[1],'update manifest must match APK version name');
+ assert.equal(String(manifest.versionName).split(/\s+/)[0],name[1],'update manifest must match APK version name');
  assert.ok(html.includes(`const UI_VERSION='${manifest.uiVersion}';`),'remote UI version must match update manifest');
 });
 check('Native history UI escapes risk titles and syncs opt-out with Android Worker',()=>{
