@@ -219,6 +219,9 @@ def main():
                 }
                 for x in report_hits[:4] if x.get("link")
             ],
+            "public_report_search_url": "https://www.google.com/search?" + urllib.parse.urlencode({
+                "q": f'"{code}" "{name}" 台股 研究報告 公開分享 摘要'
+            }),
             "analyst_mentions": len(report_hits),
             "community_mentions": community_mentions,
             "fund_lots": round(fund), "jei_score": int(jei) if jei else None,
