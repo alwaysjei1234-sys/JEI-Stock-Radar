@@ -101,6 +101,19 @@ def cmoney_sentiment(code):
     except Exception:
         return None, 0
 
+PUBLIC_REPORT_TERMS = re.compile(r"研究報告|研究摘要|券商報告|目標價|投資評等|分析師|個股報告|公開分享")
+
+
+def public_research_hits(items, code, name):
+    """Keep public research references distinct from ordinary financial news."""
+    return [
+        item for item in items
+        if matches(item.get("title", "") + " " + item.get("desc", ""), code, name)
+        and PUBLIC_REPORT_TERMS.search(item.get("title", "") + " " + item.get("desc", ""))
+        and item.get("link", "").startswith(("https://", "http://"))
+    ]
+
+
 def main():
     data = json.loads(OUT.read_text(encoding="utf-8"))
     pool = candidate_pool(data)
@@ -145,11 +158,9 @@ def main():
         community[code] = cmoney_sentiment(code)
 
     recs = []
-    report_terms = re.compile(r"研究報告|研究摘要|券商報告|目標價|投資評等|分析師|個股報告|公開分享")
     for code, p in pool.items():
         name = p.get("name") or code
-        matched_public = [x for x in news["public_reports"] if matches(x["title"]+" "+x["desc"], code, name)]
-        report_hits = [x for x in matched_public if report_terms.search(x["title"]+" "+x["desc"])]
+        report_hits = public_research_hits(news["public_reports"], code, name)
         market_hits = [x for x in news["market"] if matches(x["title"]+" "+x["desc"], code, name)]
         sentiment, community_mentions = community.get(code, (None, 0))
         if not report_hits and not market_hits and not community_mentions:
