@@ -1,4 +1,5 @@
 import unittest
+from unittest import mock
 import json
 import tempfile
 import urllib.parse
@@ -56,7 +57,7 @@ class BriefTests(unittest.TestCase):
             for code,payload in responses.items():
                 if urllib.parse.quote(code,safe="") in url: return json.dumps(payload)
             raise OSError("symbol unavailable")
-        with unittest.mock.patch.object(b,"get_url",side_effect=fake_get_url):
+        with mock.patch.object(b,"get_url",side_effect=fake_get_url):
             quotes=b.fetch_market_symbols((("^SOX","費城半導體"),("^N225","日經 225"),("^BAD","無效")),now)
         self.assertEqual([(x["name"],x["date"]) for x in quotes],[("費城半導體","2026-10-23"),("日經 225","2026-10-23")])
         self.assertTrue(all(x["source"]=="Yahoo Finance" for x in quotes))
