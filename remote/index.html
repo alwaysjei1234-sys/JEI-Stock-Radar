@@ -380,10 +380,14 @@ function renderWebReco(){
  const safe=escapeMarketText;
  el.innerHTML=a.map((x,i)=>{
   const funds=Number.isFinite(+x.fund_lots)?((+x.fund_lots>=0?'+':'')+(+x.fund_lots).toLocaleString('zh-TW')+'張'):'--';
-  const tags=[`投顧/研報 ${x.analyst_mentions??0}`,`網友 ${x.community_mentions??0}`,`法人 ${funds}`,`JEI ${x.jei_score??'--'}`].map(t=>`<span class="chip">${safe(t)}</span>`).join('');
-  const src=Array.isArray(x.source_labels)&&x.source_labels.length?'<div class="rSub">來源：'+x.source_labels.map(safe).join('、')+'</div>':'';
+  const tags=[`公開研究線索 ${x.public_report_mentions??x.analyst_mentions??0}`,`網友討論 ${x.community_mentions??0}`,`法人 ${funds}`,`JEI ${x.jei_score??'--'}`].map(t=>`<span class="chip">${safe(t)}</span>`).join('');
+  const src=Array.isArray(x.source_labels)&&x.source_labels.length?'<div class="rSub">媒體／討論來源：'+x.source_labels.map(safe).join('、')+'</div>':'';
+  const reports=(Array.isArray(x.public_report_sources)?x.public_report_sources:[]).map(r=>{
+   let href='';try{const u=new URL(String(r.url||''));if(u.protocol==='https:'||u.protocol==='http:')href=u.href}catch(_){}
+   return href?`<a class="rSub" href="${safe(href)}" target="_blank" rel="noopener noreferrer">${safe(r.title||'公開研究來源')}｜${safe(r.source||'原始來源')}${r.published_at?'｜'+safe(r.published_at):'｜發布日期未提供'}</a>`:'';
+  }).join('');
   const caution=x.caution?`<div class="rSub yellowTxt">⚠ ${safe(x.caution)}</div>`:'';
-  return `<div class="stockCard"><div class="stockTop"><div><div class="stockName">#${i+1} ${safe(x.code||'')} ${safe(x.name||'')}</div><div class="rSub">${safe(x.reason||'')}</div></div><div class="score ${(+x.score>=85?'greenTxt':'cyanTxt')}">${safe(x.score??'--')}</div></div><div class="statusline">${tags}</div>${src}${caution}</div>`
+  return `<div class="stockCard"><div class="stockTop"><div><div class="stockName">#${i+1} ${safe(x.code||'')} ${safe(x.name||'')}</div><div class="rSub">${safe(x.reason||'')}</div></div><div class="score ${(+x.score>=85?'greenTxt':'cyanTxt')}">${safe(x.score??'--')}</div></div><div class="statusline">${tags}</div>${src}${reports}${caution}</div>`
  }).join('')
 }
 function renderFlow(){const a=(isTrustedFeed()||isRecentCloseObservation())?system.flow:[],safe=escapeMarketText;if(!Array.isArray(a)||!a.length){$('flowList').innerHTML='<div class="empty">今日行情未驗證，暫停資金流判讀</div>';return}$('flowList').innerHTML=a.map(x=>`<div class="listRow"><div class="rank">${safe(x.icon||'•')}</div><div><div class="rName">${safe(x.name)}</div><div class="rSub">${safe(x.note)}</div></div><div class="score">${safe(x.score??'')}</div></div>`).join('')}
