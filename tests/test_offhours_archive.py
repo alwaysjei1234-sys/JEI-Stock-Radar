@@ -35,12 +35,23 @@ class OffhoursArchiveTests(unittest.TestCase):
         self.assertEqual(after["updated_at"],"2026-10-16 17:10")
         self.assertEqual(after["market"]["mode"],"今日收盤")
         self.assertTrue(after["market"]["historical_readonly"])
+        self.assertTrue(after["market"]["stale"])
         self.assertEqual(after["market"]["last_checked_at"],"2026-10-18 07:29")
         self.assertEqual(len(after["attack"]),1)
         self.assertEqual(after["patterns"]["status"],"ready")
         self.assertNotIn("last_checked_at",old["market"],"old dict must not be mutated")
         next_session=MOD.validated_previous_close(after,datetime(2026,10,19,9,5,tzinfo=TAIPEI))
         self.assertTrue(next_session["market"]["historical_readonly"],"Monday research remains non-live")
+
+    def test_newest_shared_official_close_advances_only_off_hours(self):
+        self.assertEqual(MOD.latest_shared_close_date(
+            {"2026-10-23"},{"2026-10-23"},"2026-10-25","2026-10-22",False,"2026-10-25"),"2026-10-23")
+        self.assertIsNone(MOD.latest_shared_close_date(
+            {"2026-10-23"},{"2026-10-23"},"2026-10-25","2026-10-23",False,"2026-10-25"))
+        self.assertIsNone(MOD.latest_shared_close_date(
+            {"2026-10-23"},{"2026-10-23"},"2026-10-25","2026-10-22",True,"2026-10-25"))
+        self.assertEqual(MOD.normalize_exchange_date("115/10/23"),"2026-10-23")
+        self.assertEqual(MOD.normalize_exchange_date("20261023"),"2026-10-23")
 
     def test_reject_incomplete_stale_fake_private_or_expired_snapshots(self):
         base=verified()
@@ -50,6 +61,7 @@ class OffhoursArchiveTests(unittest.TestCase):
             {**base,"updated_at":"2026-10-16 10:00"},
             {**base,"updated_at":"2026-10-18 17:10"},
             {**base,"market":{**base["market"],"stale":True}},
+            {**base,"market":{**base["market"],"stale":True,"historical_readonly":True},"updated_at":"2026-10-18 07:29"},
             {**base,"market":{**base["market"],"mode":"盤中即時"}},
             {**base,"market":{**base["market"],"close_count":499}},
             {**base,"market":{**base["market"],"close_count":True}},
@@ -66,8 +78,11 @@ class OffhoursArchiveTests(unittest.TestCase):
     def test_checked_in_market_snapshot_is_valid_nontrading_archive(self):
         market=json.loads((ROOT/"remote/system.json").read_text(encoding="utf-8"))
         self.assertRegex(market["data_date"],r"^\d{4}-\d{2}-\d{2}$")
-        self.assertTrue(market["updated_at"].startswith(market["data_date"]))
-        self.assertFalse(market["market"]["stale"])
+        updated=datetime.strptime(market["updated_at"],"%Y-%m-%d %H:%M")
+        data_day=datetime.strptime(market["data_date"],"%Y-%m-%d").date()
+        self.assertGreaterEqual(updated.date(),data_day)
+        self.assertEqual(market["market"]["historical_readonly"],updated.date()!=data_day)
+        self.assertEqual(market["market"]["stale"],updated.date()!=data_day)
         self.assertGreaterEqual(market["market"]["close_count"],500)
         self.assertGreater(len(market["attack"]),0)
         self.assertGreater(len(market["sectors"]),0)
