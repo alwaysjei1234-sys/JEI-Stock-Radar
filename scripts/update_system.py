@@ -1,6 +1,6 @@
 # Recompute feed after TPEx history backfill
 #!/usr/bin/env python3
-import json, math, re, statistics, time, urllib.request, urllib.parse
+import json, math, re, statistics, time, urllib.request, urllib.parse, subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -538,6 +538,35 @@ def holding_decision(row, cost, market_risk):
         reason="價格與整體市場風險目前仍在可控範圍"
     return {"action":action,"reason":reason,"limit_status":limit_status}
 
+def load_previous_risk(path=OUT):
+    """Read the last composite risk defensively; recover the parent snapshot if current JSON is damaged."""
+    if not path.exists():
+        return {}, None
+    try:
+        current = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(current, dict):
+            raise ValueError("current market feed is not an object")
+        risk = current.get("risk") or {}
+        if not isinstance(risk, dict):
+            raise ValueError("current market risk is not an object")
+        return risk, None
+    except (OSError, json.JSONDecodeError, ValueError, TypeError) as current_error:
+        try:
+            relative = path.as_posix()
+            previous = subprocess.run(
+                ["git", "show", f"HEAD^:{relative}"],
+                check=True, capture_output=True, text=True, timeout=10,
+            )
+            restored = json.loads(previous.stdout)
+            risk = restored.get("risk") if isinstance(restored, dict) else None
+            if not isinstance(risk, dict):
+                raise ValueError("parent market risk is unavailable")
+            return risk, "前一版行情摘要無法解析；已從上一個 Git 版本復原風險欄位"
+        except (OSError, subprocess.SubprocessError, json.JSONDecodeError, ValueError, TypeError) as recovery_error:
+            detail = type(current_error).__name__ + "/" + type(recovery_error).__name__
+            return {}, "前一版行情摘要與 Git 備份都無法解析（" + detail + "）；本次風險僅依新行情重算"
+
+
 def main():
     errors=[]
     try:twse_raw=fetch_json(TWSE_STOCK)
@@ -679,7 +708,9 @@ def main():
     # a newer/manual composite alert that includes foreign futures, margin leverage,
     # high-beta behavior and US/SOX external risk unless those inputs are also present.
     # This prevents a partial refresh from overwriting an orange/red composite warning.
-    previous_risk = (json.loads(OUT.read_text(encoding="utf-8")).get("risk") or {}) if OUT.exists() else {}
+    previous_risk, previous_risk_warning = load_previous_risk()
+    if previous_risk_warning:
+        errors.append(previous_risk_warning)
     previous_score = int(previous_risk.get("score") or 0)
     previous_level = str(previous_risk.get("level") or "").lower()
     composite_fields = ("foreign_cash_billion","foreign_futures_net","margin_balance","external_risk")

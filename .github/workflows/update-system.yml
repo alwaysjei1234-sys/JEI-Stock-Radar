@@ -12,6 +12,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'scripts/update_system.py'
+      - 'tests/test_update_system_recovery.py'
       - 'data/twse_ohlcv/**'
       - '.github/workflows/backfill-twse-ohlcv.yml'
       - '.github/workflows/update-system.yml'
@@ -37,6 +38,8 @@ jobs:
           python-version: '3.12'
       - name: Validate feed builder syntax
         run: python -m py_compile scripts/update_system.py
+      - name: Test damaged-feed recovery before market access
+        run: python -m unittest discover -s tests -p 'test_update_system_recovery.py'
       - name: Build market feed
         run: python scripts/update_system.py
       - name: Audit live quote coverage (diagnostic only)
