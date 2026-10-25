@@ -267,7 +267,7 @@ async function run(){
    };
   });
   await privatePage.goto('file://'+path.join(ROOT,'app','src','main','assets','index.html'),{waitUntil:'domcontentloaded'});
-  assert.match(await privatePage.locator('#uiVer').innerText(),/3\.9\.12/,'offline asset includes prioritised quotes and ETF support');
+  assert.match(await privatePage.locator('#uiVer').innerText(),/3\.9\.13/,'offline asset includes prioritised quotes and ETF support');
   await privatePage.evaluate(()=>{go('hold')});
   await privatePage.locator('#holdAlertPanel').waitFor({state:'visible'});
   assert.equal(await privatePage.locator('#alertLoss').inputValue(),'8','native watch alert defaults to 8% loss');
