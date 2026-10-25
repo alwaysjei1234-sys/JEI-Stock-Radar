@@ -101,7 +101,7 @@ def cmoney_sentiment(code):
     except Exception:
         return None, 0
 
-PUBLIC_REPORT_TERMS = re.compile(r"研究報告|研究摘要|券商報告|目標價|投資評等|分析師|個股報告|公開分享")
+PUBLIC_REPORT_TERMS = re.compile(r"研究報告|研究摘要|研究簡報|券商報告|投資報告|個股報告|公開分享")
 
 
 def public_research_hits(items, code, name):
