@@ -109,6 +109,7 @@ PUBLIC_SHARED_REPORTS = [
         "title": "2026/10/16 券商個股報告整理｜退役操盤人的投研筆記",
         "source": "Vocus｜公開分享的券商報告摘要",
         "url": "https://vocus.cc/article/6ad238a4fd89780001ad2c66",
+        "link": "https://vocus.cc/article/6ad238a4fd89780001ad2c66",
         "published_at": "2026-10-16",
         "evidence_level": "publicly_shared_secondary",
     },
@@ -240,10 +241,11 @@ def main():
                 {
                     "title": x.get("title", ""),
                     "source": x.get("source", ""),
-                    "url": x.get("link", ""),
+                    "url": x.get("link") or x.get("url", ""),
                     "published_at": x.get("published_at", ""),
+                    "evidence_level": x.get("evidence_level", "public_research_link"),
                 }
-                for x in report_hits[:4] if x.get("link")
+                for x in report_hits[:4] if x.get("link") or x.get("url")
             ],
             "public_report_search_url": "https://www.google.com/search?" + urllib.parse.urlencode({
                 "q": f'"{code}" "{name}" 台股 研究報告 公開分享 摘要'
