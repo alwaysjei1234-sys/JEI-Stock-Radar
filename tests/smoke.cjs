@@ -35,9 +35,10 @@ check('Packaged Android offline fallback includes current risk and privacy gates
 check('Offline Android UI includes latest manual notification diagnostic without sharing portfolio',()=>{
  const offline=fs.readFileSync('app/src/main/assets/index.html','utf8');
  assert.ok(offline.includes('function testNativeRiskNotification()'));
- assert.ok(offline.includes('3.9.12-priority-quotes-etf'));
+ const update=JSON.parse(fs.readFileSync('remote/update.json','utf8'));
+ assert.ok(offline.includes("const UI_VERSION='"+update.uiVersion+"';"));
  assert.ok(offline.includes('JEI_PRIVATE_APP'));
- assert.ok(html.includes('3.9.12-priority-quotes-etf'));
+ assert.ok(html.includes("const UI_VERSION='"+update.uiVersion+"';"));
 });
 check('Android backups disabled',()=>assert.match(manifest,/android:allowBackup="false"/));
 check('WebView file-origin crossing disabled',()=>{assert.match(activity,/setAllowFileAccessFromFileURLs\(false\)/);assert.match(activity,/setAllowUniversalAccessFromFileURLs\(false\)/)});
@@ -237,9 +238,9 @@ check('Day-trade legacy scanner accepts valid dated prices and refuses stale sig
  assert.equal(ctx.verify({...live,market:{...live.market,stale:true}},at),false,'stale flag');
  assert.equal(ctx.verify({...live,market:{...live.market,live_valid:false}},at),false,'unverified live');
  assert.equal(ctx.verify({...live,data_date:'2026-10-13'},at),false,'prior day');
- assert.ok(!paper.includes(String.raw`\d`),'double-escaped digit regex blocks all real stock codes');
- assert.ok(paper.includes(String.raw`/^\d{4,6}$/.test(p.code)`));
- assert.ok(paper.includes(String.raw`/^\d{4,6}$/.test(code)`));
+ const codePattern='/^'+'\\d{4,6}$/';
+ assert.ok(paper.includes(codePattern+'.test(p.code)'),'open positions must validate a normal stock code');
+ assert.ok(paper.includes(codePattern+'.test(code)'),'scanner must validate a normal stock code');
  assert.ok(paper.includes("const valid=validFeedDate(feed)"));
  assert.ok(paper.includes("if(!valid)return"),'candidate list must gate on trusted feed');
 });
