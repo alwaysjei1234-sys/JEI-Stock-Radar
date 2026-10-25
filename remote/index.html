@@ -386,8 +386,10 @@ function renderWebReco(){
    let href='';try{const u=new URL(String(r.url||''));if(u.protocol==='https:'||u.protocol==='http:')href=u.href}catch(_){}
    return href?`<a class="rSub" href="${safe(href)}" target="_blank" rel="noopener noreferrer">${safe(r.title||'公開研究來源')}｜${safe(r.source||'原始來源')}${r.published_at?'｜'+safe(r.published_at):'｜發布日期未提供'}</a>`:'';
   }).join('');
+  let searchHref='';try{const u=new URL(String(x.public_report_search_url||''));if(u.protocol==='https:')searchHref=u.href}catch(_){}
+  const reportSearch=searchHref?`<a class="rSub" href="${safe(searchHref)}" target="_blank" rel="noopener noreferrer">搜尋 ${safe(x.code||'')} ${safe(x.name||'')} 的公開分享研究摘要；請回原文核對日期與內容 →</a>`:'';
   const caution=x.caution?`<div class="rSub yellowTxt">⚠ ${safe(x.caution)}</div>`:'';
-  return `<div class="stockCard"><div class="stockTop"><div><div class="stockName">#${i+1} ${safe(x.code||'')} ${safe(x.name||'')}</div><div class="rSub">${safe(x.reason||'')}</div></div><div class="score ${(+x.score>=85?'greenTxt':'cyanTxt')}">${safe(x.score??'--')}</div></div><div class="statusline">${tags}</div>${src}${reports}${caution}</div>`
+  return `<div class="stockCard"><div class="stockTop"><div><div class="stockName">#${i+1} ${safe(x.code||'')} ${safe(x.name||'')}</div><div class="rSub">${safe(x.reason||'')}</div></div><div class="score ${(+x.score>=85?'greenTxt':'cyanTxt')}">${safe(x.score??'--')}</div></div><div class="statusline">${tags}</div>${src}${reports}${reportSearch}${caution}</div>`
  }).join('')
 }
 function renderFlow(){const a=(isTrustedFeed()||isRecentCloseObservation())?system.flow:[],safe=escapeMarketText;if(!Array.isArray(a)||!a.length){$('flowList').innerHTML='<div class="empty">今日行情未驗證，暫停資金流判讀</div>';return}$('flowList').innerHTML=a.map(x=>`<div class="listRow"><div class="rank">${safe(x.icon||'•')}</div><div><div class="rName">${safe(x.name)}</div><div class="rSub">${safe(x.note)}</div></div><div class="score">${safe(x.score??'')}</div></div>`).join('')}
