@@ -45,13 +45,13 @@ class OffhoursArchiveTests(unittest.TestCase):
 
     def test_newest_shared_official_close_advances_only_off_hours(self):
         self.assertEqual(MOD.latest_shared_close_date(
-            {"2026-10-23"},{"2026-10-23"},"2026-10-25","2026-10-22",False,"2026-10-25"),"2026-10-23")
+            {"2026-10-22"},{"2026-10-22"},"2026-10-25","2026-10-21",False,"2026-10-25"),"2026-10-22")
         self.assertIsNone(MOD.latest_shared_close_date(
-            {"2026-10-23"},{"2026-10-23"},"2026-10-25","2026-10-23",False,"2026-10-25"))
+            {"2026-10-22"},{"2026-10-22"},"2026-10-25","2026-10-22",False,"2026-10-25"))
         self.assertIsNone(MOD.latest_shared_close_date(
-            {"2026-10-23"},{"2026-10-23"},"2026-10-25","2026-10-22",True,"2026-10-25"))
-        self.assertEqual(MOD.normalize_exchange_date("115/10/23"),"2026-10-23")
-        self.assertEqual(MOD.normalize_exchange_date("20261023"),"2026-10-23")
+            {"2026-10-22"},{"2026-10-22"},"2026-10-25","2026-10-21",True,"2026-10-25"))
+        self.assertEqual(MOD.normalize_exchange_date("115/10/22"),"2026-10-22")
+        self.assertEqual(MOD.normalize_exchange_date("20261022"),"2026-10-22")
 
     def test_reject_incomplete_stale_fake_private_or_expired_snapshots(self):
         base=verified()
