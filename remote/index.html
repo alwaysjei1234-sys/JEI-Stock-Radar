@@ -758,7 +758,7 @@ function exportHoldingsData(){
 }
 function importHoldingsData(){
  try{
-  const raw=$('importHoldings').value.trim().replace(/^JEI-HOLDINGS:/i,'');
+  const raw=$('importHoldings').value.trim().replace(/^\uFEFF/,'').replace(/^JEI-HOLDINGS:/i,'');
   if(!raw){toast('請貼上 JEI 持股匯入碼');return}
   let rows;
   if(raw.startsWith('[')||raw.startsWith('{')){
