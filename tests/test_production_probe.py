@@ -46,6 +46,8 @@ class ProductionProbeTests(unittest.TestCase):
                     "versionCode": 34,
                     "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/releases/download/jei-latest/JEI_Stock_Radar_V3.apk",
                 }), ""
+            if path in {"/index.html", "/strategy.html", "/industry_research.html", "/cash.html", "/holding-health.html", "/pick_validation.html"}:
+                return 200, "<!doctype html><html></html>", ""
             raise AssertionError(path)
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -54,7 +56,7 @@ class ProductionProbeTests(unittest.TestCase):
                 self.assertEqual(probe.main(), 1)
             with open(report, encoding="utf-8") as f:
                 results = json.load(f)
-            self.assertEqual(len(results), 5)
+            self.assertEqual(len(results), 11)
             self.assertTrue(all(x["available"] for x in results[:-1]))
             self.assertFalse(results[-1]["available"])
 
