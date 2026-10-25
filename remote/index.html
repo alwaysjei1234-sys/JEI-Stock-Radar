@@ -781,8 +781,8 @@ function importHoldingsData(){
    const shares=numberValue(x?.shares??x?.quantity??x?.qty??x?.股數??x?.數量);
    return{code,name,cost,shares};
   }).filter(x=>/^[0-9A-Z]{2,8}$/.test(x.code)&&Number.isFinite(x.cost)&&x.cost>0&&Number.isFinite(x.shares)&&x.shares>0);
-  if(!a.length){toast('未匯入：請確認 JSON 含 holdings 陣列及代號、成本、股數');return}
-  holdings=a;persistHoldings();renderHoldings();refreshMarket();$('importHoldings').value='';toast('已匯入 '+a.length+' 檔（含其他資產）')
+  if(!a.length){toast('未匯入：找不到有效持股資料；請確認代號、成本、股數完整');return}
+  holdings=a;persistHoldings();renderHoldings();refreshMarket();$('importHoldings').value='';toast('持股已匯入本機：'+a.length+' 檔')
  }catch(e){toast('匯入失敗：JSON 格式錯誤或欄位無法讀取')}
 }
 function saveHolding(){if(!JEI_PRIVATE_APP)return;const code=$('editCode').value.trim().toUpperCase(),name=$('editName').value.trim()||code,cost=+$('editCost').value,shares=+$('editShares').value;if(!code||!cost||!shares){toast('請填代號、成本、股數');return}const i=holdings.findIndex(x=>x.code===code),o={code,name,cost,shares};if(i>=0)holdings[i]=o;else holdings.push(o);persistHoldings();renderHoldings();refreshMarket();toast('持股已存手機')}
