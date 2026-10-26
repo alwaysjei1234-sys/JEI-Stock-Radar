@@ -1194,6 +1194,9 @@ def main():
         "institutional":institutional,
         "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
         "holdings":public_signals,"priority":priority,"attack":attack,"next":next_list,"monster":monster,"tomorrow_monster":tomorrow_monster,"future_monster":future_monster,"rotate":rotate,"flow":flow,
+        "avoid_chase":[{"code":x["code"],"name":x["name"],"as_of":raw_date,
+                        "reason":str(raw_date)+"收盤漲幅 "+str(x.get("change_pct"))+"%｜短線追高風險，等新交易日確認"}
+                       for x in monster if (x.get("change_pct") or 0)>=9.5 or "過熱警戒" in x.get("reason","")][:8],
         "backtest":backtest,
         "patterns":patterns,
         "web_recommendations":old_web_recommendations,
