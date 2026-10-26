@@ -62,6 +62,19 @@ async function run(){
   assert.equal(await page.locator('#holdToolbar').isVisible(),false,'private sort/filter controls never shown on public browser');
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>/已連線/.test(document.querySelector('#sysStatus')?.textContent||''),null,{timeout:15000});
+  // A closed exchange must be labeled as closed, with dated historical-only picks.
+  await page.evaluate(()=>{
+    window.__marketBeforeClosureTest=system;
+    system={...system,data_date:'2026-10-22',market:{...system.market,
+      mode:'最近收盤',stale:true,historical_readonly:true,session_status:'休市',
+      session_reason:'光復節補假',next_expected_session:'2026-10-27',
+      status_updated_at:'2026-10-26 14:56'}};
+    renderSystem();
+  });
+  assert.match(await page.locator('#riskTime').innerText(),/今日休市.*光復節補假.*2026-10-22/);
+  assert.match(await page.locator('#marketState').innerText(),/休市.*最近收盤/);
+  assert.match(await page.locator('#liveDiagnostics').innerText(),/本日不產生新選股/);
+  await page.evaluate(()=>{system=window.__marketBeforeClosureTest;delete window.__marketBeforeClosureTest;renderSystem();});
   await page.waitForFunction(()=>document.querySelector('#jeiPickSync')?.textContent.includes('官方收盤'),null,{timeout:15000});
   assert.equal(await page.locator('#jeiPickDetails').evaluate(el=>el.open),false,'long performance breakdown starts collapsed');
   assert.match(await page.locator('#jeiPickDetailsSummary').innerText(),/已完成的策略／週期明細（5 組）/);
