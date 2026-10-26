@@ -3,7 +3,7 @@
   "updated_at": "2026-10-25 16:21",
   "data_date": "2026-10-22",
   "source_data_date": "2026-10-22",
-  "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
+  "summary": "今日休市：光復節補假；保留 2026-10-22 歷史名單，暫停新選股及交易訊號。",
   "risk": {
     "level": "red",
     "label": "高風險防守",
@@ -26,12 +26,14 @@
     "institutional_net_lots": -136360,
     "institutional_3d_sell_avg": 57.5,
     "institutional_5d_sell_avg": 55.8,
-    "institutional_withdrawal": false
+    "institutional_withdrawal": false,
+    "as_of": "2026-10-22",
+    "actionable": false
   },
   "market": {
     "status": "紅燈防守",
     "mode": "最近收盤",
-    "last_checked_at": "2026-10-26 14:17",
+    "last_checked_at": "2026-10-26 14:56",
     "live_count": 0,
     "close_count": 1955,
     "live_coverage_pct": 0.0,
@@ -40,37 +42,29 @@
     "historical_readonly": true,
     "post_close_refresh": false,
     "live_diagnostics": {
-      "attempted": true,
+      "attempted": false,
       "market_open": false,
-      "quote_refresh_window": true,
-      "updater_time_taipei": "2026-10-26 14:17",
+      "quote_refresh_window": false,
+      "updater_time_taipei": "2026-10-26 14:56",
       "valid_trades": 0,
-      "mis_stats": {
-        "requested_channels": 1957,
-        "returned_messages": 1957,
-        "matched_codes": 1957,
-        "rejected_date": 1957,
-        "rejected_time": 0,
-        "rejected_price": 0,
-        "missing_last_trade": 0,
-        "missing_previous_close": 0,
-        "incomplete_with_volume": 188,
-        "retry_requested": 100,
-        "retry_recovered": 0
-      },
+      "mis_stats": {},
       "required_trades": 500,
       "required_coverage_pct": 35,
       "errors": [],
-      "reason": "MIS 有效成交不足，保留已驗證歷史收盤"
+      "reason": "非行情更新時段"
     },
-    "brief": "最近收盤多因子市場｜加權 -1.81%｜廣度 21.7%｜中位數 -0.98%｜跌逾5% 197｜行情時間以最近檢查時間為準",
+    "brief": "今日休市（光復節補假）｜最近有效收盤 2026-10-22｜歷史候選僅供研究，不是今日選股",
     "partial_live": {
-      "asof": "2026-10-26 14:17",
+      "asof": "2026-10-26 14:56",
       "verified_count": 0,
       "coverage_pct": 0.0,
       "complete": false,
       "quotes": []
-    }
+    },
+    "session_status": "休市",
+    "session_reason": "光復節補假",
+    "next_expected_session": "2026-10-27",
+    "status_updated_at": "2026-10-26 14:56"
   },
   "sectors": [
     {
