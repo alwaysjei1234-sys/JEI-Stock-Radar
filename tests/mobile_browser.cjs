@@ -74,7 +74,7 @@ async function run(){
   assert.match(await page.locator('#riskTime').innerText(),/今日休市.*光復節補假.*2026-10-22/);
   assert.match(await page.locator('#marketState').innerText(),/休市.*最近收盤/);
   assert.match(await page.locator('#liveDiagnostics').textContent(),/本日不產生新選股/);
-  assert.match(await page.locator('#avoidChaseList').innerText(),/2468 華經.*追高風險/);
+  assert.match(await page.locator('#avoidChaseList').textContent(),/2468 華經.*追高風險/);
   await page.evaluate(()=>{system=window.__marketBeforeClosureTest;delete window.__marketBeforeClosureTest;renderSystem();});
   await page.waitForFunction(()=>document.querySelector('#jeiPickSync')?.textContent.includes('官方收盤'),null,{timeout:15000});
   assert.equal(await page.locator('#jeiPickDetails').evaluate(el=>el.open),false,'long performance breakdown starts collapsed');
