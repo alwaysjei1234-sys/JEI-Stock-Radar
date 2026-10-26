@@ -1002,7 +1002,8 @@ def main():
         pass
     latest_close_date=latest_shared_close_date(
         final_twse_dates,final_tpex_dates,today_iso,previous_data_date,market_open,today_iso)
-    source_is_today=latest_close_date is not None
+    # A verified exchange closure overrides apparent source dates; never mint a holiday candle.
+    source_is_today=latest_close_date is not None and not known_closure
     if source_is_today:
         source_data_date=latest_close_date
         raw_date=latest_close_date
