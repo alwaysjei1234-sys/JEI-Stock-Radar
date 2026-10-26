@@ -86,7 +86,9 @@ class OffhoursArchiveTests(unittest.TestCase):
         self.assertGreaterEqual(market["market"]["close_count"],500)
         self.assertGreater(len(market["attack"]),0)
         self.assertGreater(len(market["sectors"]),0)
-        self.assertEqual(market["holdings"],{})
+        self.assertTrue(MOD.is_safe_public_holdings(market["holdings"]))
+        self.assertTrue(all("cost" not in row and "shares" not in row and "pnl" not in row
+                            for row in market["holdings"].values()))
         self.assertIsNotNone(MOD.validated_previous_close(market,datetime.strptime(market["updated_at"],"%Y-%m-%d %H:%M").replace(tzinfo=TAIPEI)+timedelta(minutes=1)))
 
     def test_no_weekend_candle_in_published_history(self):
