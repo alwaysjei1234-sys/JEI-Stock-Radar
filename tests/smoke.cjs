@@ -3,7 +3,7 @@ let passed=0,failed=0;
 function check(label,fn){try{fn();passed++;console.log('PASS',label)}catch(e){failed++;console.error('FAIL',label,e.stack||e.message);process.exitCode=1}}
 check('Public page guards private routes',()=>{assert.match(html,/function go\(id\)\{if\(!JEI_PRIVATE_APP/);assert.match(html,/function loadHoldings\(\)\{if\(!JEI_PRIVATE_APP/)});
 check('No public portfolio nodes removed (prevents JS null dereference)',()=>assert.doesNotMatch(html,/querySelectorAll\('#hold,#rotate'\)\.forEach\(el=>el\.remove\(\)\)/));
-check('Public feed strips private positions',()=>{assert.match(py,/if out\.get\("holdings"\):/);assert.match(html,/system\.holdings=JEI_PRIVATE_APP\?/)});
+check('Public feed allows only safe ticker signals, never private positions',()=>{assert.match(py,/is_safe_public_holdings\(out\.get\("holdings"\)\)/);assert.match(html,/system\.holdings=JEI_PRIVATE_APP\?/)});
 check('Android public static feed failover is restricted',()=>{const worker=fs.readFileSync('app/src/main/java/com/jei/stockradar/RiskWorker.java','utf8');assert.ok(activity.includes('getRemoteStatic(pageUrl)')&&activity.includes('getRemoteStatic(SYSTEM_JSON)')&&activity.includes('getRemoteStatic(UPDATE_JSON)')&&activity.includes('getRemoteStatic(sourceUrl)'));assert.ok(worker.includes('getStaticFeed(SYSTEM_JSON)')&&worker.includes('getStaticFeed(UPDATE_JSON)'));assert.ok(activity.includes('raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/'));assert.ok(worker.includes('raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/'))});
 check('Published Android manifest matches app version',()=>{
  const gradle=fs.readFileSync('app/build.gradle','utf8');
