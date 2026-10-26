@@ -11,6 +11,14 @@ except ModuleNotFoundError as exc:
     if exc.name not in ("scripts", "scripts.pattern_signals"):
         raise
     from pattern_signals import build_pattern_signals, attach_verified_ohlcv
+try:
+    from scripts.market_sessions import closure_reason, next_expected_session
+    from scripts.public_holding_signals import is_safe_public_holdings, build_public_holding_signals
+except ModuleNotFoundError as exc:
+    if exc.name not in ("scripts", "scripts.market_sessions", "scripts.public_holding_signals"):
+        raise
+    from market_sessions import closure_reason, next_expected_session
+    from public_holding_signals import is_safe_public_holdings, build_public_holding_signals
 
 TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
@@ -515,7 +523,7 @@ def validated_previous_close(previous, now, max_age_days=7):
             or not isinstance(market.get("close_count"), (int,float))
             or market["close_count"] < 500):
         return None
-    if previous.get("holdings") not in (None, {}):
+    if not is_safe_public_holdings(previous.get("holdings")):
         return None
     try:
         verified_day=datetime.strptime(previous["data_date"], "%Y-%m-%d").date()
@@ -640,6 +648,7 @@ def main():
     now=datetime.now(TZ)
     today_iso=now.strftime("%Y-%m-%d")
     previous_data_date=None
+    previous_feed={}
     try:
         previous_feed=json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
         candidate_date=previous_feed.get("data_date") if isinstance(previous_feed,dict) else None
@@ -682,9 +691,10 @@ def main():
     minutes=now.hour*60+now.minute
     # Weekdays are only potential sessions: a typhoon closure or holiday must
     # also pass the exchange-date checks below before quotes become actionable.
-    market_open=now.weekday()<5 and 540<=minutes<810  # candidate window, not proof of a session
-    quote_refresh_window=now.weekday()<5 and 525<=minutes<960
-    post_close_refresh=now.weekday()<5 and 840<=minutes<960
+    known_closure=closure_reason(now.date())
+    market_open=not known_closure and now.weekday()<5 and 540<=minutes<810
+    quote_refresh_window=not known_closure and now.weekday()<5 and 525<=minutes<960
+    post_close_refresh=not known_closure and now.weekday()<5 and 840<=minutes<960
     if quote_refresh_window:
         try:rows,live_count,taiex_live,live_errors,live_stats=enrich_live(rows)
         except Exception as e:live_errors.append(str(e))
@@ -1051,6 +1061,19 @@ def main():
                     if monthly:files_by_code[code]=monthly
                 attach_verified_ohlcv(archived_patterns,files_by_code)
                 retained["patterns"]=archived_patterns
+            # An official exchange closure is not a live quote outage.
+            # Keep prior selections as dated historical research, not new picks.
+            if known_closure:
+                retained["market"].update({
+                    "mode":"最近收盤",
+                    "session_status":"休市",
+                    "session_reason":known_closure,
+                    "next_expected_session":next_expected_session(now.date()),
+                    "status_updated_at":now.strftime("%Y-%m-%d %H:%M"),
+                    "brief":f"今日休市（{known_closure}）｜最近有效收盤 {retained['data_date']}｜歷史候選僅供研究，不是今日選股"
+                })
+                retained["risk"]={**retained.get("risk",{}),"as_of":retained["data_date"],"actionable":False}
+                retained["summary"]=f"今日休市：{known_closure}；保留 {retained['data_date']} 歷史名單，暫停新選股及交易訊號。"
             # Expose only individually date-verified MIS trades as a clearly partial sample.
             # Never turn a partial sample into market-wide trading signals.
             retained["market"]["partial_live"]={"asof":now.strftime("%Y-%m-%d %H:%M"),"verified_count":live_count,"coverage_pct":round(live_coverage*100,1),"complete":False,"quotes":[{"code":x["code"],"price":x["close"],"quote_time":x.get("quote_time")} for x in stocks if x.get("live") is True and x.get("quote_time")][:250]}
@@ -1137,6 +1160,17 @@ def main():
         old_web_status["ok"]=False
         old_web_status["summary"]="網路推薦名單為空；等待下一輪外部資料交叉驗證，不提供虛構候選"
 
+    # Recompute only public ticker-only signals from dated official closes.
+    # Personal cost, quantity and P/L never enter this feed.
+    try:
+        price_archive=json.loads(DAILY_PRICES.read_text(encoding="utf-8"))
+        price_days=price_archive.get("days",{}) if isinstance(price_archive,dict) else {}
+    except (OSError,ValueError,TypeError):
+        price_days={}
+    prior_public_holdings=(previous_feed.get("holdings") or {}) if isinstance(previous_feed,dict) else {}
+    public_signals=build_public_holding_signals(
+        prior_public_holdings,price_days,raw_date,risk,
+        {x["code"]:x["close"] for x in stocks} if official_close_verified else {})
     out={
         "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,"source_data_date":source_data_date,
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
@@ -1159,7 +1193,7 @@ def main():
         "universe":[{"code":x["code"],"name":x["name"],"market":x["market"]} for x in stocks if re.fullmatch(r"[1-9][0-9]{3}",x["code"])],
         "institutional":institutional,
         "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
-        "holdings":{},"priority":priority,"attack":attack,"next":next_list,"monster":monster,"tomorrow_monster":tomorrow_monster,"future_monster":future_monster,"rotate":rotate,"flow":flow,
+        "holdings":public_signals,"priority":priority,"attack":attack,"next":next_list,"monster":monster,"tomorrow_monster":tomorrow_monster,"future_monster":future_monster,"rotate":rotate,"flow":flow,
         "backtest":backtest,
         "patterns":patterns,
         "web_recommendations":old_web_recommendations,
@@ -1169,8 +1203,8 @@ def main():
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
     # Public feed must never expose personal portfolio positions or valuations.
-    if out.get("holdings"):
-        raise RuntimeError("Privacy check failed: public holdings must be empty")
+    if not is_safe_public_holdings(out.get("holdings")):
+        raise RuntimeError("Privacy check failed: disallowed public holdings fields")
     forbidden={"cost","shares","pnl","pnl_pct","market_value","avg_cost"}
     for code, holding_row in (out.get("holdings") or {}).items():
         if isinstance(holding_row,dict) and forbidden.intersection(holding_row):
