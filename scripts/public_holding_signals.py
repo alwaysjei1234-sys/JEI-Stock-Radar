@@ -18,7 +18,7 @@ def is_safe_public_holdings(rows):
             return False
         if not isinstance(row, dict) or not set(row).issubset(FIELDS):
             return False
-        if "score" in row and (isinstance(row["score"], bool) or not isinstance(row["score"], int) or not 0 <= row["score"] <= 100):
+        if "score" in row and row["score"] is not None and (isinstance(row["score"], bool) or not isinstance(row["score"], int) or not 0 <= row["score"] <= 100):
             return False
         for key in ("defense", "target"):
             if key in row and row[key] is not None and (isinstance(row[key], bool) or not isinstance(row[key], (int, float)) or not 0 < row[key] < 1000000):
