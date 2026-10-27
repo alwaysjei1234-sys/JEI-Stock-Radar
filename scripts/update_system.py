@@ -146,7 +146,9 @@ def fetch_tpex_daily(date_obj):
     # dated, explicitly stale snapshot instead of publishing false freshness.
     unique={x["code"]:x for x in out if x.get("close",0)>0}
     if len(unique)<500:
-        raise RuntimeError(f"TPEx daily_close_quotes coverage too low: {len(unique)} valid symbols")
+        keys=",".join(list(j)[:12]) if isinstance(j,dict) else type(j).__name__
+        sample=str(rows[0])[:110] if rows else "none"
+        raise RuntimeError(f"TPEx daily_close_quotes coverage too low: {len(unique)} valid symbols; raw_rows={len(rows)}; keys={keys}; first={sample}")
     return list(unique.values())
 
 def fetch_latest_offhours_close(rows, now, previous_data_date):
