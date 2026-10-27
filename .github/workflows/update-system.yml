@@ -64,14 +64,27 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json
           git commit -m "Auto-update JEI market feed"
-          for i in 1 2 3; do
+          for i in 1 2 3 4; do
             if git push; then exit 0; fi
-            echo "Push raced with another main update; rebasing feed commit (attempt $i)"
+            if [ "$i" = 4 ]; then break; fi
+            echo "Push raced with another main update; rebuilding feed on latest main (attempt $i)"
+            # Rebasing generated JSON causes unresolvable content conflicts.
+            # Rebuild from the latest main instead; never force-push or discard
+            # another writer's market status, holdings or research updates.
             git fetch origin main
-            git rebase origin/main
+            git reset --hard origin/main
+            python scripts/update_system.py
+            python -m scripts.validate_market_session remote/system.json
+            python scripts/collect_news_rss.py || echo "RSS refresh unavailable during retry"
+            if git diff --quiet -- remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json; then
+              echo "Latest main already contains the refreshed feed"
+              exit 0
+            fi
+            git add remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json
+            git commit -m "Auto-update JEI market feed after push race"
             sleep 3
           done
-          echo "Feed publish failed after retries"
+          echo "Feed publish failed after rebuilding on latest main"
           exit 1
       - name: Optional verified intraday LINE risk or momentum alert
         if: github.event_name == 'schedule'
