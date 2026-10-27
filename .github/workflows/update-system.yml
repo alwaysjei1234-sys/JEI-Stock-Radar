@@ -14,6 +14,7 @@ on:
       - 'scripts/update_system.py'
       - 'tests/test_update_system_recovery.py'
       - 'tests/test_validate_market_session.py'
+      - 'tests/test_tpex_latest_close_fallback.py'
       - 'scripts/validate_market_session.py'
       - 'data/twse_ohlcv/**'
       - '.github/workflows/backfill-twse-ohlcv.yml'
@@ -42,6 +43,8 @@ jobs:
         run: python -m py_compile scripts/update_system.py
       - name: Test damaged-feed recovery before market access
         run: python -m unittest discover -s tests -p 'test_update_system_recovery.py'
+      - name: Test TPEx same-day close fallback
+        run: python -m unittest discover -s tests -p 'test_tpex_latest_close_fallback.py'
       - name: Build market feed
         run: python scripts/update_system.py
       - name: Reject stale holiday labels and false current closes
