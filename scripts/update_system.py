@@ -1062,23 +1062,43 @@ def main():
                     if monthly:files_by_code[code]=monthly
                 attach_verified_ohlcv(archived_patterns,files_by_code)
                 retained["patterns"]=archived_patterns
-            # An official exchange closure is not a live quote outage.
-            # Keep prior selections as dated historical research, not new picks.
+            # Carry-over metadata from a holiday must not label the NEXT
+            # trading day as a holiday while official closes are still delayed.
+            stamp=now.strftime("%Y-%m-%d %H:%M")
+            retained["updated_at"]=stamp
+            retained["market"].update({
+                "mode":"最近收盤",
+                "stale":True,
+                "historical_readonly":True,
+                "live_valid":False,
+                "no_new_picks":True,
+                "market_data_as_of":retained["data_date"],
+                "status_updated_at":stamp,
+            })
             if known_closure:
                 retained["market"].update({
-                    "mode":"最近收盤",
                     "session_status":"休市",
                     "session_reason":known_closure,
                     "next_expected_session":next_expected_session(now.date()),
-                    "status_updated_at":now.strftime("%Y-%m-%d %H:%M"),
                     "brief":f"今日休市（{known_closure}）｜最近有效收盤 {retained['data_date']}｜歷史候選僅供研究，不是今日選股"
                 })
-                retained["risk"]={**retained.get("risk",{}),"as_of":retained["data_date"],"actionable":False}
                 retained["summary"]=f"今日休市：{known_closure}；保留 {retained['data_date']} 歷史名單，暫停新選股及交易訊號。"
-            # Expose only individually date-verified MIS trades as a clearly partial sample.
-            # Never turn a partial sample into market-wide trading signals.
-            retained["market"]["partial_live"]={"asof":now.strftime("%Y-%m-%d %H:%M"),"verified_count":live_count,"coverage_pct":round(live_coverage*100,1),"complete":False,"quotes":[{"code":x["code"],"price":x["close"],"quote_time":x.get("quote_time")} for x in stocks if x.get("live") is True and x.get("quote_time")][:250]}
-            retained["market"]["live_diagnostics"]={"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":now.strftime("%Y-%m-%d %H:%M"),"valid_trades":live_count,"mis_stats":live_stats,"required_trades":500,"required_coverage_pct":35,"errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],"reason":("非行情更新時段" if not quote_refresh_window else "MIS 有效成交不足，保留已驗證歷史收盤")}
+            else:
+                retained["market"].update({
+                    "session_status":"交易日資料待驗證",
+                    "session_reason":"TWSE／TPEx 當日官方收盤尚未完成交叉驗證",
+                    "next_expected_session":None,
+                    "brief":f"交易日官方收盤待驗證｜最近有效收盤 {retained['data_date']}｜今日選股暫停，歷史名單僅供研究"
+                })
+                retained["summary"]=f"{stamp} 官方雙市場收盤尚未驗證；保留 {retained['data_date']} 歷史名單，暫停今日新選股。"
+            retained["risk"]={**retained.get("risk",{}),"as_of":retained["data_date"],"actionable":False}
+            # Keep public ticker-only tracked symbols visible in the PARTIAL
+            # dated MIS sample without exposing private costs or quantities.
+            tracked_codes=set(retained.get("holdings") or {})
+            live_sample=[x for x in stocks if x.get("live") is True and x.get("quote_time")]
+            live_sample.sort(key=lambda x:(x["code"] not in tracked_codes,x["code"]))
+            retained["market"]["partial_live"]={"asof":stamp,"verified_count":live_count,"coverage_pct":round(live_coverage*100,1),"complete":False,"quotes":[{"code":x["code"],"price":x["close"],"quote_time":x.get("quote_time")} for x in live_sample[:250]]}
+            retained["market"]["live_diagnostics"]={"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":stamp,"valid_trades":live_count,"mis_stats":live_stats,"required_trades":500,"required_coverage_pct":35,"errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],"reason":("官方休市，不更新即時行情" if known_closure else "官方雙市場收盤尚未驗證；MIS 個別成交僅供部分報價參考")}
             OUT.write_text(json.dumps(retained,ensure_ascii=False,indent=2),encoding="utf-8")
             print(json.dumps({"status":"archived_close_only",
                               "data_date":retained["data_date"],
