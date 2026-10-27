@@ -122,34 +122,65 @@ def fetch_json_fast(url, timeout=8, tries=1):
     raise last
 
 
+def parse_tpex_latest_snapshot(payload, date_obj):
+    """Accept only a full official TPEx OpenAPI snapshot for the exact requested day."""
+    if not isinstance(payload,list):
+        raise RuntimeError("TPEx latest OpenAPI payload is not a list")
+    expected=date_obj.isoformat()
+    observed=set()
+    unique={}
+    for row in payload:
+        if not isinstance(row,dict):continue
+        day=normalize_exchange_date(row.get("Date"))
+        if day:observed.add(day)
+        if day!=expected:continue
+        code=str(row.get("SecuritiesCompanyCode") or "").strip()
+        close=num(row.get("Close"))
+        if re.fullmatch(r"[1-9][0-9]{3}",code) and close is not None and close>0:
+            unique[code]={"code":code,"close":close}
+    if observed!={expected}:
+        raise RuntimeError(f"TPEx latest OpenAPI date mismatch: expected={expected}; observed={sorted(observed)[:4]}")
+    if len(unique)<500:
+        raise RuntimeError(f"TPEx latest OpenAPI coverage too low: {len(unique)} valid stocks")
+    return list(unique.values())
+
+
 def fetch_tpex_daily(date_obj):
-    # Official TPEx whole-market daily close quotes.
+    # Try the date-specific historical endpoint first. When its CDN response
+    # is empty, the official latest-only OpenAPI is a safe fallback ONLY if
+    # its embedded Date matches the requested trading day exactly.
     roc=f"{date_obj.year-1911}/{date_obj.month:02d}/{date_obj.day:02d}"
     url="https://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_result.php?"+urllib.parse.urlencode({
         "l":"zh-tw","o":"json","d":roc,"s":"0,asc,0"
     })
-    j=fetch_json_fast(url, timeout=8, tries=1)
-    rows=(j.get("aaData") or j.get("data") or []) if isinstance(j,dict) else []
-    out=[]
-    for row in rows:
-        if isinstance(row,list) and len(row)>=3:
-            code=re.sub(r"<[^>]+>","",str(row[0])).strip()
-            close=num(row[2])
-        elif isinstance(row,dict):
-            code=str(pick(row,"SecuritiesCompanyCode","Code","股票代號","證券代號") or "").strip()
-            close=num(pick(row,"Close","ClosePrice","收盤價"))
-        else:continue
-        if re.fullmatch(r"[0-9A-Z]{4,8}",code) and close is not None:
-            out.append({"code":code,"close":close})
-    # A partial/blocked TPEx response must not masquerade as full-market data.
-    # Reject tiny result sets and duplicates; the caller may fall back to a
-    # dated, explicitly stale snapshot instead of publishing false freshness.
-    unique={x["code"]:x for x in out if x.get("close",0)>0}
-    if len(unique)<500:
+    old_problem="unknown"
+    try:
+        j=fetch_json_fast(url,timeout=8,tries=1)
+        rows=(j.get("aaData") or j.get("data") or []) if isinstance(j,dict) else []
+        out=[]
+        for row in rows:
+            if isinstance(row,list) and len(row)>=3:
+                code=re.sub(r"<[^>]+>","",str(row[0])).strip()
+                close=num(row[2])
+            elif isinstance(row,dict):
+                code=str(pick(row,"SecuritiesCompanyCode","Code","股票代號","證券代號") or "").strip()
+                close=num(pick(row,"Close","ClosePrice","收盤價"))
+            else:continue
+            if re.fullmatch(r"[1-9][0-9]{3}",code) and close is not None and close>0:
+                out.append({"code":code,"close":close})
+        unique={x["code"]:x for x in out}
+        if len(unique)>=500:
+            return list(unique.values())
         keys=",".join(list(j)[:12]) if isinstance(j,dict) else type(j).__name__
-        sample=str(rows[0])[:110] if rows else "none"
-        raise RuntimeError(f"TPEx daily_close_quotes coverage too low: {len(unique)} valid symbols; raw_rows={len(rows)}; keys={keys}; first={sample}")
-    return list(unique.values())
+        old_problem=f"coverage={len(unique)}, raw_rows={len(rows)}, keys={keys}"
+    except Exception as exc:
+        old_problem=f"{type(exc).__name__}: {str(exc)[:100]}"
+    try:
+        snapshot=fetch_json_fast("https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes",timeout=12,tries=1)
+        return parse_tpex_latest_snapshot(snapshot,date_obj)
+    except Exception as exc:
+        raise RuntimeError(f"TPEx daily close unavailable: historical({old_problem}); latest({type(exc).__name__}: {str(exc)[:125]})") from exc
+
 
 def fetch_latest_offhours_close(rows, now, previous_data_date):
     """Backfill a newer shared TWSE/TPEx official close after the live session."""
