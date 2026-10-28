@@ -25,11 +25,13 @@ permissions:
 
 concurrency:
   group: jei-market-feed
-  cancel-in-progress: true
+  # Do not cancel an in-flight 5-minute refresh when the next scheduled tick arrives.
+  cancel-in-progress: false
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
