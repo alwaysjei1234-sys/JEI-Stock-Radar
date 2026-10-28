@@ -1,24 +1,24 @@
 {
   "schema": 4,
-  "updated_at": "2026-10-28 11:12",
+  "updated_at": "2026-10-28 11:54",
   "data_date": "TWSE:2026-10-27 / TPEx:2026-10-27",
   "source_data_date": "TWSE:2026-10-27 / TPEx:2026-10-27",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
   "risk": {
     "level": "green",
     "label": "資料過期，暫停判讀",
-    "score": 41,
+    "score": 42,
     "cash": "20%–30%",
     "reasons": [
       "行情來源日期 TWSE:2026-10-27 / TPEx:2026-10-27，不是今天；今日風險與選股訊號暫停判讀"
     ],
-    "breadth": 45.5,
+    "breadth": 45.7,
     "median_pct": 0.0,
-    "down5": 69,
-    "limit_down": 9,
+    "down5": 66,
+    "limit_down": 12,
     "divergence": false,
     "institutional_sell_ratio": 41.9,
-    "institutional_net_lots": 178946,
+    "institutional_net_lots": 179014,
     "institutional_3d_sell_avg": 47.1,
     "institutional_5d_sell_avg": 49.6,
     "institutional_withdrawal": false
@@ -26,10 +26,10 @@
   "market": {
     "status": "資料過期",
     "mode": "資料過期",
-    "last_checked_at": "2026-10-28 11:12",
-    "live_count": 153,
-    "close_count": 1968,
-    "live_coverage_pct": 7.8,
+    "last_checked_at": "2026-10-28 11:54",
+    "live_count": 186,
+    "close_count": 1969,
+    "live_coverage_pct": 9.4,
     "live_valid": false,
     "stale": true,
     "historical_readonly": true,
@@ -38,27 +38,27 @@
       "attempted": true,
       "market_open": true,
       "quote_refresh_window": true,
-      "updater_time_taipei": "2026-10-28 11:12",
-      "valid_trades": 153,
+      "updater_time_taipei": "2026-10-28 11:54",
+      "valid_trades": 186,
       "mis_stats": {
         "requested_channels": 1969,
         "returned_messages": 1969,
         "matched_codes": 1969,
         "rejected_date": 0,
         "rejected_time": 0,
-        "rejected_price": 1816,
-        "missing_last_trade": 1816,
+        "rejected_price": 1783,
+        "missing_last_trade": 1783,
         "missing_previous_close": 0,
-        "incomplete_with_volume": 1767,
+        "incomplete_with_volume": 1747,
         "retry_requested": 100,
-        "retry_recovered": 6
+        "retry_recovered": 4
       },
       "required_trades": 500,
       "required_coverage_pct": 35,
       "errors": [],
       "reason": "MIS 查詢失敗或有效成交價覆蓋率不足"
     },
-    "brief": "資料過期多因子市場｜加權 +1.40%｜廣度 45.5%｜中位數 +0.00%｜跌逾5% 69｜行情時間以最近檢查時間為準"
+    "brief": "資料過期多因子市場｜加權 +1.57%｜廣度 45.7%｜中位數 +0.00%｜跌逾5% 66｜行情時間以最近檢查時間為準"
   },
   "sectors": [],
   "stock_sectors": {
@@ -6697,6 +6697,11 @@
     {
       "code": "3689",
       "name": "湧德",
+      "market": "TPEX"
+    },
+    {
+      "code": "3691",
+      "name": "碩禾",
       "market": "TPEX"
     },
     {
@@ -18985,6 +18990,13 @@
       "total": 72683.0,
       "source": "TPEx OpenAPI"
     },
+    "3691": {
+      "foreign": 61990.0,
+      "trust": 0.0,
+      "dealer": 5517.0,
+      "total": 67507.0,
+      "source": "TPEx OpenAPI"
+    },
     "3693": {
       "foreign": 886075.0,
       "trust": 0.0,
@@ -22964,7 +22976,7 @@
   },
   "institutional_status": {
     "ok": true,
-    "count": 1860,
+    "count": 1861,
     "errors": [],
     "debug": {
       "twse_fields": [
