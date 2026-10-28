@@ -117,8 +117,13 @@ class OffhoursArchiveTests(unittest.TestCase):
     def test_no_weekend_candle_in_published_history(self):
         history=json.loads((ROOT/"remote/history.json").read_text(encoding="utf-8"))
         self.assertFalse(any(x.get("date") in ("2026-10-17","2026-10-18") for x in history))
-        self.assertLessEqual(history[-1]["date"],market_latest_date(history))
-        self.assertLess(datetime.fromisoformat(history[-1]["date"]).weekday(),5)
+        dates=[datetime.fromisoformat(row["date"]).date() for row in history]
+        self.assertEqual(dates,sorted(set(dates)),"archive dates must be strictly increasing and unique")
+        self.assertLessEqual(dates[-1],datetime.now(TAIPEI).date(),"archive cannot contain future candles")
+        self.assertTrue(all(MOD.closure_reason(day) is None for day in dates),
+                        "weekends, scheduled holidays and confirmed typhoon closures cannot have candles")
+        self.assertTrue(all(len(row.get("prices") or {})>=500 for row in history),
+                        "every archived day needs sufficient official price coverage")
         source=(ROOT/"scripts/update_system.py").read_text(encoding="utf-8")
         self.assertIn("if official_close_verified:",source)
         self.assertIn("history=update_history(history,date_key",source)
