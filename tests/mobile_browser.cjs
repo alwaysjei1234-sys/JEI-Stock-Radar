@@ -61,7 +61,7 @@ async function run(){
   assert.equal(await page.locator('#holdTriage').isVisible(),false,'private triage never shown on public browser');
   assert.equal(await page.locator('#holdToolbar').isVisible(),false,'private sort/filter controls never shown on public browser');
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
-  await page.waitForFunction(()=>/已連線/.test(document.querySelector('#sysStatus')?.textContent||''),null,{timeout:15000});
+  await page.waitForFunction(()=>/已取得|已連線/.test(document.querySelector('#sysStatus')?.textContent||''),null,{timeout:15000});
   // A closed exchange must be labeled as closed, with dated historical-only picks.
   await page.evaluate(()=>{
     window.__marketBeforeClosureTest=system;

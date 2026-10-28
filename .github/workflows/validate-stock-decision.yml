@@ -30,4 +30,4 @@ jobs:
         run: |
           node --check remote/stock_decision.js
           node --check scripts/test-stock-decision.cjs
-          node -e "const fs=require('fs');const h=fs.readFileSync('remote/index.html','utf8');if(!h.includes('id=\"jeiDecisionCard\"')||!h.includes('/remote/stock_decision.js'))process.exit(1)"
+          node -e "const fs=require('fs');const h=fs.readFileSync('remote/index.html','utf8');if(!h.includes('id=\"holdTriage\"')||!h.includes('function buildPrivatePortfolioTriage')||!h.includes('資料過期即停止分級'))process.exit(1)"

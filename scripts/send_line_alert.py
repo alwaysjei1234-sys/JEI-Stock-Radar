@@ -16,29 +16,47 @@ ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "remote" / "system.json"
 
 
-def trusted_live(feed, now):
-    """Only a broad, same-day, recent TWSE/TPEx trade-session snapshot qualifies."""
+def live_gate_reasons(feed, now):
+    """Explain every fail-closed reason that blocks intraday LINE alerts."""
+    reasons = []
     if now.tzinfo is None:
-        return False
+        return ["系統時間缺少時區"]
     local = now.astimezone(TAIPEI)
     minute = local.hour * 60 + local.minute
     m = feed.get("market") if isinstance(feed, dict) else None
-    if not isinstance(m, dict) or local.weekday() > 4 or not 540 <= minute < 810:
-        return False
-    if (feed.get("data_date") != local.date().isoformat()
-            or m.get("mode") != "盤中即時"
-            or m.get("stale") is not False
-            or m.get("live_valid") is not True):
-        return False
+    if not isinstance(m, dict):
+        return ["缺少市場診斷資料"]
+    if local.weekday() > 4 or not 540 <= minute < 810:
+        reasons.append("目前不在台股盤中時段")
+    if feed.get("data_date") != local.date().isoformat():
+        reasons.append(f"行情資料日 {feed.get('data_date') or '缺漏'} 與今天不同")
+    if m.get("mode") != "盤中即時":
+        reasons.append(f"行情狀態為 {m.get('mode') or '缺漏'}，不是盤中即時")
+    if m.get("stale") is not False:
+        reasons.append("市場資料標記為過期或未驗證")
+    if m.get("live_valid") is not True:
+        reasons.append("盤中行情尚未通過有效性驗證")
     count = m.get("live_count")
-    if isinstance(count, bool) or not isinstance(count, (int, float)) or count < 500:
-        return False
+    if isinstance(count, bool) or not isinstance(count, (int, float)):
+        reasons.append("有效成交檔數缺漏")
+    elif count < 500:
+        reasons.append(f"有效成交 {int(count)}/500 檔，覆蓋未達門檻")
     try:
         stamp = datetime.strptime(str(feed.get("updated_at") or ""), "%Y-%m-%d %H:%M").replace(tzinfo=TAIPEI)
     except ValueError:
-        return False
-    lag = (local - stamp).total_seconds()
-    return -120 <= lag <= 35 * 60
+        reasons.append("行情更新時間缺漏或格式錯誤")
+    else:
+        lag = (local - stamp).total_seconds()
+        if lag < -120:
+            reasons.append("行情更新時間晚於系統時間")
+        elif lag > 35 * 60:
+            reasons.append(f"行情更新已延遲 {int(lag // 60)} 分鐘")
+    return reasons
+
+
+def trusted_live(feed, now):
+    """Only a broad, same-day, recent TWSE/TPEx trade-session snapshot qualifies."""
+    return not live_gate_reasons(feed, now)
 
 
 def build_alert(feed, now):
@@ -105,9 +123,13 @@ def main():
     except (OSError, ValueError):
         print("JEI 行情快照不可讀；沒有發送")
         return
+    reasons = live_gate_reasons(feed, now)
+    if reasons:
+        print("LINE 盤中警報未送出：" + "；".join(reasons[:6]))
+        return
     report = build_alert(feed, now)
     if not report:
-        print("盤中異動未達高可信警戒門檻，或有效盤中行情不足；沒有發送")
+        print("行情已通過盤中驗證；本次未達高可信警報條件，沒有發送")
         return
     edition = report["edition"]
     ok, msg = can_send(report, edition, now, "true", token, recipient)

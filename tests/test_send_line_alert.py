@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from scripts.send_line_alert import trusted_live, build_alert
+from scripts.send_line_alert import trusted_live, build_alert, live_gate_reasons
 
 TZ = ZoneInfo("Asia/Taipei")
 NOW = datetime(2026, 10, 20, 10, 15, tzinfo=TZ)
@@ -49,6 +49,17 @@ class IntradayLineAlertTests(unittest.TestCase):
 
     def test_after_close_does_not_send_intraday_alert(self):
         self.assertIsNone(build_alert(feed(), datetime(2026, 10, 20, 14, 0, tzinfo=TZ)))
+
+    def test_low_coverage_reports_exact_blocking_reason(self):
+        f = feed()
+        f["market"].update({"mode": "資料過期", "live_valid": False, "live_count": 132, "stale": True})
+        f["data_date"] = "TWSE:2026-10-27 / TPEx:2026-10-27"
+        reasons = live_gate_reasons(f, NOW)
+        self.assertTrue(any("132/500" in reason for reason in reasons))
+        self.assertTrue(any("不是盤中即時" in reason for reason in reasons))
+        self.assertTrue(any("資料日" in reason for reason in reasons))
+        self.assertFalse(trusted_live(f, NOW))
+        self.assertIsNone(build_alert(f, NOW))
 
 
 if __name__ == "__main__":

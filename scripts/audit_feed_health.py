@@ -6,10 +6,18 @@ from datetime import datetime
 from pathlib import Path
 
 def check(feed):
-    market = feed.get("market", {})
-    diag = market.get("live_diagnostics", {})
-    stats = diag.get("mis_stats", {})
-    partial = market.get("partial_live", {})
+    market = feed.get("market") or {}
+    if not isinstance(market, dict):
+        market = {}
+    diag = market.get("live_diagnostics") or {}
+    if not isinstance(diag, dict):
+        diag = {}
+    stats = diag.get("mis_stats") or {}
+    if not isinstance(stats, dict):
+        stats = {}
+    partial = market.get("partial_live") or {}
+    if not isinstance(partial, dict):
+        partial = {}
     count = int(partial.get("verified_count") or 0)
     coverage = float(partial.get("coverage_pct") or 0)
     required = int(diag.get("required_trades") or 500)
