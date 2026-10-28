@@ -627,7 +627,7 @@ check('Native history UI escapes risk titles and syncs opt-out with Android Work
 
 check('Network recommendation success requires candidates',()=>assert.ok(py.includes('if not old_web_recommendations and old_web_status.get("ok"):')));
 
-check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=latest_close_date is not None'));assert.ok(py.includes('if official_close_verified:')&&py.includes('and not market_open and now.hour*60+now.minute>=810'));assert.ok(py.includes('fetch_latest_offhours_close'))});
+check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=(latest_close_date is not None and not known_closure')&&py.includes('final_twse_dates=={latest_close_date}')&&py.includes('final_tpex_dates=={latest_close_date}'));assert.ok(py.includes('if official_close_verified:')&&py.includes('and not market_open and now.hour*60+now.minute>=810'));assert.ok(py.includes('fetch_latest_offhours_close'))});
 
 check('TPEx close feed rejects partial responses',()=>{assert.ok(py.includes('len(unique)<500'));assert.ok(py.includes('coverage too low'));assert.ok(py.includes('return list(unique.values())'))});
 if(passed+failed<30){console.error('FAIL expected at least 30 independent checks');process.exitCode=1;}
