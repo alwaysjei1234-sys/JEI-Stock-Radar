@@ -41,6 +41,17 @@ def normalize_exchange_date(value):
         return f"{digits[:4]}-{digits[4:6]}-{digits[6:8]}"
     return None
 
+def verified_archive_date(value):
+    """Return a real ISO trading date or None; never invent a run-date candle."""
+    if not isinstance(value,str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}",value):
+        return None
+    try:
+        datetime.strptime(value,"%Y-%m-%d")
+    except ValueError:
+        return None
+    return value
+
+
 def latest_shared_close_date(twse_dates,tpex_dates,today,previous,market_open,now_date):
     """Use a newer, date-matched exchange close on off-hours refreshes only."""
     shared=set(twse_dates)&set(tpex_dates)
@@ -1165,7 +1176,7 @@ def main():
         flow=[]
     market_mode="資料過期" if stale_source else ("盤中即時" if live_valid else ("盤中資料不足" if market_open else ("今日收盤" if raw_date==today_iso else "最近收盤")))
     # Archive the actual verified exchange date; never fall back to today for malformed/mixed dates.
-    date_key=raw_date if re.fullmatch(r"\d{4}-\d{2}-\d{2}",str(raw_date)) else None
+    date_key=verified_archive_date(raw_date)
     history=hist_for_heat
     official_close_verified=(date_key is not None and source_is_today and market_mode in ("今日收盤","最近收盤")
                              and not market_open and now.hour*60+now.minute>=810)
