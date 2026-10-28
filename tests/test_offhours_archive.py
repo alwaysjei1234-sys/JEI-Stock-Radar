@@ -91,15 +91,28 @@ class OffhoursArchiveTests(unittest.TestCase):
         updated=datetime.strptime(market["updated_at"],"%Y-%m-%d %H:%M")
         data_day=datetime.strptime(market["data_date"],"%Y-%m-%d").date()
         self.assertGreaterEqual(updated.date(),data_day)
-        self.assertEqual(market["market"]["historical_readonly"],updated.date()!=data_day)
-        self.assertEqual(market["market"]["stale"],updated.date()!=data_day)
         self.assertGreaterEqual(market["market"]["close_count"],500)
-        self.assertGreater(len(market["attack"]),0)
-        self.assertGreater(len(market["sectors"]),0)
         self.assertTrue(MOD.is_safe_public_holdings(market["holdings"]))
         self.assertTrue(all("cost" not in row and "shares" not in row and "pnl" not in row
                             for row in market["holdings"].values()))
-        self.assertIsNotNone(MOD.validated_previous_close(market,datetime.strptime(market["updated_at"],"%Y-%m-%d %H:%M").replace(tzinfo=TAIPEI)+timedelta(minutes=1)))
+        if market["market"]["mode"]=="資料過期":
+            # A mixed-source feed is valid only as explicitly non-actionable
+            # historical research; it must never mint today's stock picks.
+            self.assertTrue(market["market"]["stale"])
+            self.assertTrue(market["market"]["historical_readonly"])
+            self.assertTrue(market["market"].get("no_new_picks"))
+            self.assertEqual(market["attack"],[])
+            self.assertEqual(market["next"],[])
+            self.assertEqual(market["monster"],[])
+            self.assertFalse(market["risk"].get("actionable",True))
+            self.assertNotEqual(market["risk"]["level"],"green")
+        else:
+            self.assertEqual(market["market"]["historical_readonly"],updated.date()!=data_day)
+            self.assertEqual(market["market"]["stale"],updated.date()!=data_day)
+            self.assertGreater(len(market["attack"]),0)
+            self.assertGreater(len(market["sectors"]),0)
+            self.assertIsNotNone(MOD.validated_previous_close(
+                market,datetime.strptime(market["updated_at"],"%Y-%m-%d %H:%M").replace(tzinfo=TAIPEI)+timedelta(minutes=1)))
 
     def test_no_weekend_candle_in_published_history(self):
         history=json.loads((ROOT/"remote/history.json").read_text(encoding="utf-8"))
