@@ -1,21 +1,21 @@
 {
   "schema": 4,
-  "updated_at": "2026-10-28 09:44",
+  "updated_at": "2026-10-28 10:27",
   "data_date": "TWSE:2026-10-27 / TPEx:2026-10-27",
   "source_data_date": "TWSE:2026-10-27 / TPEx:2026-10-27",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
   "risk": {
     "level": "yellow",
     "label": "資料過期，暫停判讀",
-    "score": 60,
+    "score": 62,
     "cash": "30%–50%",
     "reasons": [
       "行情來源日期 TWSE:2026-10-27 / TPEx:2026-10-27，不是今天；今日風險與選股訊號暫停判讀"
     ],
-    "breadth": 44.5,
+    "breadth": 44.6,
     "median_pct": -0.12,
-    "down5": 69,
-    "limit_down": 11,
+    "down5": 72,
+    "limit_down": 12,
     "divergence": true,
     "institutional_sell_ratio": 41.9,
     "institutional_net_lots": 178946,
@@ -26,10 +26,10 @@
   "market": {
     "status": "資料過期",
     "mode": "資料過期",
-    "last_checked_at": "2026-10-28 09:44",
-    "live_count": 120,
+    "last_checked_at": "2026-10-28 10:27",
+    "live_count": 132,
     "close_count": 1968,
-    "live_coverage_pct": 6.1,
+    "live_coverage_pct": 6.7,
     "live_valid": false,
     "stale": true,
     "historical_readonly": true,
@@ -38,27 +38,27 @@
       "attempted": true,
       "market_open": true,
       "quote_refresh_window": true,
-      "updater_time_taipei": "2026-10-28 09:44",
-      "valid_trades": 120,
+      "updater_time_taipei": "2026-10-28 10:27",
+      "valid_trades": 132,
       "mis_stats": {
         "requested_channels": 1969,
         "returned_messages": 1969,
         "matched_codes": 1969,
         "rejected_date": 0,
         "rejected_time": 0,
-        "rejected_price": 1849,
-        "missing_last_trade": 1849,
+        "rejected_price": 1837,
+        "missing_last_trade": 1837,
         "missing_previous_close": 0,
-        "incomplete_with_volume": 1693,
+        "incomplete_with_volume": 1748,
         "retry_requested": 100,
-        "retry_recovered": 7
+        "retry_recovered": 0
       },
       "required_trades": 500,
       "required_coverage_pct": 35,
       "errors": [],
       "reason": "MIS 查詢失敗或有效成交價覆蓋率不足"
     },
-    "brief": "資料過期多因子市場｜加權 +1.65%｜廣度 44.5%｜中位數 -0.12%｜跌逾5% 69｜行情時間以最近檢查時間為準"
+    "brief": "資料過期多因子市場｜加權 +1.15%｜廣度 44.6%｜中位數 -0.12%｜跌逾5% 72｜行情時間以最近檢查時間為準"
   },
   "sectors": [],
   "stock_sectors": {
