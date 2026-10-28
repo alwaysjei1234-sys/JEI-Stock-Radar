@@ -1263,7 +1263,16 @@ def main():
                                 "盤中有效成交價與覆蓋率已達標" if live_valid else
                                 "交易時段外：僅供收盤資料參考" if not market_open else
                                 "MIS 查詢失敗或有效成交價覆蓋率不足")},
-                  "brief":f"{market_mode}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜行情時間以最近檢查時間為準"},
+                  "brief":f"{market_mode}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜行情時間以最近檢查時間為準",
+                  "market_data_as_of":raw_date,
+                  "session_status":("休市" if known_closure else "交易日資料待驗證" if stale_source else "已驗證"),
+                  "no_new_picks":bool(stale_source),
+                  "partial_live":({"asof":now.strftime("%Y-%m-%d %H:%M"),"verified_count":live_count,
+                                   "complete":False,
+                                   "quotes":[{"code":x["code"],"price":x["close"],"quote_time":x.get("quote_time")}
+                                             for x in stocks if x.get("live") is True
+                                             and x["code"] in (previous_feed.get("holdings") or {})]}
+                                  if stale_source else None)},
         "sectors":sectors,"stock_sectors":stock_sector,
         "universe":[{"code":x["code"],"name":x["name"],"market":x["market"]} for x in stocks if re.fullmatch(r"[1-9][0-9]{3}",x["code"])],
         "institutional":institutional,
