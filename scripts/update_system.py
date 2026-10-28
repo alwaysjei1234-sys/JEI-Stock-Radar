@@ -1047,7 +1047,10 @@ def main():
     latest_close_date=latest_shared_close_date(
         final_twse_dates,final_tpex_dates,today_iso,previous_data_date,market_open,today_iso)
     # A verified exchange closure overrides apparent source dates; never mint a holiday candle.
-    source_is_today=latest_close_date is not None and not known_closure
+    # Reject mixed-date snapshots even if one date happens to be shared.
+    source_is_today=(latest_close_date is not None and not known_closure
+                     and final_twse_dates=={latest_close_date}
+                     and final_tpex_dates=={latest_close_date})
     if source_is_today:
         source_data_date=latest_close_date
         raw_date=latest_close_date
@@ -1055,7 +1058,11 @@ def main():
         twse_latest=max(final_twse_dates) if final_twse_dates else "未知"
         tpex_latest=max(final_tpex_dates) if final_tpex_dates else "未知"
         source_data_date=f"TWSE:{twse_latest} / TPEx:{tpex_latest}"
-        raw_date=source_data_date
+        # Keep the last verified archive date, not a mixed TWSE/TPEx string.
+        archived_days=[snap.get("date") for snap in hist_for_heat
+                       if isinstance(snap,dict) and verified_archive_date(snap.get("date"))
+                       and snap["date"]<=today_iso]
+        raw_date=max(archived_days) if archived_days else source_data_date
     live_coverage=live_count/max(1,len(stocks))
     live_valid=market_open and live_count>=500 and live_coverage>=.35
     stale_source=not source_is_today
@@ -1240,7 +1247,9 @@ def main():
     out={
         "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,"source_data_date":source_data_date,
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
-        "risk":{"level":level,"label":label,"score":risk,"cash":cash,"reasons":reasons,
+        "risk":{"level":("stale" if stale_source else level),"label":label,"score":risk,
+                "actionable":not stale_source,"as_of":raw_date,
+                "cash":("暫停判讀" if stale_source else cash),"reasons":reasons,
                 "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down,
                 "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000),
                 "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
