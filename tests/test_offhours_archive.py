@@ -43,6 +43,16 @@ class OffhoursArchiveTests(unittest.TestCase):
         next_session=MOD.validated_previous_close(after,datetime(2026,10,19,9,5,tzinfo=TAIPEI))
         self.assertTrue(next_session["market"]["historical_readonly"],"Monday research remains non-live")
 
+    def test_archive_date_key_never_substitutes_today_for_stale_or_invalid_data(self):
+        self.assertEqual(MOD.verified_archive_date("2026-10-27"),"2026-10-27")
+        for invalid in ("TWSE:2026-10-28 / TPEx:2026-10-27","2026-10-32",
+                        "2026-02-30","1151028","",None):
+            with self.subTest(invalid=invalid):
+                self.assertIsNone(MOD.verified_archive_date(invalid))
+        source=(ROOT/"scripts/update_system.py").read_text(encoding="utf-8")
+        self.assertIn("date_key=verified_archive_date(raw_date)",source)
+        self.assertIn("date_key is not None and source_is_today",source)
+
     def test_newest_shared_official_close_advances_only_off_hours(self):
         self.assertEqual(MOD.latest_shared_close_date(
             {"2026-10-22"},{"2026-10-22"},"2026-10-25","2026-10-21",False,"2026-10-25"),"2026-10-22")
