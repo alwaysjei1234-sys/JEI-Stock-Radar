@@ -1,10 +1,17 @@
 name: JEI LINE Real Push Test
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/jei-line-test.yml'
 permissions:
   contents: read
 jobs:
   send-test:
+    # The guarded push trigger allows a one-time live delivery check without
+    # needing a separate workflow-dispatch API; ordinary workflow edits skip it.
+    if: "github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'test(line): verify live delivery'"
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
