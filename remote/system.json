@@ -1,6 +1,6 @@
 {
   "schema": 4,
-  "updated_at": "2026-10-29 18:25",
+  "updated_at": "2026-10-29 19:10",
   "data_date": "2026-10-29",
   "source_data_date": "2026-10-29",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
@@ -16,7 +16,7 @@
       "上漲 430 / 下跌 1343（廣度 24.3%）",
       "市場中位數 -0.76%",
       "跌逾3% 306｜跌逾5% 95｜跌停附近 7",
-      "法人偏賣 51.3%｜3日均 44.8%｜5日均 46.7%｜淨額 -392,890張",
+      "法人偏賣 51.3%｜3日均 47.1%｜5日均 48.2%｜淨額 -392,890張",
       "最強族群 被動元件 43分",
       "部分資料源降級：TWSE OpenAPI落後，已用當日MI_INDEX補入 1388 檔"
     ],
@@ -27,14 +27,14 @@
     "divergence": false,
     "institutional_sell_ratio": 51.3,
     "institutional_net_lots": -392890,
-    "institutional_3d_sell_avg": 44.8,
-    "institutional_5d_sell_avg": 46.7,
+    "institutional_3d_sell_avg": 47.1,
+    "institutional_5d_sell_avg": 48.2,
     "institutional_withdrawal": false
   },
   "market": {
     "status": "紅燈防守",
     "mode": "今日收盤",
-    "last_checked_at": "2026-10-29 18:25",
+    "last_checked_at": "2026-10-29 19:10",
     "live_count": 0,
     "close_count": 1960,
     "live_coverage_pct": 0.0,
@@ -46,7 +46,7 @@
       "attempted": false,
       "market_open": false,
       "quote_refresh_window": false,
-      "updater_time_taipei": "2026-10-29 18:25",
+      "updater_time_taipei": "2026-10-29 19:10",
       "valid_trades": 0,
       "mis_stats": {},
       "required_trades": 500,
@@ -11700,17 +11700,17 @@
       "total": 69051.0,
       "source": "TWSE T86"
     },
-    "3052": {
-      "foreign": 68000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 68000.0,
-      "source": "TWSE T86"
-    },
     "4164": {
       "foreign": 73000.0,
       "trust": 0.0,
       "dealer": -5000.0,
+      "total": 68000.0,
+      "source": "TWSE T86"
+    },
+    "3052": {
+      "foreign": 68000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
       "total": 68000.0,
       "source": "TWSE T86"
     },
@@ -12092,14 +12092,14 @@
       "total": 35119.0,
       "source": "TWSE T86"
     },
-    "5283": {
+    "2007": {
       "foreign": 35000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 35000.0,
       "source": "TWSE T86"
     },
-    "2007": {
+    "5283": {
       "foreign": 35000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12701,17 +12701,17 @@
       "total": 15000.0,
       "source": "TWSE T86"
     },
-    "1321": {
-      "foreign": 14000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 14000.0,
-      "source": "TWSE T86"
-    },
     "4582": {
       "foreign": 11000.0,
       "trust": 0.0,
       "dealer": 3000.0,
+      "total": 14000.0,
+      "source": "TWSE T86"
+    },
+    "1321": {
+      "foreign": 14000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
       "total": 14000.0,
       "source": "TWSE T86"
     },
@@ -13373,13 +13373,6 @@
       "total": 4001.0,
       "source": "TWSE T86"
     },
-    "2432": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 3000.0,
-      "total": 4000.0,
-      "source": "TWSE T86"
-    },
     "6581": {
       "foreign": 4000.0,
       "trust": 0.0,
@@ -13401,14 +13394,21 @@
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "6606": {
+    "1614": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "1614": {
+    "2432": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 3000.0,
+      "total": 4000.0,
+      "source": "TWSE T86"
+    },
+    "6606": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13842,14 +13842,14 @@
       "total": 2000.0,
       "source": "TWSE T86"
     },
-    "3018": {
+    "3038": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 2000.0,
       "source": "TWSE T86"
     },
-    "3038": {
+    "3018": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14017,14 +14017,14 @@
       "total": 1000.0,
       "source": "TWSE T86"
     },
-    "7823": {
+    "6952": {
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 1000.0,
       "source": "TWSE T86"
     },
-    "6952": {
+    "7823": {
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14206,17 +14206,17 @@
       "total": 0.0,
       "source": "TWSE T86"
     },
-    "2906": {
-      "foreign": 2000.0,
-      "trust": 0.0,
-      "dealer": -2000.0,
-      "total": 0.0,
-      "source": "TWSE T86"
-    },
     "6951": {
       "foreign": 0.0,
       "trust": 0.0,
       "dealer": 0.0,
+      "total": 0.0,
+      "source": "TWSE T86"
+    },
+    "2906": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": -2000.0,
       "total": 0.0,
       "source": "TWSE T86"
     },
