@@ -167,6 +167,13 @@ def fetch_tpex_daily(date_obj):
     old_problem="unknown"
     try:
         j=fetch_json_fast(url,timeout=8,tries=1)
+        # Reject a cached historical response if its embedded report date disagrees
+        # with the requested session; the latest OpenAPI fallback checks every row.
+        if isinstance(j,dict):
+            reported={normalize_exchange_date(j.get(key)) for key in ("reportDate","ReportDate","date","Date") if j.get(key)}
+            reported.discard(None)
+            if reported and reported!={date_obj.isoformat()}:
+                raise ValueError(f"TPEx historical report date mismatch: expected={date_obj.isoformat()}, observed={sorted(reported)}")
         rows=(j.get("aaData") or j.get("data") or []) if isinstance(j,dict) else []
         out=[]
         for row in rows:
