@@ -32,6 +32,14 @@ class TpexLatestCloseFallbackTests(unittest.TestCase):
         self.assertEqual(len(rows), 550)
         self.assertIn("tpex_mainboard_daily_close_quotes", fetch.call_args_list[-1].args[0])
 
+    def test_stale_historical_report_date_forces_verified_fallback(self):
+        historical={"reportDate":"115/10/28","aaData":[[str(3000+i),"測試","42.50"] for i in range(550)]}
+        with patch("scripts.update_system.fetch_json_fast",
+                   side_effect=[historical,self.snapshot("1151029")]) as fetch:
+            rows=fetch_tpex_daily(date(2026,10,29))
+        self.assertEqual(len(rows),550)
+        self.assertIn("tpex_mainboard_daily_close_quotes",fetch.call_args_list[-1].args[0])
+
     def test_fallback_never_labels_prior_close_as_today(self):
         with patch("scripts.update_system.fetch_json_fast",
                    side_effect=[{"aaData": []}, self.snapshot("1151022")]):
