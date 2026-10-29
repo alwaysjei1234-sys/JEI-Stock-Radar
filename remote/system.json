@@ -1,6 +1,6 @@
 {
   "schema": 4,
-  "updated_at": "2026-10-29 19:10",
+  "updated_at": "2026-10-29 19:51",
   "data_date": "2026-10-29",
   "source_data_date": "2026-10-29",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
@@ -16,7 +16,7 @@
       "上漲 430 / 下跌 1343（廣度 24.3%）",
       "市場中位數 -0.76%",
       "跌逾3% 306｜跌逾5% 95｜跌停附近 7",
-      "法人偏賣 51.3%｜3日均 47.1%｜5日均 48.2%｜淨額 -392,890張",
+      "法人偏賣 51.4%｜3日均 47.2%｜5日均 48.2%｜淨額 -414,416張",
       "最強族群 被動元件 43分",
       "部分資料源降級：TWSE OpenAPI落後，已用當日MI_INDEX補入 1388 檔"
     ],
@@ -25,16 +25,16 @@
     "down5": 95,
     "limit_down": 7,
     "divergence": false,
-    "institutional_sell_ratio": 51.3,
-    "institutional_net_lots": -392890,
-    "institutional_3d_sell_avg": 47.1,
+    "institutional_sell_ratio": 51.4,
+    "institutional_net_lots": -414416,
+    "institutional_3d_sell_avg": 47.2,
     "institutional_5d_sell_avg": 48.2,
     "institutional_withdrawal": false
   },
   "market": {
     "status": "紅燈防守",
     "mode": "今日收盤",
-    "last_checked_at": "2026-10-29 19:10",
+    "last_checked_at": "2026-10-29 19:51",
     "live_count": 0,
     "close_count": 1960,
     "live_coverage_pct": 0.0,
@@ -46,7 +46,7 @@
       "attempted": false,
       "market_open": false,
       "quote_refresh_window": false,
-      "updater_time_taipei": "2026-10-29 19:10",
+      "updater_time_taipei": "2026-10-29 19:51",
       "valid_trades": 0,
       "mis_stats": {},
       "required_trades": 500,
@@ -10246,9 +10246,9 @@
     },
     "2408": {
       "foreign": 5661474.0,
-      "trust": 648225.0,
+      "trust": 623225.0,
       "dealer": 104751.0,
-      "total": 6414450.0,
+      "total": 6389450.0,
       "source": "TWSE T86"
     },
     "2889": {
@@ -10664,6 +10664,13 @@
       "total": 613007.0,
       "source": "TWSE T86"
     },
+    "3406": {
+      "foreign": 256993.0,
+      "trust": 159000.0,
+      "dealer": 184812.0,
+      "total": 600805.0,
+      "source": "TWSE T86"
+    },
     "1313": {
       "foreign": 557078.0,
       "trust": 0.0,
@@ -10718,13 +10725,6 @@
       "trust": 111055.0,
       "dealer": 23176.0,
       "total": 508135.0,
-      "source": "TWSE T86"
-    },
-    "3406": {
-      "foreign": 256993.0,
-      "trust": 54000.0,
-      "dealer": 184812.0,
-      "total": 495805.0,
       "source": "TWSE T86"
     },
     "3005": {
@@ -10841,9 +10841,9 @@
     },
     "3533": {
       "foreign": 355787.0,
-      "trust": 6000.0,
+      "trust": 6362.0,
       "dealer": 13783.0,
-      "total": 375570.0,
+      "total": 375932.0,
       "source": "TWSE T86"
     },
     "1301": {
@@ -11175,13 +11175,6 @@
       "total": 164418.0,
       "source": "TWSE T86"
     },
-    "2330": {
-      "foreign": -10199.0,
-      "trust": 454374.0,
-      "dealer": -281233.0,
-      "total": 162942.0,
-      "source": "TWSE T86"
-    },
     "6589": {
       "foreign": 162296.0,
       "trust": 0.0,
@@ -11229,6 +11222,13 @@
       "trust": 0.0,
       "dealer": 0.0,
       "total": 154160.0,
+      "source": "TWSE T86"
+    },
+    "2330": {
+      "foreign": -10199.0,
+      "trust": 443114.0,
+      "dealer": -281233.0,
+      "total": 151682.0,
       "source": "TWSE T86"
     },
     "8261": {
@@ -11287,13 +11287,6 @@
       "total": 140673.0,
       "source": "TWSE T86"
     },
-    "2379": {
-      "foreign": -77709.0,
-      "trust": 148000.0,
-      "dealer": 69820.0,
-      "total": 140111.0,
-      "source": "TWSE T86"
-    },
     "0061": {
       "foreign": 59000.0,
       "trust": 0.0,
@@ -11348,6 +11341,13 @@
       "trust": 0.0,
       "dealer": 0.0,
       "total": 117000.0,
+      "source": "TWSE T86"
+    },
+    "2379": {
+      "foreign": -77709.0,
+      "trust": 121830.0,
+      "dealer": 69820.0,
+      "total": 113941.0,
       "source": "TWSE T86"
     },
     "6757": {
@@ -11418,13 +11418,6 @@
       "trust": 0.0,
       "dealer": 0.0,
       "total": 102000.0,
-      "source": "TWSE T86"
-    },
-    "3665": {
-      "foreign": 307314.0,
-      "trust": -233969.0,
-      "dealer": 27291.0,
-      "total": 100636.0,
       "source": "TWSE T86"
     },
     "2359": {
@@ -11714,13 +11707,6 @@
       "total": 68000.0,
       "source": "TWSE T86"
     },
-    "6515": {
-      "foreign": 110353.0,
-      "trust": -22000.0,
-      "dealer": -23349.0,
-      "total": 65004.0,
-      "source": "TWSE T86"
-    },
     "2421": {
       "foreign": -18126.0,
       "trust": 0.0,
@@ -11742,14 +11728,14 @@
       "total": 64000.0,
       "source": "TWSE T86"
     },
-    "3058": {
+    "1702": {
       "foreign": 63000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 63000.0,
       "source": "TWSE T86"
     },
-    "1702": {
+    "3058": {
       "foreign": 63000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -11880,6 +11866,13 @@
       "trust": 0.0,
       "dealer": 3000.0,
       "total": 54000.0,
+      "source": "TWSE T86"
+    },
+    "6515": {
+      "foreign": 110353.0,
+      "trust": -33640.0,
+      "dealer": -23349.0,
+      "total": 53364.0,
       "source": "TWSE T86"
     },
     "1104": {
@@ -12064,14 +12057,14 @@
       "total": 37001.0,
       "source": "TWSE T86"
     },
-    "2417": {
+    "1439": {
       "foreign": 36000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 36000.0,
       "source": "TWSE T86"
     },
-    "1439": {
+    "2417": {
       "foreign": 36000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12162,17 +12155,17 @@
       "total": 32619.0,
       "source": "TWSE T86"
     },
-    "2431": {
-      "foreign": 33000.0,
-      "trust": 0.0,
-      "dealer": -1000.0,
-      "total": 32000.0,
-      "source": "TWSE T86"
-    },
     "5546": {
       "foreign": 29000.0,
       "trust": 0.0,
       "dealer": 3000.0,
+      "total": 32000.0,
+      "source": "TWSE T86"
+    },
+    "2431": {
+      "foreign": 33000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
       "total": 32000.0,
       "source": "TWSE T86"
     },
@@ -12218,14 +12211,14 @@
       "total": 30063.0,
       "source": "TWSE T86"
     },
-    "4555": {
+    "3501": {
       "foreign": 30000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 30000.0,
       "source": "TWSE T86"
     },
-    "3501": {
+    "4555": {
       "foreign": 30000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12274,14 +12267,14 @@
       "total": 28530.0,
       "source": "TWSE T86"
     },
-    "1417": {
+    "3015": {
       "foreign": 28000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 28000.0,
       "source": "TWSE T86"
     },
-    "3015": {
+    "1417": {
       "foreign": 28000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12337,10 +12330,10 @@
       "total": 26318.0,
       "source": "TWSE T86"
     },
-    "6854": {
-      "foreign": 23000.0,
+    "2106": {
+      "foreign": 26000.0,
       "trust": 0.0,
-      "dealer": 3000.0,
+      "dealer": 0.0,
       "total": 26000.0,
       "source": "TWSE T86"
     },
@@ -12351,10 +12344,10 @@
       "total": 26000.0,
       "source": "TWSE T86"
     },
-    "2106": {
-      "foreign": 26000.0,
+    "6854": {
+      "foreign": 23000.0,
       "trust": 0.0,
-      "dealer": 0.0,
+      "dealer": 3000.0,
       "total": 26000.0,
       "source": "TWSE T86"
     },
@@ -12512,14 +12505,14 @@
       "total": 21000.0,
       "source": "TWSE T86"
     },
-    "1340": {
+    "4557": {
       "foreign": 20000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 20000.0,
       "source": "TWSE T86"
     },
-    "4557": {
+    "1340": {
       "foreign": 20000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12547,17 +12540,17 @@
       "total": 18740.0,
       "source": "TWSE T86"
     },
-    "7765": {
-      "foreign": 19000.0,
-      "trust": 0.0,
-      "dealer": -1000.0,
-      "total": 18000.0,
-      "source": "TWSE T86"
-    },
     "2237": {
       "foreign": 21000.0,
       "trust": 0.0,
       "dealer": -3000.0,
+      "total": 18000.0,
+      "source": "TWSE T86"
+    },
+    "7765": {
+      "foreign": 19000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
       "total": 18000.0,
       "source": "TWSE T86"
     },
@@ -12582,14 +12575,14 @@
       "total": 17000.0,
       "source": "TWSE T86"
     },
-    "1506": {
+    "4572": {
       "foreign": 17000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 17000.0,
       "source": "TWSE T86"
     },
-    "4572": {
+    "1506": {
       "foreign": 17000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12680,14 +12673,14 @@
       "total": 15100.0,
       "source": "TWSE T86"
     },
-    "1737": {
+    "6416": {
       "foreign": 15000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 15000.0,
       "source": "TWSE T86"
     },
-    "6416": {
+    "1737": {
       "foreign": 15000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12701,17 +12694,17 @@
       "total": 15000.0,
       "source": "TWSE T86"
     },
-    "4582": {
-      "foreign": 11000.0,
-      "trust": 0.0,
-      "dealer": 3000.0,
-      "total": 14000.0,
-      "source": "TWSE T86"
-    },
     "1321": {
       "foreign": 14000.0,
       "trust": 0.0,
       "dealer": 0.0,
+      "total": 14000.0,
+      "source": "TWSE T86"
+    },
+    "4582": {
+      "foreign": 11000.0,
+      "trust": 0.0,
+      "dealer": 3000.0,
       "total": 14000.0,
       "source": "TWSE T86"
     },
@@ -12757,6 +12750,20 @@
       "total": 12130.0,
       "source": "TWSE T86"
     },
+    "2701": {
+      "foreign": 14000.0,
+      "trust": 0.0,
+      "dealer": -2000.0,
+      "total": 12000.0,
+      "source": "TWSE T86"
+    },
+    "1906": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": 3000.0,
+      "total": 12000.0,
+      "source": "TWSE T86"
+    },
     "6230": {
       "foreign": 12000.0,
       "trust": 0.0,
@@ -12771,17 +12778,10 @@
       "total": 12000.0,
       "source": "TWSE T86"
     },
-    "1906": {
-      "foreign": 9000.0,
+    "8011": {
+      "foreign": 12000.0,
       "trust": 0.0,
-      "dealer": 3000.0,
-      "total": 12000.0,
-      "source": "TWSE T86"
-    },
-    "2701": {
-      "foreign": 14000.0,
-      "trust": 0.0,
-      "dealer": -2000.0,
+      "dealer": 0.0,
       "total": 12000.0,
       "source": "TWSE T86"
     },
@@ -12789,13 +12789,6 @@
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 10000.0,
-      "total": 12000.0,
-      "source": "TWSE T86"
-    },
-    "8011": {
-      "foreign": 12000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
       "total": 12000.0,
       "source": "TWSE T86"
     },
@@ -12911,13 +12904,6 @@
       "total": 10653.0,
       "source": "TWSE T86"
     },
-    "7791": {
-      "foreign": 9000.0,
-      "trust": 0.0,
-      "dealer": 1000.0,
-      "total": 10000.0,
-      "source": "TWSE T86"
-    },
     "6184": {
       "foreign": 10000.0,
       "trust": 0.0,
@@ -12925,14 +12911,21 @@
       "total": 10000.0,
       "source": "TWSE T86"
     },
-    "1432": {
+    "7791": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": 10000.0,
+      "source": "TWSE T86"
+    },
+    "9937": {
       "foreign": 10000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 10000.0,
       "source": "TWSE T86"
     },
-    "9937": {
+    "1432": {
       "foreign": 10000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12981,10 +12974,10 @@
       "total": 9000.0,
       "source": "TWSE T86"
     },
-    "6283": {
-      "foreign": 9000.0,
+    "6674": {
+      "foreign": 10000.0,
       "trust": 0.0,
-      "dealer": 0.0,
+      "dealer": -1000.0,
       "total": 9000.0,
       "source": "TWSE T86"
     },
@@ -12995,10 +12988,10 @@
       "total": 9000.0,
       "source": "TWSE T86"
     },
-    "6674": {
-      "foreign": 10000.0,
+    "6283": {
+      "foreign": 9000.0,
       "trust": 0.0,
-      "dealer": -1000.0,
+      "dealer": 0.0,
       "total": 9000.0,
       "source": "TWSE T86"
     },
@@ -13051,7 +13044,7 @@
       "total": 8035.0,
       "source": "TWSE T86"
     },
-    "1530": {
+    "1445": {
       "foreign": 8000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13065,6 +13058,13 @@
       "total": 8000.0,
       "source": "TWSE T86"
     },
+    "1530": {
+      "foreign": 8000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 8000.0,
+      "source": "TWSE T86"
+    },
     "2524": {
       "foreign": 8000.0,
       "trust": 0.0,
@@ -13072,7 +13072,7 @@
       "total": 8000.0,
       "source": "TWSE T86"
     },
-    "1445": {
+    "2702": {
       "foreign": 8000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13080,13 +13080,6 @@
       "source": "TWSE T86"
     },
     "6272": {
-      "foreign": 8000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 8000.0,
-      "source": "TWSE T86"
-    },
-    "2702": {
       "foreign": 8000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13121,14 +13114,14 @@
       "total": 7009.0,
       "source": "TWSE T86"
     },
-    "5519": {
+    "9905": {
       "foreign": 7000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 7000.0,
       "source": "TWSE T86"
     },
-    "9905": {
+    "5519": {
       "foreign": 7000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13191,6 +13184,13 @@
       "total": 6022.0,
       "source": "TWSE T86"
     },
+    "7760": {
+      "foreign": 6000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 6000.0,
+      "source": "TWSE T86"
+    },
     "5538": {
       "foreign": 6000.0,
       "trust": 0.0,
@@ -13198,7 +13198,7 @@
       "total": 6000.0,
       "source": "TWSE T86"
     },
-    "7760": {
+    "2506": {
       "foreign": 6000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13213,13 +13213,6 @@
       "source": "TWSE T86"
     },
     "1236": {
-      "foreign": 6000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 6000.0,
-      "source": "TWSE T86"
-    },
-    "2506": {
       "foreign": 6000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13282,7 +13275,7 @@
       "total": 5000.0,
       "source": "TWSE T86"
     },
-    "6591": {
+    "1626": {
       "foreign": 5000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13303,7 +13296,7 @@
       "total": 5000.0,
       "source": "TWSE T86"
     },
-    "8072": {
+    "6591": {
       "foreign": 5000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13324,7 +13317,14 @@
       "total": 5000.0,
       "source": "TWSE T86"
     },
-    "1626": {
+    "8072": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 5000.0,
+      "source": "TWSE T86"
+    },
+    "5244": {
       "foreign": 5000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13335,13 +13335,6 @@
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 2000.0,
-      "total": 5000.0,
-      "source": "TWSE T86"
-    },
-    "5244": {
-      "foreign": 5000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
       "total": 5000.0,
       "source": "TWSE T86"
     },
@@ -13380,6 +13373,13 @@
       "total": 4000.0,
       "source": "TWSE T86"
     },
+    "2432": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 3000.0,
+      "total": 4000.0,
+      "source": "TWSE T86"
+    },
     "2482": {
       "foreign": 4000.0,
       "trust": 0.0,
@@ -13394,20 +13394,6 @@
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "1614": {
-      "foreign": 4000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 4000.0,
-      "source": "TWSE T86"
-    },
-    "2432": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 3000.0,
-      "total": 4000.0,
-      "source": "TWSE T86"
-    },
     "6606": {
       "foreign": 4000.0,
       "trust": 0.0,
@@ -13415,7 +13401,7 @@
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "9906": {
+    "1614": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13429,28 +13415,21 @@
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "5007": {
+    "2373": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "4935": {
+    "2423": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "4560": {
-      "foreign": 3000.0,
-      "trust": 0.0,
-      "dealer": 1000.0,
-      "total": 4000.0,
-      "source": "TWSE T86"
-    },
-    "3557": {
+    "2450": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13485,21 +13464,35 @@
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "2450": {
+    "3557": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "2373": {
+    "4560": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": 4000.0,
+      "source": "TWSE T86"
+    },
+    "5007": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "2423": {
+    "4935": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 4000.0,
+      "source": "TWSE T86"
+    },
+    "9906": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13555,7 +13548,14 @@
       "total": 3000.0,
       "source": "TWSE T86"
     },
-    "5907": {
+    "6887": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TWSE T86"
+    },
+    "6928": {
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13576,35 +13576,28 @@
       "total": 3000.0,
       "source": "TWSE T86"
     },
-    "6928": {
+    "3679": {
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 3000.0,
       "source": "TWSE T86"
     },
-    "6887": {
+    "3607": {
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 3000.0,
       "source": "TWSE T86"
     },
-    "1418": {
+    "5907": {
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 3000.0,
       "source": "TWSE T86"
     },
-    "1467": {
-      "foreign": 3000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 3000.0,
-      "source": "TWSE T86"
-    },
-    "1468": {
+    "3432": {
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13632,28 +13625,28 @@
       "total": 3000.0,
       "source": "TWSE T86"
     },
-    "3432": {
-      "foreign": 3000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 3000.0,
-      "source": "TWSE T86"
-    },
-    "3679": {
-      "foreign": 3000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 3000.0,
-      "source": "TWSE T86"
-    },
-    "3607": {
-      "foreign": 3000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 3000.0,
-      "source": "TWSE T86"
-    },
     "2712": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TWSE T86"
+    },
+    "1467": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TWSE T86"
+    },
+    "1468": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TWSE T86"
+    },
+    "6582": {
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13667,17 +13660,17 @@
       "total": 3000.0,
       "source": "TWSE T86"
     },
-    "6582": {
-      "foreign": 3000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 3000.0,
-      "source": "TWSE T86"
-    },
     "1470": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 1000.0,
+      "total": 3000.0,
+      "source": "TWSE T86"
+    },
+    "1418": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
       "total": 3000.0,
       "source": "TWSE T86"
     },
@@ -13695,6 +13688,20 @@
       "total": 2205.0,
       "source": "TWSE T86"
     },
+    "1525": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TWSE T86"
+    },
+    "1541": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TWSE T86"
+    },
     "1423": {
       "foreign": 2000.0,
       "trust": 0.0,
@@ -13709,7 +13716,14 @@
       "total": 2000.0,
       "source": "TWSE T86"
     },
-    "9926": {
+    "2387": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TWSE T86"
+    },
+    "2247": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13723,14 +13737,14 @@
       "total": 2000.0,
       "source": "TWSE T86"
     },
-    "6183": {
+    "9926": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 2000.0,
       "source": "TWSE T86"
     },
-    "6794": {
+    "6183": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13751,7 +13765,21 @@
       "total": 2000.0,
       "source": "TWSE T86"
     },
-    "2904": {
+    "6794": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TWSE T86"
+    },
+    "3308": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TWSE T86"
+    },
+    "3150": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13772,14 +13800,7 @@
       "total": 2000.0,
       "source": "TWSE T86"
     },
-    "3150": {
-      "foreign": 2000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 2000.0,
-      "source": "TWSE T86"
-    },
-    "3308": {
+    "2904": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13800,28 +13821,7 @@
       "total": 2000.0,
       "source": "TWSE T86"
     },
-    "2387": {
-      "foreign": 2000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 2000.0,
-      "source": "TWSE T86"
-    },
-    "2247": {
-      "foreign": 2000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 2000.0,
-      "source": "TWSE T86"
-    },
-    "1541": {
-      "foreign": 2000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 2000.0,
-      "source": "TWSE T86"
-    },
-    "1525": {
+    "1341": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13835,7 +13835,7 @@
       "total": 2000.0,
       "source": "TWSE T86"
     },
-    "1341": {
+    "6807": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13850,13 +13850,6 @@
       "source": "TWSE T86"
     },
     "3018": {
-      "foreign": 2000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 2000.0,
-      "source": "TWSE T86"
-    },
-    "6807": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13919,13 +13912,6 @@
       "total": 1000.0,
       "source": "TWSE T86"
     },
-    "2748": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 1000.0,
-      "source": "TWSE T86"
-    },
     "6908": {
       "foreign": 0.0,
       "trust": 0.0,
@@ -13947,6 +13933,41 @@
       "total": 1000.0,
       "source": "TWSE T86"
     },
+    "6614": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TWSE T86"
+    },
+    "6645": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 2000.0,
+      "total": 1000.0,
+      "source": "TWSE T86"
+    },
+    "6504": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": 1000.0,
+      "source": "TWSE T86"
+    },
+    "9935": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TWSE T86"
+    },
+    "9902": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TWSE T86"
+    },
     "8463": {
       "foreign": 1000.0,
       "trust": 0.0,
@@ -13961,49 +13982,7 @@
       "total": 1000.0,
       "source": "TWSE T86"
     },
-    "9902": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 1000.0,
-      "source": "TWSE T86"
-    },
-    "6504": {
-      "foreign": 0.0,
-      "trust": 0.0,
-      "dealer": 1000.0,
-      "total": 1000.0,
-      "source": "TWSE T86"
-    },
-    "6645": {
-      "foreign": -1000.0,
-      "trust": 0.0,
-      "dealer": 2000.0,
-      "total": 1000.0,
-      "source": "TWSE T86"
-    },
-    "6614": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 1000.0,
-      "source": "TWSE T86"
-    },
-    "9935": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 1000.0,
-      "source": "TWSE T86"
-    },
     "6958": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 1000.0,
-      "source": "TWSE T86"
-    },
-    "5906": {
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14031,6 +14010,20 @@
       "total": 1000.0,
       "source": "TWSE T86"
     },
+    "5906": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TWSE T86"
+    },
+    "1443": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TWSE T86"
+    },
     "3057": {
       "foreign": 1000.0,
       "trust": 0.0,
@@ -14045,7 +14038,7 @@
       "total": 1000.0,
       "source": "TWSE T86"
     },
-    "1443": {
+    "2748": {
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14108,21 +14101,21 @@
       "total": 0.0,
       "source": "TWSE T86"
     },
+    "6657": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TWSE T86"
+    },
+    "6671": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TWSE T86"
+    },
     "7705": {
-      "foreign": 0.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 0.0,
-      "source": "TWSE T86"
-    },
-    "9944": {
-      "foreign": 0.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 0.0,
-      "source": "TWSE T86"
-    },
-    "8478": {
       "foreign": 0.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14143,35 +14136,14 @@
       "total": 0.0,
       "source": "TWSE T86"
     },
-    "6657": {
+    "8478": {
       "foreign": 0.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 0.0,
       "source": "TWSE T86"
     },
-    "6671": {
-      "foreign": 0.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 0.0,
-      "source": "TWSE T86"
-    },
-    "1453": {
-      "foreign": 0.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 0.0,
-      "source": "TWSE T86"
-    },
-    "1235": {
-      "foreign": 0.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 0.0,
-      "source": "TWSE T86"
-    },
-    "1474": {
+    "9944": {
       "foreign": 0.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14179,6 +14151,13 @@
       "source": "TWSE T86"
     },
     "4178": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TWSE T86"
+    },
+    "4581": {
       "foreign": 0.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14199,7 +14178,21 @@
       "total": 0.0,
       "source": "TWSE T86"
     },
-    "4581": {
+    "1474": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TWSE T86"
+    },
+    "1453": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TWSE T86"
+    },
+    "1235": {
       "foreign": 0.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14276,13 +14269,6 @@
       "total": -978.0,
       "source": "TWSE T86"
     },
-    "6698": {
-      "foreign": 22000.0,
-      "trust": 0.0,
-      "dealer": -23000.0,
-      "total": -1000.0,
-      "source": "TWSE T86"
-    },
     "6655": {
       "foreign": -1000.0,
       "trust": 0.0,
@@ -14290,10 +14276,10 @@
       "total": -1000.0,
       "source": "TWSE T86"
     },
-    "1323": {
-      "foreign": -6000.0,
+    "6698": {
+      "foreign": 22000.0,
       "trust": 0.0,
-      "dealer": 5000.0,
+      "dealer": -23000.0,
       "total": -1000.0,
       "source": "TWSE T86"
     },
@@ -14311,14 +14297,14 @@
       "total": -1000.0,
       "source": "TWSE T86"
     },
-    "2642": {
+    "2929": {
       "foreign": -1000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -1000.0,
       "source": "TWSE T86"
     },
-    "2929": {
+    "1521": {
       "foreign": -1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14339,7 +14325,14 @@
       "total": -1000.0,
       "source": "TWSE T86"
     },
-    "1521": {
+    "1323": {
+      "foreign": -6000.0,
+      "trust": 0.0,
+      "dealer": 5000.0,
+      "total": -1000.0,
+      "source": "TWSE T86"
+    },
+    "2642": {
       "foreign": -1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14353,14 +14346,14 @@
       "total": -1000.0,
       "source": "TWSE T86"
     },
-    "1817": {
+    "2024": {
       "foreign": -1000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -1000.0,
       "source": "TWSE T86"
     },
-    "2024": {
+    "1817": {
       "foreign": -1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14437,27 +14430,6 @@
       "total": -2000.0,
       "source": "TWSE T86"
     },
-    "1203": {
-      "foreign": -2000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -2000.0,
-      "source": "TWSE T86"
-    },
-    "1539": {
-      "foreign": -2000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -2000.0,
-      "source": "TWSE T86"
-    },
-    "1540": {
-      "foreign": -1000.0,
-      "trust": 0.0,
-      "dealer": -1000.0,
-      "total": -2000.0,
-      "source": "TWSE T86"
-    },
     "2923": {
       "foreign": -5000.0,
       "trust": 0.0,
@@ -14476,6 +14448,27 @@
       "foreign": -2000.0,
       "trust": 0.0,
       "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TWSE T86"
+    },
+    "1203": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TWSE T86"
+    },
+    "1539": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TWSE T86"
+    },
+    "1540": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
       "total": -2000.0,
       "source": "TWSE T86"
     },
@@ -14528,6 +14521,27 @@
       "total": -3000.0,
       "source": "TWSE T86"
     },
+    "3686": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TWSE T86"
+    },
+    "1725": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": -3000.0,
+      "source": "TWSE T86"
+    },
+    "2434": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TWSE T86"
+    },
     "1456": {
       "foreign": -3000.0,
       "trust": 0.0,
@@ -14560,27 +14574,6 @@
       "foreign": 9000.0,
       "trust": 0.0,
       "dealer": -12000.0,
-      "total": -3000.0,
-      "source": "TWSE T86"
-    },
-    "1725": {
-      "foreign": -4000.0,
-      "trust": 0.0,
-      "dealer": 1000.0,
-      "total": -3000.0,
-      "source": "TWSE T86"
-    },
-    "2434": {
-      "foreign": -3000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -3000.0,
-      "source": "TWSE T86"
-    },
-    "3686": {
-      "foreign": -3000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
       "total": -3000.0,
       "source": "TWSE T86"
     },
@@ -14619,13 +14612,6 @@
       "total": -4000.0,
       "source": "TWSE T86"
     },
-    "6115": {
-      "foreign": -4000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -4000.0,
-      "source": "TWSE T86"
-    },
     "4108": {
       "foreign": -7000.0,
       "trust": 0.0,
@@ -14640,21 +14626,7 @@
       "total": -4000.0,
       "source": "TWSE T86"
     },
-    "2762": {
-      "foreign": -4000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -4000.0,
-      "source": "TWSE T86"
-    },
-    "2459": {
-      "foreign": -4000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -4000.0,
-      "source": "TWSE T86"
-    },
-    "1733": {
+    "6115": {
       "foreign": -4000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14665,6 +14637,27 @@
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": -7000.0,
+      "total": -4000.0,
+      "source": "TWSE T86"
+    },
+    "2459": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -4000.0,
+      "source": "TWSE T86"
+    },
+    "2762": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -4000.0,
+      "source": "TWSE T86"
+    },
+    "1733": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
       "total": -4000.0,
       "source": "TWSE T86"
     },
@@ -14717,6 +14710,13 @@
       "total": -5000.0,
       "source": "TWSE T86"
     },
+    "1324": {
+      "foreign": -5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -5000.0,
+      "source": "TWSE T86"
+    },
     "6431": {
       "foreign": -3000.0,
       "trust": 0.0,
@@ -14735,13 +14735,6 @@
       "foreign": -2000.0,
       "trust": 0.0,
       "dealer": -3000.0,
-      "total": -5000.0,
-      "source": "TWSE T86"
-    },
-    "1324": {
-      "foreign": -5000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
       "total": -5000.0,
       "source": "TWSE T86"
     },
@@ -14773,20 +14766,6 @@
       "total": -6000.0,
       "source": "TWSE T86"
     },
-    "7818": {
-      "foreign": -5000.0,
-      "trust": 0.0,
-      "dealer": -1000.0,
-      "total": -6000.0,
-      "source": "TWSE T86"
-    },
-    "7749": {
-      "foreign": -6000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -6000.0,
-      "source": "TWSE T86"
-    },
     "1473": {
       "foreign": -2000.0,
       "trust": 0.0,
@@ -14798,6 +14777,20 @@
       "foreign": -4000.0,
       "trust": 0.0,
       "dealer": -2000.0,
+      "total": -6000.0,
+      "source": "TWSE T86"
+    },
+    "7749": {
+      "foreign": -6000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -6000.0,
+      "source": "TWSE T86"
+    },
+    "7818": {
+      "foreign": -5000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
       "total": -6000.0,
       "source": "TWSE T86"
     },
@@ -14822,24 +14815,17 @@
       "total": -6533.0,
       "source": "TWSE T86"
     },
-    "4999": {
-      "foreign": -7000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -7000.0,
-      "source": "TWSE T86"
-    },
-    "1451": {
-      "foreign": -7000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -7000.0,
-      "source": "TWSE T86"
-    },
     "4569": {
       "foreign": -8000.0,
       "trust": 0.0,
       "dealer": 1000.0,
+      "total": -7000.0,
+      "source": "TWSE T86"
+    },
+    "4999": {
+      "foreign": -7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
       "total": -7000.0,
       "source": "TWSE T86"
     },
@@ -14857,7 +14843,7 @@
       "total": -7000.0,
       "source": "TWSE T86"
     },
-    "2012": {
+    "1451": {
       "foreign": -7000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14865,6 +14851,13 @@
       "source": "TWSE T86"
     },
     "1732": {
+      "foreign": -7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -7000.0,
+      "source": "TWSE T86"
+    },
+    "2012": {
       "foreign": -7000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14906,14 +14899,14 @@
       "total": -8000.0,
       "source": "TWSE T86"
     },
-    "2462": {
+    "2616": {
       "foreign": -8000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -8000.0,
       "source": "TWSE T86"
     },
-    "2616": {
+    "2462": {
       "foreign": -8000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15207,10 +15200,10 @@
       "total": -17000.0,
       "source": "TWSE T86"
     },
-    "1533": {
-      "foreign": -18000.0,
+    "5706": {
+      "foreign": -20000.0,
       "trust": 0.0,
-      "dealer": 0.0,
+      "dealer": 2000.0,
       "total": -18000.0,
       "source": "TWSE T86"
     },
@@ -15221,10 +15214,10 @@
       "total": -18000.0,
       "source": "TWSE T86"
     },
-    "5706": {
-      "foreign": -20000.0,
+    "1533": {
+      "foreign": -18000.0,
       "trust": 0.0,
-      "dealer": 2000.0,
+      "dealer": 0.0,
       "total": -18000.0,
       "source": "TWSE T86"
     },
@@ -15396,14 +15389,14 @@
       "total": -28073.0,
       "source": "TWSE T86"
     },
-    "1532": {
+    "5258": {
       "foreign": -29000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -29000.0,
       "source": "TWSE T86"
     },
-    "5258": {
+    "1532": {
       "foreign": -29000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15543,17 +15536,17 @@
       "total": -39131.0,
       "source": "TWSE T86"
     },
-    "1455": {
-      "foreign": -65000.0,
-      "trust": 0.0,
-      "dealer": 25000.0,
-      "total": -40000.0,
-      "source": "TWSE T86"
-    },
     "3229": {
       "foreign": -42000.0,
       "trust": 0.0,
       "dealer": 2000.0,
+      "total": -40000.0,
+      "source": "TWSE T86"
+    },
+    "1455": {
+      "foreign": -65000.0,
+      "trust": 0.0,
+      "dealer": 25000.0,
       "total": -40000.0,
       "source": "TWSE T86"
     },
@@ -15613,13 +15606,6 @@
       "total": -43766.0,
       "source": "TWSE T86"
     },
-    "8996": {
-      "foreign": -331057.0,
-      "trust": 317000.0,
-      "dealer": -29718.0,
-      "total": -43775.0,
-      "source": "TWSE T86"
-    },
     "7730": {
       "foreign": 14220.0,
       "trust": 0.0,
@@ -15646,6 +15632,20 @@
       "trust": 0.0,
       "dealer": -56475.0,
       "total": -44922.0,
+      "source": "TWSE T86"
+    },
+    "8996": {
+      "foreign": -331057.0,
+      "trust": 315600.0,
+      "dealer": -29718.0,
+      "total": -45175.0,
+      "source": "TWSE T86"
+    },
+    "3665": {
+      "foreign": 307314.0,
+      "trust": -379969.0,
+      "dealer": 27291.0,
+      "total": -45364.0,
       "source": "TWSE T86"
     },
     "6861": {
@@ -15690,17 +15690,17 @@
       "total": -47703.0,
       "source": "TWSE T86"
     },
-    "1582": {
-      "foreign": -47000.0,
-      "trust": 0.0,
-      "dealer": -1000.0,
-      "total": -48000.0,
-      "source": "TWSE T86"
-    },
     "2029": {
       "foreign": -48000.0,
       "trust": 0.0,
       "dealer": 0.0,
+      "total": -48000.0,
+      "source": "TWSE T86"
+    },
+    "1582": {
+      "foreign": -47000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
       "total": -48000.0,
       "source": "TWSE T86"
     },
@@ -16427,9 +16427,9 @@
     },
     "2345": {
       "foreign": -34322.0,
-      "trust": -174914.0,
+      "trust": -174308.0,
       "dealer": 34498.0,
-      "total": -174738.0,
+      "total": -174132.0,
       "source": "TWSE T86"
     },
     "6695": {
@@ -16726,6 +16726,13 @@
       "total": -256299.0,
       "source": "TWSE T86"
     },
+    "2360": {
+      "foreign": -151331.0,
+      "trust": -105986.0,
+      "dealer": -2378.0,
+      "total": -259695.0,
+      "source": "TWSE T86"
+    },
     "1727": {
       "foreign": -237503.0,
       "trust": 0.0,
@@ -16738,13 +16745,6 @@
       "trust": 0.0,
       "dealer": 2000.0,
       "total": -266081.0,
-      "source": "TWSE T86"
-    },
-    "2360": {
-      "foreign": -151331.0,
-      "trust": -122936.0,
-      "dealer": -2378.0,
-      "total": -276645.0,
       "source": "TWSE T86"
     },
     "3090": {
@@ -17158,6 +17158,13 @@
       "trust": 1000.0,
       "dealer": -141000.0,
       "total": -712940.0,
+      "source": "TWSE T86"
+    },
+    "2455": {
+      "foreign": -3807459.0,
+      "trust": 2880793.0,
+      "dealer": 199972.0,
+      "total": -726694.0,
       "source": "TWSE T86"
     },
     "2363": {
@@ -17608,13 +17615,6 @@
       "total": -3419614.0,
       "source": "TWSE T86"
     },
-    "2455": {
-      "foreign": -3807459.0,
-      "trust": 8793.0,
-      "dealer": 199972.0,
-      "total": -3598694.0,
-      "source": "TWSE T86"
-    },
     "6116": {
       "foreign": -3254919.0,
       "trust": 0.0,
@@ -17771,9 +17771,9 @@
     },
     "2303": {
       "foreign": -129271902.0,
-      "trust": -20516968.0,
+      "trust": -44816968.0,
       "dealer": -8700497.0,
-      "total": -158489367.0,
+      "total": -182789367.0,
       "source": "TWSE T86"
     },
     "1240": {
@@ -24392,8 +24392,8 @@
     {
       "icon": "🏦",
       "name": "法人籌碼廣度",
-      "note": "偏賣 51.3%｜合計 -392,890張",
-      "score": 51.3
+      "note": "偏賣 51.4%｜合計 -414,416張",
+      "score": 51.4
     }
   ],
   "avoid_chase": [
