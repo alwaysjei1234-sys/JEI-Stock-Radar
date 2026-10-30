@@ -1,6 +1,6 @@
 {
   "schema": 4,
-  "updated_at": "2026-10-30 09:48",
+  "updated_at": "2026-10-30 10:30",
   "data_date": "2026-10-29",
   "source_data_date": "TWSE:2026-10-29 / TPEx:2026-10-29",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
@@ -14,10 +14,10 @@
     "reasons": [
       "行情來源日期 TWSE:2026-10-29 / TPEx:2026-10-29，不是今天；今日風險與選股訊號暫停判讀"
     ],
-    "breadth": 22.9,
-    "median_pct": -0.82,
-    "down5": 104,
-    "limit_down": 6,
+    "breadth": 22.3,
+    "median_pct": -0.86,
+    "down5": 120,
+    "limit_down": 8,
     "divergence": false,
     "institutional_sell_ratio": 51.4,
     "institutional_net_lots": -413921,
@@ -28,10 +28,10 @@
   "market": {
     "status": "資料過期",
     "mode": "資料過期",
-    "last_checked_at": "2026-10-30 09:48",
-    "live_count": 140,
+    "last_checked_at": "2026-10-30 10:30",
+    "live_count": 168,
     "close_count": 1960,
-    "live_coverage_pct": 7.1,
+    "live_coverage_pct": 8.6,
     "live_valid": false,
     "stale": true,
     "historical_readonly": true,
@@ -40,39 +40,39 @@
       "attempted": true,
       "market_open": true,
       "quote_refresh_window": true,
-      "updater_time_taipei": "2026-10-30 09:48",
-      "valid_trades": 140,
+      "updater_time_taipei": "2026-10-30 10:30",
+      "valid_trades": 168,
       "mis_stats": {
         "requested_channels": 1960,
         "returned_messages": 1960,
         "matched_codes": 1960,
         "rejected_date": 0,
         "rejected_time": 0,
-        "rejected_price": 1820,
-        "missing_last_trade": 1820,
+        "rejected_price": 1792,
+        "missing_last_trade": 1792,
         "missing_previous_close": 0,
-        "incomplete_with_volume": 1687,
+        "incomplete_with_volume": 1714,
         "retry_requested": 100,
-        "retry_recovered": 2
+        "retry_recovered": 4
       },
       "required_trades": 500,
       "required_coverage_pct": 35,
       "errors": [],
       "reason": "MIS 查詢失敗或有效成交價覆蓋率不足"
     },
-    "brief": "資料過期多因子市場｜加權 -2.70%｜廣度 22.9%｜中位數 -0.82%｜跌逾5% 104｜行情時間以最近檢查時間為準",
+    "brief": "資料過期多因子市場｜加權 -3.23%｜廣度 22.3%｜中位數 -0.86%｜跌逾5% 120｜行情時間以最近檢查時間為準",
     "market_data_as_of": "2026-10-29",
     "session_status": "交易日資料待驗證",
     "no_new_picks": true,
     "partial_live": {
-      "asof": "2026-10-30 09:48",
-      "verified_count": 140,
+      "asof": "2026-10-30 10:30",
+      "verified_count": 168,
       "complete": false,
       "quotes": [
         {
-          "code": "3162",
-          "price": 73.1,
-          "quote_time": "2026-10-30 09:49:01"
+          "code": "5347",
+          "price": 144.0,
+          "quote_time": "2026-10-30 10:30:36"
         }
       ]
     }
@@ -13096,17 +13096,17 @@
       "total": 4001.0,
       "source": "TWSE T86"
     },
-    "2432": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 3000.0,
-      "total": 4000.0,
-      "source": "TWSE T86"
-    },
     "6581": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
+      "total": 4000.0,
+      "source": "TWSE T86"
+    },
+    "2432": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 3000.0,
       "total": 4000.0,
       "source": "TWSE T86"
     },
@@ -13124,14 +13124,14 @@
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "6606": {
+    "1614": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 4000.0,
       "source": "TWSE T86"
     },
-    "1614": {
+    "6606": {
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
