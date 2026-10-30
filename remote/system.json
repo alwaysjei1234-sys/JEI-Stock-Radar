@@ -1,6 +1,6 @@
 {
   "schema": 4,
-  "updated_at": "2026-10-30 12:07",
+  "updated_at": "2026-10-30 12:50",
   "data_date": "2026-10-29",
   "source_data_date": "TWSE:2026-10-29 / TPEx:2026-10-29",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
@@ -14,10 +14,10 @@
     "reasons": [
       "行情來源日期 TWSE:2026-10-29 / TPEx:2026-10-29，不是今天；今日風險與選股訊號暫停判讀"
     ],
-    "breadth": 23.1,
-    "median_pct": -0.82,
-    "down5": 102,
-    "limit_down": 9,
+    "breadth": 23.5,
+    "median_pct": -0.81,
+    "down5": 99,
+    "limit_down": 10,
     "divergence": false,
     "institutional_sell_ratio": 51.4,
     "institutional_net_lots": -413921,
@@ -28,10 +28,10 @@
   "market": {
     "status": "資料過期",
     "mode": "資料過期",
-    "last_checked_at": "2026-10-30 12:07",
-    "live_count": 132,
+    "last_checked_at": "2026-10-30 12:50",
+    "live_count": 160,
     "close_count": 1960,
-    "live_coverage_pct": 6.7,
+    "live_coverage_pct": 8.2,
     "live_valid": false,
     "stale": true,
     "historical_readonly": true,
@@ -40,33 +40,33 @@
       "attempted": true,
       "market_open": true,
       "quote_refresh_window": true,
-      "updater_time_taipei": "2026-10-30 12:07",
-      "valid_trades": 132,
+      "updater_time_taipei": "2026-10-30 12:50",
+      "valid_trades": 160,
       "mis_stats": {
         "requested_channels": 1960,
         "returned_messages": 1960,
         "matched_codes": 1960,
         "rejected_date": 0,
         "rejected_time": 0,
-        "rejected_price": 1828,
-        "missing_last_trade": 1828,
+        "rejected_price": 1800,
+        "missing_last_trade": 1800,
         "missing_previous_close": 0,
-        "incomplete_with_volume": 1796,
+        "incomplete_with_volume": 1782,
         "retry_requested": 100,
-        "retry_recovered": 4
+        "retry_recovered": 8
       },
       "required_trades": 500,
       "required_coverage_pct": 35,
       "errors": [],
       "reason": "MIS 查詢失敗或有效成交價覆蓋率不足"
     },
-    "brief": "資料過期多因子市場｜加權 -2.76%｜廣度 23.1%｜中位數 -0.82%｜跌逾5% 102｜行情時間以最近檢查時間為準",
+    "brief": "資料過期多因子市場｜加權 -2.10%｜廣度 23.5%｜中位數 -0.81%｜跌逾5% 99｜行情時間以最近檢查時間為準",
     "market_data_as_of": "2026-10-29",
     "session_status": "交易日資料待驗證",
     "no_new_picks": true,
     "partial_live": {
-      "asof": "2026-10-30 12:07",
-      "verified_count": 132,
+      "asof": "2026-10-30 12:50",
+      "verified_count": 160,
       "complete": false,
       "quotes": []
     }
@@ -12229,14 +12229,14 @@
       "total": 21000.0,
       "source": "TWSE T86"
     },
-    "1340": {
+    "4557": {
       "foreign": 20000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 20000.0,
       "source": "TWSE T86"
     },
-    "4557": {
+    "1340": {
       "foreign": 20000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12418,17 +12418,17 @@
       "total": 15000.0,
       "source": "TWSE T86"
     },
-    "4582": {
-      "foreign": 11000.0,
-      "trust": 0.0,
-      "dealer": 3000.0,
-      "total": 14000.0,
-      "source": "TWSE T86"
-    },
     "1321": {
       "foreign": 14000.0,
       "trust": 0.0,
       "dealer": 0.0,
+      "total": 14000.0,
+      "source": "TWSE T86"
+    },
+    "4582": {
+      "foreign": 11000.0,
+      "trust": 0.0,
+      "dealer": 3000.0,
       "total": 14000.0,
       "source": "TWSE T86"
     },
@@ -13755,14 +13755,14 @@
       "total": 1000.0,
       "source": "TWSE T86"
     },
-    "2748": {
+    "1531": {
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 1000.0,
       "source": "TWSE T86"
     },
-    "1531": {
+    "2748": {
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14049,6 +14049,13 @@
       "total": -1000.0,
       "source": "TWSE T86"
     },
+    "1323": {
+      "foreign": -6000.0,
+      "trust": 0.0,
+      "dealer": 5000.0,
+      "total": -1000.0,
+      "source": "TWSE T86"
+    },
     "2642": {
       "foreign": -1000.0,
       "trust": 0.0,
@@ -14088,13 +14095,6 @@
       "foreign": -1000.0,
       "trust": 0.0,
       "dealer": 0.0,
-      "total": -1000.0,
-      "source": "TWSE T86"
-    },
-    "1323": {
-      "foreign": -6000.0,
-      "trust": 0.0,
-      "dealer": 5000.0,
       "total": -1000.0,
       "source": "TWSE T86"
     },
