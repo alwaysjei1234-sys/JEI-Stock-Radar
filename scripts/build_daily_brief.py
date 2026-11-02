@@ -158,7 +158,7 @@ def generate(edition,now,feed,paper,us_fn=fetch_us,global_fn=fetch_global,news_f
        "privacy":"只用公開市場資料，不含私人持股與成本"
     }
     if not good:
-        report["blocks"]=[{"title":"資料尚未就緒","items":[note,"不把舊價當今日行情；LINE 亦不發送。"]}]
+        report["blocks"]=[{"title":"資料尚未就緒","items":[note,"不把舊價當今日行情；LINE 僅通知資料異常，不發布選股。"]}]
         return report
     report["blocks"]=market_blocks(feed)
     if edition=="morning":

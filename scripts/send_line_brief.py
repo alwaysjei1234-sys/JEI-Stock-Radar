@@ -73,13 +73,35 @@ def main():
     args=p.parse_args()
     now=datetime.now(TAIPEI)
     path=ROOT/"remote/brief.json"
-    report=json.loads(path.read_text(encoding="utf-8")).get(args.edition) or {}
+    document=json.loads(path.read_text(encoding="utf-8"))
+    report,edition=select_dispatch(document,args.edition,now)
     token=os.getenv("JEI_LINE_CHANNEL_ACCESS_TOKEN","")
     recipient=os.getenv("JEI_LINE_USER_ID","")
-    ok,msg=can_send(report,args.edition,now,os.getenv("JEI_LINE_ENABLED",""),token,recipient)
+    ok,msg=can_send(report,edition,now,os.getenv("JEI_LINE_ENABLED",""),token,recipient)
     if not ok:
-        print(msg)
-        return
-    print(push(report,args.edition,token,recipient))
+        raise SystemExit("未發送："+msg)
+    result=push(report,edition,token,recipient)
+    print(result)
+    if result not in ("LINE Messaging API 已接受推播請求","LINE 已接受相同日期報告，不重複發送"):
+        raise SystemExit("未確認發送："+result)
+
+def select_dispatch(document,edition,now):
+    """Send a current failure notice instead of silently reading an older brief.
+
+    A notice contains no prices, scores or picks. It has a separate retry bucket
+    so it cannot suppress the verified brief once data recovers.
+    """
+    check=(document.get("checks") or {}).get(edition) or {}
+    if check.get("date")==now.date().isoformat() and check.get("status")=="pending":
+        notice_edition=edition+"_unavailable"
+        return {
+            "date":check["date"],"edition":notice_edition,"status":"ready",
+            "title":"JEI 早報資料異常通知" if edition=="morning" else "JEI 盤後資料異常通知",
+            "note":"本次市場報告未通過驗證，尚未發布；這是系統狀態通知。",
+            "blocks":[{"title":"未發布原因","items":[str(check.get("note") or "資料尚未就緒")[:180],
+                "暫停提供本次行情、評分與選股；舊報告不代表今天行情。"]}],
+            "report_url":"https://jei-stock-radar.vercel.app/remote/brief.html",
+        },notice_edition
+    return document.get(edition) or {},edition
 
 if __name__=="__main__": main()
