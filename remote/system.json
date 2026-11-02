@@ -1,6 +1,6 @@
 {
   "schema": 4,
-  "updated_at": "2026-11-02 11:29",
+  "updated_at": "2026-11-02 12:30",
   "data_date": "2026-10-30",
   "source_data_date": "TWSE:2026-10-30 / TPEx:2026-10-30",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
@@ -14,9 +14,9 @@
     "reasons": [
       "行情來源日期 TWSE:2026-10-30 / TPEx:2026-10-30，不是今天；今日風險與選股訊號暫停判讀"
     ],
-    "breadth": 14.2,
-    "median_pct": -1.73,
-    "down5": 267,
+    "breadth": 15.4,
+    "median_pct": -1.68,
+    "down5": 266,
     "limit_down": 22,
     "divergence": false,
     "institutional_sell_ratio": 62.5,
@@ -28,10 +28,10 @@
   "market": {
     "status": "資料過期",
     "mode": "資料過期",
-    "last_checked_at": "2026-11-02 11:29",
-    "live_count": 139,
+    "last_checked_at": "2026-11-02 12:30",
+    "live_count": 167,
     "close_count": 1969,
-    "live_coverage_pct": 7.1,
+    "live_coverage_pct": 8.5,
     "live_valid": false,
     "stale": true,
     "historical_readonly": true,
@@ -40,18 +40,18 @@
       "attempted": true,
       "market_open": true,
       "quote_refresh_window": true,
-      "updater_time_taipei": "2026-11-02 11:29",
-      "valid_trades": 139,
+      "updater_time_taipei": "2026-11-02 12:30",
+      "valid_trades": 167,
       "mis_stats": {
         "requested_channels": 1969,
         "returned_messages": 1969,
         "matched_codes": 1969,
         "rejected_date": 0,
         "rejected_time": 0,
-        "rejected_price": 1830,
-        "missing_last_trade": 1830,
+        "rejected_price": 1802,
+        "missing_last_trade": 1802,
         "missing_previous_close": 0,
-        "incomplete_with_volume": 1752,
+        "incomplete_with_volume": 1754,
         "retry_requested": 100,
         "retry_recovered": 4
       },
@@ -60,13 +60,13 @@
       "errors": [],
       "reason": "MIS 查詢失敗或有效成交價覆蓋率不足"
     },
-    "brief": "資料過期多因子市場｜加權 -0.54%｜廣度 14.2%｜中位數 -1.73%｜跌逾5% 267｜行情時間以最近檢查時間為準",
+    "brief": "資料過期多因子市場｜加權 -0.22%｜廣度 15.4%｜中位數 -1.68%｜跌逾5% 266｜行情時間以最近檢查時間為準",
     "market_data_as_of": "2026-10-30",
     "session_status": "交易日資料待驗證",
     "no_new_picks": true,
     "partial_live": {
-      "asof": "2026-11-02 11:29",
-      "verified_count": 139,
+      "asof": "2026-11-02 12:30",
+      "verified_count": 167,
       "complete": false,
       "quotes": []
     }
@@ -12617,6 +12617,13 @@
       "total": 2000.0,
       "source": "TWSE T86"
     },
+    "6581": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TWSE T86"
+    },
     "0057": {
       "foreign": 9000.0,
       "trust": 0.0,
@@ -12625,13 +12632,6 @@
       "source": "TWSE T86"
     },
     "4414": {
-      "foreign": 2000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 2000.0,
-      "source": "TWSE T86"
-    },
-    "6581": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13009,14 +13009,14 @@
       "total": 0.0,
       "source": "TWSE T86"
     },
-    "6771": {
+    "2380": {
       "foreign": 0.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 0.0,
       "source": "TWSE T86"
     },
-    "2380": {
+    "6771": {
       "foreign": 0.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13408,17 +13408,17 @@
       "total": -3000.0,
       "source": "TWSE T86"
     },
-    "2432": {
-      "foreign": -4000.0,
-      "trust": 0.0,
-      "dealer": 1000.0,
-      "total": -3000.0,
-      "source": "TWSE T86"
-    },
     "2906": {
       "foreign": -3000.0,
       "trust": 0.0,
       "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TWSE T86"
+    },
+    "2432": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
       "total": -3000.0,
       "source": "TWSE T86"
     },
@@ -13688,14 +13688,14 @@
       "total": -6000.0,
       "source": "TWSE T86"
     },
-    "2514": {
+    "1110": {
       "foreign": -6000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -6000.0,
       "source": "TWSE T86"
     },
-    "1110": {
+    "2514": {
       "foreign": -6000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13863,13 +13863,6 @@
       "total": -8964.0,
       "source": "TWSE T86"
     },
-    "2438": {
-      "foreign": -9000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -9000.0,
-      "source": "TWSE T86"
-    },
     "1437": {
       "foreign": -9000.0,
       "trust": 0.0,
@@ -13881,6 +13874,13 @@
       "foreign": -8000.0,
       "trust": 0.0,
       "dealer": -1000.0,
+      "total": -9000.0,
+      "source": "TWSE T86"
+    },
+    "2438": {
+      "foreign": -9000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
       "total": -9000.0,
       "source": "TWSE T86"
     },
@@ -15277,14 +15277,14 @@
       "total": -81000.0,
       "source": "TWSE T86"
     },
-    "8045": {
+    "2022": {
       "foreign": -81000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": -81000.0,
       "source": "TWSE T86"
     },
-    "2022": {
+    "8045": {
       "foreign": -81000.0,
       "trust": 0.0,
       "dealer": 0.0,
