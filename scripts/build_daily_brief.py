@@ -185,11 +185,16 @@ def paper_block(paper,day):
     entries=["模擬紀錄截至 "+str(stamp)+"；只用官方收盤價估值，不是實際成交"]
     if stamp!=day: entries.append("模擬資料日期與今日行情不同，請勿視為最新績效")
     principal=num(paper.get("capital_per_strategy")) or 1000000
-    for key,item in (paper.get("strategies") or {}).items():
-        val=num((item.get("summary") or {}).get("estimated_liquidation_equity_ntd"))
+    for key,item in list((paper.get("strategies") or {}).items())[:4]:
+        summary=item.get("summary") or {}
+        val=num(summary.get("estimated_liquidation_equity_ntd"))
         if val is not None:
-            entries.append(f"{clean(item.get('name') or key,28)}｜估算權益 {val:,.0f} 元｜相對初始 {percent((val/principal-1)*100)}")
-    return {"title":"四策略模擬復盤","items":entries[:6]}
+            closed,wins=summary.get("closed"),summary.get("wins")
+            valid_counts=(type(closed) is int and type(wins) is int and 0<=wins<=closed)
+            rate=(f"已平倉 {closed} 筆｜勝率 {wins/closed*100:.2f}%" if closed else "已平倉 0 筆｜勝率待累積") if valid_counts else "已平倉勝率待驗證"
+            entries.append(f"{clean(item.get('name') or key,28)}｜估算權益 {val:,.0f} 元｜相對初始 {percent((val/principal-1)*100)}｜{rate}")
+    entries.append("收盤價紙上模擬；滑價與無法成交限制尚未納入；未完成完整樣本外驗證。")
+    return {"kind":"paper_performance","title":"四策略模擬復盤","items":entries}
 
 def generate(edition,now,feed,paper,us_fn=fetch_us,global_fn=fetch_global,news_fn=fetch_news,archive=None):
     good,note=quality(feed,edition,now,archive)

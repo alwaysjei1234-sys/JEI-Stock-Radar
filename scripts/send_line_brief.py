@@ -30,7 +30,9 @@ def payload(report,recipient):
     lines=[report.get("title") or "JEI 市場摘要",str(report.get("date") or ""),str(report.get("note") or "")]
     for block in (report.get("blocks") or [])[:4]:
         lines.append("【"+str(block.get("title") or "")[:40]+"】")
-        lines.extend(str(x)[:120] for x in (block.get("items") or [])[:2])
+        is_paper=block.get("kind")=="paper_performance" or block.get("title")=="四策略模擬復盤"
+        limit=8 if is_paper else 2
+        lines.extend(str(x)[:180] for x in (block.get("items") or [])[:limit])
     lines.append("詳細內容："+str(report.get("report_url") or "https://jei-stock-radar.vercel.app/remote/brief.html"))
     lines.append("僅研究參考，非即時行情或買賣建議。")
     return {"to":recipient,"messages":[{"type":"text","text":"\n".join(lines)[:3500]}],"notificationDisabled":False}

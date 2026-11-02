@@ -116,3 +116,44 @@ class WorkflowDispatchPolicyTests(unittest.TestCase):
                 subprocess.run(['bash','-e','-c',script],check=True,env={**os.environ,'SCHEDULE':schedule,'SELECTED':selected,'MANUAL_SEND':manual,'GITHUB_OUTPUT':str(output)})
                 result=dict(line.split('=',1) for line in output.read_text().splitlines())
                 self.assertEqual(result,{'name':edition,'send':send})
+
+class StrategySummaryTests(unittest.TestCase):
+    def make_paper(self):
+        return {'last_processed_day':'2026-11-02','capital_per_strategy':1000000,
+                'strategies':{key:{'name':name,'summary':{'estimated_liquidation_equity_ntd':900000,'closed':20,'wins':5}} for key,name in [('fixed5','固定 +5%'),('fixed7','固定 +7%'),('fixed10','固定 +10%'),('trailing','移動停利')]}}
+
+    def test_all_four_strategies_and_limits_survive_line_summary(self):
+        from scripts.build_daily_brief import paper_block
+        report={'blocks':[{'title':'other','items':['market']},paper_block(self.make_paper(),'2026-11-02')]}
+        message=line.payload(report,'U'+'a'*32)['messages'][0]['text']
+        for name in ['固定 +5%','固定 +7%','固定 +10%','移動停利']:
+            self.assertIn(name,message)
+        self.assertEqual(message.count('勝率 25.00%'),4)
+        self.assertEqual(message.count('相對初始 -10.00%'),4)
+        self.assertIn('滑價',message)
+        self.assertIn('樣本外',message)
+        self.assertLessEqual(len(message),3500)
+
+    def test_stale_performance_warning_does_not_displace_fourth_strategy(self):
+        from scripts.build_daily_brief import paper_block
+        block=paper_block(self.make_paper(),'2026-11-03')
+        message=line.payload({'blocks':[block]},'U'+'a'*32)['messages'][0]['text']
+        self.assertIn('請勿視為最新績效',message)
+        self.assertIn('移動停利',message)
+        self.assertIn('樣本外',message)
+
+    def test_invalid_or_zero_counts_do_not_invent_win_rate(self):
+        from scripts.build_daily_brief import paper_block
+        for closed,wins,expected in [(0,0,'勝率待累積'),(5,6,'勝率待驗證'),(True,True,'勝率待驗證'),(None,None,'勝率待驗證')]:
+            with self.subTest(closed=closed,wins=wins):
+                paper=self.make_paper()
+                paper['strategies']={'fixed5':paper['strategies']['fixed5']}
+                paper['strategies']['fixed5']['summary'].update(closed=closed,wins=wins,win_rate_pct=99)
+                block=paper_block(paper,'2026-11-02')
+                self.assertIn(expected,str(block))
+                self.assertNotIn('99%',str(block))
+
+    def test_legacy_brief_also_keeps_four_strategy_rows(self):
+        block={'title':'四策略模擬復盤','items':['date','fixed5','fixed7','fixed10','trailing']}
+        message=line.payload({'blocks':[block]},'U'+'a'*32)['messages'][0]['text']
+        for row in block['items']: self.assertIn(row,message)
