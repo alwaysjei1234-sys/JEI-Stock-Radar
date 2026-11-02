@@ -1,4 +1,5 @@
 import unittest
+import copy
 from unittest import mock
 import json
 import tempfile
@@ -21,6 +22,70 @@ PAPER={"last_processed_day":"2026-10-16","capital_per_strategy":1000000,
        "strategies":{"fixed5":{"name":"固定 +5%","summary":{"estimated_liquidation_equity_ntd":970000}}}}
 
 class BriefTests(unittest.TestCase):
+    def retained_case(self):
+        now=datetime(2026,11,2,8,55,tzinfo=ZoneInfo("Asia/Taipei"))
+        feed=copy.deepcopy(FEED)
+        feed["data_date"]="2026-10-30"
+        feed["market"].update(mode="最近收盤",stale=True,historical_readonly=True,
+                              no_new_picks=True,live_valid=False)
+        prices={str(1000+i):100 for i in range(500)}
+        prices["2344"]=58
+        archive={"schema":1,"kind":"official_daily_close","days":{"2026-10-30":prices}}
+        return now,feed,archive
+
+    def test_monday_retained_close_generates_dated_readonly_morning_and_dispatch(self):
+        now,feed,archive=self.retained_case()
+        report=b.generate("morning",now,feed,PAPER,us_fn=lambda n: [],
+                          global_fn=lambda n: [],news_fn=lambda n: [],archive=archive)
+        self.assertEqual(report["status"],"ready")
+        self.assertEqual(report["source_date"],"2026-10-30")
+        self.assertIn("非今日選股",str(report))
+        self.assertTrue(line.can_send(report,"morning",now,"true","token","U"+"a"*32)[0])
+        self.assertNotIn("NEVER_PUBLIC",str(report))
+        self.assertFalse(b.quality(feed,"close",now,archive)[0])
+
+    def test_retained_baseline_requires_archive_and_matching_candidate_prices(self):
+        now,feed,archive=self.retained_case()
+        for bad in [None,{},dict(archive,kind="feed_observation"),dict(archive,days=[]),
+                    dict(archive,days={"2026-10-30":{"2344":58}})]:
+            with self.subTest(archive=bad):
+                self.assertFalse(b.quality(feed,"morning",now,bad)[0])
+        archive["days"]["2026-10-30"]["2344"]=59
+        self.assertFalse(b.quality(feed,"morning",now,archive)[0])
+
+    def test_retained_baseline_rejects_skipped_session_and_live_or_unmarked_feed(self):
+        now,feed,archive=self.retained_case()
+        self.assertFalse(b.quality(feed,"morning",now.replace(day=3),archive)[0])
+        for field,value in [("live_valid",True),("no_new_picks",False),
+                            ("historical_readonly",False),("close_count",True)]:
+            bad=copy.deepcopy(feed);bad["market"][field]=value
+            with self.subTest(field=field):
+                self.assertFalse(b.quality(bad,"morning",now,archive)[0])
+
+    def test_retained_baseline_respects_verified_typhoon_and_holiday_gap(self):
+        now,feed,archive=self.retained_case()
+        now=now.replace(month=10,day=27)
+        feed["data_date"]="2026-10-22"
+        archive["days"]["2026-10-22"]=archive["days"].pop("2026-10-30")
+        self.assertTrue(b.quality(feed,"morning",now,archive)[0])
+
+    def test_degraded_intraday_feed_uses_archive_without_unverified_scores_or_picks(self):
+        now,feed,archive=self.retained_case()
+        feed["market"].update(mode="資料過期",live_count=109,live_coverage_pct=5.5)
+        feed["risk"]["reasons"]=["UNVERIFIED_RISK"]
+        feed["sectors"][0]["name"]="UNVERIFIED_SECTOR"
+        feed["attack"][0]["name"]="UNVERIFIED_PICK"
+        report=b.generate("morning",now,feed,PAPER,us_fn=lambda n: [],
+                          global_fn=lambda n: [],news_fn=lambda n: [],archive=archive)
+        self.assertEqual(report["status"],"ready")
+        self.assertEqual(report["source_date"],"2026-10-30")
+        self.assertIn("評分與選股暫停",report["note"])
+        self.assertNotIn("UNVERIFIED",str(report))
+        self.assertNotIn("NEVER_PUBLIC",str(report))
+        # Missing the expected preceding trading day cannot be masked by an older archive.
+        report=b.generate("morning",now.replace(day=3),feed,PAPER,archive=archive)
+        self.assertEqual(report["status"],"pending")
+
     def test_ready_close_has_no_private_data(self):
         report=b.generate("close",CLOSE,FEED,PAPER)
         self.assertEqual(report["status"],"ready")

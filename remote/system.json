@@ -24482,7 +24482,26 @@
     "hit3": 8.7,
     "hit5": 11.4,
     "hit10": 10.4,
-    "samples": 104
+    "samples": 104,
+    "validation": {
+      "checked_at": "2026-11-02 17:02",
+      "as_of": "2026-11-02",
+      "status": "證據不足；未達80%樣本外門檻",
+      "qualified_out_of_sample_closed_trades": 0,
+      "qualifying_market_regimes": null,
+      "win_rate_definition": "扣成本獲利交易數／已平倉交易數；各策略分開，不合併重複樣本",
+      "paper_strategy_source": "remote/strategy_performance.json",
+      "pick_observation_source": "remote/pick_validation.json",
+      "frozen_recommendations": 100,
+      "unique_day_symbol_signals": 77,
+      "limitations": [
+        "推薦帳本停於2026-10-21；後續封存有缺口",
+        "既有選股觀察使用訊號日收盤，不能視為無洩漏可成交績效",
+        "四策略原帳本未計滑價；本次另列每邊0.1%敏感度",
+        "尚未建立完整walk-forward與三市場狀態驗證"
+      ],
+      "legacy_hit_fields": "hit3/hit5/hit10為既有價格觀察，並非合格樣本外交易勝率"
+    }
   },
   "patterns": {
     "schema": 1,
