@@ -58,7 +58,42 @@
     "market_data_as_of": "2026-11-02",
     "session_status": "已驗證",
     "no_new_picks": false,
-    "partial_live": null
+    "partial_live": null,
+    "post_close_cross_check": {
+      "checked_at": "2026-11-02T11:50:17.444415+00:00",
+      "scope": "post-close samples only; not intraday SLA",
+      "sources": [
+        "https://www.twse.com.tw/exchangeReport/MI_INDEX?date=20261102&type=ALLBUT0999&response=json",
+        "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes",
+        "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_2330.tw%7Ctse_2449.tw%7Cotc_5425.tw&json=1&delay=0"
+      ],
+      "samples": [
+        {
+          "code": "2330",
+          "market_date": "20261102",
+          "mis_trade_time": "13:30:00",
+          "official_close": 2330.0,
+          "mis_close": 2330.0,
+          "equal": true
+        },
+        {
+          "code": "2449",
+          "market_date": "20261102",
+          "mis_trade_time": "13:30:00",
+          "official_close": 263.0,
+          "mis_close": 263.0,
+          "equal": true
+        },
+        {
+          "code": "5425",
+          "market_date": "20261102",
+          "mis_trade_time": "13:30:00",
+          "official_close": 85.0,
+          "mis_close": 85.0,
+          "equal": true
+        }
+      ]
+    }
   },
   "sectors": [
     {

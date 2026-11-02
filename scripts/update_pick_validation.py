@@ -30,7 +30,10 @@ MAX_PICKS = 5
 
 def quote(quotes, code):
     try:
-        p = float(quotes.get(code, 0))
+        raw = quotes.get(code, 0)
+        if isinstance(raw, bool):
+            return None
+        p = float(raw)
         return p if math.isfinite(p) and p > 0 else None
     except (ValueError, TypeError, AttributeError):
         return None

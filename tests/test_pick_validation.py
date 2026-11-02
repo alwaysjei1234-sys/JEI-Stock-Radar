@@ -27,6 +27,23 @@ def feed(day="2026-10-13", stale=False):
             "future_monster":rows,"next":rows,"tomorrow_monster":rows}
 
 class PickValidationTests(unittest.TestCase):
+    def test_boolean_close_stays_missing_instead_of_one_dollar_price(self):
+        a = archive(4)
+        frozen = freeze_picks(feed(), a['days'][DATES[0]], DATES[0])
+        for invalid in (True, False, float('nan'), float('inf')):
+            with self.subTest(invalid=invalid):
+                bad = copy.deepcopy(a)
+                bad['days'][DATES[2]]['2344'] = invalid
+                report = compile_report(frozen, bad, '2026-10-16 16:00')
+                rows = [p for p in report['picks'] if p['code'] == '2344']
+                self.assertTrue(rows)
+                for row in rows:
+                    result = next(o for o in row['outcomes'] if o['trading_days'] == 3)
+                    self.assertEqual(result['status'], 'missing_price')
+                    self.assertNotIn('max_close_drawdown_pct', result)
+                self.assertEqual(report['groups']['attack']['3']['completed'], 1)
+                self.assertEqual(report['groups']['attack']['3']['missing_price'], 1)
+
     def test_public_signals_allow_capture_without_exporting_holdings(self):
         a = archive(1)
         f = feed()

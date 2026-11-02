@@ -13,6 +13,14 @@ class RiskMetricsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             max_close_drawdown(100, [101, None])
 
+    def test_nonfinite_and_boolean_prices_cannot_report_safe_drawdown(self):
+        for value in (True, False, float('nan'), float('inf'), -float('inf'), 0, -1):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    max_close_drawdown(value, [100])
+                with self.assertRaises(ValueError):
+                    max_close_drawdown(100, [110, value, 90])
+
     def test_duplicate_categories_not_unique_trades(self):
         rows = [
             {"day": "2026-10-21", "code": "2449", "group": "attack"},
