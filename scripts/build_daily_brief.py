@@ -129,7 +129,14 @@ def fetch_market_symbols(symbols,now):
             current_market_day=now.astimezone(market_tz).date()
             if not 0 <= (current_market_day-day).days <= 5: continue
             change=(price/entries[-2][1]-1)*100
-            quotes.append({"name":label,"date":day.isoformat(),"close":round(price,2),"change_pct":round(change,2),"source":"Yahoo Finance"})
+            # Yahoo's current daily bar can still be live. Its `close` field
+            # alone is not evidence of a completed exchange closing auction.
+            quotes.append({"name":label,"date":day.isoformat(),"close":round(price,2),
+                           "change_pct":round(change,2),"source":"Yahoo Finance",
+                           "bar_interval":"1d","quote_kind":"daily_bar_reference",
+                           "closing_price_verified":False,
+                           "exchange_timezone":str(market_tz),
+                           "report_as_of":now.isoformat(timespec="minutes")})
         except (OSError,KeyError,IndexError,TypeError,ValueError):
             continue
     return quotes
@@ -139,6 +146,11 @@ def fetch_us(now):
 
 def fetch_global(now):
     return fetch_market_symbols(GLOBAL_SYMBOLS,now)
+
+def market_quote_line(quote,date_prefix):
+    # Safe for legacy records that have no session-completion metadata too.
+    return (f"{quote['name']}｜{date_prefix} {quote['date']} 日線參考價 {quote['close']:,.2f}｜"
+            f"{percent(quote['change_pct'])}｜{quote.get('source','來源待確認')}；未獨立驗證收盤")
 
 def fetch_news(now):
     headlines={}
@@ -229,10 +241,10 @@ def generate(edition,now,feed,paper,us_fn=fetch_us,global_fn=fetch_global,news_f
         report["blocks"][2]["title"]="歷史主攻候選（非今日選股）"
     if edition=="morning":
         report["us_market"]=us_fn(now)
-        us_entries=[f"{x['name']}｜美東 {x['date']} 收盤 {x['close']:,.2f}｜{percent(x['change_pct'])}" for x in report["us_market"]]
+        us_entries=[market_quote_line(x,"美東") for x in report["us_market"]]
         report["blocks"].insert(0,{"title":"全球市場｜美股核心指數","items":us_entries or ["美股報價暫無可信來源，不推測漲跌。"]})
         report["global_market"]=global_fn(now)
-        global_entries=[f"{x['name']}｜市場日 {x['date']} 收盤 {x['close']:,.2f}｜{percent(x['change_pct'])}｜{x.get('source','來源待確認')}" for x in report["global_market"]]
+        global_entries=[market_quote_line(x,"市場日") for x in report["global_market"]]
         report["blocks"].insert(1,{"title":"跨市場風險指標｜各市場日期分開","items":global_entries or ["跨市場報價暫無可信來源，不以舊值補足。"]})
         report["news"]=news_fn(now)
         report["blocks"].append({"title":"重要新聞","items":[f"近期新聞標題 {len(report['news'])} 則；請點連結看原文。新聞標題不等於利多利空。"]})

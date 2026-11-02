@@ -22,6 +22,38 @@ PAPER={"last_processed_day":"2026-10-16","capital_per_strategy":1000000,
        "strategies":{"fixed5":{"name":"固定 +5%","summary":{"estimated_liquidation_equity_ntd":970000}}}}
 
 class BriefTests(unittest.TestCase):
+    def test_current_daily_bar_is_not_promoted_to_verified_close(self):
+        now=datetime(2026,11,3,3,0,tzinfo=ZoneInfo('Asia/Taipei'))
+        stamps=[datetime(2026,10,30,14,tzinfo=ZoneInfo('America/New_York')).timestamp(),
+                datetime(2026,11,2,14,tzinfo=ZoneInfo('America/New_York')).timestamp()]
+        raw={'chart':{'result':[{'meta':{'exchangeTimezoneName':'America/New_York'},
+            'timestamp':stamps,'indicators':{'quote':[{'close':[100,102]}]}}]}}
+        with mock.patch.object(b,'get_url',return_value=json.dumps(raw)):
+            quotes=b.fetch_market_symbols((('^GSPC','S&P 500'),),now)
+        self.assertEqual(len(quotes),1)
+        quote=quotes[0]
+        self.assertEqual((quote['date'],quote['close'],quote['change_pct']),('2026-11-02',102,2))
+        self.assertFalse(quote['closing_price_verified'])
+        self.assertEqual(quote['quote_kind'],'daily_bar_reference')
+        self.assertEqual(quote['exchange_timezone'],'America/New_York')
+        self.assertEqual(quote['report_as_of'],'2026-11-03T03:00+08:00')
+
+    def test_morning_and_line_keep_unconfirmed_daily_price_label(self):
+        now=datetime(2026,11,3,3,0,tzinfo=ZoneInfo('Asia/Taipei'))
+        feed=dict(FEED,data_date='2026-11-02')
+        quotes=[{'name':'S&P 500','date':'2026-11-02','close':102,'change_pct':2,'source':'Yahoo Finance'}]
+        report=b.generate('morning',now,feed,PAPER,us_fn=lambda n:quotes,
+                          global_fn=lambda n:quotes,news_fn=lambda n:[])
+        self.assertEqual(report['status'],'ready')
+        for block in report['blocks'][:2]:
+            self.assertIn('日線參考價 102.00',block['items'][0])
+            self.assertIn('未獨立驗證收盤',block['items'][0])
+            self.assertNotIn(' 收盤 102.00',block['items'][0])
+        body=line.payload(report,'U'+'a'*32)['messages'][0]['text']
+        self.assertIn('日線參考價 102.00',body)
+        self.assertIn('未獨立驗證收盤',body)
+        self.assertEqual(report['us_market'],quotes)
+
     def retained_case(self):
         now=datetime(2026,11,2,8,55,tzinfo=ZoneInfo("Asia/Taipei"))
         feed=copy.deepcopy(FEED)
