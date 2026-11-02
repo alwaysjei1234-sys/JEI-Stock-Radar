@@ -29,6 +29,68 @@ class DispatchTests(unittest.TestCase):
         self.assertFalse(line.can_send(report,edition,self.now,'true','token','U'+'a'*32)[0])
 
 class AcceptanceReceiptTests(unittest.TestCase):
+    def test_transient_push_retries_same_body_and_key_with_bounded_backoff(self):
+        from unittest.mock import patch, MagicMock, call
+        from urllib.error import HTTPError
+        response=MagicMock();response.__enter__.return_value=response
+        response.status=200;response.headers={'x-line-request-id':'accepted'}
+        receipt={'delivery_confirmed':False}
+        report={'date':'2026-11-02','title':'original'}
+        requests=[]
+        def respond(request,timeout):
+            requests.append(request)
+            # A mutable caller must not alter the already-frozen retry body.
+            report['title']='changed later'
+            if len(requests)<3:raise HTTPError(line.PUSH,503,'SECRET_TOKEN',{},None)
+            return response
+        with patch.object(line,'quota_ok',return_value=True) as quota, patch.object(line.urllib.request,'urlopen',side_effect=respond), patch.object(line.time,'sleep') as pause:
+            line.push(report,'close','SECRET_TOKEN','U'+'a'*32,receipt)
+        self.assertEqual(quota.call_count,1)
+        self.assertEqual(len(requests),3)
+        self.assertEqual(len({r.data for r in requests}),1)
+        self.assertEqual(len({r.get_header('X-line-retry-key') for r in requests}),1)
+        self.assertIn(b'original',requests[0].data)
+        self.assertEqual(pause.call_args_list,[call(1),call(2)])
+        self.assertEqual(receipt['attempts'],3)
+        self.assertEqual(receipt['status'],'accepted')
+        self.assertFalse(receipt['delivery_confirmed'])
+        self.assertNotIn('SECRET_TOKEN',str(receipt))
+
+    def test_timeout_then_proven_duplicate_stops_without_extra_push(self):
+        from unittest.mock import patch
+        from urllib.error import HTTPError
+        receipt={}
+        errors=[TimeoutError('SECRET_TOKEN'),HTTPError(line.PUSH,409,'conflict',{'x-line-accepted-request-id':'original'},None)]
+        with patch.object(line,'quota_ok',return_value=True), patch.object(line.urllib.request,'urlopen',side_effect=errors) as network, patch.object(line.time,'sleep') as pause:
+            line.push({'date':'2026-11-02'},'close','SECRET_TOKEN','U'+'a'*32,receipt)
+        self.assertEqual(network.call_count,2)
+        pause.assert_called_once_with(1)
+        self.assertEqual(receipt['status'],'already_accepted')
+
+    def test_permanent_http_errors_are_not_retried(self):
+        from unittest.mock import patch
+        from urllib.error import HTTPError
+        for code in (400,401,403,409,429):
+            with self.subTest(code=code):
+                receipt={}
+                with patch.object(line,'quota_ok',return_value=True), patch.object(line.urllib.request,'urlopen',side_effect=HTTPError(line.PUSH,code,'SECRET_TOKEN',{},None)) as network, patch.object(line.time,'sleep') as pause:
+                    with self.assertRaises(RuntimeError):line.push({'date':'2026-11-02'},'close','SECRET_TOKEN','U'+'a'*32,receipt)
+                self.assertEqual(network.call_count,1);pause.assert_not_called()
+                self.assertEqual(receipt['status'],'failed')
+
+    def test_retry_exhaustion_is_bounded_and_does_not_leak_network_error(self):
+        from unittest.mock import patch,call
+        from urllib.error import HTTPError,URLError
+        for error in (HTTPError(line.PUSH,500,'SECRET_TOKEN',{},None),URLError('SECRET_TOKEN')):
+            with self.subTest(error=type(error).__name__):
+                receipt={}
+                with patch.object(line,'quota_ok',return_value=True), patch.object(line.urllib.request,'urlopen',side_effect=error) as network, patch.object(line.time,'sleep') as pause:
+                    with self.assertRaises(RuntimeError) as raised:line.push({'date':'2026-11-02'},'close','SECRET_TOKEN','U'+'a'*32,receipt)
+                self.assertEqual(network.call_count,3)
+                self.assertEqual(pause.call_args_list,[call(1),call(2)])
+                self.assertEqual(receipt['status'],'failed')
+                self.assertNotIn('SECRET_TOKEN',str(raised.exception)+str(receipt))
+
     def test_api_acceptance_records_request_id_without_claiming_delivery(self):
         from unittest.mock import patch, MagicMock
         response=MagicMock()

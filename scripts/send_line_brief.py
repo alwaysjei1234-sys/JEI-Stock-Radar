@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import re
+import time
 import uuid
 import urllib.error
 import urllib.request
@@ -59,22 +60,33 @@ def push(report,edition,token,recipient,receipt=None):
     # Official retry key: avoid duplicate acceptance for the same daily edition.
     key=str(uuid.uuid5(uuid.NAMESPACE_URL,"jei-stock-radar/"+recipient+"/"+report["date"]+"/"+edition))
     body=json.dumps(payload(report,recipient),ensure_ascii=False).encode("utf-8")
-    req=urllib.request.Request(PUSH,data=body,method="POST",headers={
-        "Authorization":"Bearer "+token,"Content-Type":"application/json",
-        "X-Line-Retry-Key":key,
-    })
-    try:
-        with urllib.request.urlopen(req,timeout=15) as r:
-            if r.status!=200: raise RuntimeError("LINE unexpected response")
-            receipt.update(status="accepted",http_status=200,request_id=r.headers.get("x-line-request-id"))
-            return "LINE Messaging API 已接受推播請求"
-    except urllib.error.HTTPError as e:
-        receipt["http_status"]=e.code
-        if e.code==409 and e.headers.get("x-line-accepted-request-id"):
-            receipt.update(status="already_accepted",request_id=e.headers.get("x-line-accepted-request-id"))
-            return "LINE 已接受相同日期報告，不重複發送"
-        receipt["status"]="failed"
-        raise RuntimeError("LINE 發送未被接受（HTTP "+str(e.code)+"）") from None
+    # Freeze content and recipient before retrying: a timeout may already have
+    # been accepted upstream. Same key/body prevents a duplicate acceptance.
+    for attempt in range(1,4):
+        receipt["attempts"]=attempt
+        receipt.pop("http_status",None)
+        req=urllib.request.Request(PUSH,data=body,method="POST",headers={
+            "Authorization":"Bearer "+token,"Content-Type":"application/json",
+            "X-Line-Retry-Key":key,
+        })
+        try:
+            with urllib.request.urlopen(req,timeout=15) as r:
+                if r.status!=200: raise RuntimeError("LINE unexpected response")
+                receipt.update(status="accepted",http_status=200,request_id=r.headers.get("x-line-request-id"))
+                return "LINE Messaging API 已接受推播請求"
+        except urllib.error.HTTPError as e:
+            receipt["http_status"]=e.code
+            if e.code==409 and e.headers.get("x-line-accepted-request-id"):
+                receipt.update(status="already_accepted",request_id=e.headers.get("x-line-accepted-request-id"))
+                return "LINE 已接受相同日期報告，不重複發送"
+            receipt["status"]="failed"
+            if not 500<=e.code<600 or attempt==3:
+                raise RuntimeError("LINE 發送未被接受（HTTP "+str(e.code)+"）") from None
+        except OSError:
+            receipt["status"]="failed"
+            if attempt==3:
+                raise RuntimeError("LINE 網路重試未確認接受") from None
+        time.sleep(2**(attempt-1))
 
 def main():
     p=argparse.ArgumentParser()
