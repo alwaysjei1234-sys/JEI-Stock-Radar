@@ -1,0 +1,37 @@
+{
+  "twse": {
+    "status": "ok",
+    "url": "https://www.twse.com.tw/exchangeReport/MI_INDEX?date=20261102&type=ALLBUT0999&response=json",
+    "date": "20261102",
+    "stat": "OK",
+    "index_rows": [
+      [
+        "發行量加權股價指數",
+        "44,920.14",
+        "<p style ='color:green'>-</p>",
+        "291.69",
+        "-0.65",
+        ""
+      ]
+    ]
+  },
+  "tpex": {
+    "status": "ok",
+    "url": "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes",
+    "rows": 1018,
+    "dates": [
+      "1151102"
+    ]
+  },
+  "mis": {
+    "status": "unavailable",
+    "url": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_2330.tw%7Ctse_2449.tw%7Cotc_5425.tw&json=1&delay=0",
+    "error": "HTTP Error 503: Service Unavailable"
+  },
+  "production": {
+    "status": "reachable",
+    "url": "https://jei-stock-radar.vercel.app/remote/system.json",
+    "note": "HTTP JSON reachable only; not a freshness assertion"
+  },
+  "checked_at": "2026-11-03T06:53:26+08:00"
+}
