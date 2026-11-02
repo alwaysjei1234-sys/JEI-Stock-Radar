@@ -81,10 +81,16 @@ async function run(){
   await page.evaluate(()=>{system=window.__marketBeforeClosureTest;delete window.__marketBeforeClosureTest;renderSystem();});
   await page.waitForFunction(()=>document.querySelector('#jeiPickSync')?.textContent.includes('官方收盤'),null,{timeout:15000});
   assert.equal(await page.locator('#jeiPickDetails').evaluate(el=>el.open),false,'long performance breakdown starts collapsed');
-  assert.match(await page.locator('#jeiPickDetailsSummary').innerText(),/已完成的策略／週期明細（5 組）/);
+  const pickReport=JSON.parse(await fs.readFile(path.join(ROOT,'remote','pick_validation.json'),'utf8'));
+  const matured=Object.values(pickReport.groups).flatMap(group=>Object.entries(group)
+    .filter(([days,entry])=>[3,7,15,20,30,40,60].includes(Number(days)) && Number(entry.completed)>0)
+    .map(([days,entry])=>({days,completed:String(entry.completed)})));
+  assert.ok(matured.length>0,'checked-in report must exercise completed performance rows');
+  assert.ok((await page.locator('#jeiPickDetailsSummary').innerText()).includes(`已完成的策略／週期明細（${matured.length} 組）`));
   assert.match(await page.locator('#jeiPickOverview').innerText(),/未到期不列為 0%/);
-  assert.equal(await page.locator('#jeiPickRows tr').count(),5,'only five matured 3-day strategy results are shown');
-  assert.deepEqual(await page.locator('#jeiPickRows tr td:nth-child(2)').allTextContents(),['3','3','3','3','3'],'only mature 3-day results are displayed');
+  assert.equal(await page.locator('#jeiPickRows tr').count(),matured.length,'all completed periods are shown; pending-only periods are excluded');
+  assert.deepEqual(await page.locator('#jeiPickRows tr td:nth-child(2)').allTextContents(),matured.map(row=>row.days));
+  assert.deepEqual(await page.locator('#jeiPickRows tr td:nth-child(3)').allTextContents(),matured.map(row=>row.completed));
   assert.equal(await page.locator('#hold').isVisible(),false,'personal holdings never exposed on public browser');
   assert.equal(await page.locator('[data-private-only]:visible').count(),0,'owner-only navigation and links stay hidden in visitor edition');
   await page.locator('[data-go="attack"]').first().click();
