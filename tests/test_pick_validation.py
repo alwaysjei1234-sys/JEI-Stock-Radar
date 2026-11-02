@@ -27,6 +27,25 @@ def feed(day="2026-10-13", stale=False):
             "future_monster":rows,"next":rows,"tomorrow_monster":rows}
 
 class PickValidationTests(unittest.TestCase):
+    def test_public_signals_allow_capture_without_exporting_holdings(self):
+        a = archive(1)
+        f = feed()
+        f["holdings"] = {"2330": {"score": 65, "trend": "整理",
+                                   "as_of": DATES[0], "status": "歷史參考"}}
+        self.assertTrue(close_verified(f, a, DATES[0]))
+        prior = {"schema": 1, "picks": []}
+        state, report, captured = update(
+            f, a, prior, datetime(2026, 10, 13, 16, tzinfo=TZ))
+        self.assertTrue(captured)
+        self.assertEqual(len(state["picks"]), 10)
+        self.assertNotIn("2330", [p["code"] for p in state["picks"]])
+        self.assertNotIn("holdings", state)
+        self.assertNotIn("holdings", report)
+        for field in ("cost", "shares", "pnl", "unknown"):
+            private = copy.deepcopy(f)
+            private["holdings"]["2330"][field] = 1
+            self.assertFalse(close_verified(private, a, DATES[0]))
+
     def test_freezes_original_five_groups_and_no_hindsight(self):
         a=archive()
         original=feed()

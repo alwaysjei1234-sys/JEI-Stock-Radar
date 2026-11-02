@@ -607,9 +607,16 @@ def update_history(history,date_key,stocks,signals,institutional_market=None):
     return history
 
 def calc_backtest(history,current_prices):
-    if len(history)<2:return {"hit3":None,"hit5":None,"hit10":None,"samples":0}
     periods=[(3,"hit3"),(5,"hit5"),(10,"hit10")]
-    out={"hit3":None,"hit5":None,"hit10":None,"samples":0}
+    out={"hit3":None,"hit5":None,"hit10":None,"samples":0,
+         "validation":{
+             "status":"insufficient_evidence", "threshold_80_met":False,
+             "qualified_oos_closed_trades":0,
+             "hit_definition":"gross close return >= 3%; not net profitable closed trades",
+             "costs_included":False, "slippage_included":False,
+             "walk_forward_verified":False, "market_regimes_verified":False,
+             "note":"舊hit欄位僅為收盤漲幅觀察，不能作80%樣本外勝率證據；正式紀錄見pick_validation.json及strategy_performance.json"
+         }}
     total_samples=0
     for days,key in periods:
         wins=0;n=0
@@ -1222,7 +1229,7 @@ def main():
         patterns=build_pattern_signals([],{}, {}, [],asof=today_iso)
         patterns["status"]="not_official_close"
         # Partial intraday/stale prices cannot be scored as a new backtest result.
-        backtest={"hit3":None,"hit5":None,"hit10":None,"samples":0}
+        backtest=calc_backtest([],{})
 
     old_web_recommendations=[]; old_web_updated_at=None; old_web_status={}
     try:

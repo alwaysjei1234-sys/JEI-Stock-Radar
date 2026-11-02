@@ -24485,7 +24485,20 @@
     "hit3": 8.7,
     "hit5": 11.4,
     "hit10": 10.4,
-    "samples": 104
+    "samples": 104,
+    "validation": {
+      "status": "insufficient_evidence",
+      "threshold_80_met": false,
+      "qualified_oos_closed_trades": 0,
+      "hit_definition": "gross close return >= 3%; not net profitable closed trades",
+      "costs_included": false,
+      "slippage_included": false,
+      "walk_forward_verified": false,
+      "market_regimes_verified": false,
+      "note": "舊hit欄位僅為收盤漲幅觀察，不能作80%樣本外勝率證據；正式紀錄見pick_validation.json及strategy_performance.json",
+      "pick_archive_records": 250,
+      "pick_archive_unique_day_symbols": 190
+    }
   },
   "patterns": {
     "schema": 1,

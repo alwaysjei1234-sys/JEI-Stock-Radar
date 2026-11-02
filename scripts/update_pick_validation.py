@@ -10,6 +10,7 @@ import math
 import re
 import statistics
 from scripts.pick_risk_metrics import max_close_drawdown, duplicate_signal_summary
+from scripts.public_holding_signals import is_safe_public_holdings
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -47,7 +48,7 @@ def close_verified(feed, archive, date):
             or market.get("stale") is not False or isinstance(count, bool)
             or not isinstance(count, (int, float)) or count < 500):
         return False
-    if feed.get("holdings") not in (None, {}):
+    if not is_safe_public_holdings(feed.get("holdings")):
         return False
     try:
         stamp = datetime.strptime(feed["updated_at"], "%Y-%m-%d %H:%M").replace(tzinfo=TZ)
