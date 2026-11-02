@@ -69,7 +69,9 @@
     const valuation = record.valuation || null;
     const financials = record.financials || null;
     const revenueFreshness = freshness(revenue && revenue.publishedAt, today, 45);
-    const financialFreshness = freshness(financials && financials.publishedAt, today, 150);
+    const financialFreshness = financials && financials.availability === 'retained_previous_snapshot'
+      ? { ...freshness(financials.publishedAt, today, 150), state: 'cached' }
+      : freshness(financials && financials.publishedAt, today, 150);
     const marginFreshness = freshness(margin && margin.marketDate, today);
     const valuationFreshness = freshness(valuation && valuation.marketDate, today);
     return { market, revenue, margin, valuation, financials, revenueFreshness, financialFreshness, marginFreshness, valuationFreshness,
@@ -138,7 +140,7 @@
       { title: '美股／國際環境', status: status(snapshot && snapshot.usFreshness, !!(snapshot && snapshot.usDate)), source: 'JEI 盤前／盤後摘要', asOf: snapshot && snapshot.usDate || '未知', detail: snapshot && snapshot.linkage || '國際脈絡資料缺值，不作方向推論。' },
       { title: '候選模型與價格參考', status: status(stock.freshness, !!candidate, !candidate || candidate.score == null), source: 'JEI 候選快照', asOf: stock.date || '未知', detail: candidate ? `候選分類 ${candidate.category} #${candidate.rank}；模型分數 ${candidate.score ?? '缺值'}；快照價格 ${candidate.price ?? '缺值'}。分數不是目標價或買賣訊號。` : '目前候選清單未收錄，不代表公司基本面判定。' },
       { title: '產業與族群', status: status(stock.freshness, !!stock.sector, !stock.sector || stock.sectorScore == null), source: 'JEI 族群資料', asOf: stock.date || '未知', detail: `族群 ${stock.sector || '未分類'}；族群分數 ${stock.sectorScore ?? '缺值'}。` },
-      { title: '營收與財報品質', status: status(revenue && evidence.revenueFreshness || financials && evidence.financialFreshness, !!revenue || !!financials, !(revenue && financials && dated(evidence.revenueFreshness) && dated(evidence.financialFreshness))), source: 'TWSE／TPEx／公開資訊觀測站免費資料', asOf: [revenue && revenue.publishedAt, financials && financials.publishedAt].filter(Boolean).join('、') || '未知', detail: `營收年增 ${revenue && revenue.monthlyYoYPct != null ? `${revenue.monthlyYoYPct}%` : '缺值'}；一般產業 EPS ${financials && financials.eps != null ? financials.eps : '缺值'}、毛利率 ${financials && financials.grossMarginPct != null ? `${financials.grossMarginPct}%` : '缺值'}。自由現金流、存貨與應收帳款仍需查報表。` },
+      { title: '營收與財報品質', status: status(revenue && evidence.revenueFreshness || financials && evidence.financialFreshness, !!revenue || !!financials, !(revenue && financials && dated(evidence.revenueFreshness) && dated(evidence.financialFreshness))), source: 'TWSE／TPEx／公開資訊觀測站免費資料', asOf: [revenue && revenue.publishedAt, financials && financials.publishedAt].filter(Boolean).join('、') || '未知', detail: `營收年增 ${revenue && revenue.monthlyYoYPct != null ? `${revenue.monthlyYoYPct}%` : '缺值'}；${financials && financials.availability === 'retained_previous_snapshot' ? '本次端點缺漏，保留前次季度；' : ''}一般產業 EPS ${financials && financials.eps != null ? financials.eps : '缺值'}、毛利率 ${financials && financials.grossMarginPct != null ? `${financials.grossMarginPct}%` : '缺值'}。自由現金流、存貨與應收帳款仍需查報表。` },
       { title: '估值與同業比較', status: status(evidence && evidence.valuationFreshness, !!valuation, !valuation || !dated(evidence.valuationFreshness)), source: 'TWSE／TPEx 免費估值快照', asOf: valuation && valuation.marketDate || '未知', detail: `本益比 ${valuation && valuation.pe != null ? valuation.pe : '缺值'}；殖利率 ${valuation && valuation.dividendYieldPct != null ? `${valuation.dividendYieldPct}%` : '缺值'}；未接入同業同口徑比較。` },
       { title: '法人／融資籌碼', status: status(evidence && evidence.marginFreshness || stock.freshness, !!stock.institutional || !!margin, !(stock.institutional && margin)), source: 'JEI 個股快照及 TWSE／TPEx 免費資料', asOf: stock.date || '未知', detail: `三大法人 ${stock.institutional ? `${stock.institutional.total} 股（公告日尚未獨立標示）` : '缺值'}；融資融券 ${margin ? `資料日 ${margin.marketDate || '未知'}` : '缺值'}；不推測大戶意圖。` },
       { title: '催化、事件與風險清單', status: status(snapshot && snapshot.freshness, news.length > 0, true), source: '公開新聞摘要＋官方公告待查', asOf: snapshot && snapshot.usDate || '未知', detail: `${newsText} 請逐項確認公司公告；未連結個股的新聞不能當成催化證據。` }
@@ -403,7 +405,7 @@
         parts.push(`月營收 ${item.period || '期間未知'}｜年增 ${item.monthlyYoYPct == null ? '缺值' : `${item.monthlyYoYPct}%`}｜累計年增 ${item.cumulativeYoYPct == null ? '缺值' : `${item.cumulativeYoYPct}%`}｜官方公告 ${item.publishedAt || '日期未知'}${dated}`);
       }
       if (evidence && evidence.financials) {
-        const item = evidence.financials, dated = evidence.financialFreshness.state === 'dated' ? '' : '（財報資料過期／日期未驗證）';
+        const item = evidence.financials, dated = item.availability === 'retained_previous_snapshot' ? '（本次官方端點缺漏，保留前次季度；非本次更新）' : evidence.financialFreshness.state === 'dated' ? '' : '（財報資料過期／日期未驗證）';
         parts.push(`一般產業財報 ${item.period || '季度未知'}｜毛利率 ${item.grossMarginPct == null ? '缺值' : `${item.grossMarginPct}%`}｜營益率 ${item.operatingMarginPct == null ? '缺值' : `${item.operatingMarginPct}%`}｜母公司淨利率 ${item.parentNetMarginPct == null ? '缺值' : `${item.parentNetMarginPct}%`}｜EPS ${item.eps ?? '缺值'}｜負債比 ${item.debtRatioPct == null ? '缺值' : `${item.debtRatioPct}%`}｜流動比 ${item.currentRatioPct == null ? '缺值' : `${item.currentRatioPct}%`}｜每股淨值 ${item.bookValuePerShare ?? '缺值'}｜公告 ${item.publishedAt || '日期未知'}${dated}`);
       }
       if (evidence && evidence.margin) {

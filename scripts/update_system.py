@@ -322,8 +322,20 @@ def live_price(m):
     z=num(m.get("z"))
     return z if z is not None and z>0 else None
 
+def recent_mis_time(message, asof):
+    """Count only executed quotes within two five-minute refresh intervals."""
+    try:
+        stamp = datetime.strptime(str(message.get("d", "")) + " " + str(message.get("t", "")),
+                                  "%Y%m%d %H:%M:%S").replace(tzinfo=TZ)
+        seconds = (asof - stamp).total_seconds()
+        return (stamp.hour >= 9 and (stamp.hour, stamp.minute, stamp.second) <= (13, 30, 0)
+                and -60 <= seconds <= 600)
+    except (ValueError, TypeError):
+        return False
+
 def enrich_live(rows, asof=None):
-    expected_day=(asof or datetime.now(TZ)).strftime("%Y%m%d")
+    asof=asof or datetime.now(TZ)
+    expected_day=asof.strftime("%Y%m%d")
     by_code={x["code"]:x for x in rows}
     channels=[]
     for x in rows:
@@ -331,7 +343,7 @@ def enrich_live(rows, asof=None):
         prefix="tse_" if x.get("market")=="TWSE" else "otc_"
         channels.append(prefix+x["code"]+".tw")
     got=0;errors=[]
-    stats={"requested_channels":len(channels),"returned_messages":0,"matched_codes":0,"rejected_date":0,"rejected_time":0,"rejected_price":0,"missing_last_trade":0,"missing_previous_close":0}
+    stats={"requested_channels":len(channels),"returned_messages":0,"matched_codes":0,"rejected_date":0,"rejected_time":0,"duplicate_messages":0,"rejected_price":0,"missing_last_trade":0,"missing_previous_close":0}
     # MIS is sensitive to oversized ex_ch queries/rate bursts. Use conservative
     # batches and retry failed/empty chunks at half size so a full-market scan
     # does not silently fall back to a stale daily snapshot.
@@ -386,6 +398,7 @@ def enrich_live(rows, asof=None):
     if replacements:
         messages=[replacements.get(str(m.get("c","")),m) for m in messages]
         stats["retry_recovered"]=len(replacements)
+    accepted_codes=set()
     for m in messages:
         code=str(m.get("c","")).strip()
         x=by_code.get(code)
@@ -406,8 +419,12 @@ def enrich_live(rows, asof=None):
         if quote_day!=expected_day:
             stats["rejected_date"]+=1
             continue
+        valid_trade_time=valid_trade_time and recent_mis_time(m, asof)
         if not valid_trade_time:
             stats["rejected_time"]+=1
+            continue
+        if code in accepted_codes:
+            stats["duplicate_messages"]+=1
             continue
         prev=num(m.get("y"));price=live_price(m)
         if price is None or price<=0 or prev is None or prev<=0:
@@ -429,11 +446,11 @@ def enrich_live(rows, asof=None):
             x["quote_time"]=f"{qd[:4]}-{qd[4:6]}-{qd[6:8]} {qt}"
         elif qt:
             x["quote_time"]=qt
-        x["live"]=True;got+=1
+        x["live"]=True;got+=1;accepted_codes.add(code)
     taiex=None
     try:
         idx=fetch_mis_channels(["tse_t00.tw"])
-        if idx and re.sub(r"[^0-9]","",str(idx[0].get("d","") or ""))==expected_day:
+        if idx and recent_mis_time(idx[0], asof):
             y=num(idx[0].get("y"));z=live_price(idx[0])
             if z and y and y>0:taiex=(z-y)/y*100.0
     except Exception as e:errors.append("TAIEX:"+str(e))
@@ -443,7 +460,9 @@ def num(v):
     if v is None:return None
     s=str(v).strip().replace(",","").replace("+","")
     if s in ("","--","---","N/A","null"):return None
-    try:return float(s)
+    try:
+        value=float(s)
+        return value if value==value and abs(value)!=float("inf") else None
     except Exception:return None
 
 def pick(d,*keys):

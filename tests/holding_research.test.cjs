@@ -136,3 +136,7 @@ assert.equal(videoRows.children.length, 1);
 assert.equal(videoDir.children.length, 1);
 assert.match(videoStatus.textContent, /未讀影片內容/);
 console.log('PASS dated market context, scenario validation, in-memory journal metrics and private-data boundaries');
+
+const cachedFinancial = research.lookupFreeEvidence({schemaVersion: 1, markets: {listed: {'2330': {financials: {period: '2026-Q2', publishedAt: '2026-10-30', availability: 'retained_previous_snapshot', eps: 49.33}}}}}, '2330', '2026-11-02');
+assert.equal(cachedFinancial.financialFreshness.state, 'cached', 'retained quarters never count as freshly synced evidence');
+assert.equal(cachedFinancial.financials.period, '2026-Q2');

@@ -21,7 +21,7 @@ class QuoteFreshnessTests(unittest.TestCase):
         def fake_mis(channels):
             if channels == ["tse_t00.tw"]:
                 return [{"d": index_day if index_day is not None else quote_day,
-                         "y": "10000", "z": "10100"}]
+                         "t": "10:15:00", "y": "10000", "z": "10100"}]
             return [{"c": "2330", "n": "台積電", "d": quote_day,
                      "t": "10:15:00", "y": "900", "z": "920", "v": "4500"}]
         with patch.object(MOD, "fetch_mis_channels", side_effect=fake_mis):

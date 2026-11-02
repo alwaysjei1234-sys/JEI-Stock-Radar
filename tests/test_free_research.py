@@ -117,6 +117,57 @@ class FreeResearchTests(unittest.TestCase):
         self.assertNotIn("holdings", json.dumps(payload).lower())
         self.assertEqual(len(payload["sources"]), 10)
 
+    def cache_fixture(self):
+        previous = {"schemaVersion": 1, "sources": module.SOURCES.copy(),
+                    "generatedAt": "2026-10-30T12:00:00+00:00", "markets": {
+                        "listed": {"2330": {"financials": {
+                            "industryCoverage": "general_industry", "period": "2026-Q2",
+                            "publishedAt": "2026-10-30", "eps": 49.33, "cost": "private"}}}, "otc": {}}}
+        current = {"generatedAt": "2026-11-02T12:00:00+00:00", "markets": {
+            "listed": {"2330": {"revenue": {"period": "2026-09-01"}}, "1232": {"financials": {"period": "2026-Q3", "eps": 8.03}}}, "otc": {}}}
+        return current, previous
+
+    def test_rolling_quarter_cache_preserves_dates_provenance_and_whitelist(self):
+        current, previous = self.cache_fixture()
+        result = module.retain_missing_financials(current, previous)
+        record = result["markets"]["listed"]["2330"]["financials"]
+        self.assertEqual(record["period"], "2026-Q2")
+        self.assertEqual(record["publishedAt"], "2026-10-30")
+        self.assertEqual(record["availability"], "retained_previous_snapshot")
+        self.assertNotIn("cost", record)
+        self.assertEqual(result["markets"]["listed"]["1232"]["financials"]["eps"], 8.03)
+        self.assertEqual(result["financialCoverage"]["listed"]["retainedFinancialRecords"], 1)
+        result.update(schemaVersion=1, sources=module.SOURCES.copy())
+        next_snapshot, _ = self.cache_fixture()
+        next_snapshot["generatedAt"] = "2026-11-03T12:00:00+00:00"
+        again = module.retain_missing_financials(next_snapshot, result)
+        self.assertEqual(again["markets"]["listed"]["2330"]["financials"]["cachedFromGeneratedAt"], previous["generatedAt"])
+
+    def test_cache_rejects_unknown_source_and_future_snapshot(self):
+        current, previous = self.cache_fixture()
+        previous["sources"] = {}
+        with self.assertRaises(ValueError):
+            module.retain_missing_financials(current, previous)
+        current, previous = self.cache_fixture()
+        previous["generatedAt"] = "2026-11-03T00:00:00+00:00"
+        with self.assertRaises(ValueError):
+            module.retain_missing_financials(current, previous)
+
+    def test_cache_does_not_merge_partial_new_quarter_or_add_removed_company(self):
+        current, previous = self.cache_fixture()
+        current["markets"]["listed"]["2330"]["financials"] = {"period": "2026-Q3", "eps": None}
+        previous["markets"]["listed"]["9999"] = previous["markets"]["listed"]["2330"]
+        module.retain_missing_financials(current, previous)
+        self.assertIsNone(current["markets"]["listed"]["2330"]["financials"]["eps"])
+        self.assertNotIn("9999", current["markets"]["listed"])
+
+    def test_cache_skips_invalid_or_future_financial_values(self):
+        for key, value in (("eps", float("nan")), ("eps", True), ("period", "2026-Q9"), ("period", "0000-Q1"), ("cachedFromGeneratedAt", "2026-10-30T12:00:00"), ("publishedAt", "2026-11-03")):
+            current, previous = self.cache_fixture()
+            previous["markets"]["listed"]["2330"]["financials"][key] = value
+            module.retain_missing_financials(current, previous)
+            self.assertNotIn("financials", current["markets"]["listed"]["2330"])
+
     def test_atomic_output_is_valid_json(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "nested" / "feed.json"

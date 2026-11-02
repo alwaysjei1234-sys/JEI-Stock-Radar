@@ -14,7 +14,7 @@ class LiveQuoteTests(unittest.TestCase):
 
     def test_same_day_trade_updates_close(self):
         rows = [{"code": "2330", "market": "TWSE", "close": 100.0, "pct": 0.0}]
-        quote = {"c": "2330", "d": "20261021", "t": "09:30:05", "z": "105", "y": "100"}
+        quote = {"c": "2330", "d": "20261021", "t": "09:59:05", "z": "105", "y": "100"}
         with patch("scripts.update_system.fetch_mis_channels", return_value=[quote]):
             result, count, _, errors, _ = enrich_live(rows, asof=datetime(2026, 10, 21, 10, 0, tzinfo=TZ))
         self.assertEqual(count, 1)
@@ -23,7 +23,7 @@ class LiveQuoteTests(unittest.TestCase):
         self.assertFalse(errors)
 
     def test_reject_old_date_nontrading_time_and_bid_only(self):
-        base = {"c": "2330", "d": "20261021", "t": "09:30:05", "z": "105", "y": "100"}
+        base = {"c": "2330", "d": "20261021", "t": "09:59:05", "z": "105", "y": "100"}
         cases = [{"d": "20261020"}, {"t": "08:59:59"}, {"t": "13:31:00"},
                  {"z": "-", "b": "105_100"}]
         for changes in cases:
@@ -34,6 +34,22 @@ class LiveQuoteTests(unittest.TestCase):
                 self.assertEqual(count, 0)
                 self.assertEqual(result[0]["close"], 100.0)
                 self.assertFalse(result[0].get("live", False))
+
+    def test_reject_stale_future_nonfinite_and_duplicate_quotes(self):
+        base = {"c": "2330", "d": "20261021", "t": "09:59:05", "z": "105", "y": "100"}
+        for changes in ({"t": "09:49:59"}, {"t": "10:02:00"}, {"z": "NaN"}, {"z": "Infinity"}, {"y": "Infinity"}):
+            with self.subTest(changes=changes):
+                rows = [{"code": "2330", "market": "TWSE", "close": 100.0}]
+                with patch("scripts.update_system.fetch_mis_channels", return_value=[dict(base, **changes)]):
+                    result, count, index, _, _ = enrich_live(rows, asof=datetime(2026, 10, 21, 10, 0, tzinfo=TZ))
+                self.assertEqual(count, 0)
+                self.assertEqual(result[0]["close"], 100)
+                self.assertIsNone(index)
+        rows = [{"code": "2330", "market": "TWSE", "close": 100.0}]
+        with patch("scripts.update_system.fetch_mis_channels", return_value=[base, base]):
+            _, count, _, _, stats = enrich_live(rows, asof=datetime(2026, 10, 21, 10, 0, tzinfo=TZ))
+        self.assertEqual(count, 1)
+        self.assertEqual(stats["duplicate_messages"], 1)
 
 
 if __name__ == "__main__":

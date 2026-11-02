@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import json
 import os
+import copy
+import re
 import tempfile
 import time
 import urllib.request
@@ -270,6 +272,71 @@ def build_snapshot(api: Any, market_date: str | None, generated_at: str | None =
     }
 
 
+def retain_missing_financials(snapshot: dict[str, Any], previous: dict[str, Any]) -> dict[str, Any]:
+    """Keep attributed prior quarters when rolling official APIs omit a company.
+
+    Never merge fields across quarters or refresh a cached publication date.
+    Only the public financial whitelist may cross the snapshot boundary.
+    """
+    if previous.get("schemaVersion") != 1 or previous.get("sources") != SOURCES:
+        raise ValueError("Previous financial cache has unrecognized official sources/schema")
+    current_time = datetime.fromisoformat(snapshot["generatedAt"])
+    prior_time = datetime.fromisoformat(previous["generatedAt"])
+    if current_time.tzinfo is None or prior_time.tzinfo is None:
+        raise ValueError("Financial cache timestamps require a timezone")
+    if prior_time > current_time:
+        raise ValueError("Previous financial cache is from the future")
+    numeric_fields = ("grossMarginPct", "operatingMarginPct", "parentNetMarginPct", "eps",
+                      "debtRatioPct", "currentRatioPct", "bookValuePerShare")
+    coverage = {}
+    for market in ("listed", "otc"):
+        records = snapshot["markets"][market]
+        previous_records = previous.get("markets", {}).get(market, {})
+        fresh_count = sum(isinstance(row.get("financials"), dict) for row in records.values())
+        retained = 0
+        for code, row in records.items():
+            if "financials" in row:
+                continue
+            old = previous_records.get(code, {}).get("financials")
+            if not isinstance(old, dict) or old.get("industryCoverage") != "general_industry":
+                continue
+            period = old.get("period")
+            published = old.get("publishedAt")
+            if not isinstance(period, str) or not re.fullmatch(r"\d{4}-Q[1-4]", period):
+                continue
+            try:
+                publication = date.fromisoformat(published)
+            except (TypeError, ValueError):
+                continue
+            year, quarter = int(period[:4]), int(period[-1])
+            if year < 1911 or publication > prior_time.date() or date(year, quarter * 3, 1) > publication:
+                continue
+            if any(old.get(key) is not None and
+                   (isinstance(old[key], bool) or not isinstance(old[key], (float, int)) or number(old[key]) is None)
+                   for key in numeric_fields):
+                continue
+            if not any(old.get(key) is not None for key in numeric_fields):
+                continue
+            cached = {key: copy.deepcopy(old.get(key)) for key in
+                      ("industryCoverage", "period", "publishedAt", *numeric_fields)}
+            # Preserve the first observation time over repeated partial refreshes.
+            origin = old.get("cachedFromGeneratedAt", previous["generatedAt"])
+            try:
+                if datetime.fromisoformat(origin).tzinfo is None or datetime.fromisoformat(origin) > prior_time:
+                    continue
+            except (TypeError, ValueError):
+                continue
+            cached.update({"availability": "retained_previous_snapshot",
+                           "cachedFromGeneratedAt": origin})
+            row["financials"] = cached
+            retained += 1
+        coverage[market] = {"currentFinancialRecords": fresh_count,
+                            "retainedFinancialRecords": retained,
+                            "missingFinancialRecords": sum("financials" not in row for row in records.values())}
+    snapshot["financialCoverage"] = coverage
+    return snapshot
+
+
 def write_atomic(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
@@ -288,5 +355,8 @@ if __name__ == "__main__":
     output = root / "remote" / "free_research.json"
     system_path = root / "remote" / "system.json"
     snapshot = build_snapshot(fetch_json, load_market_date(system_path))
+    if output.exists():
+        previous = json.loads(output.read_text(encoding="utf-8"))
+        snapshot = retain_missing_financials(snapshot, previous)
     write_atomic(output, snapshot)
     print(f"Wrote {output}: TWSE={len(snapshot['markets']['listed'])}, TPEx={len(snapshot['markets']['otc'])}, market_date={snapshot['marketDate']}")
