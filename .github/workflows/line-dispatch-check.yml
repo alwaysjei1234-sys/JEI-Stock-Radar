@@ -1,0 +1,60 @@
+name: JEI one-time LINE dispatch verification
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/line-dispatch-check.yml']
+permissions:
+  contents: read
+concurrency:
+  group: jei-daily-brief
+  cancel-in-progress: false
+jobs:
+  verify:
+    # Explicitly authorized single-day check. Future unrelated edits cannot send.
+    if: github.event.head_commit.message == 'test(line): verify 2026-11-02 close dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check date and dispatch safety tests
+        run: |
+          python - <<'PY'
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          if datetime.now(ZoneInfo('Asia/Taipei')).date().isoformat() != '2026-11-02':
+              raise SystemExit('One-time verification expired; no message sent')
+          PY
+          python -m unittest discover -s tests -p 'test_line_dispatch.py' -v
+          python -m unittest discover -s tests -p 'test_daily_brief.py' -v
+      - name: Dispatch verified current close using existing LINE retry key
+        env:
+          JEI_LINE_ENABLED: ${{ vars.JEI_LINE_ENABLED }}
+          JEI_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.JEI_LINE_CHANNEL_ACCESS_TOKEN }}
+          JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
+        run: python scripts/send_line_brief.py --edition close --result-path "${{ runner.temp }}/jei-line-result.json"
+      - name: Record credential-free API acceptance result
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path=Path(os.environ['RUNNER_TEMP'])/'jei-line-result.json'
+          if path.exists():
+              result=json.loads(path.read_text())
+              print(json.dumps(result,ensure_ascii=False))
+              with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as summary:
+                  summary.write('LINE API acceptance result (phone delivery unconfirmed):\n\n```json\n'+json.dumps(result,ensure_ascii=False,indent=2)+'\n```\n')
+          else:
+              print('No receipt: dispatch step did not execute')
+          PY
+      - name: Preserve dispatch result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jei-line-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/jei-line-result.json
+          if-no-files-found: warn
+          retention-days: 14
