@@ -49,8 +49,10 @@ def quota_ok(token,cap=55):
     return (quota.get("type")=="limited" and isinstance(maximum,int) and 0<maximum<=200
             and isinstance(used,int) and 0<=used<min(cap,maximum))
 
-def push(report,edition,token,recipient):
+def push(report,edition,token,recipient,receipt=None):
+    receipt = receipt if receipt is not None else {}
     if not quota_ok(token):
+        receipt["status"]="quota_blocked"
         return "LINE 免費方案額度未通過安全檢查，跳過推播"
     # Official retry key: avoid duplicate acceptance for the same daily edition.
     key=str(uuid.uuid5(uuid.NAMESPACE_URL,"jei-stock-radar/"+recipient+"/"+report["date"]+"/"+edition))
@@ -62,28 +64,48 @@ def push(report,edition,token,recipient):
     try:
         with urllib.request.urlopen(req,timeout=15) as r:
             if r.status!=200: raise RuntimeError("LINE unexpected response")
+            receipt.update(status="accepted",http_status=200,request_id=r.headers.get("x-line-request-id"))
             return "LINE Messaging API 已接受推播請求"
     except urllib.error.HTTPError as e:
-        if e.code==409: return "LINE 已接受相同日期報告，不重複發送"
+        receipt["http_status"]=e.code
+        if e.code==409 and e.headers.get("x-line-accepted-request-id"):
+            receipt.update(status="already_accepted",request_id=e.headers.get("x-line-accepted-request-id"))
+            return "LINE 已接受相同日期報告，不重複發送"
+        receipt["status"]="failed"
         raise RuntimeError("LINE 發送未被接受（HTTP "+str(e.code)+"）") from None
 
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--edition",choices=["morning","close"],required=True)
+    p.add_argument("--result-path",help="Write a credential-free API acceptance receipt")
     args=p.parse_args()
     now=datetime.now(TAIPEI)
-    path=ROOT/"remote/brief.json"
-    document=json.loads(path.read_text(encoding="utf-8"))
-    report,edition=select_dispatch(document,args.edition,now)
-    token=os.getenv("JEI_LINE_CHANNEL_ACCESS_TOKEN","")
-    recipient=os.getenv("JEI_LINE_USER_ID","")
-    ok,msg=can_send(report,edition,now,os.getenv("JEI_LINE_ENABLED",""),token,recipient)
-    if not ok:
-        raise SystemExit("未發送："+msg)
-    result=push(report,edition,token,recipient)
-    print(result)
-    if result not in ("LINE Messaging API 已接受推播請求","LINE 已接受相同日期報告，不重複發送"):
-        raise SystemExit("未確認發送："+result)
+    receipt={"date":now.date().isoformat(),"edition":args.edition,
+             "checked_at":now.isoformat(timespec="seconds"),"status":"failed",
+             "delivery_confirmed":False}
+    try:
+        document=json.loads((ROOT/"remote/brief.json").read_text(encoding="utf-8"))
+        report,edition=select_dispatch(document,args.edition,now)
+        receipt["edition"]=edition
+        token=os.getenv("JEI_LINE_CHANNEL_ACCESS_TOKEN","")
+        recipient=os.getenv("JEI_LINE_USER_ID","")
+        ok,msg=can_send(report,edition,now,os.getenv("JEI_LINE_ENABLED",""),token,recipient)
+        if not ok:
+            receipt.update(status="blocked",reason=msg)
+            raise SystemExit("未發送："+msg)
+        result=push(report,edition,token,recipient,receipt=receipt)
+        print(result)
+        if receipt["status"] not in ("accepted","already_accepted"):
+            raise SystemExit("未確認發送："+result)
+    except (OSError, ValueError, RuntimeError) as error:
+        # Do not serialize exception text, headers, payloads or environment secrets.
+        receipt["error_type"]=type(error).__name__
+        raise SystemExit("LINE 發送失敗；請查看推播結果紀錄（"+type(error).__name__+"）") from None
+    finally:
+        if args.result_path:
+            output=Path(args.result_path)
+            output.parent.mkdir(parents=True,exist_ok=True)
+            output.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 
 def select_dispatch(document,edition,now):
     """Send a current failure notice instead of silently reading an older brief.

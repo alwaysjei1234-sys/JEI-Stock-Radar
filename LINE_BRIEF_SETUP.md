@@ -61,3 +61,23 @@
 Android App 3.9.11（versionCode 35）「持股 → Android 背景風險通知紀錄」新增「**測試手機通知**」按鈕。它直接使用手機 Android NotificationManager 發出一筆**明確標為測試**的本地通知並記錄測試，不會發送 LINE、製造假股價或下單。若手機未允許通知、通知頻道遭關閉，會顯示原因。瀏覽器／舊 APK 不能冒充原生通知成功。
 
 背景警示比照選股和 LINE 的有效行情門檻，新增 `live_count >= 500`，且維持只有有效盤中成交、未過期資料才能觸發。WorkManager 執行時間仍受手機系統排程與省電機制限制。
+
+### 2026-11-02：補發與受理結果追查
+
+`JEI Daily Brief and Optional LINE` 的手動執行新增 `send_line` 選項，預設關閉。
+要補發時選擇正確的 `edition` 並設為 `true`。仍須通過既有總開關、憑證、當日報告與免費額度檢查；一般程式推送不發 LINE。
+補發使用原日期與版本的 retry key，不能用它強制重發 LINE 已接受的訊息。
+
+實際進入推播步驟後，工作流程會保存 `jei-line-result-<run_id>-<attempt>` 附件 14 天。
+附件只包含日期、版本、檢查時間、狀態、HTTP 狀態與 LINE 請求識別碼等診斷欄位；不含 token、收件者、訊息內容或私人持股。
+
+- `accepted`：LINE API 回覆 200；不代表手機已收件。
+- `already_accepted`：409 且附有 `x-line-accepted-request-id`；不再重複推播。
+- `quota_blocked`：免費額度檢查阻擋，未送出訊息。
+- `blocked`：開關、憑證、日期或報告狀態未通過檢查。
+- `failed`：網路或 API 失敗；409 缺少原受理識別碼也屬失敗。
+
+`delivery_confirmed` 固定為 `false`，不能以工作流程成功或 API 受理聲稱手機送達。
+API 重試行為依據：https://developers.line.biz/en/docs/messaging-api/retrying-api-request/
+
+本輪驗證：232 項 Python 測試，涵蓋受理、重複請求、額度阻擋、失敗紀錄與敏感內容排除；另實際執行排程選擇 shell，驗證三個早報時段、盤後時段及手動補發／預設不發。
