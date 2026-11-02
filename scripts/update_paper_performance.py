@@ -8,6 +8,7 @@ Close-to-close figures are observations, not executable fills or predictions.
 import json
 import math
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -17,6 +18,10 @@ SYSTEM = ROOT / "remote/system.json"
 DAILY = ROOT / "remote/daily_prices.json"
 OUT = ROOT / "remote/strategy_performance.json"
 TZ = ZoneInfo("Asia/Taipei")
+if __package__ in (None, ""):
+    sys.path.insert(0, str(ROOT))
+from scripts.paper_evidence import trade_metrics, full_drawdown
+
 CAPITAL = 1_000_000.0
 LIMIT = 100_000.0
 FEE = 0.001425
@@ -143,6 +148,7 @@ def summarize(account, quotes):
         "estimated_liquidation_equity_ntd": round(value, 2) if coverage else None,
         "official_close_coverage": f"{covered}/{len(account['positions'])}",
     }
+    summary["evidence"] = trade_metrics(closed, FEE, SELL_TAX)
     account["summary"] = summary
     return summary
 
@@ -208,17 +214,9 @@ def advance(feed, archive, state, day):
                 "entry_day": day, "entry_price": px,
                 "entry_cost": entry_cost, "qty": qty, "peak": px,
             })
-        a["closed"] = a["closed"][-500:]
         summary = summarize(a, quotes)
         a["equity_history"].append({"day": day, "equity": summary["estimated_liquidation_equity_ntd"]})
-        a["equity_history"] = a["equity_history"][-90:]
-        values = [x["equity"] for x in a["equity_history"] if x["equity"] is not None]
-        peak = CAPITAL
-        dd = 0.0
-        for v in values:
-            peak = max(peak, v)
-            dd = max(dd, 100 * (peak - v) / peak)
-        summary["max_drawdown_pct"] = round(dd, 3) if values else None
+        summary["max_drawdown_pct"] = full_drawdown(a["equity_history"], CAPITAL)
 
     state["signals"].extend(daily_signals(feed, quotes, day))
     state["signals"] = state["signals"][-400:]
@@ -240,7 +238,12 @@ def main():
         print(json.dumps({"day": day, "updated": False, "skipped": True,
                           "reason": str(e)}, ensure_ascii=False))
         return
-    if updated:
+    before = json.dumps(state, sort_keys=True)
+    if not updated:
+        for account in state["strategies"].values():
+            account["summary"]["evidence"] = trade_metrics(account["closed"], FEE, SELL_TAX)
+            account["summary"]["max_drawdown_pct"] = full_drawdown(account["equity_history"], CAPITAL)
+    if updated or json.dumps(state, sort_keys=True) != before:
         OUT.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({
         "day": day, "updated": updated,
