@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-11-02T15:52:02.122915+00:00",
+  "scope": "post-close official-source check; MIS unavailable on this attempt",
+  "sources": {
+    "twse": "https://www.twse.com.tw/exchangeReport/MI_INDEX?date=20261102&type=ALLBUT0999&response=json",
+    "tpex": "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes",
+    "mis": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_2330.tw%7Ctse_2449.tw%7Cotc_5425.tw&json=1&delay=0",
+    "production": "https://jei-stock-radar.vercel.app/remote/system.json"
+  },
+  "twse": {
+    "date": "20261102",
+    "weighted_index": 44920.14,
+    "change_pct": -0.65
+  },
+  "tpex": {
+    "dates": [
+      "1151102"
+    ],
+    "rows": 1018
+  },
+  "mis": {
+    "error": "HTTPError: HTTP Error 503: Service Unavailable"
+  },
+  "cross_source_verified_this_attempt": false,
+  "previous_success_evidence": "data/research_evidence/market-cross-check-20261102-1948.json"
+}

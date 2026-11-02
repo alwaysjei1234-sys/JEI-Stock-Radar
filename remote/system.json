@@ -60,7 +60,7 @@
     "no_new_picks": false,
     "partial_live": null,
     "post_close_source_check": {
-      "checked_at": "2026-11-02T12:55:34.510975+00:00",
+      "checked_at": "2026-11-02T15:52:02.122915+00:00",
       "scope": "post-close official-source check; MIS unavailable on this attempt",
       "sources": {
         "twse": "https://www.twse.com.tw/exchangeReport/MI_INDEX?date=20261102&type=ALLBUT0999&response=json",
@@ -24521,7 +24521,18 @@
       "slippage_included": false,
       "walk_forward_verified": false,
       "market_regimes_verified": false,
-      "note": "舊hit欄位僅為收盤漲幅觀察，不能作80%樣本外勝率證據；正式紀錄見pick_validation.json及strategy_performance.json"
+      "note": "舊hit欄位僅為收盤漲幅觀察，不能作80%樣本外勝率證據；正式紀錄見pick_validation.json及strategy_performance.json",
+      "diagnostic_archive": {
+        "signals": 210,
+        "signal_sessions": 7,
+        "price_sessions": 7,
+        "latest_session": "2026-11-02",
+        "recovered_signal_sessions": 4,
+        "recovered_signals": 120,
+        "qualified_oos": false,
+        "evidence": "data/research_evidence/diagnostic-recovery-20261102-2349.json",
+        "note": "三分類診斷紀錄；不併入四策略已平倉數或五分類250筆觀察；績效仍未驗證"
+      }
     }
   },
   "patterns": {
