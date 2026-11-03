@@ -1302,13 +1302,25 @@ def main():
                 })
                 retained["summary"]=f"今日休市：{known_closure}；保留 {retained['data_date']} 歷史名單，暫停新選股及交易訊號。"
             else:
+                # Yesterday's close is expected before the opening bell. During
+                # the session the missing input is live coverage, not a closing
+                # file that the exchanges cannot have published yet.
+                if minutes < 540:
+                    session_status="盤前準備"
+                    session_reason="尚未開盤；保留最近有效收盤，等待今日盤中行情驗證"
+                elif market_open:
+                    session_status="盤中資料不足"
+                    session_reason="今日盤中成交價覆蓋未達驗證門檻，暫停新判讀"
+                else:
+                    session_status="交易日資料待驗證"
+                    session_reason="TWSE／TPEx 當日官方收盤尚未完成交叉驗證"
                 retained["market"].update({
-                    "session_status":"交易日資料待驗證",
-                    "session_reason":"TWSE／TPEx 當日官方收盤尚未完成交叉驗證",
+                    "session_status":session_status,
+                    "session_reason":session_reason,
                     "next_expected_session":None,
-                    "brief":f"交易日官方收盤待驗證｜最近有效收盤 {retained['data_date']}｜今日選股暫停，歷史名單僅供研究"
+                    "brief":f"{session_status}｜{session_reason}｜最近有效收盤 {retained['data_date']}｜歷史名單僅供研究"
                 })
-                retained["summary"]=f"{stamp} 官方雙市場收盤尚未驗證；保留 {retained['data_date']} 歷史名單，暫停今日新選股。"
+                retained["summary"]=f"{stamp} {session_reason}；保留 {retained['data_date']} 歷史名單，暫停今日新選股。"
             retained["risk"]={**retained.get("risk",{}),"as_of":retained["data_date"],"actionable":False}
             # Keep public ticker-only tracked symbols visible in the PARTIAL
             # dated MIS sample without exposing private costs or quantities.
@@ -1316,7 +1328,7 @@ def main():
             live_sample=[x for x in stocks if x.get("live") is True and x.get("quote_time")]
             live_sample.sort(key=lambda x:(x["code"] not in tracked_codes,x["code"]))
             retained["market"]["partial_live"]={"asof":stamp,"verified_count":live_count,"coverage_pct":round(live_coverage*100,1),"complete":False,"quotes":[{"code":x["code"],"price":x["close"],"quote_time":x.get("quote_time")} for x in live_sample[:250]]}
-            retained["market"]["live_diagnostics"]={"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":stamp,"valid_trades":live_count,"mis_stats":live_stats,"required_trades":500,"required_coverage_pct":35,"errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],"reason":("官方休市，不更新即時行情" if known_closure else "官方雙市場收盤尚未驗證；MIS 個別成交僅供部分報價參考")}
+            retained["market"]["live_diagnostics"]={"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":stamp,"valid_trades":live_count,"mis_stats":live_stats,"required_trades":500,"required_coverage_pct":35,"errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],"reason":("官方休市，不更新即時行情" if known_closure else session_reason)}
             retained["holdings"]=refresh_public_etf_references(
                 retained.get("holdings"),holdings_by_code,retained["data_date"])
             OUT.write_text(json.dumps(retained,ensure_ascii=False,indent=2),encoding="utf-8")

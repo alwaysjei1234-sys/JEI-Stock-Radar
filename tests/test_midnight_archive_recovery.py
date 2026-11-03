@@ -64,4 +64,27 @@ class MidnightArchiveRecoveryTests(unittest.TestCase):
     def test_preopen_and_market_open_without_new_verified_trades_remain_readonly(self):
         self.exercise([datetime(2026,11,4,0,44,tzinfo=TZ),datetime(2026,11,4,8,45,tzinfo=TZ),datetime(2026,11,4,9,5,tzinfo=TZ)])
 
+    def test_status_tracks_open_and_close_boundaries_without_changing_prices(self):
+        moments=[datetime(2026,11,4,h,m,tzinfo=TZ)
+                 for h,m in [(8,59),(9,0),(13,29),(13,30),(18,0)]]
+        snapshots=self.exercise(moments)
+        expected=['盤前準備','盤中資料不足','盤中資料不足',
+                  '交易日資料待驗證','交易日資料待驗證']
+        self.assertEqual([s['market']['session_status'] for s in snapshots],expected)
+        for snapshot in snapshots:
+            market=snapshot['market']
+            self.assertIn(market['session_status'],market['brief'])
+            self.assertIn(market['session_reason'],snapshot['summary'])
+            self.assertEqual(market['live_diagnostics']['reason'],market['session_reason'])
+        for snapshot in snapshots[:3]:
+            self.assertNotIn('當日官方收盤尚未',snapshot['summary'])
+
+    def test_weekend_still_overrides_preopen_and_live_hours(self):
+        snapshots=self.exercise([datetime(2026,11,7,8,59,tzinfo=TZ),
+                                 datetime(2026,11,7,9,5,tzinfo=TZ)])
+        for snapshot in snapshots:
+            self.assertEqual(snapshot['market']['session_status'],'休市')
+            self.assertIn('週末',snapshot['market']['session_reason'])
+            self.assertFalse(snapshot['market']['live_diagnostics']['attempted'])
+
 if __name__=='__main__':unittest.main()
