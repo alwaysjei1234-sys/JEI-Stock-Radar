@@ -44,7 +44,9 @@ async function run(){
   }));
 
   // Serve the checked-in feed deterministically; external GitHub availability is not a UI test.
+  let backupRequests=0;
   await page.route('https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/system.json**',async route=>{
+    backupRequests++;
     const body=await fs.readFile(path.join(ROOT,'remote','system.json'),'utf8');
     await route.fulfill({status:200,contentType:'application/json',body});
   });
@@ -62,6 +64,15 @@ async function run(){
   assert.equal(await page.locator('#holdToolbar').isVisible(),false,'private sort/filter controls never shown on public browser');
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>/已取得|已連線/.test(document.querySelector('#sysStatus')?.textContent||''),null,{timeout:15000});
+  const backupBeforeFailure=backupRequests;
+  await page.route(base+'system.json**',route=>route.fulfill({status:503,body:'temporary unavailable'}));
+  await page.evaluate(async()=>{await refreshSystem()});
+  assert.equal(backupRequests,backupBeforeFailure+1,'browser loads repository backup when primary is unavailable');
+  assert.match(await page.locator('#sysStatus').innerText(),/已取得/);
+  await page.unroute(base+'system.json**');
+  await page.evaluate(async()=>{await refreshSystem()});
+  assert.equal(backupRequests,backupBeforeFailure+1,'recovered primary is used on the next refresh');
+  console.log('PASS browser system feed switches to backup and recovers primary');
   // Missing live trades must not leave the whole app empty: dated official
   // research remains readable without becoming today's actionable picks.
   await page.waitForFunction(()=>document.querySelector('#closeArchiveSignals')?.querySelectorAll('.listRow').length>0,null,{timeout:15000});
@@ -304,7 +315,8 @@ async function run(){
    };
   });
   await privatePage.goto('file://'+path.join(ROOT,'app','src','main','assets','index.html'),{waitUntil:'domcontentloaded'});
-  assert.match(await privatePage.locator('#uiVer').innerText(),/3\.9\.13/,'offline asset includes prioritised quotes and ETF support');
+  const expectedUi=JSON.parse(await fs.readFile(path.join(ROOT,'remote','update.json'),'utf8')).uiVersion;
+  assert.equal(await privatePage.locator('#uiVer').innerText(),'UI '+expectedUi,'offline asset matches published UI version');
   await privatePage.evaluate(()=>{go('hold')});
   await privatePage.locator('#holdAlertPanel').waitFor({state:'visible'});
   assert.equal(await privatePage.locator('#alertLoss').inputValue(),'8','native watch alert defaults to 8% loss');
