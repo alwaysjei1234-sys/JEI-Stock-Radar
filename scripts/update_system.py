@@ -289,13 +289,25 @@ def backfill_twse_history(history, now, min_days=20, max_otc_fetches=0):
     snaps={str(x.get("date")):x for x in history if isinstance(x,dict) and x.get("date")}
     return sorted(snaps.values(),key=lambda x:str(x.get("date","")))[-90:],[]
 
-def fetch_institutional():
+def institutional_market_complete(rows, errors, expected_date):
+    """Require dated finite totals from both exchanges before market-wide scoring."""
+    sources={v.get("source") for v in rows.values()
+             if v.get("data_date")==expected_date and num(v.get("total")) is not None}
+    return (not errors and sources=={"TWSE T86","TPEx OpenAPI"}
+            and all(v.get("data_date")==expected_date and num(v.get("total")) is not None for v in rows.values()))
+
+
+def fetch_institutional(expected_date=None):
+    expected_date=expected_date or datetime.now(TZ).strftime("%Y-%m-%d")
     out={}; errs=[]; debug={}
     try:
         try:
             j=fetch_json(TWSE_INST)
         except Exception:
             j=fetch_json("https://www.twse.com.tw/fund/T86?response=json&selectType=ALLBUT0999")
+        if (not isinstance(j,dict) or j.get("stat")!="OK" or
+                verified_archive_date(normalize_exchange_date(j.get("date")))!=expected_date):
+            raise ValueError("T86 response status/date not verified for "+expected_date)
         fields=j.get("fields",[]) if isinstance(j,dict) else []
         data=j.get("data",[]) if isinstance(j,dict) else []
         if not data:
@@ -324,12 +336,15 @@ def fetch_institutional():
                 if trust is None: trust=num(row[10])
                 if dealer is None: dealer=num(row[11])
                 if total is None: total=num(row[18])
-            out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TWSE T86"}
+            out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TWSE T86","data_date":expected_date}
     except Exception as e: errs.append("TWSE法人:"+str(e))
     try:
         rows=fetch_json(TPEX_INST)
         if not isinstance(rows,list) or not rows:
             raise RuntimeError("TPEx institutional endpoint returned no rows")
+        if any(not isinstance(r,dict) or
+               verified_archive_date(normalize_exchange_date(r.get("Date")))!=expected_date for r in rows):
+            raise ValueError("TPEx institutional response dates not verified for "+expected_date)
         debug["tpex_keys"]=list(rows[0].keys()) if isinstance(rows[0],dict) else []
         debug["tpex_first"]=rows[0] if rows else None
         for r in rows:
@@ -341,8 +356,11 @@ def fetch_institutional():
             trust=num(pick(r,"SecuritiesInvestmentTrustCompanies-Difference","InvestmentTrustNetBuySell","InvestmentTrustBuySell"))
             dealer=num(pick(r,"Dealers-Difference","DealerNetBuySell","DealerBuySell"))
             total=num(pick(r,"TotalDifference","TotalNetBuySell","ThreeInstitutionalInvestorsNetBuySell"))
-            out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TPEx OpenAPI"}
+            out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TPEx OpenAPI","data_date":expected_date}
     except Exception as e: errs.append("TPEx法人:"+str(e))
+    for source in ("TWSE T86","TPEx OpenAPI"):
+        if not any(v.get("source")==source and num(v.get("total")) is not None for v in out.values()):
+            errs.append(source+": no dated finite institutional totals")
     if not out and not errs: errs.append("法人來源有回應，但未解析出任何股票代碼")
     return out,errs,debug
 
@@ -680,6 +698,10 @@ def update_history(history,date_key,stocks,signals,institutional_market=None):
     price_map={x["code"]:x["close"] for x in stocks if x.get("close")}
     snap={"date":date_key,"prices":price_map,"signals":[{"code":x["code"],"price":x["price"],"score":x["score"]} for x in signals[:8]]}
     if institutional_market:snap["institutional_market"]=institutional_market
+    else:
+        previous=next((x.get("institutional_market") for x in history if x.get("date")==date_key),None)
+        if isinstance(previous,dict) and previous.get("verified") is True and previous.get("data_date")==date_key:
+            snap["institutional_market"]=previous
     history=[x for x in history if x.get("date")!=date_key]
     history.append(snap)
     history=history[-90:]
@@ -840,8 +862,10 @@ def main():
     stocks=[x for x in rows if stock_only(x)]
     by_code={x["code"]:x for x in stocks}
     holdings_by_code={x["code"]:x for x in rows if x.get("code")}
-    institutional,inst_errors,inst_debug=fetch_institutional()
+    institutional,inst_errors,inst_debug=fetch_institutional(today_iso)
     institutional={k:v for k,v in institutional.items() if k in by_code}
+    inst_complete=institutional_market_complete(institutional,inst_errors,today_iso)
+    if not inst_complete: errors.append("法人籌碼:雙市場同日資料不完整，停用全市場法人評分與趨勢")
     if inst_errors: errors.extend(inst_errors)
     if not institutional: errors.append("法人籌碼:官方資料暫無有效逐檔資料，已停用法人判讀")
 
@@ -866,14 +890,14 @@ def main():
     up5=sum(1 for p in pcts if p>=5);up8=sum(1 for p in pcts if p>=8)
 
     # Institutional breadth: use direction across the whole stock universe, not a single stock.
-    inst_vals=[num(v.get("total")) for v in institutional.values()]
+    inst_vals=[num(v.get("total")) for v in institutional.values()] if inst_complete else []
     inst_vals=[x for x in inst_vals if x is not None]
     inst_sell=sum(1 for x in inst_vals if x<0); inst_buy=sum(1 for x in inst_vals if x>0)
     inst_sell_ratio=inst_sell/max(1,inst_sell+inst_buy)
     inst_total=sum(inst_vals) if inst_vals else 0
 
     hist_before=load_history()
-    prev_inst=[x.get("institutional_market",{}) for x in hist_before[-5:] if x.get("institutional_market")]
+    prev_inst=[x.get("institutional_market",{}) for x in hist_before[-5:] if x.get("institutional_market",{}).get("verified") is True and x.get("date","")<today_iso]
     prev_sell=[num(x.get("sell_ratio")) for x in prev_inst]
     prev_sell=[x for x in prev_sell if x is not None]
     inst_3d=(prev_sell[-2:]+[inst_sell_ratio*100])[-3:]
@@ -1084,7 +1108,7 @@ def main():
     reasons=[f"加權指數 {taiex_txt}",f"上漲 {adv} / 下跌 {dec}（廣度 {adv_ratio*100:.1f}%）",
              f"市場中位數 {median:+.2f}%",f"跌逾3% {down3}｜跌逾5% {down5}｜跌停附近 {limit_down}"]
     if inst_vals:
-        reasons.append(f"法人偏賣 {inst_sell_ratio*100:.1f}%｜3日均 {inst_3d_avg:.1f}%｜5日均 {inst_5d_avg:.1f}%｜淨額 {inst_total/1000:+,.0f}張")
+        reasons.append(f"法人偏賣 {inst_sell_ratio*100:.1f}%｜淨額 {inst_total/1000:+,.0f}張｜已驗證歷史 {len(prev_sell)} 日")
         if inst_withdrawal:reasons.append("法人連續撤退警訊：3日偏賣率高檔且惡化")
     if sectors:reasons.append("最強族群 "+sectors[0]["name"]+f" {sectors[0]['score']}分")
     if errors:reasons.append("部分資料源降級："+"；".join(errors)[:140])
@@ -1094,7 +1118,7 @@ def main():
         {"icon":"⚠","name":"尾端賣壓","note":f"跌逾3% {down3}｜跌逾5% {down5}｜跌停附近 {limit_down}","score":down5},
         {"icon":"🔥","name":"強勢動能","note":f"漲逾5% {up5}｜漲逾8% {up8}","score":up5},
         {"icon":"◎","name":"市場中位數","note":"排除權值股後觀察整體溫度","score":round(median,2)},
-        {"icon":"🏦","name":"法人籌碼廣度","note":f"偏賣 {inst_sell_ratio*100:.1f}%｜合計 {inst_total/1000:+,.0f}張","score":round(inst_sell_ratio*100,1)}
+        {"icon":"🏦","name":"法人籌碼廣度","note":(f"偏賣 {inst_sell_ratio*100:.1f}%｜合計 {inst_total/1000:+,.0f}張" if inst_complete else "雙市場同日法人資料不完整，暫停判讀"),"score":round(inst_sell_ratio*100,1) if inst_complete else None}
     ]
 
     priority=[{"title":"市場風控","note":"｜".join(reasons[:4]),"action":label}]
@@ -1266,7 +1290,7 @@ def main():
     if official_close_verified:
         # Only a verified exchange close may create or replace a backtest day.
         history=update_history(history,date_key,stocks,attack[:5]+next_list[:5],
-                               {"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000)})
+                               {"sell_ratio":round(inst_sell_ratio*100,1),"net_lots":round(inst_total/1000),"verified":True,"data_date":today_iso} if inst_complete else None)
         HISTORY.parent.mkdir(parents=True,exist_ok=True)
         HISTORY.write_text(json.dumps(history,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
         patterns=build_pattern_signals(history,by_code,stock_sector,sectors,asof=today_iso)
@@ -1328,8 +1352,8 @@ def main():
                 "actionable":not stale_source,"as_of":raw_date,
                 "cash":("暫停判讀" if stale_source else cash),"reasons":reasons,
                 "breadth":round(adv_ratio*100,1),"median_pct":round(median,2),"down5":down5,"limit_down":limit_down,
-                "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000),
-                "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
+                "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1) if inst_complete else None,"institutional_net_lots":round(inst_total/1000) if inst_complete else None,
+                "institutional_3d_sell_avg":round(inst_3d_avg,1) if inst_complete and len(inst_3d)>=3 else None,"institutional_5d_sell_avg":round(inst_5d_avg,1) if inst_complete and len(inst_5d)>=5 else None,"institutional_withdrawal":inst_withdrawal if inst_complete else None},
         "market":{"status":market_status,"mode":market_mode,"last_checked_at":now.strftime("%Y-%m-%d %H:%M"),
                   "index":{"change_pct":taiex_pct,"data_date":today_iso if taiex_pct is not None else None,
                            "source":taiex_source,"date_verified":taiex_pct is not None,
@@ -1356,7 +1380,7 @@ def main():
         "sectors":sectors,"stock_sectors":stock_sector,
         "universe":[{"code":x["code"],"name":x["name"],"market":x["market"]} for x in stocks if re.fullmatch(r"[1-9][0-9]{3}",x["code"])],
         "institutional":institutional,
-        "institutional_status":{"ok":bool(institutional),"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
+        "institutional_status":{"ok":inst_complete,"partial":bool(institutional) and not inst_complete,"data_date":today_iso if inst_complete else None,"count":len(institutional),"errors":inst_errors,"debug":inst_debug},
         "holdings":public_signals,"priority":priority,"attack":attack,"next":next_list,"monster":monster,"tomorrow_monster":tomorrow_monster,"future_monster":future_monster,"rotate":rotate,"flow":flow,
         "avoid_chase":[{"code":x["code"],"name":x["name"],"as_of":raw_date,
                         "reason":str(raw_date)+"收盤漲幅 "+str(x.get("change_pct"))+"%｜短線追高風險，等新交易日確認"}

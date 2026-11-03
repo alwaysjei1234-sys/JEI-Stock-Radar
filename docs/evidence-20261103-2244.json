@@ -1,0 +1,71 @@
+{
+  "baseline": "7518f085ea783f9dfb8441d80073ea53bdadc90d",
+  "market": {
+    "status": "紅燈防守",
+    "mode": "今日收盤",
+    "last_checked_at": "2026-11-03 22:52",
+    "index": {
+      "change_pct": -3.59,
+      "data_date": "2026-11-03",
+      "source": "TWSE MI_INDEX dated response",
+      "date_verified": true,
+      "checked_at": "2026-11-03 22:52"
+    },
+    "live_count": 0,
+    "close_count": 1967,
+    "live_coverage_pct": 0.0,
+    "live_valid": false,
+    "stale": false,
+    "historical_readonly": false,
+    "post_close_refresh": false,
+    "live_diagnostics": {
+      "attempted": false,
+      "market_open": false,
+      "quote_refresh_window": false,
+      "updater_time_taipei": "2026-11-03 22:52",
+      "valid_trades": 0,
+      "mis_stats": {},
+      "required_trades": 500,
+      "required_coverage_pct": 35,
+      "errors": [],
+      "reason": "非行情更新時段"
+    },
+    "brief": "今日收盤多因子市場｜加權 -3.59%｜廣度 6.2%｜中位數 -2.75%｜跌逾5% 542｜行情時間以最近檢查時間為準",
+    "market_data_as_of": "2026-11-03",
+    "session_status": "已驗證",
+    "no_new_picks": false,
+    "partial_live": null
+  },
+  "institutional_status": {
+    "ok": true,
+    "partial": false,
+    "data_date": "2026-11-03",
+    "count": 1883,
+    "errors": []
+  },
+  "integration": "{\"updated_at\": \"2026-11-03 22:52\", \"risk\": 100, \"stocks\": 1967, \"live_count\": 0, \"sectors\": 11, \"errors\": [\"TWSE OpenAPI落後，已用當日MI_INDEX補入 1390 檔\"]}\nPASS current verified two-market refresh and insufficient trend history\nPASS full updater one-market outage: nullable metrics, explicit degraded flow, valid history retained\n",
+  "python_tests": 291,
+  "frontend_checks": 71,
+  "frozen_picks": 272,
+  "holdings_unchanged": true,
+  "qualified_oos_closed": 0,
+  "browser_local": "missing Chromium executable; not passed",
+  "benchmark": {
+    "fixed5": {
+      "paired": 54,
+      "benchmark_mean_pct": -1.44
+    },
+    "fixed7": {
+      "paired": 53,
+      "benchmark_mean_pct": -1.541
+    },
+    "fixed10": {
+      "paired": 51,
+      "benchmark_mean_pct": -1.807
+    },
+    "trailing": {
+      "paired": 47,
+      "benchmark_mean_pct": -1.757
+    }
+  }
+}
