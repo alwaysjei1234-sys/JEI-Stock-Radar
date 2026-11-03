@@ -26,7 +26,7 @@ class MidnightArchiveRecoveryTests(unittest.TestCase):
                 'holdings':{},'attack':[{'code':'2330','score':88}],'sectors':[{'name':'fixture'}],
                 'risk':{'score':26,'level':'green','label':'fixture','actionable':True,'as_of':'2026-11-03'}}
 
-    def exercise(self,moments):
+    def exercise(self,moments,live_impl=None):
         with tempfile.TemporaryDirectory() as temp:
             out=Path(temp)/'system.json';history=Path(temp)/'history.json';daily=Path(temp)/'daily.json'
             original=self.prior();out.write_text(json.dumps(original));history.write_text('[]');daily.write_text('{"schema":1,"days":{}}')
@@ -38,7 +38,7 @@ class MidnightArchiveRecoveryTests(unittest.TestCase):
                 raise RuntimeError('No new official session in fixture')
             def offhours(rows,*args):return rows,None
             def live(rows):return rows,0,None,[],{}
-            with patch.object(u,'OUT',out),patch.object(u,'HISTORY',history),patch.object(u,'DAILY_PRICES',daily),patch.object(u,'datetime',Clock),patch.object(u,'fetch_json',side_effect=get),patch.object(u,'fetch_latest_offhours_close',side_effect=offhours),patch.object(u,'fetch_institutional',return_value=({},['no new institutional session'],{})),patch.object(u,'enrich_live',side_effect=live),contextlib.redirect_stdout(io.StringIO()):
+            with patch.object(u,'OUT',out),patch.object(u,'HISTORY',history),patch.object(u,'DAILY_PRICES',daily),patch.object(u,'datetime',Clock),patch.object(u,'fetch_json',side_effect=get),patch.object(u,'fetch_latest_offhours_close',side_effect=offhours),patch.object(u,'fetch_institutional',return_value=({},['no new institutional session'],{})),patch.object(u,'enrich_live',side_effect=live_impl or live),contextlib.redirect_stdout(io.StringIO()):
                 for moment in moments:
                     Clock.current=moment
                     u.main()

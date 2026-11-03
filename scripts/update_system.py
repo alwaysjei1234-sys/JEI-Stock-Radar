@@ -1,6 +1,6 @@
 # Recompute feed after TPEx history backfill
 #!/usr/bin/env python3
-import json, math, re, statistics, time, urllib.request, urllib.parse, subprocess
+import json, math, re, statistics, time, urllib.request, urllib.parse, urllib.error, subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -390,6 +390,35 @@ def live_price(m):
     z=num(m.get("z"))
     return z if z is not None and z>0 else None
 
+def mis_service_probe(channels):
+    """Bound a known service outage before starting a full-universe fan-out.
+
+    Probe one symbol from each requested market. A successful or ambiguous
+    response does not certify any price: the normal quote gates still apply.
+    No state survives this invocation, so the next refresh always probes again.
+    """
+    probe=[]
+    for prefix in ("tse_", "otc_"):
+        sample=next((c for c in channels if c.startswith(prefix)), None)
+        if sample:probe.append(sample)
+    if not probe:return True,0,None
+    for attempt in range(1,4):
+        try:
+            fetch_mis_channels(probe)
+            return True,attempt,None
+        except urllib.error.HTTPError as error:
+            # Do not fan out on explicit denial/rate limits, or a persistent
+            # service-unavailable response. Other failures retain old recovery.
+            if error.code not in (403,429) and not 500<=error.code<600:
+                return True,attempt,None
+            if error.code in (403,429) or attempt==3:
+                return False,attempt,error.code
+        except (urllib.error.URLError,TimeoutError,ConnectionError):
+            if attempt==3:return False,attempt,"network"
+        except Exception:
+            return True,attempt,None
+        time.sleep(2**(attempt-1))
+
 def recent_mis_time(message, asof):
     """Count only executed quotes within two five-minute refresh intervals."""
     try:
@@ -412,6 +441,15 @@ def enrich_live(rows, asof=None):
         channels.append(prefix+x["code"]+".tw")
     got=0;errors=[]
     stats={"requested_channels":len(channels),"returned_messages":0,"matched_codes":0,"rejected_date":0,"rejected_time":0,"duplicate_messages":0,"rejected_price":0,"missing_last_trade":0,"missing_previous_close":0}
+    available,attempts,status=mis_service_probe(channels)
+    stats.update(service_probe_attempts=attempts,bulk_scan_skipped=not available,
+                 unavailable_http_status=status if isinstance(status,int) else None,
+                 outage_reason="network" if status=="network" else f"HTTP_{status}" if status else None,
+                 skipped_channels=len(channels) if not available else 0)
+    if not available:
+        reason=f"HTTP {status}" if isinstance(status,int) else "network"
+        errors.append(f"MIS {reason}：連線探測未通過，停止本輪全市場掃描；下輪重新探測")
+        return rows,0,None,errors,stats
     # MIS is sensitive to oversized ex_ch queries/rate bursts. Use conservative
     # batches and retry failed/empty chunks at half size so a full-market scan
     # does not silently fall back to a stale daily snapshot.
