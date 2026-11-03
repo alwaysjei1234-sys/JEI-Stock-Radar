@@ -92,9 +92,59 @@ def fetch_json(url,tries=3):
     raise last
 
 
+def require_twse_daily_date(payload, expected_date):
+    """The URL date is a request, not evidence of the response's session."""
+    expected=(verified_archive_date(normalize_exchange_date(expected_date))
+              if isinstance(expected_date,str) and re.fullmatch(r"\d{8}",expected_date) else None)
+    if expected is None:
+        raise ValueError("MI_INDEX requested date is invalid")
+    actual=payload.get("date") if isinstance(payload,dict) else None
+    if (not isinstance(payload,dict) or payload.get("stat")!="OK" or
+            actual!=expected_date):
+        raise ValueError("MI_INDEX response status/date is not verified for "+expected)
+    return expected
+
+
+def twse_daily_index_pct(payload, expected_date):
+    require_twse_daily_date(payload,expected_date)
+    for table in payload.get("tables",[]):
+        if not isinstance(table,dict):continue
+        fields=[re.sub(r"<[^>]+>","",str(v)).strip() for v in table.get("fields",[])]
+        if "指數" not in fields:continue
+        for row in table.get("data",[]):
+            if not isinstance(row,list):continue
+            def cell(*names):
+                for name in names:
+                    if name in fields and fields.index(name)<len(row):return row[fields.index(name)]
+                return None
+            if str(cell("指數") or "").strip()!="發行量加權股價指數":continue
+            pct=num(cell("漲跌百分比(%)","漲跌百分比"))
+            if pct is not None:
+                sign=str(cell("漲跌(+/-)","漲跌") or "")
+                return -abs(pct) if ("-" in sign or "－" in sign) else pct
+    return None
+
+
+def twse_openapi_index_pct(payload, expected_date):
+    expected=verified_archive_date(normalize_exchange_date(expected_date))
+    if expected is None:return None
+    for row in payload if isinstance(payload,list) else []:
+        if not isinstance(row,dict):continue
+        actual=row.get("日期")
+        if (not isinstance(actual,str) or
+                verified_archive_date(normalize_exchange_date(actual))!=expected):continue
+        if str(row.get("指數","")).strip()!="發行量加權股價指數":continue
+        pct=num(row.get("漲跌百分比"))
+        if pct is not None:
+            sign=str(row.get("漲跌","")).strip()
+            return -abs(pct) if sign in ("-","－") else pct
+    return None
+
+
 def fetch_twse_daily(date_yyyymmdd):
     url=TWSE_DAILY+"?"+urllib.parse.urlencode({"date":date_yyyymmdd,"type":"ALLBUT0999","response":"json"})
     j=fetch_json(url)
+    require_twse_daily_date(j,date_yyyymmdd)
     tables=j.get("tables",[]) if isinstance(j,dict) else []
     best=None
     for t in tables:
@@ -795,36 +845,19 @@ def main():
     if inst_errors: errors.extend(inst_errors)
     if not institutional: errors.append("法人籌碼:官方資料暫無有效逐檔資料，已停用法人判讀")
 
-    taiex_pct=None
+    taiex_pct=None;taiex_source=None
     # Prefer the same-day official MI_INDEX summary when the daily OpenAPI index feed lags.
     if now.weekday()<5:
         try:
             ij=fetch_json(TWSE_DAILY+"?"+urllib.parse.urlencode({"date":today_ymd,"type":"ALL","response":"json"}))
-            for t in (ij.get("tables",[]) if isinstance(ij,dict) else []):
-                fields=[re.sub(r"<[^>]+>","",str(v)).strip() for v in t.get("fields",[])]
-                if "指數" not in fields or not t.get("data"):continue
-                fi={v:i for i,v in enumerate(fields)}
-                for row in t.get("data",[]):
-                    name=str(row[fi["指數"]]).strip() if fi.get("指數") is not None and fi["指數"]<len(row) else ""
-                    if name!="發行量加權股價指數":continue
-                    def rc(*names):
-                        for n in names:
-                            i=fi.get(n)
-                            if i is not None and i<len(row):return row[i]
-                        return None
-                    p=num(rc("漲跌百分比(%)","漲跌百分比"))
-                    if p is not None:
-                        sign=str(rc("漲跌(+/-)","漲跌") or "")
-                        taiex_pct=-abs(p) if ("-" in sign or "－" in sign) else p
-                    break
-                if taiex_pct is not None:break
+            taiex_pct=twse_daily_index_pct(ij,today_ymd)
+            if taiex_pct is not None:taiex_source="TWSE MI_INDEX dated response"
         except Exception as e:errors.append("TWSE當日指數:"+str(e))
     if taiex_pct is None:
-        for x in idx_raw if isinstance(idx_raw,list) else []:
-            if str(x.get("指數","")).strip()=="發行量加權股價指數":
-                p=num(x.get("漲跌百分比"));sign=str(x.get("漲跌","")).strip()
-                taiex_pct=(-abs(p) if sign=="-" and p is not None else p);break
-    if taiex_live is not None:taiex_pct=taiex_live
+        taiex_pct=twse_openapi_index_pct(idx_raw,today_iso)
+        if taiex_pct is not None:taiex_source="TWSE OpenAPI MI_INDEX"
+    if taiex_live is not None:taiex_pct=taiex_live;taiex_source="TWSE MIS validated quote"
+    if taiex_pct is None:errors.append("TWSE指數缺少同日有效資料；不使用舊日漲跌幅")
 
     pcts=[x["pct"] for x in stocks if x["pct"] is not None]
     adv=sum(1 for p in pcts if p>0);dec=sum(1 for p in pcts if p<0);flat=max(0,len(pcts)-adv-dec)
@@ -1298,6 +1331,9 @@ def main():
                 "divergence":divergence,"institutional_sell_ratio":round(inst_sell_ratio*100,1),"institutional_net_lots":round(inst_total/1000),
                 "institutional_3d_sell_avg":round(inst_3d_avg,1),"institutional_5d_sell_avg":round(inst_5d_avg,1),"institutional_withdrawal":inst_withdrawal},
         "market":{"status":market_status,"mode":market_mode,"last_checked_at":now.strftime("%Y-%m-%d %H:%M"),
+                  "index":{"change_pct":taiex_pct,"data_date":today_iso if taiex_pct is not None else None,
+                           "source":taiex_source,"date_verified":taiex_pct is not None,
+                           "checked_at":now.strftime("%Y-%m-%d %H:%M")},
                   "live_count":live_count,"close_count":len(stocks),"live_coverage_pct":round(live_coverage*100,1),"live_valid":live_valid,"stale":stale_source or raw_date!=today_iso,"historical_readonly":raw_date!=today_iso,"post_close_refresh":post_close_refresh,
                   "live_diagnostics":{"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":now.strftime("%Y-%m-%d %H:%M"),
                       "valid_trades":live_count,"mis_stats":live_stats,"required_trades":500,
