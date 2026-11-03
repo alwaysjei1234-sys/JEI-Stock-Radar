@@ -1,23 +1,23 @@
 {
   "schema": 4,
-  "updated_at": "2026-11-03 11:29",
+  "updated_at": "2026-11-03 12:21",
   "data_date": "2026-11-02",
   "source_data_date": "TWSE:2026-11-02 / TPEx:2026-11-02",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
   "risk": {
     "level": "stale",
     "label": "資料過期，暫停判讀",
-    "score": 70,
+    "score": 86,
     "actionable": false,
     "as_of": "2026-11-02",
     "cash": "暫停判讀",
     "reasons": [
       "行情來源日期 TWSE:2026-11-02 / TPEx:2026-11-02，不是今天；今日風險與選股訊號暫停判讀"
     ],
-    "breadth": 48.1,
+    "breadth": 48.4,
     "median_pct": 0.0,
-    "down5": 60,
-    "limit_down": 12,
+    "down5": 69,
+    "limit_down": 21,
     "divergence": false,
     "institutional_sell_ratio": 40.1,
     "institutional_net_lots": 6176,
@@ -28,10 +28,10 @@
   "market": {
     "status": "資料過期",
     "mode": "資料過期",
-    "last_checked_at": "2026-11-03 11:29",
-    "live_count": 161,
+    "last_checked_at": "2026-11-03 12:21",
+    "live_count": 149,
     "close_count": 1958,
-    "live_coverage_pct": 8.2,
+    "live_coverage_pct": 7.6,
     "live_valid": false,
     "stale": true,
     "historical_readonly": true,
@@ -40,45 +40,40 @@
       "attempted": true,
       "market_open": true,
       "quote_refresh_window": true,
-      "updater_time_taipei": "2026-11-03 11:29",
-      "valid_trades": 161,
+      "updater_time_taipei": "2026-11-03 12:21",
+      "valid_trades": 149,
       "mis_stats": {
         "requested_channels": 1958,
         "returned_messages": 1958,
         "matched_codes": 1958,
         "rejected_date": 0,
-        "rejected_time": 166,
+        "rejected_time": 142,
         "duplicate_messages": 0,
-        "rejected_price": 1631,
-        "missing_last_trade": 1631,
+        "rejected_price": 1667,
+        "missing_last_trade": 1667,
         "missing_previous_close": 0,
-        "incomplete_with_volume": 1718,
+        "incomplete_with_volume": 1762,
         "retry_requested": 100,
-        "retry_recovered": 11
+        "retry_recovered": 5
       },
       "required_trades": 500,
       "required_coverage_pct": 35,
       "errors": [],
       "reason": "MIS 查詢失敗或有效成交價覆蓋率不足"
     },
-    "brief": "資料過期多因子市場｜加權 -2.39%｜廣度 48.1%｜中位數 +0.00%｜跌逾5% 60｜行情時間以最近檢查時間為準",
+    "brief": "資料過期多因子市場｜加權 -3.31%｜廣度 48.4%｜中位數 +0.00%｜跌逾5% 69｜行情時間以最近檢查時間為準",
     "market_data_as_of": "2026-11-02",
     "session_status": "交易日資料待驗證",
     "no_new_picks": true,
     "partial_live": {
-      "asof": "2026-11-03 11:29",
-      "verified_count": 161,
+      "asof": "2026-11-03 12:21",
+      "verified_count": 149,
       "complete": false,
       "quotes": [
         {
-          "code": "2609",
-          "price": 62.5,
-          "quote_time": "2026-11-03 11:30:01"
-        },
-        {
-          "code": "3162",
-          "price": 72.1,
-          "quote_time": "2026-11-03 11:30:09"
+          "code": "3289",
+          "price": 122.5,
+          "quote_time": "2026-11-03 12:21:59"
         }
       ]
     }
@@ -12938,14 +12933,14 @@
       "total": 19000.0,
       "source": "TWSE T86"
     },
-    "4414": {
+    "6582": {
       "foreign": 19000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 19000.0,
       "source": "TWSE T86"
     },
-    "6582": {
+    "4414": {
       "foreign": 19000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13498,14 +13493,14 @@
       "total": 11000.0,
       "source": "TWSE T86"
     },
-    "1623": {
+    "2705": {
       "foreign": 11000.0,
       "trust": 0.0,
       "dealer": 0.0,
       "total": 11000.0,
       "source": "TWSE T86"
     },
-    "2705": {
+    "1623": {
       "foreign": 11000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14394,17 +14389,17 @@
       "total": 2000.0,
       "source": "TWSE T86"
     },
-    "7823": {
-      "foreign": 5000.0,
-      "trust": 0.0,
-      "dealer": -3000.0,
-      "total": 2000.0,
-      "source": "TWSE T86"
-    },
     "3046": {
       "foreign": -7000.0,
       "trust": 0.0,
       "dealer": 9000.0,
+      "total": 2000.0,
+      "source": "TWSE T86"
+    },
+    "7823": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": -3000.0,
       "total": 2000.0,
       "source": "TWSE T86"
     },
@@ -14597,13 +14592,6 @@
       "total": 1000.0,
       "source": "TWSE T86"
     },
-    "9929": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 1000.0,
-      "source": "TWSE T86"
-    },
     "6807": {
       "foreign": 1000.0,
       "trust": 0.0,
@@ -14611,7 +14599,7 @@
       "total": 1000.0,
       "source": "TWSE T86"
     },
-    "2432": {
+    "9929": {
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14619,6 +14607,13 @@
       "source": "TWSE T86"
     },
     "1341": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TWSE T86"
+    },
+    "2432": {
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -22960,9 +22955,9 @@
   },
   "holdings": {
     "1711": {
-      "score": 15,
+      "score": 10,
       "trend": "短線偏弱",
-      "action": "減碼評估",
+      "action": "防守觀察",
       "defense": 37.47,
       "target": 48.14,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -22970,9 +22965,9 @@
       "status": "歷史參考"
     },
     "2478": {
-      "score": 26,
+      "score": 16,
       "trend": "短線偏弱",
-      "action": "減碼評估",
+      "action": "防守觀察",
       "defense": 107.91,
       "target": 129.03,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -22980,9 +22975,9 @@
       "status": "歷史參考"
     },
     "2609": {
-      "score": 69,
+      "score": 59,
       "trend": "短線轉強",
-      "action": "續抱觀察",
+      "action": "防守觀察",
       "defense": 61.38,
       "target": 65.28,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -22990,9 +22985,9 @@
       "status": "歷史參考"
     },
     "2748": {
-      "score": 37,
+      "score": 27,
       "trend": "短線偏弱",
-      "action": "減碼評估",
+      "action": "防守觀察",
       "defense": 37.42,
       "target": 39.12,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -23000,9 +22995,9 @@
       "status": "歷史參考"
     },
     "3162": {
-      "score": 58,
+      "score": 48,
       "trend": "整理",
-      "action": "續抱觀察",
+      "action": "防守觀察",
       "defense": 70.88,
       "target": 80.99,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -23010,9 +23005,9 @@
       "status": "歷史參考"
     },
     "3289": {
-      "score": 36,
+      "score": 26,
       "trend": "短線偏弱",
-      "action": "減碼評估",
+      "action": "防守觀察",
       "defense": 130.68,
       "target": 142.29,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -23020,9 +23015,9 @@
       "status": "歷史參考"
     },
     "3707": {
-      "score": 18,
+      "score": 10,
       "trend": "短線偏弱",
-      "action": "減碼評估",
+      "action": "防守觀察",
       "defense": 63.95,
       "target": 75.79,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -23030,9 +23025,9 @@
       "status": "歷史參考"
     },
     "5347": {
-      "score": 17,
+      "score": 10,
       "trend": "短線偏弱",
-      "action": "減碼評估",
+      "action": "防守觀察",
       "defense": 142.56,
       "target": 170.85,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -23040,9 +23035,9 @@
       "status": "歷史參考"
     },
     "5425": {
-      "score": 27,
+      "score": 17,
       "trend": "短線偏弱",
-      "action": "減碼評估",
+      "action": "防守觀察",
       "defense": 84.15,
       "target": 95.88,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -23050,9 +23045,9 @@
       "status": "歷史參考"
     },
     "6150": {
-      "score": 57,
+      "score": 47,
       "trend": "整理",
-      "action": "續抱觀察",
+      "action": "防守觀察",
       "defense": 64.35,
       "target": 71.91,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -23060,9 +23055,9 @@
       "status": "歷史參考"
     },
     "7711": {
-      "score": 21,
+      "score": 11,
       "trend": "短線偏弱",
-      "action": "減碼評估",
+      "action": "防守觀察",
       "defense": 538.56,
       "target": 604.86,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
@@ -23070,9 +23065,9 @@
       "status": "歷史參考"
     },
     "8070": {
-      "score": 32,
+      "score": 22,
       "trend": "短線偏弱",
-      "action": "減碼評估",
+      "action": "防守觀察",
       "defense": 47.57,
       "target": 52.33,
       "reason": "2026-11-02已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
