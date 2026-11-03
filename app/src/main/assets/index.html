@@ -163,7 +163,7 @@
 <div id="toast" class="toast"></div>
 <div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="chat"><b>💬</b>聊天</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
 <script>
-const UI_VERSION='3.9.14-feed-recovery';
+const UI_VERSION='3.9.15-close-cache';
 const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],tomorrow_monster:[],future_monster:[],rotate:[],flow:[],sectors:[],stock_sectors:{},universe:[]}, updateManifest=null, refreshTimer=null, systemTimer=null, lastMarketAt='',liveScanReceived=0;
 // Privacy boundary: public web browsers never load or render a personal portfolio.
@@ -1228,19 +1228,27 @@ function sendChat(){
 }
 let systemFetchPending=false;
 const CLOSE_CACHE_KEY='jei.verified-close.v1';
+function readCloseCache(){
+ if(typeof JEINative!=='undefined'&&typeof JEINative.loadCloseSnapshot==='function')return JEINative.loadCloseSnapshot();
+ return localStorage.getItem(CLOSE_CACHE_KEY);
+}
+function writeCloseCache(raw){
+ if(typeof JEINative!=='undefined'&&typeof JEINative.saveCloseSnapshot==='function'){JEINative.saveCloseSnapshot(raw);return}
+ localStorage.setItem(CLOSE_CACHE_KEY,raw);
+}
 function saveCloseSnapshot(feed){
  try{
   if(!isRecentCloseObservation(feed))return;
   const keys=['schema','updated_at','data_date','source_data_date','summary','risk','market','sectors','stock_sectors','universe','institutional','institutional_status','priority','attack','next','monster','tomorrow_monster','future_monster','rotate','flow','avoid_chase','backtest','patterns','web_recommendations','web_recommendations_updated_at','web_recommendations_status','sources'];
   const snapshot=Object.fromEntries(keys.filter(k=>Object.prototype.hasOwnProperty.call(feed,k)).map(k=>[k,feed[k]]));
-  let previous;try{previous=JSON.parse(localStorage.getItem(CLOSE_CACHE_KEY)||'null')}catch(e){}
+  let previous;try{previous=JSON.parse(readCloseCache()||'null')}catch(e){}
   if(previous&&String(previous.data_date)>snapshot.data_date)return;
-  localStorage.setItem(CLOSE_CACHE_KEY,JSON.stringify(snapshot));
+  writeCloseCache(JSON.stringify(snapshot));
  }catch(e){} // Storage may be disabled or full; online data must still render.
 }
 function restoreCloseSnapshot(){
  try{
-  const saved=validateSystemFeed(JSON.parse(localStorage.getItem(CLOSE_CACHE_KEY)||'null'));
+  const saved=validateSystemFeed(JSON.parse(readCloseCache()||'null'));
   if(!isRecentCloseObservation(saved))return false;
   system={...saved,holdings:{},market:{...saved.market,mode:'最近收盤',stale:true,historical_readonly:true,live_valid:false,live_count:0,actionable:false,no_new_picks:true,partial_live:{quotes:[],verified_count:0,complete:false}}};
   seedMarketFromSystem();renderSystem();showFeedStatus();

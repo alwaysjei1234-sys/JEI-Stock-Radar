@@ -518,6 +518,18 @@ public class MainActivity extends Activity {
     }
 
     public class NativeBridge {
+        // Shared by the packaged file UI and the downloaded HTTPS UI.
+        @JavascriptInterface public String loadCloseSnapshot() {
+            return prefs.getString("public_close_snapshot_v1", "");
+        }
+        @JavascriptInterface public void saveCloseSnapshot(String raw) {
+            if (raw == null || raw.length() > 2000000 || !validStatic(SYSTEM_JSON, raw)) return;
+            try {
+                JSONObject snapshot = new JSONObject(raw);
+                snapshot.remove("holdings");
+                prefs.edit().putString("public_close_snapshot_v1", snapshot.toString()).apply();
+            } catch (Exception ignored) { }
+        }
         @JavascriptInterface public String getAppVersion() { return BuildConfig.VERSION_NAME; }
         @JavascriptInterface public int getAppVersionCode() { return BuildConfig.VERSION_CODE; }
         @JavascriptInterface public boolean isOnline() { return MainActivity.this.isOnline(); }

@@ -77,5 +77,12 @@ for(const source of [html,offline]){
  assert.equal(entries.size,0,'intraday feed must not overwrite official-close cache');
  sandbox.localStorage.getItem=()=>{throw Error('storage disabled')};
  assert.equal(sandbox.testCache.restore(),false);assert.doesNotThrow(()=>sandbox.testCache.save(close));
+ let nativeStored='';
+ sandbox.JEINative={loadCloseSnapshot:()=>nativeStored,saveCloseSnapshot:raw=>{nativeStored=raw}};
+ sandbox.testCache.save(close);
+ assert.equal(JSON.parse(nativeStored).data_date,'2026-11-03','native cache works even when localStorage is disabled');
+ assert.equal(sandbox.testCache.restore(),true,'packaged and remote UI share native persistence');
+ assert.equal(Object.hasOwn(JSON.parse(nativeStored),'holdings'),false);
+
 }
 console.log('PASS browser and packaged close snapshots: persistence, read-only replay, privacy whitelist, rollback, invalid/expired/live rejection and blocked storage');
