@@ -62,6 +62,13 @@ async function run(){
   assert.equal(await page.locator('#holdToolbar').isVisible(),false,'private sort/filter controls never shown on public browser');
   assert.equal(await page.locator('#privateRotate').isVisible(),false,'private rotation comparison never shown on public browser');
   await page.waitForFunction(()=>/已取得|已連線/.test(document.querySelector('#sysStatus')?.textContent||''),null,{timeout:15000});
+  // Missing live trades must not leave the whole app empty: dated official
+  // research remains readable without becoming today's actionable picks.
+  await page.waitForFunction(()=>document.querySelector('#closeArchiveSignals')?.querySelectorAll('.listRow').length>0,null,{timeout:15000});
+  assert.match(await page.locator('#closeArchiveMeta').innerText(),/資料日.*不提供今日買賣指令/);
+  assert.ok(await page.locator('#closeArchiveSectors .listRow').count()>0,'official close sector comparison remains available');
+  assert.ok(await page.locator('#sectorHeatmap .heatTile').count()>0,'dated archive heatmap is not empty');
+  assert.doesNotMatch(await page.locator('#closeArchiveSignals').innerText(),/參考區.*防守.*目標/,'archive research must not display a live entry plan');
   // A closed exchange must be labeled as closed, with dated historical-only picks.
   await page.evaluate(()=>{
     window.__marketBeforeClosureTest=system;
@@ -95,7 +102,14 @@ async function run(){
   assert.equal(await page.locator('[data-private-only]:visible').count(),0,'owner-only navigation and links stay hidden in visitor edition');
   await page.locator('[data-go="attack"]').first().click();
   await page.locator('#screenPreset').selectOption('all');
-  assert.match(await page.locator('#attackList').innerText(),/IC設計熱度|記憶體\/儲存熱度|族群未分類（中性計分）|族群資料未涵蓋/);
+  const attackText=await page.locator('#attackList').innerText();
+  const hasActionableRows=await page.evaluate(()=>
+    (isTrustedFeed()||isRecentCloseObservation())&&Array.isArray(system.attack)&&system.attack.length>0);
+  if(hasActionableRows){
+    assert.match(attackText,/IC設計熱度|記憶體\/儲存熱度|族群未分類（中性計分）|族群資料未涵蓋/);
+  }else{
+    assert.match(attackText,/未驗證|暫停|沒有符合/,'unverified market must not mint current attack picks');
+  }
   assert.doesNotMatch(await page.locator('#attackList').innerText(),/其他熱度 50/,'unmeasured sector heat must not look like a market observation');
   await page.locator('[data-go="home"]').first().click();
   const health=await context.newPage();
