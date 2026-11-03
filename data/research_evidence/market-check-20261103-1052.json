@@ -1,0 +1,44 @@
+{
+  "twse": {
+    "url": "https://www.twse.com.tw/exchangeReport/MI_INDEX?date=20261102&type=ALLBUT0999&response=json",
+    "result": {
+      "date": "20261102",
+      "stat": "OK",
+      "index": [
+        [
+          "發行量加權股價指數",
+          "44,920.14",
+          "<p style ='color:green'>-</p>",
+          "291.69",
+          "-0.65",
+          ""
+        ]
+      ]
+    }
+  },
+  "tpex": {
+    "url": "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes",
+    "result": {
+      "rows": 1018,
+      "dates": [
+        "1151102"
+      ]
+    }
+  },
+  "mis": {
+    "url": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_2330.tw%7Ctse_2449.tw%7Cotc_5425.tw&json=1&delay=0",
+    "error": "HTTP Error 503: Service Unavailable"
+  },
+  "production": {
+    "url": "https://jei-stock-radar.vercel.app/remote/system.json?verify=202611031055",
+    "result": {
+      "data_date": "2026-11-02",
+      "updated_at": "2026-11-03 10:33",
+      "count": 88,
+      "coverage": 4.5,
+      "actionable": false,
+      "privacy": "PASS"
+    }
+  },
+  "checked_at": "2026-11-03T10:54:03+08:00"
+}

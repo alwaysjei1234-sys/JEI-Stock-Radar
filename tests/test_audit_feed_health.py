@@ -59,6 +59,37 @@ class FeedAuditTests(unittest.TestCase):
         }}
         self.assertTrue(any("132 trades / 6.7%" in x for x in check(feed)))
 
+    def test_full_market_snapshot_without_partial_sample_can_pass(self):
+        feed=self.healthy()
+        feed['market'].update(live_count=600,live_coverage_pct=40,partial_live=None)
+        before=copy.deepcopy(feed)
+        self.assertEqual(check(feed),[])
+        self.assertEqual(feed,before)
+
+    def test_current_degraded_shape_reports_actual_market_coverage(self):
+        feed=self.healthy()
+        feed['market'].update(live_count=88,live_coverage_pct=4.5,live_valid=False,
+                             partial_live={'verified_count':88,'complete':False,'quotes':[]})
+        issues=check(feed)
+        self.assertTrue(any('88 trades / 4.5%' in issue for issue in issues))
+        self.assertFalse(any('88 trades / 0%' in issue for issue in issues))
+
+    def test_invalid_canonical_metrics_never_use_healthy_partial_fallback(self):
+        for key,values in (('live_count',(True,600.5,-1,'bad',float('inf'))),
+                           ('live_coverage_pct',(True,-1,101,'NaN',float('inf')))):
+            for value in values:
+                with self.subTest(key=key,value=value):
+                    feed=self.healthy();feed['market'][key]=value
+                    issues=check(feed)
+                    self.assertIn('invalid diagnostic metric: '+key,issues)
+                    self.assertIn('live_valid incorrectly true',issues)
+
+    def test_disagreeing_market_and_partial_metrics_are_flagged(self):
+        feed=self.healthy();feed['market'].update(live_count=601,live_coverage_pct=41)
+        issues=check(feed)
+        self.assertIn('inconsistent live count between market and partial_live',issues)
+        self.assertIn('inconsistent live coverage between market and partial_live',issues)
+
 
 if __name__ == "__main__":
     unittest.main()

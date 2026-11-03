@@ -36,8 +36,20 @@ def check(feed):
             issues.append("invalid diagnostic metric: " + key)
             return default
 
-    count = metric(partial, "verified_count", 0, whole=True)
-    coverage = metric(partial, "coverage_pct", 0, maximum=100)
+    partial_count = metric(partial, "verified_count", 0, whole=True)
+    partial_coverage = metric(partial, "coverage_pct", 0, maximum=100)
+    # Full-market snapshots need not carry partial_live. Use the canonical
+    # market metrics when present; an invalid canonical value must fail closed,
+    # never fall back to a healthier partial sample.
+    count = (metric(market, "live_count", 0, whole=True)
+             if "live_count" in market else partial_count)
+    coverage = (metric(market, "live_coverage_pct", 0, maximum=100)
+                if "live_coverage_pct" in market else partial_coverage)
+    if "live_count" in market and "verified_count" in partial and count != partial_count:
+        issues.append("inconsistent live count between market and partial_live")
+    if ("live_coverage_pct" in market and "coverage_pct" in partial
+            and abs(coverage - partial_coverage) > 0.05):
+        issues.append("inconsistent live coverage between market and partial_live")
     required = metric(diag, "required_trades", 500, whole=True, positive=True)
     min_pct = metric(diag, "required_coverage_pct", 35, positive=True, maximum=100)
     returned = metric(stats, "returned_messages", 0, whole=True)
