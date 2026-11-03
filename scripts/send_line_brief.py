@@ -39,9 +39,24 @@ def payload(report,recipient):
     return {"to":recipient,"messages":[{"type":"text","text":"\n".join(lines)[:3500]}],"notificationDisabled":False}
 
 def api_get(path,token):
+    """Retry only transient read failures; never bypass a missing quota check."""
     req=urllib.request.Request(BASE+path,headers={"Authorization":"Bearer "+token})
-    with urllib.request.urlopen(req,timeout=12) as r:
-        return json.loads(r.read().decode("utf-8"))
+    for attempt in range(1,4):
+        try:
+            with urllib.request.urlopen(req,timeout=12) as r:
+                if r.status!=200:
+                    raise RuntimeError("LINE quota unexpected response")
+                document=json.loads(r.read().decode("utf-8"))
+                if not isinstance(document,dict):
+                    raise ValueError("LINE quota invalid response")
+                return document
+        except urllib.error.HTTPError as error:
+            if not 500<=error.code<600 or attempt==3:
+                raise RuntimeError("LINE quota HTTP "+str(error.code)) from None
+        except OSError:
+            if attempt==3:
+                raise RuntimeError("LINE quota network retries exhausted") from None
+        time.sleep(2**(attempt-1))
 
 def quota_ok(token,cap=55):
     # Fail closed: only the Taiwan light free plan (200 max), no paid top-ups.
@@ -49,14 +64,16 @@ def quota_ok(token,cap=55):
     consumption=api_get("/v2/bot/message/quota/consumption",token)
     maximum=quota.get("value")
     used=consumption.get("totalUsage")
-    return (quota.get("type")=="limited" and isinstance(maximum,int) and 0<maximum<=200
-            and isinstance(used,int) and 0<=used<min(cap,maximum))
+    return (quota.get("type")=="limited" and type(maximum) is int and 0<maximum<=200
+            and type(used) is int and 0<=used<min(cap,maximum))
 
 def push(report,edition,token,recipient,receipt=None):
     receipt = receipt if receipt is not None else {}
+    receipt["stage"]="quota"
     if not quota_ok(token):
         receipt["status"]="quota_blocked"
         return "LINE 免費方案額度未通過安全檢查，跳過推播"
+    receipt["stage"]="push"
     # Official retry key: avoid duplicate acceptance for the same daily edition.
     key=str(uuid.uuid5(uuid.NAMESPACE_URL,"jei-stock-radar/"+recipient+"/"+report["date"]+"/"+edition))
     body=json.dumps(payload(report,recipient),ensure_ascii=False).encode("utf-8")

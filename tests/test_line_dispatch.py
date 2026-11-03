@@ -241,3 +241,73 @@ class StrategySummaryTests(unittest.TestCase):
         block={'title':'四策略模擬復盤','items':['date','fixed5','fixed7','fixed10','trailing']}
         message=line.payload({'blocks':[block]},'U'+'a'*32)['messages'][0]['text']
         for row in block['items']: self.assertIn(row,message)
+
+class QuotaPreflightRecoveryTests(unittest.TestCase):
+    @staticmethod
+    def response(body):
+        import json
+        from unittest.mock import MagicMock
+        result=MagicMock()
+        result.__enter__.return_value=result
+        result.status=200
+        result.read.return_value=json.dumps(body).encode()
+        return result
+
+    def test_transient_quota_reads_recover_before_one_push(self):
+        from unittest.mock import patch, call
+        from urllib.error import HTTPError
+        replies=[HTTPError(line.BASE,503,'SECRET_TOKEN',{},None),
+                 self.response({'type':'limited','value':200}),
+                 TimeoutError('SECRET_TOKEN'),self.response({'totalUsage':10}),
+                 self.response({})]
+        receipt={'delivery_confirmed':False}
+        with patch.object(line.urllib.request,'urlopen',side_effect=replies) as network, patch.object(line.time,'sleep') as pause:
+            line.push({'date':'2026-11-03'},'close','SECRET_TOKEN','U'+'a'*32,receipt)
+        methods=[c.args[0].get_method() for c in network.call_args_list]
+        self.assertEqual(methods,['GET','GET','GET','GET','POST'])
+        self.assertEqual(pause.call_args_list,[call(1),call(1)])
+        self.assertEqual((receipt['status'],receipt['stage']),('accepted','push'))
+        self.assertFalse(receipt['delivery_confirmed'])
+        self.assertNotIn('SECRET_TOKEN',str(receipt))
+
+    def test_quota_outage_exhausts_without_push(self):
+        from unittest.mock import patch,call
+        from urllib.error import URLError
+        receipt={}
+        with patch.object(line.urllib.request,'urlopen',side_effect=URLError('SECRET_TOKEN')) as network, patch.object(line.time,'sleep') as pause:
+            with self.assertRaises(RuntimeError) as error:
+                line.push({'date':'2026-11-03'},'close','token','U'+'a'*32,receipt)
+        self.assertEqual(network.call_count,3)
+        self.assertTrue(all(c.args[0].get_method()=='GET' for c in network.call_args_list))
+        self.assertEqual(pause.call_args_list,[call(1),call(2)])
+        self.assertEqual(receipt['stage'],'quota')
+        self.assertNotIn('SECRET_TOKEN',str(error.exception))
+
+    def test_permanent_quota_http_errors_stop_without_push(self):
+        from unittest.mock import patch
+        from urllib.error import HTTPError
+        for status in (400,401,403,429):
+            with self.subTest(status=status), patch.object(line.urllib.request,'urlopen',side_effect=HTTPError(line.BASE,status,'SECRET_TOKEN',{},None)) as network, patch.object(line.time,'sleep') as pause:
+                with self.assertRaises(RuntimeError):
+                    line.push({'date':'2026-11-03'},'close','token','U'+'a'*32,{})
+                self.assertEqual(network.call_count,1)
+                pause.assert_not_called()
+
+    def test_malformed_or_non_object_quota_does_not_retry_or_push(self):
+        from unittest.mock import patch
+        for body in ([],None,'invalid'):
+            with self.subTest(body=body), patch.object(line.urllib.request,'urlopen',return_value=self.response(body)) as network, patch.object(line.time,'sleep') as pause:
+                with self.assertRaises(ValueError):
+                    line.push({'date':'2026-11-03'},'close','token','U'+'a'*32,{})
+                self.assertEqual(network.call_count,1)
+                pause.assert_not_called()
+
+    def test_boolean_quota_values_never_authorize_push(self):
+        from unittest.mock import patch
+        for maximum,used in ((True,0),(200,False)):
+            with self.subTest(maximum=maximum,used=used), patch.object(line.urllib.request,'urlopen',side_effect=[self.response({'type':'limited','value':maximum}),self.response({'totalUsage':used})]) as network:
+                receipt={}
+                line.push({'date':'2026-11-03'},'close','token','U'+'a'*32,receipt)
+                self.assertEqual(receipt['status'],'quota_blocked')
+                self.assertEqual(receipt['stage'],'quota')
+                self.assertEqual(network.call_count,2)
