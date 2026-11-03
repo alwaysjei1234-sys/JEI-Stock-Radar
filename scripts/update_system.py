@@ -1286,7 +1286,8 @@ def main():
     prior_public_holdings=(previous_feed.get("holdings") or {}) if isinstance(previous_feed,dict) else {}
     public_signals=build_public_holding_signals(
         prior_public_holdings,price_days,raw_date,risk,
-        {x["code"]:x["close"] for x in stocks} if official_close_verified else {})
+        {x["code"]:x["close"] for x in stocks} if official_close_verified else {},
+        official_close_verified=official_close_verified)
     out={
         "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,"source_data_date":source_data_date,
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",

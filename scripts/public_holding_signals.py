@@ -28,11 +28,16 @@ def is_safe_public_holdings(rows):
                 return False
     return True
 
-def build_public_holding_signals(previous, price_days, as_of, risk_score, current_closes=None):
+def build_public_holding_signals(previous, price_days, as_of, risk_score, current_closes=None,
+                                 *, official_close_verified=False):
     """Update only explicitly listed public tickers from observed dated closes."""
     if not is_safe_public_holdings(previous):
         raise ValueError("Public holdings contain disallowed private fields")
     previous = previous or {}
+    # A new unverified/mixed-date risk score must not rewrite a dated official
+    # signal. Keep the last published public evidence until a new close passes.
+    if official_close_verified is not True:
+        return {code: dict(row) for code, row in previous.items()}
     if not isinstance(price_days, dict):
         price_days = {}
     current_closes = current_closes or {}

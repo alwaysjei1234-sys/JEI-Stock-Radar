@@ -1,0 +1,188 @@
+{
+  "source_checks": {
+    "twse_today": {
+      "url": "https://www.twse.com.tw/exchangeReport/MI_INDEX?date=20261103&type=ALLBUT0999&response=json",
+      "result": {
+        "date": "20261103",
+        "stat": "OK",
+        "index": [
+          [
+            "發行量加權股價指數",
+            "43,307.54",
+            "<p style ='color:green'>-</p>",
+            "1,612.60",
+            "-3.59",
+            ""
+          ]
+        ]
+      }
+    },
+    "tpex": {
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes",
+      "result": {
+        "rows": 1018,
+        "dates": [
+          "1151102"
+        ]
+      }
+    },
+    "tpex_close": {
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes",
+      "result": {
+        "rows": 13454,
+        "dates": [
+          "1151102"
+        ]
+      }
+    },
+    "mis": {
+      "url": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_2330.tw%7Ctse_2449.tw%7Cotc_5425.tw&json=1&delay=0",
+      "error": "HTTP Error 503: Service Unavailable"
+    },
+    "production": {
+      "url": "https://jei-stock-radar.vercel.app/remote/system.json?verify=202611031452",
+      "result": {
+        "data_date": "2026-11-02",
+        "updated_at": "2026-11-03 14:12",
+        "mode": "資料過期",
+        "actionable": false,
+        "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
+        "privacy": "PASS"
+      }
+    },
+    "checked_at": "2026-11-03T14:51:02+08:00"
+  },
+  "restored_signal_source_commit": "7e9e20f7388eade0384562cc3bec108ebd0093f0",
+  "source_data_date": "2026-11-02",
+  "source_market_mode": "今日收盤",
+  "changed_public_signals": {
+    "1711": {
+      "score": {
+        "before": 10,
+        "restored": 15
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "減碼評估"
+      }
+    },
+    "2478": {
+      "score": {
+        "before": 16,
+        "restored": 26
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "減碼評估"
+      }
+    },
+    "2609": {
+      "score": {
+        "before": 59,
+        "restored": 69
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "續抱觀察"
+      }
+    },
+    "2748": {
+      "score": {
+        "before": 27,
+        "restored": 37
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "減碼評估"
+      }
+    },
+    "3162": {
+      "score": {
+        "before": 48,
+        "restored": 58
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "續抱觀察"
+      }
+    },
+    "3289": {
+      "score": {
+        "before": 26,
+        "restored": 36
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "減碼評估"
+      }
+    },
+    "3707": {
+      "score": {
+        "before": 10,
+        "restored": 18
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "減碼評估"
+      }
+    },
+    "5347": {
+      "score": {
+        "before": 10,
+        "restored": 17
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "減碼評估"
+      }
+    },
+    "5425": {
+      "score": {
+        "before": 17,
+        "restored": 27
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "減碼評估"
+      }
+    },
+    "6150": {
+      "score": {
+        "before": 47,
+        "restored": 57
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "續抱觀察"
+      }
+    },
+    "7711": {
+      "score": {
+        "before": 11,
+        "restored": 21
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "減碼評估"
+      }
+    },
+    "8070": {
+      "score": {
+        "before": 22,
+        "restored": 32
+      },
+      "action": {
+        "before": "防守觀察",
+        "restored": "減碼評估"
+      }
+    }
+  },
+  "restored_count": 12,
+  "all_other_system_fields_unchanged": true,
+  "paper_files_sha256": {
+    "remote/strategy_performance.json": "4e06fc3b68017143ef014a05a4d1662e5cc01063938709be7521466c3d6c8185",
+    "remote/pick_history.json": "da573a41e0a9f59cbb027d13f5f2fa60b178a390420421eabdb026ea21515658",
+    "remote/pick_validation.json": "0d935d3705d26250e4c980c4a72bbf9521624125b0cf3cc1c7f9ca8a7d216394",
+    "remote/daily_prices.json": "8074ddad3a21800bc0d0d4cc34adf1e0a822324ca2334eefe1dfb76c47006a2a"
+  }
+}
