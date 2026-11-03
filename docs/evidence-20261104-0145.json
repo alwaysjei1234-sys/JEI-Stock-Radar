@@ -1,0 +1,67 @@
+{
+  "baseline": "dbf998a9cefc4c62e79b6ee35ea41198ece6aaca",
+  "checked_at": "2026-11-04T01:53:18+08:00",
+  "source": "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes",
+  "quote": {
+    "Date": "1151103",
+    "SecuritiesCompanyCode": "00937B",
+    "CompanyName": "群益ESG投等債20+",
+    "Close": "14.19"
+  },
+  "previous_public_reference": {
+    "score": null,
+    "trend": "債券ETF／官方技術資料不足",
+    "action": "收息觀察",
+    "defense": 14.11,
+    "target": 14.22,
+    "reason": "債券ETF 10/30官方報價尚未驗證；沿用歷史價位，勿當今日收盤",
+    "as_of": "2026-10-27",
+    "status": "外部來源歷史參考"
+  },
+  "updated_public_reference": {
+    "score": null,
+    "trend": "債券ETF／技術資料不足",
+    "action": "收盤參考",
+    "defense": null,
+    "target": null,
+    "reason": "2026-11-03 TPEx官方收盤14.19元；歷史樣本不足，不提供JEI技術評分、防守或目標價。",
+    "as_of": "2026-11-03",
+    "status": "官方收盤參考"
+  },
+  "code_changed": false,
+  "new_trades": false,
+  "python_tests": 304,
+  "frontend_checks": 71,
+  "paper_run": {
+    "day": "2026-11-04",
+    "updated": false,
+    "skipped": true,
+    "reason": "尚未取得今日已驗證官方收盤行情；拒絕更新模擬"
+  },
+  "pick_run": {
+    "captured": false,
+    "latest_official_day": "2026-11-03",
+    "picks": 272,
+    "completed_3day": 199
+  },
+  "previous_ci_success": [
+    41678416648,
+    41678417025,
+    41678416861,
+    41678416994,
+    41678416813,
+    41678416889
+  ],
+  "session_probe": {
+    "landing_http": 503,
+    "quote_http": 503
+  },
+  "completion": {
+    "pass": 0,
+    "partial": 29,
+    "incomplete": 2,
+    "numerator": 14.5,
+    "denominator": 31,
+    "pct": 46.77
+  }
+}
