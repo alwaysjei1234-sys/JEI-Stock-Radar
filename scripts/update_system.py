@@ -694,6 +694,38 @@ def validated_previous_close(previous, now, max_age_days=7):
         out["summary"]=f"保留 {previous['data_date']} 歷史收盤資料；本次即時行情尚未驗證，暫停今日評分及新選股。"
     return out
 
+def refresh_public_etf_references(previous, official_by_code, as_of):
+    """Refresh only already-public ETFs from a matching official daily row.
+
+    Keep ETFs outside stock ranking, history candles and paper trades. A dated
+    close is evidence of price only, never evidence for a technical score.
+    """
+    if not is_safe_public_holdings(previous):
+        raise ValueError("Public holdings contain disallowed private fields")
+    out={code:dict(value) for code,value in (previous or {}).items()}
+    if verified_archive_date(as_of) is None or not isinstance(official_by_code,dict):
+        return out
+    for code, prior in (previous or {}).items():
+        if not re.fullmatch(r"0(?:[0-9]{3}|[0-9]{4}[A-Z])",code):
+            continue
+        row=official_by_code.get(code)
+        if (not isinstance(row,dict) or row.get("code")!=code
+                or row.get("market") not in ("TWSE","TPEX") or row.get("live") is True
+                or verified_archive_date(normalize_exchange_date(row.get("date")))!=as_of):
+            continue
+        if verified_archive_date(prior.get("as_of")) and prior["as_of"]>as_of:
+            continue
+        price=num(row.get("close"))
+        if isinstance(row.get("close"),bool) or price is None or not 0<price<1000000:
+            continue
+        source="TWSE" if row["market"]=="TWSE" else "TPEx"
+        out[code]={"score":None,"trend":("債券ETF" if code.endswith("B") else "ETF")+"／技術資料不足",
+                   "action":"收盤參考","defense":None,"target":None,
+                   "reason":f"{as_of} {source}官方收盤{price:g}元；尚未驗證ETF技術評分、防守或目標價。",
+                   "as_of":as_of,"status":"官方收盤參考"}
+    return out
+
+
 def update_history(history,date_key,stocks,signals,institutional_market=None):
     price_map={x["code"]:x["close"] for x in stocks if x.get("close")}
     snap={"date":date_key,"prices":price_map,"signals":[{"code":x["code"],"price":x["price"],"score":x["score"]} for x in signals[:8]]}
@@ -1252,6 +1284,8 @@ def main():
             live_sample.sort(key=lambda x:(x["code"] not in tracked_codes,x["code"]))
             retained["market"]["partial_live"]={"asof":stamp,"verified_count":live_count,"coverage_pct":round(live_coverage*100,1),"complete":False,"quotes":[{"code":x["code"],"price":x["close"],"quote_time":x.get("quote_time")} for x in live_sample[:250]]}
             retained["market"]["live_diagnostics"]={"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":stamp,"valid_trades":live_count,"mis_stats":live_stats,"required_trades":500,"required_coverage_pct":35,"errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],"reason":("官方休市，不更新即時行情" if known_closure else "官方雙市場收盤尚未驗證；MIS 個別成交僅供部分報價參考")}
+            retained["holdings"]=refresh_public_etf_references(
+                retained.get("holdings"),holdings_by_code,retained["data_date"])
             OUT.write_text(json.dumps(retained,ensure_ascii=False,indent=2),encoding="utf-8")
             print(json.dumps({"status":"archived_close_only",
                               "data_date":retained["data_date"],
@@ -1347,6 +1381,8 @@ def main():
         prior_public_holdings,price_days,raw_date,risk,
         {x["code"]:x["close"] for x in stocks} if official_close_verified else {},
         official_close_verified=official_close_verified)
+    if official_close_verified:
+        public_signals=refresh_public_etf_references(public_signals,holdings_by_code,raw_date)
     out={
         "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,"source_data_date":source_data_date,
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",

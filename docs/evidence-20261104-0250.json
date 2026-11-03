@@ -1,0 +1,72 @@
+{
+  "baseline": "201f0c91a87a746ec1f2d0818a52555b9a62497c",
+  "python_tests": 313,
+  "new_tests": 9,
+  "frontend_checks": 71,
+  "baseline_integration": {
+    "failed": 2,
+    "errors": 0
+  },
+  "new_integration": {
+    "passed": 2
+  },
+  "actual_update_log": "{\"offhours_close_error\": \"2026-11-04\", \"error\": \"ValueError: MI_INDEX response status/date is not verified for 2026-11-04\"}\n{\"status\": \"archived_close_only\", \"data_date\": \"2026-11-03\", \"checked_at\": \"2026-11-04 02:54\", \"no_live_signal\": true}\n",
+  "data_date": "2026-11-03",
+  "updated_at": "2026-11-03 23:55",
+  "last_checked_at": "2026-11-04 02:54",
+  "official_etf_quote": {
+    "Date": "1151103",
+    "SecuritiesCompanyCode": "00937B",
+    "Close": "14.19"
+  },
+  "public_etf": {
+    "score": null,
+    "trend": "債券ETF／技術資料不足",
+    "action": "收盤參考",
+    "defense": null,
+    "target": null,
+    "reason": "2026-11-03 TPEx官方收盤14.19元；尚未驗證ETF技術評分、防守或目標價。",
+    "as_of": "2026-11-03",
+    "status": "官方收盤參考"
+  },
+  "other_12_signals_unchanged": true,
+  "privacy_pass": true,
+  "paper_run": {
+    "day": "2026-11-04",
+    "updated": false,
+    "skipped": true,
+    "reason": "尚未取得今日已驗證官方收盤行情；拒絕更新模擬"
+  },
+  "pick_run": {
+    "captured": false,
+    "latest_official_day": "2026-11-03",
+    "picks": 272,
+    "completed_3day": 199
+  },
+  "benchmark": {
+    "fixed5": {
+      "paired": 54,
+      "benchmark_mean_pct": -1.44
+    },
+    "fixed7": {
+      "paired": 53,
+      "benchmark_mean_pct": -1.541
+    },
+    "fixed10": {
+      "paired": 51,
+      "benchmark_mean_pct": -1.807
+    },
+    "trailing": {
+      "paired": 47,
+      "benchmark_mean_pct": -1.757
+    }
+  },
+  "completion": {
+    "pass": 0,
+    "partial": 29,
+    "incomplete": 2,
+    "numerator": 14.5,
+    "denominator": 31,
+    "pct": 46.77
+  }
+}
