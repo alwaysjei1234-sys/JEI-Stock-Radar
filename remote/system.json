@@ -3,7 +3,7 @@
   "updated_at": "2026-11-03 13:17",
   "data_date": "2026-11-02",
   "source_data_date": "TWSE:2026-11-02 / TPEx:2026-11-02",
-  "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
+  "summary": "11/3 TWSE加權下跌3.59%；TPEx尚未更新同日收盤。僅更新已核實的大盤指數觀察，保留11/2歷史研究，暫停今日評分、新選股與模擬更新。",
   "risk": {
     "level": "stale",
     "label": "資料過期，暫停判讀",
@@ -61,7 +61,7 @@
       "errors": [],
       "reason": "MIS 查詢失敗或有效成交價覆蓋率不足"
     },
-    "brief": "資料過期多因子市場｜加權 -3.56%｜廣度 45.4%｜中位數 +0.00%｜跌逾5% 93｜行情時間以最近檢查時間為準",
+    "brief": "11/3 TWSE加權43,307.54點（-1,612.60／-3.59%）；13:52核對。TPEx仍11/2，雙市場收盤待驗證；今日評分與新選股暫停。",
     "market_data_as_of": "2026-11-02",
     "session_status": "交易日資料待驗證",
     "no_new_picks": true,
@@ -81,6 +81,51 @@
           "quote_time": "2026-11-03 13:18:00"
         }
       ]
+    },
+    "post_close_source_check": {
+      "checked_at": "2026-11-03T13:52:32+08:00",
+      "scope": "TWSE current-day index only; combined TWSE/TPEx close NOT verified",
+      "twse": {
+        "url": "https://www.twse.com.tw/exchangeReport/MI_INDEX?date=20261103&type=ALLBUT0999&response=json",
+        "result": {
+          "stat": "OK",
+          "date": "20261103",
+          "tables": 10,
+          "index": [
+            [
+              "發行量加權股價指數",
+              "43,307.54",
+              "<p style ='color:green'>-</p>",
+              "1,612.60",
+              "-3.59",
+              ""
+            ]
+          ]
+        }
+      },
+      "tpex": {
+        "url": "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes",
+        "result": {
+          "rows": 1018,
+          "dates": [
+            "1151102"
+          ]
+        }
+      },
+      "mis": {
+        "url": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_2330.tw%7Ctse_2449.tw%7Cotc_5425.tw&json=1&delay=0",
+        "error": "HTTP Error 503: Service Unavailable"
+      },
+      "tpex_daily_fallback": {
+        "requested_day": "2026-11-03",
+        "historical_attempt": "IncompleteRead; rejected",
+        "latest_snapshot_observed_dates": [
+          "2026-11-02"
+        ],
+        "retry_historical_response_date": "20261102",
+        "accepted": false
+      },
+      "cross_source_verified_this_attempt": false
     }
   },
   "sectors": [],
