@@ -14,11 +14,23 @@ from pathlib import Path
 from scripts.update_pick_validation import ROOT, TZ, close_verified, update
 
 
-def recover(prior, archive, snapshots, now):
-    if not prior.get("picks"):
+def last_sealed_day(prior):
+    """An explicitly sealed no-signal day is observed, not missing history."""
+    days=[p["day"] for p in prior.get("picks",[])]+[s["day"] for s in prior.get("empty_sessions",[])]
+    if not days:
         raise ValueError("Recovery requires an existing immutable ledger")
+    for day in days:
+        try:
+            if datetime.strptime(day,"%Y-%m-%d").date().isoformat()!=day:
+                raise ValueError("invalid sealed date")
+        except (ValueError,TypeError):
+            raise ValueError("Invalid immutable ledger session date") from None
+    return max(days)
+
+
+def recover(prior, archive, snapshots, now):
     state = copy.deepcopy(prior)
-    last = max(p["day"] for p in state["picks"])
+    last = last_sealed_day(state)
     required = sorted(d for d in archive["days"] if last < d <= now.astimezone(TZ).date().isoformat())
     chosen = {}
     # Git loader supplies first-parent chronological order. Never inspect outcomes
@@ -44,7 +56,9 @@ def recover(prior, archive, snapshots, now):
                                     datetime.fromisoformat(source["committed_at"]))
         if not captured:
             raise ValueError("Historical snapshot did not capture " + day)
-        for pick in state["picks"][before:]:
+        recovered_records=state["picks"][before:]+[
+            s for s in state.get("empty_sessions",[]) if s["day"]==day]
+        for pick in recovered_records:
             pick.update(origin="recovered_mainline_close_observation",
                         source_commit=source["sha"], source_blob=source["blob"],
                         source_committed_at=source["committed_at"])
@@ -80,7 +94,7 @@ def main():
     original = ledger.read_bytes()
     prior = json.loads(original)
     archive = json.loads((ROOT / "remote/daily_prices.json").read_bytes())
-    last = max(p["day"] for p in prior["picks"])
+    last = last_sealed_day(prior)
     state, proof = recover(prior, archive, git_snapshots(args.ref, last), datetime.now(TZ))
     if args.write and proof:
         if ledger.read_bytes() != original:

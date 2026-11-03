@@ -224,16 +224,38 @@ def update(feed, archive, prior, now):
         if not isinstance(identity,str) or identity!=expected or identity in ids:
             raise ValueError("封存推薦識別碼錯誤或重複，不可覆寫")
         ids.add(identity)
+    empty_sessions=prior.get("empty_sessions",[])
+    if not isinstance(empty_sessions,list):
+        raise ValueError("空名單交易日封存格式錯誤")
+    empty_sessions=[dict(x) if isinstance(x,dict) else x for x in empty_sessions]
+    sealed_days={p["day"] for p in stored}
+    for session in empty_sessions:
+        if not isinstance(session,dict):
+            raise ValueError("空名單交易日封存格式錯誤")
+        day=session.get("day")
+        try:
+            stamp=datetime.strptime(session.get("feed_updated_at",""),"%Y-%m-%d %H:%M").replace(tzinfo=TZ)
+        except (ValueError,TypeError):
+            raise ValueError("空名單交易日缺少有效收盤時間") from None
+        prices=days.get(day) if isinstance(day,str) else None
+        if (not isinstance(day,str) or session.get("status")!="verified_no_candidates" or day in sealed_days
+                or stamp.date().isoformat()!=day or stamp.hour*60+stamp.minute<810
+                or stamp>local or not isinstance(prices,dict)
+                or sum(quote(prices,c) is not None for c in prices)<500
+                or not isinstance(session.get("selection_policy"),str)
+                or not 1<=len(session["selection_policy"])<=80):
+            raise ValueError("空名單交易日封存無法核對，不可覆寫")
+        sealed_days.add(day)
     captured=False
     origin="scheduled_close"
     # The very first import may seed the latest *audited* Friday close on a
     # weekend; never manufacture prior multi-day historical picks.
-    bootstrap=(not stored and asof in days and asof==max(days)
+    bootstrap=(not sealed_days and asof in days and asof==max(days)
                and 0 <= (local.date()-datetime.strptime(asof,"%Y-%m-%d").date()).days <= 7
                if re.fullmatch(r"\d{4}-\d{2}-\d{2}",asof) else False)
     # Do not append a later session when the official price archive has gaps.
-    if stored and asof==today and asof in days and close_verified(feed,archive,asof) and asof>max(p["day"] for p in stored):
-        earlier=[d for d in days if max(p["day"] for p in stored)<d<asof]
+    if sealed_days and asof==today and asof in days and close_verified(feed,archive,asof) and asof>max(sealed_days):
+        earlier=[d for d in days if max(sealed_days)<d<asof]
         if earlier:
             raise ValueError("封存日之間存在尚未記錄的交易日，停止新增以避免績效樣本偏差")
     if asof==today or bootstrap:
@@ -246,11 +268,19 @@ def update(feed, archive, prior, now):
         # Prevent a future-dated feed from being captured before the session.
         if (stamp is not None and stamp <= local and
                 close_verified(feed,archive,asof)):
-            if not any(x.get("day")==asof for x in stored):
+            if asof not in sealed_days:
                 origin="verified_archive_bootstrap" if bootstrap and asof!=today else origin
                 new=freeze_picks(feed,days[asof],asof,origin)
                 if not new:
-                    raise ValueError("已驗證行情但沒有可封存的選股名單")
+                    # Only explicit empty arrays prove a legitimate no-signal day.
+                    # Missing groups or rejected nonempty candidates remain errors.
+                    if not all(isinstance(feed.get(g),list) and not feed[g] for g in GROUPS):
+                        raise ValueError("已驗證行情但沒有可封存的選股名單")
+                    empty_sessions.append({
+                        "day":asof,"status":"verified_no_candidates",
+                        "feed_updated_at":feed["updated_at"],"origin":origin,
+                        "selection_policy":str(feed.get("selection_policy") or "legacy-unversioned")[:80]
+                    })
                 stored.extend(new)
                 captured=True
     # Even without a fresh feed, all previously sealed picks get their horizons
@@ -261,7 +291,11 @@ def update(feed, archive, prior, now):
     report_ids={p["id"] for p in report["picks"]}
     if report_ids!={p["id"] for p in stored}:
         raise ValueError("績效報表與封存帳本的推薦識別碼不一致")
-    return {"schema":1,"mode":"immutable_asof_pick_archive","picks":stored},report,captured
+    ledger={"schema":1,"mode":"immutable_asof_pick_archive","picks":stored}
+    if empty_sessions:
+        ledger["empty_sessions"]=empty_sessions
+        report["empty_sessions"]=[dict(x) for x in empty_sessions]
+    return ledger,report,captured
 
 
 def main():
@@ -279,8 +313,8 @@ def main():
     # Refresh when the schema or risk fields change, even on a non-trading day.
     if (captured or not REPORT.exists() or
             any(json.loads(REPORT.read_text(encoding="utf-8")).get(key) != report.get(key)
-                for key in ("schema", "mode", "latest_official_day", "horizons_trading_days", "duplicate_signal_summary", "groups", "picks", "total_frozen_picks", "analysis_notes", "estimated_costs")) or
-            "max_close_drawdown_pct" not in REPORT.read_text(encoding="utf-8")):
+                for key in ("schema", "mode", "latest_official_day", "horizons_trading_days", "duplicate_signal_summary", "groups", "picks", "total_frozen_picks", "analysis_notes", "estimated_costs", "empty_sessions")) or
+            (bool(report["picks"]) and "max_close_drawdown_pct" not in REPORT.read_text(encoding="utf-8"))):
         temp=REPORT.with_suffix(".json.tmp")
         temp.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
         temp.replace(REPORT)

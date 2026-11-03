@@ -15,6 +15,8 @@ on:
       - 'scripts/update_pick_validation.py'
       - 'remote/pick_validation.html'
       - 'tests/test_pick_validation.py'
+      - 'tests/test_empty_pick_sessions.py'
+      - 'scripts/recover_pick_history.py'
       - 'tests/test_export_official_closes.py'
       - 'tests/test_export_daily_picks.py'
       - 'tests/test_recover_archived_paper_day.py'
@@ -52,6 +54,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_paper_missing_valuation.py' -v
       - name: Verify forward-only picked-stock analysis and no hindsight
         run: python -m unittest discover -s tests -p 'test_pick_validation.py' -v
+      - name: Verify immutable zero-signal sessions and recovery
+        run: python -m unittest discover -s tests -p 'test_empty_pick_sessions.py' -v
       - name: Verify standalone picked-stock generator import path
         run: PYTHONPATH=. python -c 'import scripts.update_pick_validation'
       - name: Verify full-market official close exporter

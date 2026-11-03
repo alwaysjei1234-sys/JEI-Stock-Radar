@@ -23,7 +23,9 @@ jobs:
         with:
           python-version: "3.11"
       - name: Run regression tests
-        run: python -m unittest discover -s tests -p 'test_pick*.py'
+        run: |
+          python -m unittest discover -s tests -p 'test_pick*.py'
+          python -m unittest discover -s tests -p 'test_empty_pick_sessions.py'
       - name: Rebuild verified report from immutable history
         run: python -m scripts.update_pick_validation
       - name: Commit public report and any newly frozen picks
