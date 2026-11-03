@@ -1,0 +1,101 @@
+{
+  "baseline": "41d9dafa66671fa3052720c97a9dccca8dd79470",
+  "python_tests": 304,
+  "frontend_checks": 71,
+  "before_fix_failed_tests": 2,
+  "after_fix_passed_tests": 2,
+  "actual_refresh_log": "{\"offhours_close_error\": \"2026-11-04\", \"error\": \"ValueError: MI_INDEX response status/date is not verified for 2026-11-04\"}\n{\"status\": \"archived_close_only\", \"data_date\": \"2026-11-03\", \"checked_at\": \"2026-11-04 00:47\", \"no_live_signal\": true}\n",
+  "updated_at": "2026-11-03 23:55",
+  "data_date": "2026-11-03",
+  "market": {
+    "status": "紅燈防守",
+    "mode": "最近收盤",
+    "last_checked_at": "2026-11-04 00:47",
+    "index": {
+      "change_pct": -3.59,
+      "data_date": "2026-11-03",
+      "source": "TWSE MI_INDEX dated response",
+      "date_verified": true,
+      "checked_at": "2026-11-03 23:55"
+    },
+    "live_count": 0,
+    "close_count": 1967,
+    "live_coverage_pct": 0.0,
+    "live_valid": false,
+    "stale": true,
+    "historical_readonly": true,
+    "post_close_refresh": false,
+    "live_diagnostics": {
+      "attempted": false,
+      "market_open": false,
+      "quote_refresh_window": false,
+      "updater_time_taipei": "2026-11-04 00:47",
+      "valid_trades": 0,
+      "mis_stats": {},
+      "required_trades": 500,
+      "required_coverage_pct": 35,
+      "errors": [],
+      "reason": "官方雙市場收盤尚未驗證；MIS 個別成交僅供部分報價參考"
+    },
+    "brief": "交易日官方收盤待驗證｜最近有效收盤 2026-11-03｜今日選股暫停，歷史名單僅供研究",
+    "market_data_as_of": "2026-11-03",
+    "session_status": "交易日資料待驗證",
+    "no_new_picks": true,
+    "partial_live": {
+      "asof": "2026-11-04 00:47",
+      "verified_count": 0,
+      "coverage_pct": 0.0,
+      "complete": false,
+      "quotes": []
+    },
+    "status_updated_at": "2026-11-04 00:47",
+    "session_reason": "TWSE／TPEx 當日官方收盤尚未完成交叉驗證",
+    "next_expected_session": null
+  },
+  "actionable": false,
+  "holdings_unchanged": true,
+  "holdings_official_close_matches": 12,
+  "unmatched": [
+    "00937B"
+  ],
+  "public_privacy_pass": true,
+  "paper_run": {
+    "day": "2026-11-04",
+    "updated": false,
+    "skipped": true,
+    "reason": "尚未取得今日已驗證官方收盤行情；拒絕更新模擬"
+  },
+  "pick_run": {
+    "captured": false,
+    "latest_official_day": "2026-11-03",
+    "picks": 272,
+    "completed_3day": 199
+  },
+  "benchmark": {
+    "fixed5": {
+      "paired": 54,
+      "benchmark_mean_pct": -1.44
+    },
+    "fixed7": {
+      "paired": 53,
+      "benchmark_mean_pct": -1.541
+    },
+    "fixed10": {
+      "paired": 51,
+      "benchmark_mean_pct": -1.807
+    },
+    "trailing": {
+      "paired": 47,
+      "benchmark_mean_pct": -1.757
+    }
+  },
+  "qualified_oos_closed": 0,
+  "completion": {
+    "pass": 0,
+    "partial": 29,
+    "incomplete": 2,
+    "numerator": 14.5,
+    "denominator": 31,
+    "pct": 46.77
+  }
+}

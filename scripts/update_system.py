@@ -1216,7 +1216,9 @@ def main():
             # Carry-over metadata from a holiday must not label the NEXT
             # trading day as a holiday while official closes are still delayed.
             stamp=now.strftime("%Y-%m-%d %H:%M")
-            retained["updated_at"]=stamp
+            # Keep the verified close timestamp. A midnight status refresh must
+            # not turn a valid archived close into a pre-close/unverifiable one.
+            # last_checked_at and status_updated_at carry the new check time.
             retained["market"].update({
                 "mode":"最近收盤",
                 "stale":True,
