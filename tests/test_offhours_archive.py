@@ -113,7 +113,7 @@ class OffhoursArchiveTests(unittest.TestCase):
     def test_checked_in_market_snapshot_is_valid_nontrading_archive(self):
         market=json.loads((ROOT/"remote/system.json").read_text(encoding="utf-8"))
         self.assertRegex(market["data_date"],r"^\d{4}-\d{2}-\d{2}$")
-        updated=datetime.strptime(market["updated_at"],"%Y-%m-%d %H:%M")
+        updated=datetime.strptime(market["updated_at"],"%Y-%m-%d %H:%M").replace(tzinfo=TAIPEI)
         data_day=datetime.strptime(market["data_date"],"%Y-%m-%d").date()
         self.assertGreaterEqual(updated.date(),data_day)
         self.assertGreaterEqual(market["market"]["close_count"],500)
@@ -132,12 +132,22 @@ class OffhoursArchiveTests(unittest.TestCase):
             self.assertFalse(market["risk"].get("actionable",True))
             self.assertNotEqual(market["risk"]["level"],"green")
         else:
-            self.assertEqual(market["market"]["historical_readonly"],updated.date()!=data_day)
-            self.assertEqual(market["market"]["stale"],updated.date()!=data_day)
+            # updated_at may deliberately preserve the original quote time.
+            # Cross-day status is evaluated at its separate check timestamp.
+            checked=datetime.strptime(market["market"].get("status_updated_at") or
+                                      market["market"].get("last_checked_at") or
+                                      market["updated_at"],"%Y-%m-%d %H:%M").replace(tzinfo=TAIPEI)
+            self.assertGreaterEqual(checked,updated)
+            self.assertEqual(market["market"]["historical_readonly"],checked.date()!=data_day)
+            self.assertEqual(market["market"]["stale"],checked.date()!=data_day)
+            if checked.date()!=data_day:
+                self.assertTrue(market["market"]["no_new_picks"])
+                self.assertFalse(market["risk"]["actionable"])
+                self.assertEqual(market["risk"]["as_of"],market["data_date"])
             self.assertGreater(len(market["attack"]),0)
             self.assertGreater(len(market["sectors"]),0)
             self.assertIsNotNone(MOD.validated_previous_close(
-                market,datetime.strptime(market["updated_at"],"%Y-%m-%d %H:%M").replace(tzinfo=TAIPEI)+timedelta(minutes=1)))
+                market,checked+timedelta(minutes=1)))
 
     def test_no_weekend_candle_in_published_history(self):
         history=json.loads((ROOT/"remote/history.json").read_text(encoding="utf-8"))
