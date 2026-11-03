@@ -29,6 +29,25 @@ class DispatchTests(unittest.TestCase):
         self.assertFalse(line.can_send(report,edition,self.now,'true','token','U'+'a'*32)[0])
 
 class AcceptanceReceiptTests(unittest.TestCase):
+    def test_close_backups_reuse_daily_key_after_report_refresh(self):
+        from unittest.mock import patch, MagicMock
+        from urllib.error import HTTPError
+        response=MagicMock();response.__enter__.return_value=response
+        response.status=200;response.headers={'x-line-request-id':'original'}
+        duplicate=HTTPError(line.PUSH,409,'conflict',{'x-line-accepted-request-id':'original'},None)
+        receipts=[]
+        with patch.object(line,'quota_ok',return_value=True), patch.object(line.urllib.request,'urlopen',side_effect=[response,duplicate,duplicate]) as network, patch.object(line.time,'sleep') as pause:
+            for stamp in ('18:10','18:40','19:10'):
+                report={'date':'2026-11-03','edition':'close','status':'ready','title':'close '+stamp}
+                receipt={'delivery_confirmed':False}
+                line.push(report,'close','test-token','U'+'a'*32,receipt)
+                receipts.append(receipt)
+        self.assertEqual([r['status'] for r in receipts],['accepted','already_accepted','already_accepted'])
+        self.assertEqual(len({c.args[0].get_header('X-line-retry-key') for c in network.call_args_list}),1)
+        self.assertEqual(network.call_count,3)
+        self.assertTrue(all(r['attempts']==1 and not r['delivery_confirmed'] for r in receipts))
+        pause.assert_not_called()
+
     def test_transient_push_retries_same_body_and_key_with_bounded_backoff(self):
         from unittest.mock import patch, MagicMock, call
         from urllib.error import HTTPError
@@ -171,7 +190,10 @@ class WorkflowDispatchPolicyTests(unittest.TestCase):
         workflow=(Path(__file__).resolve().parents[1]/'.github/workflows/jei-daily-brief.yml').read_text()
         block=workflow.split('      - name: Select edition and LINE policy\n',1)[1].split('      - name:',1)[0]
         script='\n'.join(line[10:] for line in block.split('        run: |\n',1)[1].splitlines())
-        cases=[('55 0 * * 1-5','','','morning','true'),('10 1 * * 1-5','','','morning','true'),('25 1 * * 1-5','','','morning','true'),('30 7 * * 1-5','','','close','false'),('10 10 * * 1-5','','','close','true'),('','morning','true','morning','true'),('','close','false','close','false'),('','','','close','false')]
+        cases=[('55 0 * * 1-5','','','morning','true'),('10 1 * * 1-5','','','morning','true'),('25 1 * * 1-5','','','morning','true'),('30 7 * * 1-5','','','close','false'),('10 10 * * 1-5','','','close','true'),('40 10 * * 1-5','','','close','true'),('10 11 * * 1-5','','','close','true'),('','morning','true','morning','true'),('','close','false','close','false'),('','','','close','false')]
+        for schedule,_,_,_,_ in cases:
+            if schedule:
+                self.assertIn("- cron: '"+schedule+"'",workflow)
         for schedule,selected,manual,edition,send in cases:
             with self.subTest(schedule=schedule,selected=selected,manual=manual), tempfile.TemporaryDirectory() as directory:
                 output=Path(directory)/'output'
