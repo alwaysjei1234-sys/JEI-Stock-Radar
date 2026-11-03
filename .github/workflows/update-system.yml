@@ -17,6 +17,8 @@ on:
       - 'tests/test_tpex_latest_close_fallback.py'
       - 'tests/test_twse_response_dates.py'
       - 'tests/test_institutional_integrity.py'
+      - 'scripts/send_line_alert.py'
+      - 'tests/test_send_line_alert_receipt.py'
       - 'scripts/validate_market_session.py'
       - 'data/twse_ohlcv/**'
       - '.github/workflows/backfill-twse-ohlcv.yml'
@@ -53,6 +55,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_twse_response_dates.py'
       - name: Reject stale or partial institutional market scoring
         run: python -m unittest discover -s tests -p 'test_institutional_integrity.py'
+      - name: Test intraday LINE gating and receipt privacy
+        run: python -m unittest discover -s tests -p 'test_send_line_alert*.py'
       - name: Build market feed
         run: python scripts/update_system.py
       - name: Reject stale holiday labels and false current closes
@@ -107,4 +111,12 @@ jobs:
           JEI_LINE_ALERTS_ENABLED: ${{ vars.JEI_LINE_ENABLED == 'true' && vars.JEI_LINE_ALERTS_ENABLED != 'false' }}
           JEI_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.JEI_LINE_CHANNEL_ACCESS_TOKEN }}
           JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
-        run: python -m scripts.send_line_alert
+        run: python -m scripts.send_line_alert --result-path "${{ runner.temp }}/jei-line-intraday-result.json"
+      - name: Preserve intraday LINE decision and API acceptance
+        if: always() && github.event_name == 'schedule'
+        uses: actions/upload-artifact@v4
+        with:
+          name: jei-line-intraday-result-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/jei-line-intraday-result.json
+          if-no-files-found: warn
+          retention-days: 14

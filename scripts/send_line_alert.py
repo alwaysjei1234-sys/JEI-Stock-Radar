@@ -4,6 +4,8 @@
 Runs only after the regular market feed refresh. Defaults OFF until a separate
 repository variable explicitly enables these extra notifications.
 """
+import argparse
+import math
 import json
 import os
 import re
@@ -36,8 +38,15 @@ def live_gate_reasons(feed, now):
         reasons.append("市場資料標記為過期或未驗證")
     if m.get("live_valid") is not True:
         reasons.append("盤中行情尚未通過有效性驗證")
+    risk = feed.get("risk")
+    if not isinstance(risk, dict):
+        reasons.append("風控資料缺漏或格式錯誤")
+    elif risk.get("actionable") is False:
+        reasons.append("行情風控明確暫停新判讀")
+    if m.get("no_new_picks") is True:
+        reasons.append("市場明確暫停新判讀")
     count = m.get("live_count")
-    if isinstance(count, bool) or not isinstance(count, (int, float)):
+    if isinstance(count, bool) or not isinstance(count, (int, float)) or not math.isfinite(count):
         reasons.append("有效成交檔數缺漏")
     elif count < 500:
         reasons.append(f"有效成交 {int(count)}/500 檔，覆蓋未達門檻")
@@ -91,7 +100,7 @@ def build_alert(feed, now):
         code, name = str(x.get("code") or ""), str(x.get("name") or "")
         grade, change, price = x.get("score"), x.get("change_pct"), x.get("price")
         if (not re.fullmatch(r"[0-9]{4,6}", code) or
-                any(isinstance(v, bool) or not isinstance(v, (int, float)) for v in (grade, change, price))):
+                any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) for v in (grade, change, price))):
             continue
         if grade >= 95 and 4 <= change <= 10 and price > 0:
             picks.append(f"{code} {name[:20]}｜動能評分 {grade}｜盤中 {change:+.2f}%｜價格 {price:.2f}")
@@ -109,36 +118,68 @@ def build_alert(feed, now):
     }
 
 
-def main():
-    now = datetime.now(TAIPEI)
+def dispatch(now, receipt):
+    """Keep every skip distinct from an API rejection or confirmed acceptance."""
     if os.getenv("JEI_LINE_ALERTS_ENABLED", "").lower() != "true":
+        receipt.update(status="disabled", reason_code="alerts_disabled")
         print("JEI 盤中 LINE 額外警報尚未啟用；沒有發送")
         return
     token, recipient = os.getenv("JEI_LINE_CHANNEL_ACCESS_TOKEN", ""), os.getenv("JEI_LINE_USER_ID", "")
     if os.getenv("JEI_LINE_ENABLED", "").lower() != "true" or not token or not recipient:
+        receipt.update(status="blocked", reason_code="master_switch_or_credentials")
         print("JEI LINE 總開關或憑證尚未設定；沒有發送")
         return
     try:
         feed = json.loads(FEED.read_text(encoding="utf-8"))
     except (OSError, ValueError):
+        receipt.update(status="blocked", reason_code="feed_unreadable")
         print("JEI 行情快照不可讀；沒有發送")
         return
     reasons = live_gate_reasons(feed, now)
     if reasons:
+        receipt.update(status="blocked", reason_code="live_gate")
         print("LINE 盤中警報未送出：" + "；".join(reasons[:6]))
         return
     report = build_alert(feed, now)
     if not report:
+        receipt.update(status="no_alert", reason_code="conditions_not_met")
         print("行情已通過盤中驗證；本次未達高可信警報條件，沒有發送")
         return
     edition = report["edition"]
+    receipt["edition"] = edition
     ok, msg = can_send(report, edition, now, "true", token, recipient)
     if not ok:
+        receipt.update(status="blocked", reason_code="dispatch_gate")
         print("發送條件不合格："+msg)
         return
     # Keep independent daily de-duplication buckets: a momentum watch must NOT
     # silence a later crash warning. At most one of each edition per day.
-    print(push(report, edition, token, recipient))
+    result = push(report, edition, token, recipient, receipt=receipt)
+    print(result)
+    if receipt.get("status") not in ("accepted", "already_accepted"):
+        raise SystemExit("盤中 LINE 未確認接受；請查看結果紀錄")
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--result-path", help="Write a credential-free API acceptance receipt")
+    args = parser.parse_args(argv)
+    now = datetime.now(TAIPEI)
+    receipt = {"date": now.date().isoformat(), "edition": "intraday",
+               "checked_at": now.isoformat(timespec="seconds"), "status": "failed",
+               "delivery_confirmed": False}
+    try:
+        dispatch(now, receipt)
+    except (OSError, ValueError, RuntimeError, TypeError, AttributeError) as error:
+        # Never copy exception text, headers, payloads, environment or recipient.
+        receipt["status"] = "failed"
+        receipt["error_type"] = type(error).__name__
+        raise SystemExit("盤中 LINE 失敗；請查看結果紀錄（" + type(error).__name__ + "）") from None
+    finally:
+        if args.result_path:
+            output = Path(args.result_path)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

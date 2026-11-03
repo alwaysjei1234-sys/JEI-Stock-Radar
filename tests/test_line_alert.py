@@ -64,7 +64,7 @@ class LineAlertTests(unittest.TestCase):
 
     def test_push_disabled_by_default_even_when_eligible(self):
         with patch.dict("os.environ", {}, clear=True), patch.object(alert, "push") as push, patch.object(alert, "build_alert") as build:
-            alert.main()
+            alert.main([])
             push.assert_not_called()
             build.assert_not_called()
 

@@ -1,0 +1,84 @@
+{
+  "baseline": "19243b44ad73ff5cdae59f37a3858e9651face70",
+  "python_tests": 302,
+  "new_tests": 11,
+  "frontend_checks": 71,
+  "baseline_fault_injection": {
+    "tests": 3,
+    "assertion_failures": 6,
+    "overflow_errors": 1
+  },
+  "previous_commit_runs": [
+    {
+      "id": 41658632642,
+      "name": "JEI Smoke Tests",
+      "conclusion": "success"
+    },
+    {
+      "id": 41658632655,
+      "name": "JEI Research Engine Tests",
+      "conclusion": "success"
+    },
+    {
+      "id": 41658632360,
+      "name": "JEI feed acceptance",
+      "conclusion": "success"
+    },
+    {
+      "id": 41658632784,
+      "name": "Update free official stock research data",
+      "conclusion": "success"
+    },
+    {
+      "id": 41658632243,
+      "name": "Update JEI Market Feed",
+      "conclusion": "success"
+    },
+    {
+      "id": 41658632476,
+      "name": "Build JEI Android APK",
+      "conclusion": "success"
+    }
+  ],
+  "local_cli_disabled_receipt": {
+    "date": "2026-11-03",
+    "edition": "intraday",
+    "checked_at": "2026-11-03T23:52:04+08:00",
+    "status": "disabled",
+    "delivery_confirmed": false,
+    "reason_code": "alerts_disabled"
+  },
+  "benchmark": {
+    "fixed5": {
+      "paired": 54,
+      "benchmark_mean_pct": -1.44
+    },
+    "fixed7": {
+      "paired": 53,
+      "benchmark_mean_pct": -1.541
+    },
+    "fixed10": {
+      "paired": 51,
+      "benchmark_mean_pct": -1.807
+    },
+    "trailing": {
+      "paired": 47,
+      "benchmark_mean_pct": -1.757
+    }
+  },
+  "holdings_official_close_matches": 12,
+  "unmatched": [
+    "00937B"
+  ],
+  "public_holdings_privacy_pass": true,
+  "line_actually_sent_this_run": false,
+  "qualified_oos_closed": 0,
+  "completion": {
+    "pass": 0,
+    "partial": 29,
+    "incomplete": 2,
+    "weighted_numerator": 14.5,
+    "denominator": 31,
+    "pct": 46.77
+  }
+}
