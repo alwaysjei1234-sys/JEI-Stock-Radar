@@ -163,7 +163,7 @@
 <div id="toast" class="toast"></div>
 <div class="bottom"><div class="btab active" data-go="home"><b>⌂</b>總覽</div><div class="btab" data-go="hold"><b>💰</b>持股</div><div class="btab" data-go="attack"><b>🔥</b>主攻</div><div class="btab" data-go="chat"><b>💬</b>聊天</div><div class="btab" data-go="settings"><b>⚙</b>更新</div></div>
 <script>
-const UI_VERSION='3.9.13-public-research-json';
+const UI_VERSION='3.9.14-feed-recovery';
 const DEFAULT_HOLDINGS=[];
 let holdings=[], market={}, system={holdings:{},attack:[],next:[],monster:[],tomorrow_monster:[],future_monster:[],rotate:[],flow:[],sectors:[],stock_sectors:{},universe:[]}, updateManifest=null, refreshTimer=null, systemTimer=null, lastMarketAt='',liveScanReceived=0,closeArchiveHistory=[],closeArchiveDaily=null,lastCloseArchiveFetchAt=0,closeArchiveFetchPending=false;
 // Privacy boundary: public web browsers never load or render a personal portfolio.
@@ -1246,15 +1246,32 @@ function sendChat(){
  if(aiMode==='local')setTimeout(()=>chatSay('bot',answerChat(q)),80);else sendAiConsult(q)
 }
 let systemFetchPending=false;
-function refreshSystem(){
+function validateSystemFeed(j){
+ if(!j||typeof j!=='object'||Array.isArray(j)||typeof j.updated_at!=='string'||!j.updated_at.trim()||typeof j.data_date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(j.data_date)||!j.market||typeof j.market!=='object'||Array.isArray(j.market))throw new Error('資料格式或更新時間缺失');
+ return j
+}
+async function fetchSystemSource(url){
+ const controller=new AbortController();let timer;
+ try{
+  return await Promise.race([
+   (async()=>{const r=await fetch(url+(url.includes('?')?'&':'?')+'ts='+Date.now(),{cache:'no-store',signal:controller.signal});if(!r.ok)throw new Error('HTTP '+r.status);return validateSystemFeed(await r.json())})(),
+   new Promise((_,reject)=>{timer=setTimeout(()=>{reject(new Error('資料讀取逾時'));controller.abort()},12000)})
+  ])
+ }finally{clearTimeout(timer)}
+}
+async function refreshSystem(){
  if(nativeOk()){JEINative.refreshSystem();return}
  if(systemFetchPending)return; // Avoid overlapping polls and out-of-order stale responses.
  systemFetchPending=true;
- fetch('https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/system.json?ts='+Date.now(),{cache:'no-store'})
-  .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
-  .then(j=>{if(!j||typeof j!=='object'||Array.isArray(j)||!j.updated_at)throw new Error('資料格式或更新時間缺失');system=j;system.holdings=JEI_PRIVATE_APP?(system.holdings||{}):{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI 資料已取得（資料時間：'+system.updated_at+'；不代表即時行情）'})
-  .catch(e=>{$('sysStatus').textContent='JEI feed 更新失敗，畫面可能是舊資料｜'+e.message;$('netDot').classList.add('off');$('netText').textContent='資料更新失敗・請勿視為即時行情'})
-  .finally(()=>{systemFetchPending=false})
+ try{
+  let j,lastError;
+  for(const url of ['/remote/system.json','https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/system.json']){
+   try{j=await fetchSystemSource(url);break}catch(e){lastError=e}
+  }
+  if(!j)throw lastError;
+  system=j;system.holdings=JEI_PRIVATE_APP?(system.holdings||{}):{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI 資料已取得（資料時間：'+system.updated_at+'；不代表即時行情）'
+ }catch(e){$('sysStatus').textContent='JEI feed 更新失敗，畫面可能是舊資料｜'+e.message;$('netDot').classList.add('off');$('netText').textContent='資料更新失敗・請勿視為即時行情'}
+ finally{systemFetchPending=false}
 }
 function checkUpdate(){
  if(nativeOk()){JEINative.checkForUpdates();return}
@@ -1270,7 +1287,7 @@ window.JEI_NATIVE={
  onMarketBatch(raw){try{ingestMarket(JSON.parse(raw))}catch(e){}},
  onMarketData(raw){try{ingestMarket(JSON.parse(raw))}catch(e){toast('行情資料解析失敗')}},
  onMarketError(e){if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}$('netDot').classList.add('off');$('netText').textContent='行情離線';toast('行情連線失敗')},
- onSystemData(raw){try{system=JSON.parse(raw);system.holdings=system.holdings||{};seedMarketFromSystem();renderSystem();if(tradingWindow())refreshMarket();else showFeedStatus();$('sysStatus').textContent='JEI 遠端 feed 已連線｜'+(system.updated_at||'無時間')}catch(e){$('sysStatus').textContent='JEI feed 格式錯誤'}},
+ onSystemData(raw){try{const next=validateSystemFeed(JSON.parse(raw));system=next;system.holdings=system.holdings||{};seedMarketFromSystem();renderSystem();if(tradingWindow())refreshMarket();else showFeedStatus();$('sysStatus').textContent='JEI 遠端 feed 已連線｜'+(system.updated_at||'無時間')}catch(e){$('sysStatus').textContent='JEI feed 格式錯誤'}},
  onSystemError(e){$('sysStatus').textContent='JEI feed 暫時無法連線｜'+e},
  onUpdateManifest(raw){try{updateManifest=JSON.parse(raw);const local=nativeOk()?JEINative.getAppVersionCode():12,remote=+updateManifest.versionCode||0;if(remote>local){$('updateBanner').classList.add('show');$('updateText').textContent=`APP 新版 ${updateManifest.versionName||''} 可更新`}else $('updateBanner').classList.remove('show')}catch(e){}},
  onUpdateError(e){},
