@@ -11,6 +11,7 @@ on:
       - 'scripts/update_paper_performance.py'
       - 'scripts/paper_evidence.py'
       - 'tests/test_paper_evidence.py'
+      - 'tests/test_paper_missing_valuation.py'
       - 'scripts/update_pick_validation.py'
       - 'remote/pick_validation.html'
       - 'tests/test_pick_validation.py'
@@ -47,6 +48,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_paper_performance.py' -v
       - name: Verify diagnostic costs and lifetime history
         run: python -m unittest discover -s tests -p 'test_paper_evidence.py' -v
+      - name: Reject incomplete valuation drawdowns and boolean prices
+        run: python -m unittest discover -s tests -p 'test_paper_missing_valuation.py' -v
       - name: Verify forward-only picked-stock analysis and no hindsight
         run: python -m unittest discover -s tests -p 'test_pick_validation.py' -v
       - name: Verify standalone picked-stock generator import path

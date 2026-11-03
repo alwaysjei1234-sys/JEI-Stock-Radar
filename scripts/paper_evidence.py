@@ -55,14 +55,17 @@ def trade_metrics(trades, fee, sell_tax):
 
 
 def full_drawdown(history, capital):
-    peak, worst, available = capital, 0.0, False
+    # Missing marked-to-market equity can conceal a deeper trough. Do not
+    # silently certify the surviving subsequence as the full-path drawdown.
+    peak, worst, available, missing = capital, 0.0, False, False
     for row in history:
         value = row.get('equity')
         if value is None:
+            missing = True
             continue
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
             raise ValueError('Invalid paper equity')
         available = True
         peak = max(peak, value)
         worst = max(worst, 100*(peak-value)/peak)
-    return round(worst, 3) if available else None
+    return round(worst, 3) if available and not missing else None

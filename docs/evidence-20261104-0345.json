@@ -1,0 +1,74 @@
+{
+  "baseline": "c83d8e145273e14fe008dc5a02848beba5188716",
+  "python_tests": 321,
+  "new_tests": 8,
+  "frontend_checks": 71,
+  "baseline_assertion_failures": 8,
+  "new_tests_status": "passed",
+  "backend_to_frontend_check": "null drawdown blocks ranking even with 12 closed and 13 valid valuation days",
+  "valuation_coverage": {
+    "fixed5": {
+      "observations": 14,
+      "missing": 0
+    },
+    "fixed7": {
+      "observations": 14,
+      "missing": 0
+    },
+    "fixed10": {
+      "observations": 14,
+      "missing": 0
+    },
+    "trailing": {
+      "observations": 14,
+      "missing": 0
+    }
+  },
+  "boolean_archived_prices": 0,
+  "paper_run": {
+    "day": "2026-11-04",
+    "updated": false,
+    "skipped": true,
+    "reason": "尚未取得今日已驗證官方收盤行情；拒絕更新模擬"
+  },
+  "pick_run": {
+    "captured": false,
+    "latest_official_day": "2026-11-03",
+    "picks": 272,
+    "completed_3day": 199
+  },
+  "benchmark": {
+    "fixed5": {
+      "paired": 54,
+      "benchmark_mean_pct": -1.44
+    },
+    "fixed7": {
+      "paired": 53,
+      "benchmark_mean_pct": -1.541
+    },
+    "fixed10": {
+      "paired": 51,
+      "benchmark_mean_pct": -1.807
+    },
+    "trailing": {
+      "paired": 47,
+      "benchmark_mean_pct": -1.757
+    }
+  },
+  "benchmark_fresh_lookup": "both official URL families returned 307; retain prior verified same-window comparison",
+  "data_date": "2026-11-03",
+  "updated_at": "2026-11-03 23:55",
+  "last_checked_at": "2026-11-04 03:01",
+  "privacy_pass": true,
+  "public_feed_changed": false,
+  "ledger_changed": false,
+  "line_sent": false,
+  "completion": {
+    "pass": 0,
+    "partial": 29,
+    "incomplete": 2,
+    "numerator": 14.5,
+    "denominator": 31,
+    "pct": 46.77
+  }
+}

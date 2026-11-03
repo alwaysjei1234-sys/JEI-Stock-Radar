@@ -140,9 +140,9 @@ function strategyComparison(data){
 function renderStrategyComparison(data){
  const el=$('cloudCompare');if(!el)return;
  const result=strategyComparison(data),fmt=x=>Number(x).toFixed(2)+'%',d=String(data?.last_processed_day||'未定');
- $('cloudKpiDate').textContent=d;$('cloudKpiStatus').textContent=result.ready?'可比較':'樣本不足';$('cloudKpiLeader').textContent=result.ready?result.ranked[0].label:'暫不排名';
+ $('cloudKpiDate').textContent=d;$('cloudKpiStatus').textContent=result.ready?'可比較':'資料不足';$('cloudKpiLeader').textContent=result.ready?result.ranked[0].label:'暫不排名';
  if(!result.ready){
-  el.textContent='暫不排名（資料至 '+d+'）：四套策略需各至少10筆模擬平倉、10個有完整估值的交易日，且最新持倉收盤價覆蓋完整。'+result.rows.map(x=>x.label+' '+x.closed+'/10筆、估值'+x.days+'/10日、覆蓋'+(x.coverage||'未提供')).join('｜');
+  el.textContent='暫不排名（資料至 '+d+'）：四套策略需各至少10筆模擬平倉、10個有完整估值的交易日，且最新持倉收盤價覆蓋完整、最大回撤已驗證。歷史估值有缺漏時先暫停排名。'+result.rows.map(x=>x.label+' '+x.closed+'/10筆、估值'+x.days+'/10日、覆蓋'+(x.coverage||'未提供')).join('｜');
   return;
  }
  const best=result.ranked[0],second=result.ranked[1];
