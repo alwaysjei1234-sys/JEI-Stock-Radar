@@ -1227,6 +1227,27 @@ function sendChat(){
  if(aiMode==='local')setTimeout(()=>chatSay('bot',answerChat(q)),80);else sendAiConsult(q)
 }
 let systemFetchPending=false;
+const CLOSE_CACHE_KEY='jei.verified-close.v1';
+function saveCloseSnapshot(feed){
+ try{
+  if(!isRecentCloseObservation(feed))return;
+  const keys=['schema','updated_at','data_date','source_data_date','summary','risk','market','sectors','stock_sectors','universe','institutional','institutional_status','priority','attack','next','monster','tomorrow_monster','future_monster','rotate','flow','avoid_chase','backtest','patterns','web_recommendations','web_recommendations_updated_at','web_recommendations_status','sources'];
+  const snapshot=Object.fromEntries(keys.filter(k=>Object.prototype.hasOwnProperty.call(feed,k)).map(k=>[k,feed[k]]));
+  let previous;try{previous=JSON.parse(localStorage.getItem(CLOSE_CACHE_KEY)||'null')}catch(e){}
+  if(previous&&String(previous.data_date)>snapshot.data_date)return;
+  localStorage.setItem(CLOSE_CACHE_KEY,JSON.stringify(snapshot));
+ }catch(e){} // Storage may be disabled or full; online data must still render.
+}
+function restoreCloseSnapshot(){
+ try{
+  const saved=validateSystemFeed(JSON.parse(localStorage.getItem(CLOSE_CACHE_KEY)||'null'));
+  if(!isRecentCloseObservation(saved))return false;
+  system={...saved,holdings:{},market:{...saved.market,mode:'最近收盤',stale:true,historical_readonly:true,live_valid:false,live_count:0,actionable:false,no_new_picks:true,partial_live:{quotes:[],verified_count:0,complete:false}}};
+  seedMarketFromSystem();renderSystem();showFeedStatus();
+  $('sysStatus').textContent='已載入本機收盤快照｜'+system.data_date+'｜歷史參考，正在嘗試更新';
+  return true;
+ }catch(e){return false}
+}
 function validateSystemFeed(j){
  if(!j||typeof j!=='object'||Array.isArray(j)||typeof j.updated_at!=='string'||!j.updated_at.trim()||typeof j.data_date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(j.data_date)||!j.market||typeof j.market!=='object'||Array.isArray(j.market))throw new Error('資料格式或更新時間缺失');
  return j
@@ -1250,8 +1271,8 @@ async function refreshSystem(){
    try{j=await fetchSystemSource(url);break}catch(e){lastError=e}
   }
   if(!j)throw lastError;
-  system=j;system.holdings=JEI_PRIVATE_APP?(system.holdings||{}):{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI 資料已取得（資料時間：'+system.updated_at+'；不代表即時行情）'
- }catch(e){$('sysStatus').textContent='JEI feed 更新失敗，畫面可能是舊資料｜'+e.message;$('netDot').classList.add('off');$('netText').textContent='資料更新失敗・請勿視為即時行情'}
+  saveCloseSnapshot(j);system=j;system.holdings=JEI_PRIVATE_APP?(system.holdings||{}):{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI 資料已取得（資料時間：'+system.updated_at+'；不代表即時行情）'
+ }catch(e){$('sysStatus').textContent=(system.market?.historical_readonly?'更新失敗，保留 '+system.data_date+' 收盤歷史參考｜':'JEI feed 更新失敗，畫面可能是舊資料｜')+e.message;$('netDot').classList.add('off');$('netText').textContent='資料更新失敗・請勿視為即時行情'}
  finally{systemFetchPending=false}
 }
 function checkUpdate(){
@@ -1268,14 +1289,14 @@ window.JEI_NATIVE={
  onMarketBatch(raw){try{ingestMarket(JSON.parse(raw))}catch(e){}},
  onMarketData(raw){try{ingestMarket(JSON.parse(raw))}catch(e){toast('行情資料解析失敗')}},
  onMarketError(e){if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}$('netDot').classList.add('off');$('netText').textContent='行情離線';toast('行情連線失敗')},
- onSystemData(raw){try{const next=validateSystemFeed(JSON.parse(raw));system=next;system.holdings=system.holdings||{};seedMarketFromSystem();renderSystem();if(tradingWindow())refreshMarket();else showFeedStatus();$('sysStatus').textContent='JEI 遠端 feed 已連線｜'+(system.updated_at||'無時間')}catch(e){$('sysStatus').textContent='JEI feed 格式錯誤'}},
- onSystemError(e){$('sysStatus').textContent='JEI feed 暫時無法連線｜'+e},
+ onSystemData(raw){try{const next=validateSystemFeed(JSON.parse(raw));saveCloseSnapshot(next);system=next;system.holdings=system.holdings||{};seedMarketFromSystem();renderSystem();if(tradingWindow())refreshMarket();else showFeedStatus();$('sysStatus').textContent='JEI 遠端 feed 已連線｜'+(system.updated_at||'無時間')}catch(e){$('sysStatus').textContent='JEI feed 格式錯誤'}},
+ onSystemError(e){$('sysStatus').textContent=(system.market?.historical_readonly?'連線失敗，保留 '+system.data_date+' 收盤歷史參考｜':'JEI feed 暫時無法連線｜')+e},
  onUpdateManifest(raw){try{updateManifest=JSON.parse(raw);const local=nativeOk()?JEINative.getAppVersionCode():12,remote=+updateManifest.versionCode||0;if(remote>local){$('updateBanner').classList.add('show');$('updateText').textContent=`APP 新版 ${updateManifest.versionName||''} 可更新`}else $('updateBanner').classList.remove('show')}catch(e){}},
  onUpdateError(e){},
  onAIConsultResult(raw){renderAiConsultResult(raw)},
  onAIConsultError(e){failAiConsult(e)}
 };
-function init(){loadScreenPrefs();importAiSetupFromHash();loadHoldAlertSettings();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshMarket();if(tradingWindow())refreshSystem()}},60000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
+function init(){loadScreenPrefs();importAiSetupFromHash();loadHoldAlertSettings();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';restoreCloseSnapshot();refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshMarket();if(tradingWindow())refreshSystem()}},60000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshAll(false)});init();
 </script><section id="jeiPickPerformance" style="max-width:1180px;margin:14px auto;padding:16px;border:1px solid #183e5c;border-radius:16px;background:#0a1b2b;color:#eff8ff;font-family:system-ui,sans-serif">
 <h2 style="margin:0 0 8px;font-size:18px">選股績效驗證 <small id="jeiPickSync" style="font-size:12px;color:#8ca8bd">載入中</small></h2>

@@ -185,7 +185,27 @@ function archiveDay(){const d=closeArchiveDaily?.days||{},target=String(system.d
 function archiveRecord(){const day=archiveDay();if(!day)return null;return closeArchiveHistory.filter(x=>String(x?.date||'')<=day&&Array.isArray(x?.signals)&&x.signals.length).sort((a,b)=>String(a.date).localeCompare(String(b.date))).pop()||null}
 function archiveSectors(){const days=closeArchiveDaily?.days||{},latest=archiveDay(),dates=Object.keys(days).filter(x=>x<latest&&Object.keys(days[x]||{}).length>=500).sort(),prior=dates[dates.length-1];if(!latest||!prior)return[];const current=days[latest],previous=days[prior],groups=new Map(),map=system.stock_sectors||{},names=new Map((system.universe||[]).map(x=>[String(x.code),String(x.name||x.code)]));for(const [code,sectorRaw] of Object.entries(map)){const sector=String(sectorRaw||'').trim(),p=Number(current[code]),q=Number(previous[code]);if(!sector||!Number.isFinite(p)||p<=0||!Number.isFinite(q)||q<=0)continue;const row={code,name:names.get(code)||code,pct:(p/q-1)*100,price:p},g=groups.get(sector)||{name:sector,rows:[]};g.rows.push(row);groups.set(sector,g)}return[...groups.values()].filter(g=>g.rows.length>=2).map(g=>{const avg=g.rows.reduce((n,x)=>n+x.pct,0)/g.rows.length,breadth=g.rows.filter(x=>x.pct>0).length/g.rows.length*100;return{name:g.name,avg_pct:Number(avg.toFixed(2)),breadth:Number(breadth.toFixed(1)),members:g.rows.length,score:null,leaders:g.rows.sort((a,b)=>b.pct-a.pct).slice(0,3).map(x=>({code:x.code,name:x.name,pct:Number(x.pct.toFixed(2))}))}}).sort((a,b)=>b.avg_pct-a.avg_pct)}
 function renderCloseArchive(){const meta=$('closeArchiveMeta'),signalsEl=$('closeArchiveSignals'),sectorsEl=$('closeArchiveSectors');if(!meta||!signalsEl||!sectorsEl)return;const rec=archiveRecord(),latest=archiveDay();if(!latest||!rec){meta.textContent='目前沒有可用的官方收盤研究封存';signalsEl.replaceChildren();sectorsEl.replaceChildren();return}const label=isTrustedFeed()?'最新官方收盤研究':'最近有效官方收盤研究（歷史參考；非盤中訊號）';meta.textContent=label+'｜資料日 '+latest+'｜不提供今日買賣指令';const names=new Map((system.universe||[]).map(x=>[String(x.code),String(x.name||x.code)]));signalsEl.innerHTML='<div class="panelTitle small">收盤精選觀察</div>'+rec.signals.slice(0,8).map((x,i)=>'<div class="listRow"><div class="rank">#'+(i+1)+'</div><div><div class="rName">'+escapeMarketText(x.code)+' '+escapeMarketText(names.get(String(x.code))||x.name||'')+'</div><div class="rSub">官方收盤 '+(Number.isFinite(Number(x.price))?Number(x.price).toLocaleString('zh-TW'):'--')+'｜歷史模型分數 '+(Number.isFinite(Number(x.score))?Number(x.score):'--')+'</div></div><div class="score cyanTxt">觀察</div></div>').join('');const sectors=archiveSectors(),prior=Object.keys(closeArchiveDaily.days).filter(x=>x<latest&&Object.keys(closeArchiveDaily.days[x]||{}).length>=500).sort().pop()||'前一收盤日';sectorsEl.innerHTML=sectors.length?'<div class="panelTitle small" style="margin-top:10px">收盤族群變化｜'+latest+' 相較 '+prior+'</div>'+sectors.slice(0,5).map(x=>'<div class="listRow"><div class="rank">🌊</div><div><div class="rName">'+escapeMarketText(x.name)+'</div><div class="rSub">'+x.members+' 檔樣本｜上漲比 '+x.breadth+'%</div></div><div class="score '+(x.avg_pct>=0?'greenTxt':'redTxt')+'">'+(x.avg_pct>0?'+':'')+x.avg_pct.toFixed(2)+'%</div></div>').join(''):'<div class="sub">收盤族群比較資料不足</div>'}
-function refreshCloseArchive(){if(closeArchiveFetchPending||Date.now()-lastCloseArchiveFetchAt<15*60000)return;closeArchiveFetchPending=true;lastCloseArchiveFetchAt=Date.now();Promise.all([fetch('/remote/history.json?ts='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('history HTTP '+r.status);return r.json()}),fetch('/remote/daily_prices.json?ts='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('daily HTTP '+r.status);return r.json()})]).then(([history,daily])=>{if(!Array.isArray(history)||!daily||daily.kind!=='official_daily_close'||!daily.days)throw Error('官方收盤封存格式錯誤');closeArchiveHistory=history;closeArchiveDaily=daily;renderCloseArchive();renderSectors();renderSectorHeatmap()}).catch(e=>{lastCloseArchiveFetchAt=0;const el=$('closeArchiveMeta');if(el)el.textContent='收盤封存暫時無法載入｜'+String(e.message||e)}).finally(()=>{closeArchiveFetchPending=false})}
+async function fetchArchiveJson(file,validate){
+ let lastError;
+ for(const base of ['/remote/','https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/']){
+  const controller=new AbortController();let timer;
+  try{return await Promise.race([
+   (async()=>{const response=await fetch(base+file+'?ts='+Date.now(),{cache:'no-store',signal:controller.signal});if(!response.ok)throw Error('HTTP '+response.status);const data=await response.json();if(!validate(data))throw Error('官方收盤封存格式錯誤');return data})(),
+   new Promise((_,reject)=>{timer=setTimeout(()=>{reject(Error('收盤封存讀取逾時'));controller.abort()},12000)})
+  ])}catch(e){lastError=e}finally{clearTimeout(timer)}
+ }
+ throw lastError;
+}
+function refreshCloseArchive(){
+ if(closeArchiveFetchPending||Date.now()-lastCloseArchiveFetchAt<15*60000)return;
+ closeArchiveFetchPending=true;lastCloseArchiveFetchAt=Date.now();
+ Promise.all([
+  fetchArchiveJson('history.json',Array.isArray),
+  fetchArchiveJson('daily_prices.json',data=>data?.schema===1&&data.kind==='official_daily_close'&&data.days&&typeof data.days==='object'&&!Array.isArray(data.days))
+ ]).then(([history,daily])=>{closeArchiveHistory=history;closeArchiveDaily=daily;renderCloseArchive();renderSectors();renderSectorHeatmap()})
+ .catch(e=>{lastCloseArchiveFetchAt=0;const el=$('closeArchiveMeta');if(el)el.textContent='收盤封存暫時無法載入｜'+String(e.message||e)})
+ .finally(()=>{closeArchiveFetchPending=false})
+}
 function riskEmoji(l){return l==='red'?'🔴':l==='orange'?'🟠':l==='yellow'?'🟡':'🟢'}
 function toggleRiskDetails(){
  const el=$('riskReasons'),b=$('riskExpand');if(!el||!b)return;
@@ -1246,6 +1266,27 @@ function sendChat(){
  if(aiMode==='local')setTimeout(()=>chatSay('bot',answerChat(q)),80);else sendAiConsult(q)
 }
 let systemFetchPending=false;
+const CLOSE_CACHE_KEY='jei.verified-close.v1';
+function saveCloseSnapshot(feed){
+ try{
+  if(!isRecentCloseObservation(feed))return;
+  const keys=['schema','updated_at','data_date','source_data_date','summary','risk','market','sectors','stock_sectors','universe','institutional','institutional_status','priority','attack','next','monster','tomorrow_monster','future_monster','rotate','flow','avoid_chase','backtest','patterns','web_recommendations','web_recommendations_updated_at','web_recommendations_status','sources'];
+  const snapshot=Object.fromEntries(keys.filter(k=>Object.prototype.hasOwnProperty.call(feed,k)).map(k=>[k,feed[k]]));
+  let previous;try{previous=JSON.parse(localStorage.getItem(CLOSE_CACHE_KEY)||'null')}catch(e){}
+  if(previous&&String(previous.data_date)>snapshot.data_date)return;
+  localStorage.setItem(CLOSE_CACHE_KEY,JSON.stringify(snapshot));
+ }catch(e){} // Storage may be disabled or full; online data must still render.
+}
+function restoreCloseSnapshot(){
+ try{
+  const saved=validateSystemFeed(JSON.parse(localStorage.getItem(CLOSE_CACHE_KEY)||'null'));
+  if(!isRecentCloseObservation(saved))return false;
+  system={...saved,holdings:{},market:{...saved.market,mode:'最近收盤',stale:true,historical_readonly:true,live_valid:false,live_count:0,actionable:false,no_new_picks:true,partial_live:{quotes:[],verified_count:0,complete:false}}};
+  seedMarketFromSystem();renderSystem();showFeedStatus();
+  $('sysStatus').textContent='已載入本機收盤快照｜'+system.data_date+'｜歷史參考，正在嘗試更新';
+  return true;
+ }catch(e){return false}
+}
 function validateSystemFeed(j){
  if(!j||typeof j!=='object'||Array.isArray(j)||typeof j.updated_at!=='string'||!j.updated_at.trim()||typeof j.data_date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(j.data_date)||!j.market||typeof j.market!=='object'||Array.isArray(j.market))throw new Error('資料格式或更新時間缺失');
  return j
@@ -1269,8 +1310,8 @@ async function refreshSystem(){
    try{j=await fetchSystemSource(url);break}catch(e){lastError=e}
   }
   if(!j)throw lastError;
-  system=j;system.holdings=JEI_PRIVATE_APP?(system.holdings||{}):{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI 資料已取得（資料時間：'+system.updated_at+'；不代表即時行情）'
- }catch(e){$('sysStatus').textContent='JEI feed 更新失敗，畫面可能是舊資料｜'+e.message;$('netDot').classList.add('off');$('netText').textContent='資料更新失敗・請勿視為即時行情'}
+  saveCloseSnapshot(j);system=j;system.holdings=JEI_PRIVATE_APP?(system.holdings||{}):{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI 資料已取得（資料時間：'+system.updated_at+'；不代表即時行情）'
+ }catch(e){$('sysStatus').textContent=(system.market?.historical_readonly?'更新失敗，保留 '+system.data_date+' 收盤歷史參考｜':'JEI feed 更新失敗，畫面可能是舊資料｜')+e.message;$('netDot').classList.add('off');$('netText').textContent='資料更新失敗・請勿視為即時行情'}
  finally{systemFetchPending=false}
 }
 function checkUpdate(){
@@ -1287,14 +1328,14 @@ window.JEI_NATIVE={
  onMarketBatch(raw){try{ingestMarket(JSON.parse(raw))}catch(e){}},
  onMarketData(raw){try{ingestMarket(JSON.parse(raw))}catch(e){toast('行情資料解析失敗')}},
  onMarketError(e){if(!tradingWindow()){seedMarketFromSystem();showFeedStatus();return}$('netDot').classList.add('off');$('netText').textContent='行情離線';toast('行情連線失敗')},
- onSystemData(raw){try{const next=validateSystemFeed(JSON.parse(raw));system=next;system.holdings=system.holdings||{};seedMarketFromSystem();renderSystem();if(tradingWindow())refreshMarket();else showFeedStatus();$('sysStatus').textContent='JEI 遠端 feed 已連線｜'+(system.updated_at||'無時間')}catch(e){$('sysStatus').textContent='JEI feed 格式錯誤'}},
- onSystemError(e){$('sysStatus').textContent='JEI feed 暫時無法連線｜'+e},
+ onSystemData(raw){try{const next=validateSystemFeed(JSON.parse(raw));saveCloseSnapshot(next);system=next;system.holdings=system.holdings||{};seedMarketFromSystem();renderSystem();if(tradingWindow())refreshMarket();else showFeedStatus();$('sysStatus').textContent='JEI 遠端 feed 已連線｜'+(system.updated_at||'無時間')}catch(e){$('sysStatus').textContent='JEI feed 格式錯誤'}},
+ onSystemError(e){$('sysStatus').textContent=(system.market?.historical_readonly?'連線失敗，保留 '+system.data_date+' 收盤歷史參考｜':'JEI feed 暫時無法連線｜')+e},
  onUpdateManifest(raw){try{updateManifest=JSON.parse(raw);const local=nativeOk()?JEINative.getAppVersionCode():12,remote=+updateManifest.versionCode||0;if(remote>local){$('updateBanner').classList.add('show');$('updateText').textContent=`APP 新版 ${updateManifest.versionName||''} 可更新`}else $('updateBanner').classList.remove('show')}catch(e){}},
  onUpdateError(e){},
  onAIConsultResult(raw){renderAiConsultResult(raw)},
  onAIConsultError(e){failAiConsult(e)}
 };
-function init(){loadScreenPrefs();importAiSetupFromHash();loadHoldAlertSettings();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshMarket();if(tradingWindow())refreshSystem()}},60000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
+function init(){loadScreenPrefs();importAiSetupFromHash();loadHoldAlertSettings();loadHoldings();initChat();loadAiCloud();$('uiVer').textContent='UI '+UI_VERSION;if(nativeOk()){$('appVer').textContent='APP '+JEINative.getAppVersion();$('netText').textContent=JEINative.isOnline()?'已連線':'離線模式';$('netDot').classList.toggle('off',!JEINative.isOnline())}else $('appVer').textContent='Browser preview';restoreCloseSnapshot();refreshAll(false);clearInterval(refreshTimer);clearInterval(systemTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshMarket();if(tradingWindow())refreshSystem()}},60000);systemTimer=setInterval(()=>{if(document.visibilityState==='visible'){refreshSystem();checkUpdate()}},300000)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshAll(false)});init();
 </script><section id="jeiPickPerformance" style="max-width:1180px;margin:14px auto;padding:16px;border:1px solid #183e5c;border-radius:16px;background:#0a1b2b;color:#eff8ff;font-family:system-ui,sans-serif">
 <h2 style="margin:0 0 8px;font-size:18px">選股績效驗證 <small id="jeiPickSync" style="font-size:12px;color:#8ca8bd">載入中</small></h2>

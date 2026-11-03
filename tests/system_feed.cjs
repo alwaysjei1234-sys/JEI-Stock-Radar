@@ -48,3 +48,34 @@ const flush=async()=>{for(let i=0;i<12;i++)await Promise.resolve()};
  await ctx.api.refresh();assert.match(elements.sysStatus.textContent,/已取得/);assert.ok(renderCount>=4);
  console.log('PASS system feed primary, backup, schema, timeout, body stall, overlap, late response, retry and privacy recovery');
 })().catch(e=>{console.error(e);process.exitCode=1});
+
+// Close snapshots survive restarts, but never become today's trusted feed.
+for(const source of [html,offline]){
+ const cacheCode=source.slice(source.indexOf('const CLOSE_CACHE_KEY='),source.indexOf('async function fetchSystemSource'));
+ const recentCode=source.slice(source.indexOf('function isRecentCloseObservation('),source.indexOf('function updateFeedFreshness('));
+ const entries=new Map(), labels={};
+ class FixedDate extends Date { constructor(...args){super(...(args.length?args:['2026-11-04T05:00:00+08:00']))} }
+ const sandbox={Date:FixedDate,localStorage:{getItem:k=>entries.get(k)||null,setItem:(k,v)=>entries.set(k,v)},
+  $:id=>labels[id]??={textContent:''},seedMarketFromSystem(){},renderSystem(){},showFeedStatus(){}};
+ vm.createContext(sandbox);
+ vm.runInContext('let system={};'+recentCode+cacheCode+';globalThis.testCache={save:saveCloseSnapshot,restore:restoreCloseSnapshot,current:()=>system,key:CLOSE_CACHE_KEY}',sandbox);
+ const close={data_date:'2026-11-03',updated_at:'2026-11-03 23:55',market:{mode:'今日收盤',close_count:1967,stale:false,live_valid:true},risk:{score:40},holdings:{private:'secret'},api_key:'secret'};
+ sandbox.testCache.save(close);
+ const saved=JSON.parse(entries.get(sandbox.testCache.key));
+ assert.equal(Object.hasOwn(saved,'holdings'),false);assert.equal(Object.hasOwn(saved,'api_key'),false);
+ assert.equal(sandbox.testCache.restore(),true);
+ assert.equal(sandbox.testCache.current().market.stale,true);
+ assert.equal(sandbox.testCache.current().market.live_valid,false);
+ assert.equal(sandbox.testCache.current().market.actionable,false);
+ assert.equal(sandbox.testCache.current().updated_at,close.updated_at,'cache never rewrites original quote time');
+ sandbox.testCache.save({...close,data_date:'2026-11-02',updated_at:'2026-11-02 16:00'});
+ assert.equal(JSON.parse(entries.get(sandbox.testCache.key)).data_date,'2026-11-03','older close cannot replace newer snapshot');
+ entries.set(sandbox.testCache.key,'{broken');assert.equal(sandbox.testCache.restore(),false);
+ entries.set(sandbox.testCache.key,JSON.stringify({...close,data_date:'2026-10-01',updated_at:'2026-10-01 16:00'}));
+ assert.equal(sandbox.testCache.restore(),false,'expired snapshots rejected');
+ entries.clear();sandbox.testCache.save({...close,market:{...close.market,mode:'盤中即時'}});
+ assert.equal(entries.size,0,'intraday feed must not overwrite official-close cache');
+ sandbox.localStorage.getItem=()=>{throw Error('storage disabled')};
+ assert.equal(sandbox.testCache.restore(),false);assert.doesNotThrow(()=>sandbox.testCache.save(close));
+}
+console.log('PASS browser and packaged close snapshots: persistence, read-only replay, privacy whitelist, rollback, invalid/expired/live rejection and blocked storage');

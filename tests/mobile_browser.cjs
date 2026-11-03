@@ -26,10 +26,59 @@ const server=http.createServer(async(req,res)=>{
 });
 function listen(){return new Promise(resolve=>server.listen(0,'127.0.0.1',()=>resolve(server.address().port)))}
 function close(){return new Promise(resolve=>server.close(resolve))}
+async function verifyOfflineRecovery(browser,base){
+ const ctx=await browser.newContext({viewport:{width:390,height:844},isMobile:true});
+ const p=await ctx.newPage(),errors=[];
+ p.on('pageerror',e=>errors.push(e.message));
+ await p.clock.setFixedTime(new Date('2026-11-04T05:00:00+08:00'));
+ const feed=JSON.parse(await fs.readFile(path.join(ROOT,'remote/system.json'),'utf8'));
+ Object.assign(feed,{data_date:'2026-11-03',updated_at:'2026-11-03 23:55'});
+ Object.assign(feed.market,{mode:'最近收盤',close_count:1967,stale:true,historical_readonly:true});
+ feed.holdings={secret:{cost:123,shares:999}};
+ feed.private_token='must never persist';
+ let offline=false;
+ await p.route('**/*.json**',route=>{
+  if(offline)return route.abort();
+  if(route.request().url().includes('/system.json'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(feed)});
+  return route.continue();
+ });
+ await p.goto(base+'index.html',{waitUntil:'domcontentloaded'});
+ await p.waitForFunction(()=>/已取得/.test(document.querySelector('#sysStatus').textContent));
+ const stored=await p.evaluate(()=>JSON.parse(localStorage.getItem(CLOSE_CACHE_KEY)));
+ assert.equal(stored.data_date,'2026-11-03');
+ assert.equal(Object.hasOwn(stored,'holdings'),false,'private holdings must never enter the public close cache');
+ assert.equal(Object.hasOwn(stored,'private_token'),false,'unknown root fields must never enter cache');
+ offline=true;
+ await p.reload({waitUntil:'domcontentloaded'});
+ await p.waitForFunction(()=>/更新失敗/.test(document.querySelector('#sysStatus').textContent));
+ assert.match(await p.locator('#sysStatus').innerText(),/保留 2026-11-03 收盤歷史參考/);
+ assert.match(await p.locator('#feedFreshness').innerText(),/前次收盤/);
+ assert.match(await p.locator('#riskTitle').innerText(),/前次收盤/);
+ assert.equal(await p.evaluate(()=>isTrustedFeed()),false,'cached close must never authorize current trading');
+ assert.equal(await p.evaluate(()=>system.market.live_valid),false);
+ assert.equal(await p.evaluate(()=>isRecentCloseObservation()),true);
+ // Native callback shares the same cache path, including the bundled fallback UI.
+ await p.goto(base.replace('/remote/','/app/src/main/assets/')+'index.html',{waitUntil:'domcontentloaded'});
+ await p.evaluate(raw=>window.JEI_NATIVE.onSystemData(raw),JSON.stringify(feed));
+ await p.reload({waitUntil:'domcontentloaded'});
+ await p.waitForFunction(()=>/更新失敗/.test(document.querySelector('#sysStatus').textContent));
+ assert.match(await p.locator('#riskTitle').innerText(),/前次收盤/);
+ // Broken and expired caches fail closed without breaking startup.
+ await p.evaluate(()=>localStorage.setItem(CLOSE_CACHE_KEY,'{broken'));
+ await p.reload({waitUntil:'domcontentloaded'});
+ assert.equal(await p.evaluate(()=>isRecentCloseObservation()),false);
+ await p.evaluate(raw=>localStorage.setItem(CLOSE_CACHE_KEY,raw),JSON.stringify({...stored,data_date:'2026-10-01',updated_at:'2026-10-01 16:00'}));
+ await p.reload({waitUntil:'domcontentloaded'});
+ assert.equal(await p.evaluate(()=>isRecentCloseObservation()),false,'expired cache must not restore');
+ assert.deepEqual(errors,[]);
+ await ctx.close();
+ console.log('PASS offline restart restores dated close in browser and bundled UI; private data excluded; malformed and expired snapshots rejected');
+}
 async function run(){
   const port=await listen(),base='http://127.0.0.1:'+port+'/remote/';
   const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
   try{
+  await verifyOfflineRecovery(browser,base);
   const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
   const page=await context.newPage(),errors=[];
   page.on('pageerror',error=>errors.push(error.message));
@@ -73,6 +122,22 @@ async function run(){
   await page.evaluate(async()=>{await refreshSystem()});
   assert.equal(backupRequests,backupBeforeFailure+1,'recovered primary is used on the next refresh');
   console.log('PASS browser system feed switches to backup and recovers primary');
+  let archiveBackups=0;
+  for(const name of ['history.json','daily_prices.json']){
+    await page.route(base+name+'**',route=>route.fulfill({status:503,body:'unavailable'}));
+    await page.route('https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/'+name+'**',async route=>{
+      archiveBackups++;
+      await route.fulfill({status:200,contentType:'application/json',body:await fs.readFile(path.join(ROOT,'remote',name),'utf8')});
+    });
+  }
+  await page.waitForFunction(()=>!closeArchiveFetchPending);
+  await page.evaluate(()=>{lastCloseArchiveFetchAt=0;refreshCloseArchive()});
+  await page.waitForFunction(()=>!closeArchiveFetchPending);
+  assert.equal(archiveBackups,2,'both archives must use backup when the primary is unavailable');
+  assert.match(await page.locator('#closeArchiveMeta').innerText(),/官方收盤研究/);
+  for(const name of ['history.json','daily_prices.json'])await page.unroute(base+name+'**');
+  console.log('PASS official close research loads through backup when both primary archives fail');
+
   // Missing live trades must not leave the whole app empty: dated official
   // research remains readable without becoming today's actionable picks.
   await page.waitForFunction(()=>document.querySelector('#closeArchiveSignals')?.querySelectorAll('.listRow').length>0,null,{timeout:15000});
