@@ -1,0 +1,115 @@
+{
+  "checked_at": "2026-11-03T16:48:58.126326+08:00",
+  "base_main": "9bbae03",
+  "twse_count": 1390,
+  "tpex_count": 873,
+  "official_date": "2026-11-03",
+  "mis": "HTTP 503 in this environment; intraday verification remains incomplete",
+  "public_holding_quote_checks": {
+    "1711": {
+      "archive": 34.95,
+      "official": 34.95,
+      "match": true
+    },
+    "2478": {
+      "archive": 102.5,
+      "official": 102.5,
+      "match": true
+    },
+    "2609": {
+      "archive": 62.1,
+      "official": 62.1,
+      "match": true
+    },
+    "2748": {
+      "archive": 37.5,
+      "official": 37.5,
+      "match": true
+    },
+    "3162": {
+      "archive": 71.9,
+      "official": 71.9,
+      "match": true
+    },
+    "3289": {
+      "archive": 121.0,
+      "official": 121.0,
+      "match": true
+    },
+    "3707": {
+      "archive": 59.5,
+      "official": 59.5,
+      "match": true
+    },
+    "5347": {
+      "archive": 134.0,
+      "official": 134.0,
+      "match": true
+    },
+    "5425": {
+      "archive": 78.6,
+      "official": 78.6,
+      "match": true
+    },
+    "6150": {
+      "archive": 66.3,
+      "official": 66.3,
+      "match": true
+    },
+    "7711": {
+      "archive": 545.0,
+      "official": 545.0,
+      "match": true
+    },
+    "8070": {
+      "archive": 46.0,
+      "official": 46.0,
+      "match": true
+    }
+  },
+  "index_source": "https://www.twse.com.tw/exchangeReport/FMTQIK?response=json&date=20261101",
+  "index_raw": {
+    "stat": "OK",
+    "date": "20261101",
+    "title": "115年11月市場成交資訊",
+    "hints": "單位：元、股",
+    "fields": [
+      "日期",
+      "成交股數",
+      "成交金額",
+      "成交筆數",
+      "發行量加權股價指數",
+      "漲跌點數"
+    ],
+    "data": [
+      [
+        "115/11/02",
+        "10,422,514,115",
+        "799,687,507,911",
+        "4,104,242",
+        "44,920.14",
+        "-291.69"
+      ],
+      [
+        "115/11/03",
+        "15,196,170,719",
+        "990,506,200,725",
+        "7,682,848",
+        "43,307.54",
+        "-1,612.60"
+      ]
+    ],
+    "notes": [
+      "當日統計資訊含一般、零股、盤後定價，不含鉅額、拍賣、標購。",
+      "不加計外幣交易證券交易金額。"
+    ]
+  },
+  "privacy_safe": true,
+  "research": {
+    "repo": "https://github.com/gerrymanoim/exchange_calendars",
+    "license": "Apache-2.0",
+    "pushed_at": "2026-11-02T06:44:37Z",
+    "adopted": false,
+    "reason": "Static typhoon history is not live closure evidence; existing official-date gates remain authoritative"
+  }
+}
