@@ -33,7 +33,7 @@ class OffhoursArchiveTests(unittest.TestCase):
         self.assertIsNotNone(after)
         self.assertEqual(after["data_date"],"2026-10-16")
         self.assertEqual(after["updated_at"],"2026-10-16 17:10")
-        self.assertEqual(after["market"]["mode"],"今日收盤")
+        self.assertEqual(after["market"]["mode"],"最近收盤")
         self.assertTrue(after["market"]["historical_readonly"])
         self.assertTrue(after["market"]["stale"])
         self.assertEqual(after["market"]["last_checked_at"],"2026-10-18 07:29")
@@ -42,6 +42,31 @@ class OffhoursArchiveTests(unittest.TestCase):
         self.assertNotIn("last_checked_at",old["market"],"old dict must not be mutated")
         next_session=MOD.validated_previous_close(after,datetime(2026,10,19,9,5,tzinfo=TAIPEI))
         self.assertTrue(next_session["market"]["historical_readonly"],"Monday research remains non-live")
+
+    def test_next_day_disables_actionable_risk_without_rewriting_original(self):
+        old=verified()
+        old["risk"].update(actionable=True,as_of="2026-10-16")
+        old["market"].update(no_new_picks=False,live_valid=True)
+        original=json.loads(json.dumps(old))
+        after=MOD.validated_previous_close(old,SUNDAY)
+        self.assertFalse(after["risk"]["actionable"])
+        self.assertEqual(after["risk"]["as_of"],old["data_date"])
+        self.assertEqual(after["risk"]["score"],old["risk"]["score"])
+        self.assertTrue(after["market"]["no_new_picks"])
+        self.assertFalse(after["market"]["live_valid"])
+        self.assertEqual(after["updated_at"],old["updated_at"])
+        self.assertEqual(after["attack"],old["attack"])
+        self.assertEqual(old,original)
+        again=MOD.validated_previous_close(after,SUNDAY+timedelta(hours=1))
+        self.assertFalse(again["risk"]["actionable"])
+
+    def test_same_day_retention_preserves_verified_actionability(self):
+        old=verified()
+        old["risk"]["actionable"]=True
+        after=MOD.validated_previous_close(old,FRIDAY+timedelta(minutes=20))
+        self.assertTrue(after["risk"]["actionable"])
+        self.assertEqual(after["market"]["mode"],"今日收盤")
+        self.assertFalse(after["market"]["historical_readonly"])
 
     def test_archive_date_key_never_substitutes_today_for_stale_or_invalid_data(self):
         self.assertEqual(MOD.verified_archive_date("2026-10-27"),"2026-10-27")

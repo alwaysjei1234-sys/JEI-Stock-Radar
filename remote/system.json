@@ -3,12 +3,12 @@
   "updated_at": "2026-11-02 20:25",
   "data_date": "2026-11-02",
   "source_data_date": "2026-11-02",
-  "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
+  "summary": "保留 2026-11-02 歷史收盤資料；本次即時行情尚未驗證，暫停今日評分及新選股。",
   "risk": {
     "level": "yellow",
     "label": "震盪警戒",
     "score": 45,
-    "actionable": true,
+    "actionable": false,
     "as_of": "2026-11-02",
     "cash": "30%–50%",
     "reasons": [
@@ -33,14 +33,14 @@
   },
   "market": {
     "status": "震盪",
-    "mode": "今日收盤",
-    "last_checked_at": "2026-11-02 20:25",
+    "mode": "最近收盤",
+    "last_checked_at": "2026-11-03 08:46",
     "live_count": 0,
     "close_count": 1958,
     "live_coverage_pct": 0.0,
     "live_valid": false,
-    "stale": false,
-    "historical_readonly": false,
+    "stale": true,
+    "historical_readonly": true,
     "post_close_refresh": false,
     "live_diagnostics": {
       "attempted": false,
@@ -54,14 +54,14 @@
       "errors": [],
       "reason": "非行情更新時段"
     },
-    "brief": "今日收盤多因子市場｜加權 -0.65%｜廣度 51.9%｜中位數 +0.00%｜跌逾5% 31｜行情時間以最近檢查時間為準",
+    "brief": "最近有效收盤 2026-11-02｜歷史參考，非今日訊號；暫停新選股",
     "market_data_as_of": "2026-11-02",
-    "session_status": "已驗證",
-    "no_new_picks": false,
+    "session_status": "歷史唯讀",
+    "no_new_picks": true,
     "partial_live": null,
     "post_close_source_check": {
-      "checked_at": "2026-11-03T06:53:26+08:00",
-      "scope": "pre-open 2026-11-03; previous official close only; MIS unavailable",
+      "checked_at": "2026-11-03T08:44:49+08:00",
+      "scope": "pre-open 2026-11-03; retained official close is read-only; MIS unavailable",
       "sources": {
         "twse": "https://www.twse.com.tw/exchangeReport/MI_INDEX?date=20261102&type=ALLBUT0999&response=json",
         "tpex": "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes",

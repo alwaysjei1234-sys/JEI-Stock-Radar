@@ -614,6 +614,16 @@ def validated_previous_close(previous, now, max_age_days=7):
     out=dict(previous)
     out["market"]={**market,"stale":verified_day!=now.date(),"historical_readonly":verified_day!=now.date(),
                    "last_checked_at":now.strftime("%Y-%m-%d %H:%M")}
+    if verified_day!=now.date():
+        # Every consumer of a retained snapshot must see the same read-only
+        # contract, including Android clients that inspect risk.actionable.
+        out["market"].update(mode="最近收盤", live_valid=False, no_new_picks=True,
+                             market_data_as_of=previous["data_date"],
+                             session_status="歷史唯讀",
+                             brief=f"最近有效收盤 {previous['data_date']}｜歷史參考，非今日訊號；暫停新選股")
+        out["risk"]={**(previous.get("risk") or {}),"actionable":False,
+                     "as_of":previous["data_date"]}
+        out["summary"]=f"保留 {previous['data_date']} 歷史收盤資料；本次即時行情尚未驗證，暫停今日評分及新選股。"
     return out
 
 def update_history(history,date_key,stocks,signals,institutional_market=None):
