@@ -626,6 +626,39 @@ def score_row(s,mode,risk,sector_score,heat_penalty=0):
         score=38+clamp(p,0,10)*3.7+pos*12+liq+sector+value_accel*.5-risk_pen
     return int(round(clamp(score,0,99)))
 
+SELECTION_POLICY = "jei-user-radar-gates-v1"
+
+
+def next_setup_score(stock, sector_score, heat_penalty):
+    return round(clamp(sector_score*.42+position(stock)*100*.28+
+                       clamp((math.log10(max(stock.get("value",1),1))-7)*12,0,100)*.18+
+                       (100-min(100,heat_penalty*5))*.12,0,99))
+
+
+def qualified_radar_rows(pool, mode, limit=10):
+    """Apply the user's fixed eligibility gates BEFORE taking ranked slots.
+
+    Input order is the existing score/value ranking. No backfill below the
+    thresholds, no rescore and no change to historical signals.
+    """
+    if mode not in ("attack", "next"):
+        raise ValueError("unsupported formal radar group")
+    result=[]
+    for row in pool:
+        score,stock,sector,sector_score,r5,r10,r20,heat_penalty=row
+        if (isinstance(score,bool) or not isinstance(score,(int,float)) or
+                not math.isfinite(score) or not 0<=score<=99):
+            continue
+        if score < (85 if mode=="attack" else 80):
+            continue
+        if mode=="next" and next_setup_score(stock,sector_score,heat_penalty)<80:
+            continue
+        result.append(row)
+        if len(result)>=limit:
+            break
+    return result
+
+
 def item(s,score,reason,mode,risk,sector,sector_score):
     sector_label="族群未分類" if sector=="未分類" else (sector or "族群未分類")
     x={"code":s["code"],"name":s["name"],"score":score,"reason":reason,"price":s["close"],
@@ -1042,7 +1075,7 @@ def main():
 
     attack_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
     attack=[]
-    for score,s,sec,ss,r5,r10,r20,hp in attack_pool[:10]:
+    for score,s,sec,ss,r5,r10,r20,hp in qualified_radar_rows(attack_pool,"attack"):
         chase="｜接近漲停，勿追高" if s["pct"]>=8.5 else ""
         reason=f"{sector_evidence(sec,ss)}｜漲幅 {s['pct']:.2f}%｜收盤位置 {position(s)*100:.0f}%｜成交值 {s['value']/1e8:.1f} 億{chase}"
         attack.append(item(s,score,reason,"attack",risk,sec,ss))
@@ -1051,8 +1084,8 @@ def main():
     next_pool=[x for x in next_pool if x[1]["code"] not in attack_codes]
     next_pool.sort(key=lambda x:(x[0],x[1]["value"]),reverse=True)
     next_list=[]
-    for score,s,sec,ss,r5,r10,r20,hp in next_pool[:10]:
-        setup=round(clamp(ss*.42+position(s)*100*.28+clamp((math.log10(max(s.get("value",1),1))-7)*12,0,100)*.18+(100-min(100,hp*5))*.12,0,99))
+    for score,s,sec,ss,r5,r10,r20,hp in qualified_radar_rows(next_pool,"next"):
+        setup=next_setup_score(s,ss,hp)
         reason=f"準備發動 {setup}分｜{sector_evidence(sec,ss)}｜今日 {s['pct']:+.2f}%｜5日 {fmt_ret(r5)}｜10日 {fmt_ret(r10)}｜成交值 {s['value']/1e8:.1f}億｜"+("低過熱" if hp<4 else "過熱降權")
         next_list.append(item(s,score,reason,"next",risk,sec,ss))
 
@@ -1384,6 +1417,7 @@ def main():
     if official_close_verified:
         public_signals=refresh_public_etf_references(public_signals,holdings_by_code,raw_date)
     out={
+        "selection_policy":SELECTION_POLICY,
         "schema":4,"updated_at":now.strftime("%Y-%m-%d %H:%M"),"data_date":raw_date,"source_data_date":source_data_date,
         "summary":"JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
         "risk":{"level":("stale" if stale_source else level),"label":label,"score":risk,

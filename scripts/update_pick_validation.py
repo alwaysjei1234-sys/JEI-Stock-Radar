@@ -96,7 +96,8 @@ def freeze_picks(feed, prices, date, origin="scheduled_close"):
                 "rank": original_rank, "code": code,
                 "name": str(row.get("name") or code)[:40],
                 "score": round(score, 2),
-                "signal_close": price, "origin": origin
+                "signal_close": price, "origin": origin,
+                "selection_policy": str(feed.get("selection_policy") or "legacy-unversioned")[:80]
             })
             if len(seen) >= MAX_PICKS:
                 break

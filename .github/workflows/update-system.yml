@@ -19,6 +19,7 @@ on:
       - 'tests/test_institutional_integrity.py'
       - 'tests/test_midnight_archive_recovery.py'
       - 'tests/test_tracked_etf_reference.py'
+      - 'tests/test_radar_eligibility.py'
       - 'scripts/send_line_alert.py'
       - 'tests/test_send_line_alert_receipt.py'
       - 'scripts/validate_market_session.py'
@@ -63,6 +64,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_midnight_archive_recovery.py'
       - name: Verify tracked ETF reference dates and privacy
         run: python -m unittest discover -s tests -p 'test_tracked_etf_reference.py'
+      - name: Enforce original formal radar eligibility gates
+        run: python -m unittest discover -s tests -p 'test_radar_eligibility.py'
       - name: Build market feed
         run: python scripts/update_system.py
       - name: Reject stale holiday labels and false current closes
