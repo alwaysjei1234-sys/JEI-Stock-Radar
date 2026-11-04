@@ -13,6 +13,7 @@ on:
     paths:
       - 'scripts/update_system.py'
       - 'tests/test_update_system_recovery.py'
+      - 'tests/test_financial_context.py'
       - 'tests/test_validate_market_session.py'
       - 'tests/test_tpex_latest_close_fallback.py'
       - 'tests/test_tpex_dated_close.py'
@@ -55,6 +56,8 @@ jobs:
         run: python -m py_compile scripts/update_system.py
       - name: Test damaged-feed recovery before market access
         run: python -m unittest discover -s tests -p 'test_update_system_recovery.py'
+      - name: Test dated public financial context and look-ahead gate
+        run: python -m unittest discover -s tests -p 'test_financial_context.py'
       - name: Test TPEx same-day close fallback
         run: python -m unittest discover -s tests -p 'test_tpex_latest_close_fallback.py'
       - name: Test current TPEx dated table and shared close

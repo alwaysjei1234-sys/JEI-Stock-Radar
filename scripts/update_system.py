@@ -792,6 +792,145 @@ def item(s,score,reason,mode,risk,sector,sector_score):
     x.update(price_plan(s,mode,risk))
     return x
 
+def attach_financial_context(rows, snapshot, as_of):
+    """Add dated public financial context without changing technical ranks.
+
+    Only the latest monthly revenue and quarterly statement already published
+    by the market date are exposed. These fields are display context, not score
+    inputs or historical backtest features.
+    """
+    try:
+        cutoff=datetime.strptime(str(as_of),"%Y-%m-%d").date()
+    except (TypeError,ValueError):
+        return
+    if not isinstance(snapshot,dict) or snapshot.get("schemaVersion") != 1:
+        return
+    markets=snapshot.get("markets")
+    if not isinstance(markets,dict):
+        return
+    def record_for(code):
+        for market in ("listed","otc"):
+            table=markets.get(market)
+            record=table.get(code) if isinstance(table,dict) else None
+            if isinstance(record,dict):
+                return record,market
+        return {},None
+    def valid_date(value, max_age_days):
+        try:
+            day=datetime.strptime(str(value),"%Y-%m-%d").date()
+        except (TypeError,ValueError):
+            return None
+        age=(cutoff-day).days
+        # Publication data has day-level precision only. A report dated on the
+        # signal day might have appeared after the close, so require a prior day.
+        return day if 0 < age <= max_age_days else None
+    def valid_month(value):
+        try:
+            day=datetime.strptime(str(value),"%Y-%m-%d").date()
+        except (TypeError,ValueError):
+            return None
+        age=(cutoff-day).days
+        return day if day.day==1 and 0 <= age <= 120 else None
+    def valid_quarter(value):
+        match=re.fullmatch(r"(\d{4})-Q([1-4])",str(value or ""))
+        if not match:
+            return False
+        year,quarter=map(int,match.groups())
+        quarter_end_month=quarter*3
+        return (year,quarter_end_month) <= (cutoff.year,cutoff.month)
+    def pct(value):
+        if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value):
+            return None
+        return f"{value:+.1f}%"
+    for row in rows:
+        if not isinstance(row,dict):
+            continue
+        previous_context=row.get("financial_context")
+        reason=str(row.get("reason") or "")
+        if isinstance(previous_context,dict) and isinstance(previous_context.get("text"),str):
+            reason=reason.replace("｜"+previous_context["text"],"")
+        code=str(row.get("code") or "").strip().upper()
+        record,market=record_for(code) if code else ({},None)
+        revenue=record.get("revenue") if isinstance(record.get("revenue"),dict) else {}
+        financials=record.get("financials") if isinstance(record.get("financials"),dict) else {}
+        sources=snapshot.get("sources") if isinstance(snapshot.get("sources"),dict) else {}
+        prefix={"listed":"twse","otc":"tpex"}.get(market)
+        official_sources={
+            "revenue":f"{prefix}Revenue" if prefix else None,
+            "income":f"{prefix}Income" if prefix else None,
+            "balance":f"{prefix}Balance" if prefix else None,
+        }
+        expected_hosts={"listed":"https://openapi.twse.com.tw/v1/","otc":"https://www.tpex.org.tw/openapi/v1/"}
+        def verified_source(key):
+            source_key=official_sources.get(key)
+            value=sources.get(source_key) if source_key else None
+            return value if isinstance(value,str) and value.startswith(expected_hosts.get(market,"!")) else None
+        revenue_date=valid_date(revenue.get("publishedAt"),60)
+        statement_date=valid_date(financials.get("publishedAt"),180)
+        revenue_period=valid_month(revenue.get("period"))
+        statement_period=valid_quarter(financials.get("period"))
+        parts=[]
+        revenue_included=False
+        statement_included=False
+        revenue_source=verified_source("revenue")
+        if revenue_date and revenue_period and revenue_source:
+            period=revenue_period.strftime("%Y-%m")
+            yoy=pct(revenue.get("monthlyYoYPct"))
+            mom=pct(revenue.get("monthlyMoMPct"))
+            if period and (yoy or mom):
+                parts.append(f"月營收 {period} 公告 {revenue_date.isoformat()}"+ (f" YoY {yoy}" if yoy else "") + (f"／MoM {mom}" if mom else ""))
+                revenue_included=True
+        income_source=verified_source("income")
+        balance_source=verified_source("balance")
+        if statement_date and statement_period and income_source and balance_source:
+            period=str(financials.get("period") or "")
+            eps=financials.get("eps")
+            gross=financials.get("grossMarginPct")
+            debt=financials.get("debtRatioPct")
+            metrics=[]
+            if isinstance(eps,(int,float)) and not isinstance(eps,bool) and math.isfinite(eps):
+                metrics.append(f"EPS {eps:.2f}")
+            if isinstance(gross,(int,float)) and not isinstance(gross,bool) and math.isfinite(gross):
+                metrics.append(f"毛利率 {gross:.1f}%")
+            if isinstance(debt,(int,float)) and not isinstance(debt,bool) and math.isfinite(debt):
+                metrics.append(f"負債率 {debt:.1f}%")
+            if period and metrics:
+                parts.append(f"季報 {period} 公告 {statement_date.isoformat()} " + "、".join(metrics))
+                statement_included=True
+        if parts:
+            text="；".join(parts)+"（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+            row["financial_context"]={
+                "status":"verified","as_of":cutoff.isoformat(),
+                "snapshot_generated_at":snapshot.get("generatedAt"),
+                "publication_dates":{"revenue":revenue_date.isoformat() if revenue_included else None,
+                                     "financials":statement_date.isoformat() if statement_included else None},
+                "periods":{"revenue":revenue_period.strftime("%Y-%m") if revenue_included else None,
+                           "financials":financials.get("period") if statement_included else None},
+                "availability":financials.get("availability") if statement_included else None,
+                "sources":{"revenue":revenue_source if revenue_included else None,
+                           "income":income_source if statement_included else None,
+                           "balance":balance_source if statement_included else None},
+                "text":text,
+            }
+        else:
+            text="財務資料未驗證，不影響現行技術排名"
+            row["financial_context"]={"status":"unverified","as_of":cutoff.isoformat(),"text":text}
+        row["reason"]=(reason+"｜" if reason else "")+text
+
+def load_recent_financial_snapshot(as_of, path=Path("remote/free_research.json")):
+    """Load only a recent public snapshot that is not newer than the quote date."""
+    try:
+        snapshot=json.loads(path.read_text(encoding="utf-8"))
+        generated_day=datetime.strptime(str(snapshot.get("generatedAt") or "")[:10],"%Y-%m-%d").date()
+        cutoff_day=datetime.strptime(str(as_of),"%Y-%m-%d").date()
+        if (snapshot.get("schemaVersion")==1
+                and 0 <= (cutoff_day-generated_day).days <= 3
+                and isinstance(snapshot.get("markets"),dict)):
+            return snapshot
+    except (OSError,ValueError,TypeError,AttributeError):
+        pass
+    return {}
+
 def sector_evidence(sector,score):
     # 50 is the neutral model input when the stock is outside our tracked baskets;
     # it is not measured sector heat and must not be presented as such.
@@ -1462,6 +1601,9 @@ def main():
             retained["market"]["live_diagnostics"]={"attempted":quote_refresh_window,"market_open":market_open,"quote_refresh_window":quote_refresh_window,"updater_time_taipei":stamp,"valid_trades":live_count,"mis_stats":live_stats,"required_trades":500,"required_coverage_pct":35,"errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],"reason":("官方休市，不更新即時行情" if known_closure else session_reason)}
             retained["holdings"]=refresh_public_etf_references(
                 retained.get("holdings"),holdings_by_code,retained["data_date"])
+            financial_snapshot=load_recent_financial_snapshot(retained["data_date"])
+            for candidate_group in ("attack","next","monster","tomorrow_monster","future_monster","rotate"):
+                attach_financial_context(retained.get(candidate_group) or [],financial_snapshot,retained["data_date"])
             OUT.write_text(json.dumps(retained,ensure_ascii=False,indent=2),encoding="utf-8")
             print(json.dumps({"status":"archived_close_only",
                               "data_date":retained["data_date"],
@@ -1493,6 +1635,12 @@ def main():
         reasons=[f"行情來源日期 {source_data_date or '未知'}，不是今天；今日風險與選股訊號暫停判讀"]
         sectors=[]
         flow=[]
+    # Add current, already-published financial context to visible candidates.
+    # This is display-only: technical scores, eligibility, archives, and backtests
+    # remain unchanged until a point-in-time financial strategy is separately tested.
+    financial_snapshot=load_recent_financial_snapshot(raw_date)
+    for candidate_group in (attack,next_list,monster,tomorrow_monster,future_monster,rotate):
+        attach_financial_context(candidate_group,financial_snapshot,raw_date)
     market_mode="資料過期" if stale_source else ("盤中即時" if live_valid else ("盤中資料不足" if market_open else ("今日收盤" if raw_date==today_iso else "最近收盤")))
     # Archive the actual verified exchange date; never fall back to today for malformed/mixed dates.
     date_key=verified_archive_date(raw_date)
