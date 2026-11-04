@@ -3,7 +3,7 @@
   "updated_at": "2026-11-03 23:55",
   "data_date": "2026-11-03",
   "source_data_date": "2026-11-03",
-  "summary": "2026-11-04 08:52 尚未開盤；保留最近有效收盤，等待今日盤中行情驗證；保留 2026-11-03 歷史名單，暫停今日新選股。",
+  "summary": "2026-11-04 09:32 今日盤中成交價覆蓋未達驗證門檻，暫停新判讀；保留 2026-11-03 歷史名單，暫停今日新選股。",
   "risk": {
     "level": "red",
     "label": "高風險防守",
@@ -34,7 +34,7 @@
   "market": {
     "status": "紅燈防守",
     "mode": "最近收盤",
-    "last_checked_at": "2026-11-04 08:52",
+    "last_checked_at": "2026-11-04 09:32",
     "index": {
       "change_pct": -3.59,
       "data_date": "2026-11-03",
@@ -66,46 +66,563 @@
     "post_close_refresh": false,
     "live_diagnostics": {
       "attempted": true,
-      "market_open": false,
+      "market_open": true,
       "quote_refresh_window": true,
-      "updater_time_taipei": "2026-11-04 08:52",
-      "valid_trades": 0,
+      "updater_time_taipei": "2026-11-04 09:32",
+      "valid_trades": 103,
       "mis_stats": {
         "requested_channels": 1967,
-        "returned_messages": 0,
-        "matched_codes": 0,
+        "returned_messages": 1967,
+        "matched_codes": 1967,
         "rejected_date": 0,
-        "rejected_time": 0,
+        "rejected_time": 94,
         "duplicate_messages": 0,
-        "rejected_price": 0,
-        "missing_last_trade": 0,
+        "rejected_price": 1770,
+        "missing_last_trade": 1770,
         "missing_previous_close": 0,
-        "service_probe_attempts": 3,
-        "bulk_scan_skipped": true,
-        "unavailable_http_status": 503,
-        "outage_reason": "HTTP_503",
-        "skipped_channels": 1967
+        "service_probe_attempts": 1,
+        "bulk_scan_skipped": false,
+        "unavailable_http_status": null,
+        "outage_reason": null,
+        "skipped_channels": 0,
+        "incomplete_with_volume": 1623,
+        "retry_requested": 100,
+        "retry_recovered": 0
       },
       "required_trades": 500,
       "required_coverage_pct": 35,
-      "errors": [
-        "MIS HTTP 503：連線探測未通過，停止本輪全市場掃描；下輪重新探測"
-      ],
-      "reason": "尚未開盤；保留最近有效收盤，等待今日盤中行情驗證"
+      "errors": [],
+      "reason": "今日盤中成交價覆蓋未達驗證門檻，暫停新判讀"
     },
-    "brief": "盤前準備｜尚未開盤；保留最近有效收盤，等待今日盤中行情驗證｜最近有效收盤 2026-11-03｜歷史名單僅供研究",
+    "brief": "盤中資料不足｜今日盤中成交價覆蓋未達驗證門檻，暫停新判讀｜最近有效收盤 2026-11-03｜歷史名單僅供研究",
     "market_data_as_of": "2026-11-03",
-    "session_status": "盤前準備",
+    "session_status": "盤中資料不足",
     "no_new_picks": true,
     "partial_live": {
-      "asof": "2026-11-04 08:52",
-      "verified_count": 0,
-      "coverage_pct": 0.0,
+      "asof": "2026-11-04 09:32",
+      "verified_count": 103,
+      "coverage_pct": 5.2,
       "complete": false,
-      "quotes": []
+      "quotes": [
+        {
+          "code": "6150",
+          "price": 72.9,
+          "quote_time": "2026-11-04 09:32:00"
+        },
+        {
+          "code": "1102",
+          "price": 37.5,
+          "quote_time": "2026-11-04 09:32:14"
+        },
+        {
+          "code": "1234",
+          "price": 32.15,
+          "quote_time": "2026-11-04 09:31:54"
+        },
+        {
+          "code": "1314",
+          "price": 7.84,
+          "quote_time": "2026-11-04 09:32:19"
+        },
+        {
+          "code": "1316",
+          "price": 9.99,
+          "quote_time": "2026-11-04 09:31:56"
+        },
+        {
+          "code": "1321",
+          "price": 34.5,
+          "quote_time": "2026-11-04 09:30:19"
+        },
+        {
+          "code": "1337",
+          "price": 4.0,
+          "quote_time": "2026-11-04 09:31:19"
+        },
+        {
+          "code": "1454",
+          "price": 11.9,
+          "quote_time": "2026-11-04 09:29:45"
+        },
+        {
+          "code": "1512",
+          "price": 6.09,
+          "quote_time": "2026-11-04 09:31:27"
+        },
+        {
+          "code": "1528",
+          "price": 26.75,
+          "quote_time": "2026-11-04 09:32:00"
+        },
+        {
+          "code": "1714",
+          "price": 16.8,
+          "quote_time": "2026-11-04 09:32:22"
+        },
+        {
+          "code": "1722",
+          "price": 41.3,
+          "quote_time": "2026-11-04 09:31:33"
+        },
+        {
+          "code": "1731",
+          "price": 20.95,
+          "quote_time": "2026-11-04 09:29:27"
+        },
+        {
+          "code": "1788",
+          "price": 126.5,
+          "quote_time": "2026-11-04 09:30:22"
+        },
+        {
+          "code": "2002",
+          "price": 19.25,
+          "quote_time": "2026-11-04 09:32:18"
+        },
+        {
+          "code": "2020",
+          "price": 22.8,
+          "quote_time": "2026-11-04 09:30:45"
+        },
+        {
+          "code": "2033",
+          "price": 70.0,
+          "quote_time": "2026-11-04 09:31:58"
+        },
+        {
+          "code": "2072",
+          "price": 111.0,
+          "quote_time": "2026-11-04 09:31:47"
+        },
+        {
+          "code": "2221",
+          "price": 141.0,
+          "quote_time": "2026-11-04 09:29:59"
+        },
+        {
+          "code": "2239",
+          "price": 17.3,
+          "quote_time": "2026-11-04 09:32:00"
+        },
+        {
+          "code": "2301",
+          "price": 226.0,
+          "quote_time": "2026-11-04 09:32:00"
+        },
+        {
+          "code": "2344",
+          "price": 142.5,
+          "quote_time": "2026-11-04 09:32:10"
+        },
+        {
+          "code": "2367",
+          "price": 38.2,
+          "quote_time": "2026-11-04 09:32:08"
+        },
+        {
+          "code": "2382",
+          "price": 307.5,
+          "quote_time": "2026-11-04 09:32:01"
+        },
+        {
+          "code": "2412",
+          "price": 160.0,
+          "quote_time": "2026-11-04 09:32:00"
+        },
+        {
+          "code": "2436",
+          "price": 60.9,
+          "quote_time": "2026-11-04 09:31:39"
+        },
+        {
+          "code": "2438",
+          "price": 18.05,
+          "quote_time": "2026-11-04 09:26:25"
+        },
+        {
+          "code": "2465",
+          "price": 125.0,
+          "quote_time": "2026-11-04 09:31:41"
+        },
+        {
+          "code": "2483",
+          "price": 32.1,
+          "quote_time": "2026-11-04 09:31:43"
+        },
+        {
+          "code": "2484",
+          "price": 63.7,
+          "quote_time": "2026-11-04 09:32:18"
+        },
+        {
+          "code": "2496",
+          "price": 52.6,
+          "quote_time": "2026-11-04 09:32:08"
+        },
+        {
+          "code": "2506",
+          "price": 8.33,
+          "quote_time": "2026-11-04 09:31:29"
+        },
+        {
+          "code": "2515",
+          "price": 11.2,
+          "quote_time": "2026-11-04 09:32:27"
+        },
+        {
+          "code": "2520",
+          "price": 35.5,
+          "quote_time": "2026-11-04 09:31:37"
+        },
+        {
+          "code": "2643",
+          "price": 67.1,
+          "quote_time": "2026-11-04 09:31:30"
+        },
+        {
+          "code": "2886",
+          "price": 52.7,
+          "quote_time": "2026-11-04 09:32:26"
+        },
+        {
+          "code": "2938",
+          "price": 17.85,
+          "quote_time": "2026-11-04 09:32:02"
+        },
+        {
+          "code": "3019",
+          "price": 115.5,
+          "quote_time": "2026-11-04 09:31:53"
+        },
+        {
+          "code": "3037",
+          "price": 888.0,
+          "quote_time": "2026-11-04 09:32:15"
+        },
+        {
+          "code": "3043",
+          "price": 18.95,
+          "quote_time": "2026-11-04 09:30:51"
+        },
+        {
+          "code": "3207",
+          "price": 33.6,
+          "quote_time": "2026-11-04 09:31:40"
+        },
+        {
+          "code": "3228",
+          "price": 131.0,
+          "quote_time": "2026-11-04 09:32:28"
+        },
+        {
+          "code": "3287",
+          "price": 71.5,
+          "quote_time": "2026-11-04 09:32:27"
+        },
+        {
+          "code": "3441",
+          "price": 160.0,
+          "quote_time": "2026-11-04 09:32:02"
+        },
+        {
+          "code": "3447",
+          "price": 23.4,
+          "quote_time": "2026-11-04 09:32:00"
+        },
+        {
+          "code": "3481",
+          "price": 41.3,
+          "quote_time": "2026-11-04 09:32:02"
+        },
+        {
+          "code": "3546",
+          "price": 72.2,
+          "quote_time": "2026-11-04 09:31:00"
+        },
+        {
+          "code": "3597",
+          "price": 38.75,
+          "quote_time": "2026-11-04 09:32:31"
+        },
+        {
+          "code": "3684",
+          "price": 50.1,
+          "quote_time": "2026-11-04 09:32:15"
+        },
+        {
+          "code": "3685",
+          "price": 25.55,
+          "quote_time": "2026-11-04 09:31:56"
+        },
+        {
+          "code": "4441",
+          "price": 163.0,
+          "quote_time": "2026-11-04 09:29:37"
+        },
+        {
+          "code": "4526",
+          "price": 55.3,
+          "quote_time": "2026-11-04 09:32:00"
+        },
+        {
+          "code": "4543",
+          "price": 26.0,
+          "quote_time": "2026-11-04 09:31:31"
+        },
+        {
+          "code": "4562",
+          "price": 33.8,
+          "quote_time": "2026-11-04 09:32:08"
+        },
+        {
+          "code": "4706",
+          "price": 49.5,
+          "quote_time": "2026-11-04 09:32:32"
+        },
+        {
+          "code": "4707",
+          "price": 27.6,
+          "quote_time": "2026-11-04 09:32:36"
+        },
+        {
+          "code": "4720",
+          "price": 32.8,
+          "quote_time": "2026-11-04 09:31:57"
+        },
+        {
+          "code": "4903",
+          "price": 52.0,
+          "quote_time": "2026-11-04 09:32:59"
+        },
+        {
+          "code": "4916",
+          "price": 96.9,
+          "quote_time": "2026-11-04 09:32:40"
+        },
+        {
+          "code": "4989",
+          "price": 59.3,
+          "quote_time": "2026-11-04 09:32:29"
+        },
+        {
+          "code": "5013",
+          "price": 69.5,
+          "quote_time": "2026-11-04 09:32:55"
+        },
+        {
+          "code": "5202",
+          "price": 17.9,
+          "quote_time": "2026-11-04 09:33:09"
+        },
+        {
+          "code": "5483",
+          "price": 161.5,
+          "quote_time": "2026-11-04 09:33:16"
+        },
+        {
+          "code": "5543",
+          "price": 26.2,
+          "quote_time": "2026-11-04 09:32:43"
+        },
+        {
+          "code": "5905",
+          "price": 6.87,
+          "quote_time": "2026-11-04 09:30:12"
+        },
+        {
+          "code": "6020",
+          "price": 19.9,
+          "quote_time": "2026-11-04 09:23:07"
+        },
+        {
+          "code": "6023",
+          "price": 80.8,
+          "quote_time": "2026-11-04 09:31:33"
+        },
+        {
+          "code": "6112",
+          "price": 47.8,
+          "quote_time": "2026-11-04 09:32:45"
+        },
+        {
+          "code": "6122",
+          "price": 58.4,
+          "quote_time": "2026-11-04 09:32:12"
+        },
+        {
+          "code": "6179",
+          "price": 38.1,
+          "quote_time": "2026-11-04 09:32:01"
+        },
+        {
+          "code": "6199",
+          "price": 165.5,
+          "quote_time": "2026-11-04 09:32:14"
+        },
+        {
+          "code": "6203",
+          "price": 54.0,
+          "quote_time": "2026-11-04 09:31:41"
+        },
+        {
+          "code": "6214",
+          "price": 182.5,
+          "quote_time": "2026-11-04 09:32:02"
+        },
+        {
+          "code": "6431",
+          "price": 15.95,
+          "quote_time": "2026-11-04 09:25:03"
+        },
+        {
+          "code": "6570",
+          "price": 43.3,
+          "quote_time": "2026-11-04 09:23:12"
+        },
+        {
+          "code": "6573",
+          "price": 13.4,
+          "quote_time": "2026-11-04 09:31:22"
+        },
+        {
+          "code": "6585",
+          "price": 93.0,
+          "quote_time": "2026-11-04 09:29:52"
+        },
+        {
+          "code": "6596",
+          "price": 90.2,
+          "quote_time": "2026-11-04 09:32:25"
+        },
+        {
+          "code": "6697",
+          "price": 63.3,
+          "quote_time": "2026-11-04 09:32:27"
+        },
+        {
+          "code": "6770",
+          "price": 60.3,
+          "quote_time": "2026-11-04 09:32:23"
+        },
+        {
+          "code": "6873",
+          "price": 43.05,
+          "quote_time": "2026-11-04 09:31:34"
+        },
+        {
+          "code": "6874",
+          "price": 73.2,
+          "quote_time": "2026-11-04 09:32:19"
+        },
+        {
+          "code": "6898",
+          "price": 67.7,
+          "quote_time": "2026-11-04 09:32:43"
+        },
+        {
+          "code": "6925",
+          "price": 112.5,
+          "quote_time": "2026-11-04 09:32:12"
+        },
+        {
+          "code": "6945",
+          "price": 125.0,
+          "quote_time": "2026-11-04 09:32:25"
+        },
+        {
+          "code": "7736",
+          "price": 69.0,
+          "quote_time": "2026-11-04 09:32:50"
+        },
+        {
+          "code": "7743",
+          "price": 22.5,
+          "quote_time": "2026-11-04 09:33:03"
+        },
+        {
+          "code": "7753",
+          "price": 34.1,
+          "quote_time": "2026-11-04 09:31:55"
+        },
+        {
+          "code": "7765",
+          "price": 237.0,
+          "quote_time": "2026-11-04 09:31:32"
+        },
+        {
+          "code": "7856",
+          "price": 2835.0,
+          "quote_time": "2026-11-04 09:31:58"
+        },
+        {
+          "code": "8049",
+          "price": 23.05,
+          "quote_time": "2026-11-04 09:32:53"
+        },
+        {
+          "code": "8083",
+          "price": 156.0,
+          "quote_time": "2026-11-04 09:33:07"
+        },
+        {
+          "code": "8099",
+          "price": 138.5,
+          "quote_time": "2026-11-04 09:32:43"
+        },
+        {
+          "code": "8277",
+          "price": 15.1,
+          "quote_time": "2026-11-04 09:29:20"
+        },
+        {
+          "code": "8435",
+          "price": 52.0,
+          "quote_time": "2026-11-04 09:32:16"
+        },
+        {
+          "code": "8437",
+          "price": 16.4,
+          "quote_time": "2026-11-04 09:32:26"
+        },
+        {
+          "code": "8446",
+          "price": 85.1,
+          "quote_time": "2026-11-04 09:30:25"
+        },
+        {
+          "code": "8466",
+          "price": 14.65,
+          "quote_time": "2026-11-04 09:31:19"
+        },
+        {
+          "code": "8924",
+          "price": 43.65,
+          "quote_time": "2026-11-04 09:32:11"
+        },
+        {
+          "code": "8928",
+          "price": 20.95,
+          "quote_time": "2026-11-04 09:32:27"
+        },
+        {
+          "code": "8929",
+          "price": 12.7,
+          "quote_time": "2026-11-04 09:31:43"
+        },
+        {
+          "code": "8940",
+          "price": 14.7,
+          "quote_time": "2026-11-04 09:30:04"
+        },
+        {
+          "code": "9928",
+          "price": 16.5,
+          "quote_time": "2026-11-04 09:25:44"
+        }
+      ]
     },
-    "status_updated_at": "2026-11-04 08:52",
-    "session_reason": "尚未開盤；保留最近有效收盤，等待今日盤中行情驗證",
+    "status_updated_at": "2026-11-04 09:32",
+    "session_reason": "今日盤中成交價覆蓋未達驗證門檻，暫停新判讀",
     "next_expected_session": null
   },
   "sectors": [
