@@ -7,6 +7,7 @@ on:
       - 'tests/test_free_research.py'
       - 'scripts/update_working_capital.py'
       - 'tests/test_working_capital.py'
+      - 'tests/test_working_capital_cache.py'
       - 'remote/system.json'
       - '.github/workflows/update-free-research.yml'
   workflow_dispatch:
@@ -32,7 +33,7 @@ jobs:
       - name: Validate generated public feed
         run: python3 -m unittest discover -s tests -p 'test_free_research.py'
       - name: Test period, unit and privacy gates for detailed filings
-        run: python3 -m unittest discover -s tests -p 'test_working_capital.py'
+        run: python3 -m unittest discover -s tests -p 'test_working_capital*.py'
       - name: Refresh tracked-company working capital from official iXBRL
         run: python3 scripts/update_working_capital.py
       - name: Publish snapshot

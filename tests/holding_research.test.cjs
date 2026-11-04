@@ -173,3 +173,17 @@ edgeWorking.current.receivables=edgeWorking.previous.receivables;
 assert.doesNotMatch(research.workingCapitalDetail(edgeWorking),/查核提醒：/,'display rounding cannot promote a gap below 20pp');
 edgeWorking.current.inventory=edgeWorking.previous.inventory*1.2;
 assert.match(research.workingCapitalDetail(edgeWorking),/查核提醒：存貨/,'20pp boundary tolerates floating point representation only');
+
+const retainedFeed=JSON.parse(JSON.stringify(workingFeed));
+Object.assign(retainedFeed.records['6150'],{status:'cached',availability:'retained_previous_snapshot',source_revalidated:false,last_checked_at:'2026-11-04T07:00:00Z'});
+const retained=research.workingCapitalFor(retainedFeed,'6150','2026-11-04');
+assert.ok(retained);
+assert.match(research.workingCapitalDetail(retained),/保留前次，非本次驗證/);
+assert.match(research.workingCapitalDetail(retained),/不產生新查核提醒/);
+assert.doesNotMatch(research.workingCapitalDetail(retained),/查核提醒：/);
+assert.match(research.workingCapitalDetail(retained),/存貨 1645\.831/);
+assert.equal(retained.observed_at,working.observed_at,'a failed refresh cannot renew the original observation');
+assert.equal(research.workingCapitalFor(retainedFeed,'6150','2026-11-12'),null);
+retainedFeed.records['6150'].source_revalidated=true;
+assert.equal(research.workingCapitalFor(retainedFeed,'6150','2026-11-04'),null,'cached content cannot claim current validation');
+console.log('PASS retained financial filing: dated read-only display, no new reminders, expiry and provenance flags');
