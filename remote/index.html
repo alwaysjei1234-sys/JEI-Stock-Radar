@@ -1321,8 +1321,9 @@ function validateSystemFeed(j){
  if(!j||typeof j!=='object'||Array.isArray(j)||typeof j.updated_at!=='string'||!j.updated_at.trim()||typeof j.data_date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(j.data_date)||!j.market||typeof j.market!=='object'||Array.isArray(j.market))throw new Error('資料格式或更新時間缺失');
  return j
 }
-async function fetchSystemSource(url){
+async function fetchSystemSource(url,request={}){
  const controller=new AbortController();let timer;
+ request.cancel=()=>{clearTimeout(timer);controller.abort()};
  try{
   return await Promise.race([
    (async()=>{const r=await fetch(url+(url.includes('?')?'&':'?')+'ts='+Date.now(),{cache:'no-store',signal:controller.signal});if(!r.ok)throw new Error('HTTP '+r.status);return validateSystemFeed(await r.json())})(),
@@ -1335,11 +1336,19 @@ async function refreshSystem(){
  if(systemFetchPending)return; // Avoid overlapping polls and out-of-order stale responses.
  systemFetchPending=true;
  try{
-  let j,lastError;
-  for(const url of ['/remote/system.json','https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/system.json']){
-   try{j=await fetchSystemSource(url);break}catch(e){lastError=e}
-  }
-  if(!j)throw lastError;
+  const primaryRequest={},backupRequest={};let hedgeTimer,startBackup,backupStarted=false,j;
+  const backup=new Promise((resolve,reject)=>{
+   startBackup=()=>{
+    if(backupStarted)return;backupStarted=true;clearTimeout(hedgeTimer);
+    fetchSystemSource('https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/system.json',backupRequest).then(resolve,reject);
+   };
+   hedgeTimer=setTimeout(startBackup,1500);
+  });
+  try{
+   const primary=fetchSystemSource('/remote/system.json',primaryRequest).catch(e=>{startBackup();throw e});
+   j=await Promise.any([primary,backup]);
+  }catch(e){throw new Error('主來源與備援讀取失敗：'+(e.errors||[e]).map(x=>x.message).join('；'))}
+  finally{clearTimeout(hedgeTimer);primaryRequest.cancel?.();backupRequest.cancel?.()}
   saveCloseSnapshot(j);system=j;system.holdings=JEI_PRIVATE_APP?(system.holdings||{}):{};seedMarketFromSystem();renderSystem();showFeedStatus();$('sysStatus').textContent='JEI 資料已取得（資料時間：'+system.updated_at+'；不代表即時行情）'
  }catch(e){$('sysStatus').textContent=(system.market?.historical_readonly?'更新失敗，保留 '+system.data_date+' 收盤歷史參考｜':'JEI feed 更新失敗，畫面可能是舊資料｜')+e.message;$('netDot').classList.add('off');$('netText').textContent='資料更新失敗・請勿視為即時行情'}
  finally{systemFetchPending=false}

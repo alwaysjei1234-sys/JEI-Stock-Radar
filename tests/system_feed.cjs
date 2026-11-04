@@ -10,7 +10,7 @@ const elements={};let calls=[],timers=new Map(),timerId=0,renderCount=0;
 const ctx={AbortController,Date,Promise,JEI_PRIVATE_APP:false,nativeOk:()=>false,
  $:id=>elements[id]??=( {textContent:'',classList:{add(){}}} ),
  seedMarketFromSystem(){},renderSystem(){renderCount++},showFeedStatus(){},
- setTimeout(fn){const id=++timerId;timers.set(id,fn);return id},clearTimeout(id){timers.delete(id)},
+ setTimeout(fn,ms){const id=++timerId;timers.set(id,{fn,ms});return id},clearTimeout(id){timers.delete(id)},
  fetch:async url=>{calls.push(url);return {ok:true,json:async()=>structuredClone(fixture)}}};
 vm.createContext(ctx);
 vm.runInContext('let system={sentinel:true};'+code+';globalThis.api={refresh:refreshSystem,pending:()=>systemFetchPending,current:()=>system};',ctx);
@@ -28,13 +28,25 @@ const flush=async()=>{for(let i=0;i<12;i++)await Promise.resolve()};
  calls=[];
  ctx.fetch=async url=>{calls.push(url);return {ok:true,json:async()=>url.startsWith('/')?{updated_at:'today'}:structuredClone(fixture)}};
  await ctx.api.refresh();assert.equal(calls.length,2,'invalid primary schema falls back before changing displayed data');
+ // A stalled primary must start backup before its 12-second timeout.
+ calls=[];let slowPrimary;
+ ctx.fetch=url=>{calls.push(url);return url.startsWith('/')?new Promise(resolve=>{slowPrimary=resolve}):Promise.resolve({ok:true,json:async()=>structuredClone(fixture)})};
+ const hedged=ctx.api.refresh();await flush();
+ assert.equal(calls.length,1,'healthy fast primary avoids extra backup traffic');
+ const hedge=[...timers.values()].find(t=>t.ms===1500);
+ assert.ok(hedge,'backup must have a bounded head start delay');
+ hedge.fn();await hedged;
+ assert.equal(calls.length,2);assert.equal(timers.size,0,'winner clears all request timers');
+ const winner=ctx.api.current();
+ slowPrimary({ok:true,json:async()=>({...fixture,data_date:'2000-01-01'})});await flush();
+ assert.equal(ctx.api.current(),winner,'losing source cannot overwrite the winner');
  const retained=ctx.api.current();calls=[];
  let lateResolve;
  ctx.fetch=url=>{calls.push(url);if(url.startsWith('/'))return new Promise(resolve=>{lateResolve=resolve});throw Error('offline')};
  const request=ctx.api.refresh();await flush();
  await ctx.api.refresh();assert.equal(calls.length,1,'concurrent refresh must not start another request');
  assert.equal(ctx.api.pending(),true);
- [...timers.values()][0]();await request;
+ [...timers.values()].find(t=>t.ms===12000).fn();await request;
  assert.equal(ctx.api.pending(),false,'timeout must release future refreshes');
  assert.equal(ctx.api.current(),retained,'failed sources preserve last loaded feed');
  assert.match(elements.sysStatus.textContent,/更新失敗/);assert.equal(timers.size,0);
@@ -42,7 +54,7 @@ const flush=async()=>{for(let i=0;i<12;i++)await Promise.resolve()};
  assert.equal(ctx.api.current(),retained,'late timed-out response must not overwrite the displayed feed');
  // A response whose body never finishes must also time out, then recover through backup.
  calls=[];ctx.fetch=async url=>{calls.push(url);return {ok:true,json:()=>url.startsWith('/')?new Promise(()=>{}):Promise.resolve(structuredClone(fixture))}};
- const bodyRequest=ctx.api.refresh();await flush();[...timers.values()][0]();await bodyRequest;
+ const bodyRequest=ctx.api.refresh();await flush();[...timers.values()].find(t=>t.ms===12000).fn();await bodyRequest;
  assert.equal(calls.length,2);assert.equal(ctx.api.pending(),false);assert.equal(timers.size,0);
  ctx.fetch=async()=>({ok:true,json:async()=>structuredClone(fixture)});
  await ctx.api.refresh();assert.match(elements.sysStatus.textContent,/已取得/);assert.ok(renderCount>=4);
