@@ -38,7 +38,13 @@ function lineStatusText(document,selected,today){
  if(!row||!Object.hasOwn(labels,row.status)||typeof row.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(row.date)||typeof row.checked_at!=='string'||!Number.isFinite(Date.parse(row.checked_at)))return '尚無可核對的發送紀錄；不能確認已發送或手機收到。';
  const type=String(row.edition).endsWith('_unavailable')?'資料異常通知':'市場摘要';
  const current=row.date===today?'今日紀錄':'歷史紀錄（今天尚無發送紀錄）';
- return current+'｜'+type+'｜'+labels[row.status]+'｜檢查 '+row.checked_at+'｜手機實收尚未確認。';
+ const prior=row.accepted_attempt;
+ const accepted=prior&&prior.date===row.date&&prior.edition===row.edition&&
+  ((prior.status==='accepted'&&prior.http_status===200)||(prior.status==='already_accepted'&&prior.http_status===409))&&
+  typeof prior.checked_at==='string'&&Number.isFinite(Date.parse(prior.checked_at))&&Date.parse(prior.checked_at)<=Date.parse(row.checked_at)&&
+  typeof prior.evidence_url==='string'&&/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/actions\/runs\/[1-9][0-9]*$/.test(prior.evidence_url);
+ const history=accepted&&!['accepted','already_accepted'].includes(row.status)?'｜同日同版先前已獲 API 接受 '+prior.checked_at:'';
+ return current+'｜'+type+'｜最近嘗試：'+labels[row.status]+'｜檢查 '+row.checked_at+history+'｜手機實收尚未確認。';
 }
 function renderLineStatus(){
  const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());

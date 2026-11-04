@@ -39,6 +39,12 @@ async function run(){
   await p.waitForFunction(()=>document.querySelector('#line-status').textContent.includes('今日紀錄'));
   assert.match(await p.locator('#line-status').innerText(),/免費額度安全檢查未通過/);
   assert.ok(await p.locator('#line-evidence').isHidden());
+  record.accepted_attempt={date:record.date,edition:'close',checked_at:'2026-11-05T00:59:00+08:00',status:'accepted',http_status:200,evidence_url:'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/123',token:'SECRET'};
+  await p.locator('#reload').click();
+  await p.waitForFunction(()=>document.querySelector('#line-status').textContent.includes('先前已獲 API 接受'));
+  assert.match(await p.locator('#line-status').innerText(),/免費額度安全檢查未通過.*先前已獲 API 接受.*手機實收尚未確認/);
+  assert.ok(!(await p.locator('#line-status').innerText()).includes('SECRET'));
+  assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   recordStatus=503;await p.locator('#reload').click();
   await p.waitForFunction(()=>document.querySelector('#line-status').textContent.includes('尚無可核對'));
   assert.ok(await p.locator('#content section').count()>0,'diagnostic failure must not hide the valid report');

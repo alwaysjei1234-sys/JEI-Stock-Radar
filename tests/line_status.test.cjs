@@ -17,3 +17,14 @@ row.edition='close_unavailable';assert.match(context.lineStatusText(doc,'close',
 row.status='delivered';assert.match(context.lineStatusText(doc,'close','2026-11-04'),/尚無可核對/);
 row.status='__proto__';assert.match(context.lineStatusText(doc,'close','2026-11-04'),/尚無可核對/);
 console.log('LINE status UI: history, missing evidence, failure, duplicate, notice and untrusted delivery checks passed');
+
+row.edition='close';row.status='quota_blocked';row.http_status=429;
+row.accepted_attempt={date:row.date,edition:'close',checked_at:'2026-11-04T18:15:00+08:00',status:'accepted',http_status:200,evidence_url:'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/123',token:'SECRET'};
+text=context.lineStatusText(doc,'close','2026-11-04');
+assert.match(text,/免費額度安全檢查未通過/);assert.match(text,/先前已獲 API 接受/);assert.match(text,/手機實收尚未確認/);assert.ok(!text.includes('SECRET'));
+for(const change of [{date:'2026-11-03'},{edition:'close_unavailable'},{http_status:500},{evidence_url:'https://evil.example/123'},{checked_at:'2026-11-04T23:00:00+08:00'}]){
+ const saved=row.accepted_attempt;row.accepted_attempt={...saved,...change};
+ assert.ok(!context.lineStatusText(doc,'close','2026-11-04').includes('先前已獲 API 接受'));
+ row.accepted_attempt=saved;
+}
+console.log('LINE status UI: latest failed attempt and same-day acceptance both visible; invalid acceptance excluded');

@@ -50,6 +50,7 @@ def merge_status(document, receipt, run_id, now=None):
     now = now or datetime.now(TAIPEI)
     incoming = public_record(receipt, run_id, now)
     records = {}
+    acceptances = []
     prior = document.get('editions') if isinstance(document, dict) else None
     if isinstance(prior, dict):
         for slot in ('morning', 'close'):
@@ -65,10 +66,35 @@ def merge_status(document, receipt, run_id, now=None):
                 continue
             if clean['edition'].split('_', 1)[0] == slot:
                 records[slot] = clean
+                if clean['api_accepted']:
+                    acceptances.append(clean)
+                nested = row.get('accepted_attempt')
+                if isinstance(nested, dict):
+                    nested_url = nested.get('evidence_url')
+                    if isinstance(nested_url, str) and nested_url.startswith(RUN_BASE):
+                        try:
+                            accepted = public_record(nested, nested_url[len(RUN_BASE):], now)
+                        except (ValueError, TypeError):
+                            continue
+                        if (accepted['api_accepted'] and accepted['date'] == clean['date']
+                                and accepted['edition'] == clean['edition']
+                                and accepted['checked_at'] <= clean['checked_at']):
+                            acceptances.append(accepted)
     slot = incoming['edition'].split('_', 1)[0]
     previous = records.get(slot)
     if previous is None or incoming['checked_at'] >= previous['checked_at']:
         records[slot] = incoming
+    if incoming['api_accepted']:
+        acceptances.append(incoming)
+    # A failed backup is a new decision, not a revocation of prior acceptance.
+    # Keep only the earliest validated acceptance for the same date and exact
+    # report edition; unavailable notices must not stand in for market reports.
+    for row in records.values():
+        matching = [accepted for accepted in acceptances
+                    if accepted['date'] == row['date'] and accepted['edition'] == row['edition']
+                    and accepted['checked_at'] <= row['checked_at']]
+        if matching:
+            row['accepted_attempt'] = dict(min(matching, key=lambda item: item['checked_at']))
     return {'schema': 1, 'updated_at': max(x['checked_at'] for x in records.values()),
             'editions': records}
 

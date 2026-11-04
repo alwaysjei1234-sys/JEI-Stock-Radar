@@ -77,6 +77,51 @@ class LineStatusTests(unittest.TestCase):
         result = merge_status(prior, receipt(edition='morning', checked_at='2026-11-04T09:15:00+08:00'), '124', NOW)
         self.assertNotIn('SECRET', str(result))
 
+    def test_later_failed_backup_preserves_acceptance_and_latest_decision(self):
+        for status in ('quota_blocked', 'failed', 'blocked'):
+            with self.subTest(status=status):
+                prior = merge_status({}, receipt(), '123', NOW)
+                later = receipt(status=status, http_status=429,
+                                checked_at='2026-11-04T19:56:20+08:00')
+                row = merge_status(prior, later, '124', NOW)['editions']['close']
+                self.assertEqual(row['status'], status)
+                self.assertFalse(row['api_accepted'])
+                self.assertEqual(row['accepted_attempt']['evidence_url'].rsplit('/', 1)[1], '123')
+                self.assertFalse(row['accepted_attempt']['delivery_confirmed'])
+                row['accepted_attempt']['token'] = 'SECRET'
+                again = merge_status({'editions': {'close': row}}, later, '124', NOW)
+                self.assertNotIn('SECRET', str(again))
+                self.assertIn('accepted_attempt', again['editions']['close'])
+
+    def test_late_older_accepted_run_is_kept_beside_newer_failure(self):
+        prior = merge_status({}, receipt(status='failed', http_status=500,
+                            checked_at='2026-11-04T19:56:20+08:00'), '124', NOW)
+        row = merge_status(prior, receipt(), '123', NOW)['editions']['close']
+        self.assertEqual(row['status'], 'failed')
+        self.assertEqual(row['accepted_attempt']['checked_at'], receipt()['checked_at'])
+
+    def test_acceptance_is_not_reused_for_new_day_or_different_notice_edition(self):
+        prior = merge_status({}, receipt(edition='close_unavailable'), '123', NOW)
+        row = merge_status(prior, receipt(status='failed', http_status=500,
+                           checked_at='2026-11-04T19:56:20+08:00'), '124', NOW)['editions']['close']
+        self.assertNotIn('accepted_attempt', row)
+        prior = merge_status({}, receipt(), '123', NOW)
+        row = merge_status(prior, receipt(date='2026-11-05', status='failed', http_status=500,
+                           checked_at='2026-11-05T00:30:00+08:00'), '124', NOW)['editions']['close']
+        self.assertNotIn('accepted_attempt', row)
+
+    def test_forged_nested_acceptance_is_discarded(self):
+        for changes in ({'http_status': 500}, {'date': '2026-11-03'},
+                        {'checked_at': '2026-11-05T01:03:00+08:00'},
+                        {'evidence_url': 'https://evil.example/123'}, {'status': 'delivered'}):
+            with self.subTest(changes=changes):
+                prior = merge_status({}, receipt(status='failed', http_status=500), '124', NOW)
+                nested = merge_status({}, receipt(), '123', NOW)['editions']['close']
+                prior['editions']['close']['accepted_attempt'] = {**nested, **changes}
+                row = merge_status(prior, receipt(edition='morning',
+                                   checked_at='2026-11-04T09:15:00+08:00'), '125', NOW)['editions']['close']
+                self.assertNotIn('accepted_attempt', row)
+
     def test_workflow_recovers_from_a_real_push_race_without_losing_market_data(self):
         root = Path(__file__).resolve().parents[1]
         workflow = (root/'.github/workflows/jei-daily-brief.yml').read_text()
