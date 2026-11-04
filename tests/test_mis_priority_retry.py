@@ -10,7 +10,8 @@ class MisPriorityRetryTests(unittest.TestCase):
     now=datetime(2026,11,4,11,45,tzinfo=u.TZ)
 
     def quote(self,code,**changes):
-        return dict({'c':code,'d':'20261104','t':'11:44:00','z':'-',
+        return dict({'c':code,'ex':'otc' if code in ('6150','6488') else 'tse',
+                     'ch':code+'.tw','d':'20261104','t':'11:44:00','z':'-',
                      'y':'100','v':'200'},**changes)
 
     def rows(self):

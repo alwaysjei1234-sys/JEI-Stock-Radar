@@ -23,7 +23,7 @@ class QuoteFreshnessTests(unittest.TestCase):
                 return [{"c":"t00", "ex":"tse", "ch":"t00.tw",
                          "d": index_day if index_day is not None else quote_day,
                          "t": "10:15:00", "y": "10000", "z": "10100"}]
-            return [{"c": "2330", "n": "台積電", "d": quote_day,
+            return [{"c": "2330", "ex":"tse", "ch":"2330.tw", "n": "台積電", "d": quote_day,
                      "t": "10:15:00", "y": "900", "z": "920", "v": "4500"}]
         with patch.object(MOD, "fetch_mis_channels", side_effect=fake_mis):
             result, count, taiex, errors, _ = MOD.enrich_live([stock], asof=self.ASOF)

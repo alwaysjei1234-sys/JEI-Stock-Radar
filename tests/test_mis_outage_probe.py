@@ -39,7 +39,7 @@ class MisOutageProbeTests(unittest.TestCase):
                 self.assertTrue(stats['bulk_scan_skipped'])
 
     def test_transient_503_recovers_and_quotes_still_need_normal_gates(self):
-        valid={'c':'2330','d':'20261104','t':'09:59:00','z':'105','y':'100'}
+        valid={'c':'2330','ex':'tse','ch':'2330.tw','d':'20261104','t':'09:59:00','z':'105','y':'100'}
         count=0
         def fetch(channels):
             nonlocal count
@@ -56,7 +56,7 @@ class MisOutageProbeTests(unittest.TestCase):
         self.assertFalse(stats['bulk_scan_skipped'])
 
     def test_next_invocation_reprobes_after_outage_and_probe_prices_are_not_used(self):
-        quote={'c':'2330','d':'20261104','t':'09:59:00','z':'105','y':'100'}
+        quote={'c':'2330','ex':'tse','ch':'2330.tw','d':'20261104','t':'09:59:00','z':'105','y':'100'}
         moment=datetime(2026,11,4,10,tzinfo=u.TZ)
         with patch.object(u,'fetch_mis_channels',side_effect=HTTPError(u.TWSE_MIS,503,'outage',{},None)),patch.object(u.time,'sleep'):
             self.assertTrue(u.enrich_live([{'code':'2330','market':'TWSE','close':100}],moment)[4]['bulk_scan_skipped'])

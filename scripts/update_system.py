@@ -516,6 +516,15 @@ def mis_index_change(messages, asof):
     change=(price-previous)/previous*100.0
     return (change,"verified") if math.isfinite(change) else (None,"invalid_price")
 
+def mis_stock_identity(message, code, market):
+    """Bind a stock quote to the exchange/channel requested for its official row."""
+    exchange={"TWSE":"tse", "TPEX":"otc"}.get(market)
+    return (isinstance(message,dict) and isinstance(code,str)
+            and re.fullmatch(r"\d{4}",code) is not None and exchange is not None
+            and message.get("c")==code and message.get("ex")==exchange
+            and message.get("ch")==code+".tw")
+
+
 def select_mis_retry_channels(messages, by_code, asof, priority_codes=()):
     """Spend the existing 100-symbol retry budget on fresh, distinct symbols.
 
@@ -525,10 +534,11 @@ def select_mis_retry_channels(messages, by_code, asof, priority_codes=()):
     priority={code for code in priority_codes if isinstance(code,str) and re.fullmatch(r"\d{4}",code)}
     candidates={}
     for message in messages:
+        if not isinstance(message,dict):continue
         code=str(message.get("c", ""))
         row=by_code.get(code)
         if (not re.fullmatch(r"\d{4}",code) or not row
-                or row.get("market") not in ("TWSE","TPEX")
+                or not mis_stock_identity(message,code,row.get("market"))
                 or str(message.get("d", ""))!=asof.strftime("%Y%m%d")
                 or not recent_mis_time(message,asof)):
             continue
@@ -550,11 +560,12 @@ def enrich_live(rows, asof=None, priority_codes=()):
     by_code={x["code"]:x for x in rows}
     channels=[]
     for x in rows:
-        if not re.fullmatch(r"\d{4}",x.get("code","")):continue
+        if (not re.fullmatch(r"\d{4}",x.get("code",""))
+                or x.get("market") not in ("TWSE","TPEX")):continue
         prefix="tse_" if x.get("market")=="TWSE" else "otc_"
         channels.append(prefix+x["code"]+".tw")
     got=0;errors=[]
-    stats={"requested_channels":len(channels),"returned_messages":0,"matched_codes":0,"rejected_date":0,"rejected_time":0,"duplicate_messages":0,"rejected_price":0,"missing_last_trade":0,"missing_previous_close":0,"index_quote_status":"not_requested"}
+    stats={"requested_channels":len(channels),"returned_messages":0,"matched_codes":0,"rejected_date":0,"rejected_time":0,"duplicate_messages":0,"rejected_price":0,"missing_last_trade":0,"missing_previous_close":0,"index_quote_status":"not_requested","rejected_identity":0,"malformed_messages":0}
     available,attempts,status=mis_service_probe(channels)
     stats.update(service_probe_attempts=attempts,bulk_scan_skipped=not available,
                  unavailable_http_status=status if isinstance(status,int) else None,
@@ -593,6 +604,8 @@ def enrich_live(rows, asof=None, priority_codes=()):
                 got_rows,errs=fut.result();messages.extend(got_rows);errors.extend(errs)
             except Exception as e:errors.append(str(e))
     stats["returned_messages"]=len(messages)
+    stats["malformed_messages"]=sum(not isinstance(m,dict) for m in messages)
+    messages=[m for m in messages if isinstance(m,dict)]
     # Retry at most 100 symbols showing volume but no last trade.
     incomplete=[m for m in messages if live_price(m) is None and
                 (num(m.get("v")) or 0)>0 and
@@ -609,7 +622,9 @@ def enrich_live(rows, asof=None, priority_codes=()):
     for j in range(0,len(retry_channels),20):
         try:
             for quote in fetch_mis_channels(retry_channels[j:j+20]):
-                if (str(quote.get("c","")) in requested_retry_codes
+                code=str(quote.get("c","")) if isinstance(quote,dict) else ""
+                if (code in requested_retry_codes
+                        and mis_stock_identity(quote,code,by_code[code].get("market"))
                         and live_price(quote) is not None):
                     replacements[str(quote.get("c",""))]=quote
         except Exception as exc:
@@ -622,6 +637,9 @@ def enrich_live(rows, asof=None, priority_codes=()):
         x=by_code.get(code)
         if not x:continue
         stats["matched_codes"]+=1
+        if not mis_stock_identity(m,code,x.get("market")):
+            stats["rejected_identity"]+=1
+            continue
         # MIS can return the prior session on holidays, before opening, or after outages.
         # Never overwrite official rows or count a quote without the exchange date for today.
         quote_day=re.sub(r"[^0-9]","",str(m.get("d","") or ""))
