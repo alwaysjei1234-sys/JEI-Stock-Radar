@@ -1,0 +1,59 @@
+{
+  "verified_at": "2026-11-05T06:00:00Z",
+  "repository": "alwaysjei1234-sys/JEI-Stock-Radar",
+  "main_sha_at_start": "914e34663c181ba26d8982dbc0482acf7356ea53",
+  "run_type": "31-item completion evidence correction; no application code or market feed changed",
+  "completion_audit": {
+    "prior": {"passed": 0, "partial": 30, "incomplete": 1, "points": 15, "denominator": 31, "percent": 48.39},
+    "current": {"passed": 1, "partial": 29, "incomplete": 1, "points": 15.5, "denominator": 31, "percent": 50.0},
+    "formula": "(passed*1 + partial*0.5 + incomplete*0) / 31 * 100",
+    "changed_item": 7,
+    "changed_item_status": "實測通過",
+    "reason": "Existing successful same-date archive workflow, pushed immutable snapshot and close-feed files, subsequent idempotent backup/performance refresh, and targeted integrity/export tests were not counted in the prior report.",
+    "90_percent_points_needed": 28,
+    "points_remaining": 12.5
+  },
+  "archive_evidence": {
+    "trading_date": "2026-11-04",
+    "primary_workflow_run_id": 41827035871,
+    "primary_workflow_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/41827035871",
+    "archive_commit": "27cb3c8",
+    "pick_snapshot_path": "data/pick_snapshots/2026-11-04.json",
+    "pick_snapshot_sha256": "802fd984960e08119e0078c6ffa2fef3ae99367a138c8096324e1225beb0a91f",
+    "pick_count": 22,
+    "snapshot_captured_at_taipei": "2026-11-04T16:52:00+08:00",
+    "official_close_path": "data/feed_closes/2026-11-04.json",
+    "official_close_sha256": "c72e91afcb3ef8805bb42f01087e491d077386ff91139ae55378148b1ea8a130",
+    "official_close_coverage": 1973,
+    "backup_run_id": 41866869015,
+    "performance_refresh_run_id": 41833950419,
+    "performance_refresh_recorded_pick_count": 289
+  },
+  "targeted_verification": {
+    "python_test_commands": [
+      {"command": "python -m unittest discover -s tests -p 'test_export_daily_picks.py' -v", "passed": 7},
+      {"command": "python -m unittest discover -s tests -p 'test_export_official_closes.py' -v", "passed": 3},
+      {"command": "python -m unittest discover -s tests -p 'test_collect_feed_closes.py' -v", "passed": 6}
+    ],
+    "node_test_commands": [
+      {"command": "node tests/pick_archive.test.cjs", "result": "passed; verified 289 frozen picks"},
+      {"command": "node scripts/check-pick-validation.cjs", "result": "passed; 289 pick integrity"},
+      {"command": "node scripts/test-pick-validation.cjs", "result": "passed"}
+    ],
+    "python_test_count": 16,
+    "application_code_changed": false,
+    "market_data_changed": false,
+    "deployment_triggered": false,
+    "personal_holdings_or_credentials_published": false
+  },
+  "attachments": {
+    "image_count": 4,
+    "visible_reference_date": "2026-04-20",
+    "used_as_current_market_or_performance_evidence": false
+  },
+  "out_of_sample_performance": {
+    "qualifying_closed_trades": 0,
+    "win_rate_threshold_80_percent_met": false,
+    "evidence_status": "證據不足"
+  }
+}
