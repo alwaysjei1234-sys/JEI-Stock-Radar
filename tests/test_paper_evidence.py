@@ -39,6 +39,41 @@ class PaperEvidenceTests(unittest.TestCase):
             with self.subTest(change=change),self.assertRaises(ValueError):
                 trade_metrics([{**trade(100,106),**change}],FEE,SELL_TAX)
 
+    def test_minimum_brokerage_can_turn_a_small_gain_into_a_loss(self):
+        trades=[trade(100,101,10)]
+        before=copy.deepcopy(trades)
+        self.assertGreater(trades[0]['net'],0)
+        scenarios=trade_metrics(trades,FEE,SELL_TAX)['minimum_fee_scenarios']
+        floor20=next(x for x in scenarios if x['minimum_fee_per_side_ntd']==20 and x['slippage_per_side_pct']==0)
+        # Buy 1000+20; sell 1010-20-3.03 tax = 986.97, net -33.03.
+        self.assertEqual(floor20['mean_net_pnl_ntd'],-33.03)
+        self.assertAlmostEqual(floor20['mean_net_return_pct'],100*(-33.03)/1020,places=3)
+        self.assertEqual(floor20['win_rate_pct'],0)
+        self.assertEqual(floor20['affected_trades'],1)
+        self.assertEqual(trades,before)
+
+    def test_minimum_fee_keeps_tax_separate_and_large_trades_unchanged(self):
+        scenarios=trade_metrics([trade(100,101,1000)],FEE,SELL_TAX)['minimum_fee_scenarios']
+        no_slip=[x for x in scenarios if x['slippage_per_side_pct']==0]
+        for row in no_slip:
+            self.assertEqual(row['affected_trades'],0)
+            self.assertEqual(row['additional_commission_ntd'],0)
+            self.assertEqual(row['mean_net_pnl_ntd'],trade(100,101,1000)['net'])
+        stressed=next(x for x in scenarios if x['minimum_fee_per_side_ntd']==20 and x['slippage_per_side_pct']==0.1)
+        self.assertLess(stressed['mean_net_pnl_ntd'],no_slip[-1]['mean_net_pnl_ntd'])
+        # A 1 TWD floor still charges sell tax on top, never inside the floor.
+        tiny=trade_metrics([trade(10,10,1)],FEE,SELL_TAX)['minimum_fee_scenarios'][0]
+        self.assertEqual(tiny['mean_net_pnl_ntd'],-2.03)
+
+    def test_empty_minimum_fee_scenarios_do_not_fabricate_metrics(self):
+        rows=trade_metrics([],FEE,SELL_TAX)['minimum_fee_scenarios']
+        self.assertEqual(len(rows),4)
+        for row in rows:
+            self.assertEqual(row['closed'],0)
+            self.assertIsNone(row['win_rate_pct'])
+            self.assertIsNone(row['mean_net_return_pct'])
+            self.assertIsNone(row['mean_net_pnl_ntd'])
+
     def test_lifetime_trades_and_early_drawdown_survive_daily_update(self):
         state=initial_state();state['last_processed_day']=DAY1
         for account in state['strategies'].values():

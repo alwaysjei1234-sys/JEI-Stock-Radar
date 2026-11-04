@@ -1550,8 +1550,54 @@
               "mean_net_return_pct": -3.813
             }
           ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 56,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 25.0,
+              "mean_net_return_pct": -3.427,
+              "mean_net_pnl_ntd": -3339.23,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 56,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 25.0,
+              "mean_net_return_pct": -3.62,
+              "mean_net_pnl_ntd": -3534.12,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 56,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 25.0,
+              "mean_net_return_pct": -3.427,
+              "mean_net_pnl_ntd": -3339.23,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 56,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 25.0,
+              "mean_net_return_pct": -3.62,
+              "mean_net_pnl_ntd": -3534.12,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
           "qualification": "research_only",
-          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。"
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
         },
         "max_drawdown_pct": 19.869
       }
@@ -2408,8 +2454,54 @@
               "mean_net_return_pct": -4.03
             }
           ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 55,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 21.82,
+              "mean_net_return_pct": -3.645,
+              "mean_net_pnl_ntd": -3503.63,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 55,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 21.82,
+              "mean_net_return_pct": -3.838,
+              "mean_net_pnl_ntd": -3695.65,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 55,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 21.82,
+              "mean_net_return_pct": -3.645,
+              "mean_net_pnl_ntd": -3503.63,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 55,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 21.82,
+              "mean_net_return_pct": -3.838,
+              "mean_net_pnl_ntd": -3695.65,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
           "qualification": "research_only",
-          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。"
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
         },
         "max_drawdown_pct": 20.439
       }
@@ -3230,8 +3322,54 @@
               "mean_net_return_pct": -4.736
             }
           ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 52,
+              "affected_trades": 3,
+              "additional_commission_ntd": 5.07,
+              "win_rate_pct": 13.46,
+              "mean_net_return_pct": -4.447,
+              "mean_net_pnl_ntd": -3540.47,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 52,
+              "affected_trades": 3,
+              "additional_commission_ntd": 5.07,
+              "win_rate_pct": 13.46,
+              "mean_net_return_pct": -4.638,
+              "mean_net_pnl_ntd": -3711.31,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 52,
+              "affected_trades": 5,
+              "additional_commission_ntd": 162.37,
+              "win_rate_pct": 13.46,
+              "mean_net_return_pct": -6.231,
+              "mean_net_pnl_ntd": -3543.49,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 52,
+              "affected_trades": 5,
+              "additional_commission_ntd": 162.37,
+              "win_rate_pct": 13.46,
+              "mean_net_return_pct": -6.419,
+              "mean_net_pnl_ntd": -3714.33,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
           "qualification": "research_only",
-          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。"
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
         },
         "max_drawdown_pct": 17.723
       }
@@ -4036,8 +4174,54 @@
               "mean_net_return_pct": -4.587
             }
           ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 49,
+              "affected_trades": 3,
+              "additional_commission_ntd": 4.98,
+              "win_rate_pct": 18.37,
+              "mean_net_return_pct": -4.286,
+              "mean_net_pnl_ntd": -3333.59,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 49,
+              "affected_trades": 3,
+              "additional_commission_ntd": 4.98,
+              "win_rate_pct": 18.37,
+              "mean_net_return_pct": -4.477,
+              "mean_net_pnl_ntd": -3505.65,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 49,
+              "affected_trades": 4,
+              "additional_commission_ntd": 156.79,
+              "win_rate_pct": 18.37,
+              "mean_net_return_pct": -5.952,
+              "mean_net_pnl_ntd": -3336.69,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 49,
+              "affected_trades": 4,
+              "additional_commission_ntd": 156.79,
+              "win_rate_pct": 18.37,
+              "mean_net_return_pct": -6.14,
+              "mean_net_pnl_ntd": -3508.75,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
           "qualification": "research_only",
-          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。"
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
         },
         "max_drawdown_pct": 16.686
       }
