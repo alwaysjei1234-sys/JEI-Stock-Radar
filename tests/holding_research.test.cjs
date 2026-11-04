@@ -166,3 +166,10 @@ const missing=JSON.parse(JSON.stringify(workingFeed));missing.records['6150'].st
 research.renderWorkingCapital({getElementById:()=>workingTarget,createElement:()=>({textContent:''})},missing,'2026-11-04');
 assert.match(nodes[0].textContent,/未取得/);
 console.log('PASS official working capital: period, unit, freshness, missing values, inventory flag and text-only rendering');
+const edgeWorking=JSON.parse(JSON.stringify(working));
+edgeWorking.current.inventory=edgeWorking.previous.inventory*1.199996;
+edgeWorking.current.revenue_ytd=edgeWorking.previous.revenue_ytd;
+edgeWorking.current.receivables=edgeWorking.previous.receivables;
+assert.doesNotMatch(research.workingCapitalDetail(edgeWorking),/查核提醒：/,'display rounding cannot promote a gap below 20pp');
+edgeWorking.current.inventory=edgeWorking.previous.inventory*1.2;
+assert.match(research.workingCapitalDetail(edgeWorking),/查核提醒：存貨/,'20pp boundary tolerates floating point representation only');

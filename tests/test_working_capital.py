@@ -67,6 +67,12 @@ class WorkingCapitalTests(unittest.TestCase):
         r=self.parse(b)
         self.assertNotIn('inventory_growth_exceeds_revenue',r['alerts'])
 
+    def test_display_rounding_never_promotes_a_subthreshold_gap(self):
+        b=self.filing().replace(b'>200</ix:',b'>119.9996</ix:').replace(b'>900</ix:',b'>1000</ix:')
+        r=self.parse(b)
+        self.assertEqual(r['yoy_pct']['inventory'],20.0)
+        self.assertNotIn('inventory_growth_exceeds_revenue',r['alerts'])
+
     def test_future_reporting_period_and_xml_entities_refused(self):
         for b in (b'<!DOCTYPE html>'+self.filing(),b'<!ENTITY foo "bar">'+self.filing()):
             with self.assertRaises(ValueError):self.parse(b)
