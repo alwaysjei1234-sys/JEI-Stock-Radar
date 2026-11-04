@@ -15,6 +15,7 @@ const server=http.createServer(async(req,res)=>{
   try{
     const fixtureRoutes={
       '/remote/free_research.json':'free_research.json',
+      '/remote/working_capital.json':'working_capital.json',
       '/remote/daily_news_watch.json':'daily_news_watch.json',
       '/remote/video_upload_watch.json':'video_upload_watch.json'
     };
@@ -189,6 +190,7 @@ async function run(){
   assert.doesNotMatch(await page.locator('#attackList').innerText(),/其他熱度 50/,'unmeasured sector heat must not look like a market observation');
   await page.locator('[data-go="home"]').first().click();
   const health=await context.newPage();
+  await health.clock.setFixedTime(new Date('2026-11-04T12:55:00+08:00'));
   await health.goto(base+'holding-health.html',{waitUntil:'domcontentloaded'});
   assert.equal(await health.locator('main section').count(),8);
   assert.match(await health.locator('body').innerText(),/免費官方 feed|免費官方資料/);
@@ -200,6 +202,14 @@ async function run(){
   assert.match(await health.locator('#researchTickerResult').innerText(),/月營收/);
   assert.match(await health.locator('#researchTickerResult').innerText(),/融資餘額/);
   assert.match(await health.locator('#researchTickerResult').innerText(),/官方估值快照/);
+  await health.waitForFunction(()=>/6150.*存貨 1645\.831/.test(document.querySelector('#workingCapitalRows')?.textContent||''));
+  await health.locator('#workingCapitalRows').locator('..').locator('summary').click();
+  assert.match(await health.locator('#workingCapitalRows').innerText(),/查核提醒：存貨/);
+  await health.locator('#researchTicker').fill('6150');
+  await health.locator('#researchTickerRun').click();
+  assert.match(await health.locator('#researchTickerResult').innerText(),/存貨 1645\.831/);
+  assert.match(await health.locator('#researchTickerResult').innerText(),/同期間累計營收/);
+  assert.match(await health.locator('#researchTickerResult').innerText(),/不保證最新申報/);
   const researchLinks=health.locator('#researchSourceLinks a');
   assert.ok(await researchLinks.count()>=10,'ticker lookup should expose several free source entry points');
   assert.ok((await health.locator('#researchSourceLinks').innerText()).includes('華南永昌'));

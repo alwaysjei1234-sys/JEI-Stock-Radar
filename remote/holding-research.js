@@ -78,6 +78,47 @@
       sources: feed.sources || {}, generatedAt: feed.generatedAt || null,
       status: !revenue && !margin && !valuation ? '官方免費資料尚未提供此股可用欄位。' : null };
   }
+  function workingCapitalFor(feed, code, today) {
+    const item = feed && feed.schema === 1 && feed.rule_version === 'working-capital-yoy-v1' && feed.records && feed.records[code];
+    if (!item || item.code !== code || !['comparable', 'partial'].includes(item.status)) return null;
+    if (item.unit !== 'TWD' || item.revenue_basis !== 'year_to_date' ||
+        !/^20\d{2}-Q[1-4]$/.test(item.period || '') || !validDay(item.period_end) ||
+        !validDay(item.comparison_period_end) || item.period_end > today ||
+        freshness(String(item.observed_at || '').slice(0, 10), today, 7).state !== 'dated') return null;
+    const year = Number(item.period.slice(0, 4)), month = Number(item.period.slice(-1)) * 3;
+    const end = y => `${y}-${String(month).padStart(2, '0')}-${new Date(Date.UTC(y, month, 0)).getUTCDate()}`;
+    if (item.period_end !== end(year) || item.comparison_period_end !== end(year - 1)) return null;
+    for (const group of ['current', 'previous']) {
+      if (!item[group] || Object.values(item[group]).some(v => typeof v !== 'number' || !Number.isFinite(v) || v < 0)) return null;
+    }
+    return item;
+  }
+  function workingCapitalDetail(item) {
+    if (!item) return '營運資金明細未取得、過期或未驗證；不推算存貨與應收異常。';
+    const money = v => typeof v === 'number' && Number.isFinite(v) ? (v / 1e6).toFixed(3) : '缺值';
+    const growth = key => {
+      const a = item.current[key], b = item.previous[key];
+      return typeof a === 'number' && typeof b === 'number' && b > 0 ? 100 * (a / b - 1) : null;
+    };
+    const pct = n => n == null ? '缺值' : `${n.toFixed(2)}%`;
+    const rev = growth('revenue_ytd');
+    const alerts = ['inventory', 'receivables'].filter(k => growth(k) > 0 && rev != null && growth(k) - rev >= 20)
+      .map(k => k === 'inventory' ? '存貨' : '應收帳款');
+    return `官方合併報表 ${item.period}｜期末 ${item.period_end}／比較 ${item.comparison_period_end}｜新台幣百萬元：存貨 ${money(item.current.inventory)}（年增 ${pct(growth('inventory'))}）、應收帳款淨額 ${money(item.current.receivables)}（年增 ${pct(growth('receivables'))}）、同期間累計營收 ${money(item.current.revenue_ytd)}（年增 ${pct(rev)}）。${alerts.length ? `查核提醒：${alerts.join('、')}增加且年增率高於累計營收至少20百分點。` : '未觸發20百分點查核提醒；缺值不代表正常。'}依既有官方快照季度，不保證最新申報；觀測 ${String(item.observed_at).slice(0, 10)}，非公告日；非交易訊號，自由現金流仍未提供。`;
+  }
+  function renderWorkingCapital(doc, feed, today) {
+    const target = doc.getElementById('workingCapitalRows');
+    if (!target) return;
+    target.replaceChildren();
+    const records = feed && feed.records || {};
+    const codes = Object.keys(records).filter(code => /^\d{4}$/.test(code)).sort();
+    if (!codes.length) { target.textContent = '官方營運資金資料尚未同步；不要求手動補值。'; return; }
+    codes.forEach(code => {
+      const row = doc.createElement('p');
+      row.textContent = `${code}｜${workingCapitalDetail(workingCapitalFor(feed, code, today))}`;
+      target.append(row);
+    });
+  }
   function scenario(input) {
     const values = ['price', 'bull', 'baseLow', 'baseHigh', 'bear'].map(key => Number(input && input[key]));
     if (values.some(value => !Number.isFinite(value) || value <= 0)) return { ok: false, message: '請填入五個大於 0 的價格。' };
@@ -140,7 +181,7 @@
       { title: '美股／國際環境', status: status(snapshot && snapshot.usFreshness, !!(snapshot && snapshot.usDate)), source: 'JEI 盤前／盤後摘要', asOf: snapshot && snapshot.usDate || '未知', detail: snapshot && snapshot.linkage || '國際脈絡資料缺值，不作方向推論。' },
       { title: '候選模型與價格參考', status: status(stock.freshness, !!candidate, !candidate || candidate.score == null), source: 'JEI 候選快照', asOf: stock.date || '未知', detail: candidate ? `候選分類 ${candidate.category} #${candidate.rank}；模型分數 ${candidate.score ?? '缺值'}；快照價格 ${candidate.price ?? '缺值'}。分數不是目標價或買賣訊號。` : '目前候選清單未收錄，不代表公司基本面判定。' },
       { title: '產業與族群', status: status(stock.freshness, !!stock.sector, !stock.sector || stock.sectorScore == null), source: 'JEI 族群資料', asOf: stock.date || '未知', detail: `族群 ${stock.sector || '未分類'}；族群分數 ${stock.sectorScore ?? '缺值'}。` },
-      { title: '營收與財報品質', status: status(revenue && evidence.revenueFreshness || financials && evidence.financialFreshness, !!revenue || !!financials, !(revenue && financials && dated(evidence.revenueFreshness) && dated(evidence.financialFreshness))), source: 'TWSE／TPEx／公開資訊觀測站免費資料', asOf: [revenue && revenue.publishedAt, financials && financials.publishedAt].filter(Boolean).join('、') || '未知', detail: `營收年增 ${revenue && revenue.monthlyYoYPct != null ? `${revenue.monthlyYoYPct}%` : '缺值'}；${financials && financials.availability === 'retained_previous_snapshot' ? '本次端點缺漏，保留前次季度；' : ''}一般產業 EPS ${financials && financials.eps != null ? financials.eps : '缺值'}、毛利率 ${financials && financials.grossMarginPct != null ? `${financials.grossMarginPct}%` : '缺值'}。自由現金流、存貨與應收帳款仍需查報表。` },
+      { title: '營收與財報品質', status: status(revenue && evidence.revenueFreshness || financials && evidence.financialFreshness, !!revenue || !!financials, !(revenue && financials && dated(evidence.revenueFreshness) && dated(evidence.financialFreshness))), source: 'TWSE／TPEx／公開資訊觀測站免費資料', asOf: [revenue && revenue.publishedAt, financials && financials.publishedAt].filter(Boolean).join('、') || '未知', detail: `營收年增 ${revenue && revenue.monthlyYoYPct != null ? `${revenue.monthlyYoYPct}%` : '缺值'}；${financials && financials.availability === 'retained_previous_snapshot' ? '本次端點缺漏，保留前次季度；' : ''}一般產業 EPS ${financials && financials.eps != null ? financials.eps : '缺值'}、毛利率 ${financials && financials.grossMarginPct != null ? `${financials.grossMarginPct}%` : '缺值'}。${workingCapitalDetail(evidence && evidence.workingCapital)}` },
       { title: '估值與同業比較', status: status(evidence && evidence.valuationFreshness, !!valuation, !valuation || !dated(evidence.valuationFreshness)), source: 'TWSE／TPEx 免費估值快照', asOf: valuation && valuation.marketDate || '未知', detail: `本益比 ${valuation && valuation.pe != null ? valuation.pe : '缺值'}；殖利率 ${valuation && valuation.dividendYieldPct != null ? `${valuation.dividendYieldPct}%` : '缺值'}；未接入同業同口徑比較。` },
       { title: '法人／融資籌碼', status: status(evidence && evidence.marginFreshness || stock.freshness, !!stock.institutional || !!margin, !(stock.institutional && margin)), source: 'JEI 個股快照及 TWSE／TPEx 免費資料', asOf: stock.date || '未知', detail: `三大法人 ${stock.institutional ? `${stock.institutional.total} 股（公告日尚未獨立標示）` : '缺值'}；融資融券 ${margin ? `資料日 ${margin.marketDate || '未知'}` : '缺值'}；不推測大戶意圖。` },
       { title: '催化、事件與風險清單', status: status(snapshot && snapshot.freshness, news.length > 0, true), source: '公開新聞摘要＋官方公告待查', asOf: snapshot && snapshot.usDate || '未知', detail: `${newsText} 請逐項確認公司公告；未連結個股的新聞不能當成催化證據。` }
@@ -305,7 +346,17 @@
     if (lock) lock.addEventListener('click', clearEphemeral);
     const globalTarget = typeof window !== 'undefined' ? window : globalThis;
     if (globalTarget && globalTarget.addEventListener) globalTarget.addEventListener('pagehide', clearEphemeral);
-    let latestSystem = null, latestBrief = null, latestNews = [], latestFree = null, latestSources = null;
+    let latestSystem = null, latestBrief = null, latestNews = [], latestFree = null, latestSources = null, latestWorking = null;
+    // Load independently: an unavailable detailed filing feed cannot block the existing research page.
+    if (fetcher) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      Promise.resolve().then(() => fetcher('./working_capital.json', { cache: 'no-store', signal: controller.signal }))
+        .then(r => { if (!r.ok) throw Error('working capital'); return r.json(); })
+        .then(feed => { latestWorking = feed; renderWorkingCapital(doc, feed, dayInTaipei()); })
+        .catch(() => renderWorkingCapital(doc, null, dayInTaipei()))
+        .finally(() => clearTimeout(timer));
+    }
     if (fetcher) Promise.allSettled([fetcher('./system.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('market'); return r.json(); }),
       fetcher('./brief.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('brief'); return r.json(); }),
       fetcher('./free_research.json', { cache: 'no-store' }).then(r => { if (!r.ok) throw Error('free research'); return r.json(); }),
@@ -394,7 +445,9 @@
           card.append(link, doc.createElement('br'), detail); sourceContainer.append(card);
         });
       }
+      if (evidence) evidence.workingCapital = workingCapitalFor(latestWorking, found.code, dayInTaipei());
       const parts = [`${found.code} ${found.name}`, `JEI 快照資料日 ${found.date || '未知'}`, found.freshness.state === 'dated' ? '日期可用' : found.message || '日期待驗證', '非券商即時報價，不能視為下單訊號'];
+      parts.push(workingCapitalDetail(evidence && evidence.workingCapital));
       if (found.candidate) parts.push(`候選：${found.candidate.category} #${found.candidate.rank}｜模型分數 ${found.candidate.score ?? '缺值'}｜價格 ${found.candidate.price ?? '缺值'}${found.candidate.changePct == null ? '' : `｜漲跌 ${found.candidate.changePct}%`}`);
       else parts.push('今日公開候選清單未收錄；不代表基本面或投資價值判定。');
       parts.push(`族群 ${found.sector || '未分類'}｜族群分數 ${found.sectorScore ?? '缺值'}`);
@@ -446,5 +499,5 @@
       set('journalResult', stats.count ? `${stats.count} 筆有效交易｜毛勝率 ${fmt(stats.winRate)}%｜平均獲利 ${fmt(stats.avgWin)}｜平均虧損 ${fmt(stats.avgLoss)}｜毛獲利因子 ${fmt(stats.profitFactor)}｜累積序列最大回撤 ${fmt(stats.maxDrawdown)}。未扣費稅，樣本不代表未來。` : '沒有有效交易資料；請使用日期,代號,進場價,出場價,股數格式。');
     });
   }
-  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, scenario, journalStats, parseJournal, sourceQueries, buildResearchBrief, renderSourceStatus, renderGooayeWatch, renderDailyNewsWatch, renderVideoUploadWatch, init });
+  return Object.freeze({ validDay, dayInTaipei, freshness, marketSnapshot, lookupStock, lookupFreeEvidence, workingCapitalFor, workingCapitalDetail, renderWorkingCapital, scenario, journalStats, parseJournal, sourceQueries, buildResearchBrief, renderSourceStatus, renderGooayeWatch, renderDailyNewsWatch, renderVideoUploadWatch, init });
 }));
