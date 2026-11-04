@@ -479,11 +479,13 @@ async function run(){
   await page.locator('#cloudRows tr').first().waitFor({state:'attached',timeout:15000});
   assert.equal(await page.locator('#cloudRows tr').count(),4);
   assert.equal(await page.locator('#cloudEvidenceRows tr').count(),4,'all four strategies expose diagnostic rows');
-  assert.equal(await page.locator('#cloudEvidenceRows tr').first().locator('td').count(),6);
+  assert.equal(await page.locator('#cloudEvidenceRows tr').first().locator('td').count(),7);
   assert.doesNotMatch(await page.locator('#cloudEvidenceRows').textContent(),/NaN|Infinity|undefined/);
   const evidenceFeed=JSON.parse(await fs.readFile(path.join(ROOT,'remote','strategy_performance.json'),'utf8'));
   const stress=evidenceFeed.strategies.fixed5.summary.evidence?.slippage_scenarios?.find(x=>x.slippage_per_side_pct===0.1);
   if(stress) assert.equal(await page.locator('#cloudEvidenceRows tr').first().locator('td').nth(4).textContent(),stress.mean_net_return_pct.toFixed(2)+'%');
+  const minimum=evidenceFeed.strategies.fixed5.summary.evidence?.minimum_fee_scenarios?.find(x=>x.minimum_fee_per_side_ntd===20&&x.slippage_per_side_pct===0.1);
+  assert.equal(await page.locator('#cloudEvidenceRows tr').first().locator('td').nth(6).textContent(),minimum?minimum.mean_net_return_pct.toFixed(2)+'%':'待驗證');
   assert.equal(await page.locator('#cloudRows tr').first().locator('td').count(),8,'cloud scorecard reports return and drawdown');
   assert.match(await page.locator('#cloudCompare').innerText(),/暫不排名|四策略比較/,'cloud status must state if sample is sufficient');
   assert.match(await page.locator('#cloudKpiStatus').innerText(),/樣本不足|可比較/);
