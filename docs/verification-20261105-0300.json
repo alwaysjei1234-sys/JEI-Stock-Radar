@@ -1,0 +1,205 @@
+{
+  "source_checks": [
+    {
+      "source": "TWSE_FMTQIK",
+      "url": "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?date=20261101&response=json",
+      "checked_at": "2026-11-05T03:02:13+08:00",
+      "http_status": 200,
+      "sha256": "a0ea60623bd0fccc0431a1ba5e576512610e8b00d57e97b74134bdedcddef1f7",
+      "last_row": [
+        "115/11/04",
+        "15,601,136,570",
+        "1,176,930,442,854",
+        "7,098,597",
+        "42,948.91",
+        "-358.63"
+      ]
+    },
+    {
+      "source": "TPEx_institutional",
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading",
+      "checked_at": "2026-11-05T03:02:21+08:00",
+      "http_status": 200,
+      "sha256": "658f59bf07758b90d017c7381c10010a860520cc1c69a01fb14eff5ab86e110c",
+      "rows": 918,
+      "dates": [
+        "1151104"
+      ]
+    },
+    {
+      "source": "MIS_sample",
+      "url": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw%7Ctse_2330.tw%7Cotc_6488.tw&json=1&delay=0",
+      "checked_at": "2026-11-05T03:02:30+08:00",
+      "http_status": 200,
+      "sha256": "77b061588b0d1008f4fb00a27ba60380c89afe92e57ea18c5760b0a973cddab4",
+      "rtcode": "0000",
+      "quotes": [
+        {
+          "c": "t00",
+          "ex": "tse",
+          "ch": "t00.tw",
+          "d": "20261104",
+          "t": "13:33:00",
+          "z": "42948.91",
+          "y": "43307.54"
+        },
+        {
+          "c": "2330",
+          "ex": "tse",
+          "ch": "2330.tw",
+          "d": "20261104",
+          "t": "13:30:00",
+          "z": "2260.0000",
+          "y": "2295.0000"
+        },
+        {
+          "c": "6488",
+          "ex": "otc",
+          "ch": "6488.tw",
+          "d": "20261104",
+          "t": "13:30:00",
+          "z": "619.0000",
+          "y": "685.0000"
+        }
+      ]
+    }
+  ],
+  "paper_metrics_recomputed": [
+    {
+      "strategy": "fixed5",
+      "closed": 56,
+      "wins": 14,
+      "win_rate_pct": 25.0,
+      "ci95": [
+        15.52,
+        37.69
+      ],
+      "mean_net_return_pct": -3.427,
+      "expectancy_ntd": -3339.23,
+      "max_drawdown_pct": 19.869,
+      "coverage": "9/9"
+    },
+    {
+      "strategy": "fixed7",
+      "closed": 55,
+      "wins": 12,
+      "win_rate_pct": 21.82,
+      "ci95": [
+        12.95,
+        34.37
+      ],
+      "mean_net_return_pct": -3.645,
+      "expectancy_ntd": -3503.63,
+      "max_drawdown_pct": 20.439,
+      "coverage": "9/9"
+    },
+    {
+      "strategy": "fixed10",
+      "closed": 52,
+      "wins": 7,
+      "win_rate_pct": 13.46,
+      "ci95": [
+        6.68,
+        25.27
+      ],
+      "mean_net_return_pct": -4.354,
+      "expectancy_ntd": -3540.37,
+      "max_drawdown_pct": 17.723,
+      "coverage": "9/9"
+    },
+    {
+      "strategy": "trailing",
+      "closed": 49,
+      "wins": 9,
+      "win_rate_pct": 18.37,
+      "ci95": [
+        9.98,
+        31.36
+      ],
+      "mean_net_return_pct": -4.205,
+      "expectancy_ntd": -3333.49,
+      "max_drawdown_pct": 16.686,
+      "coverage": "11/11"
+    }
+  ],
+  "signals": 75,
+  "new_trades": 0,
+  "qualified_oos_closed": 0,
+  "payload_replay": {
+    "replayed_report_date": "2026-11-04",
+    "source_date": "2026-11-03",
+    "blocks": 6,
+    "before_included": 4,
+    "after_included": 6,
+    "before_python_chars": 566,
+    "after_utf16_units": 1128,
+    "candidates_before": false,
+    "candidates_after": true,
+    "messages": 1,
+    "actually_sent": false
+  },
+  "index_and_stock_close_matches": 3,
+  "public_holdings_whitelist": 13,
+  "system_sha256": "43d9866b882c4165566d01c9b2af4d89667600dcab505e0f06ac6c2cd9f9e533",
+  "paper_sha256": "20922851be1ca3bcf7ae7b4c78aef05aa6991a7162b07eaacb67bcbd7ca67aaa",
+  "code_commit": "9ee4da3ece68a9e0e126aa2dd11bfce5761ee344",
+  "brief_commit": "960fdf3feeb1eafa6891ceb490dc82d99f97bdd7",
+  "python_tests_passed": 437,
+  "new_payload_tests_passed": 7,
+  "before_new_case_failures": 5,
+  "before_new_case_errors": 1,
+  "formal_readback": [
+    {
+      "file": "system.json",
+      "http_status": 200,
+      "matches_original": true,
+      "sha256": "43d9866b882c4165566d01c9b2af4d89667600dcab505e0f06ac6c2cd9f9e533",
+      "data_date": "2026-11-04",
+      "status_updated_at": "2026-11-05 02:03"
+    },
+    {
+      "file": "strategy_performance.json",
+      "http_status": 200,
+      "matches_original": true,
+      "sha256": "20922851be1ca3bcf7ae7b4c78aef05aa6991a7162b07eaacb67bcbd7ca67aaa",
+      "data_date": null,
+      "status_updated_at": null
+    },
+    {
+      "file": "pick_validation.json",
+      "http_status": 200,
+      "matches_original": true,
+      "sha256": "2fe90469589066c9b4dc1dcc86da5b5888fb48fd0d976e429cc3e5d4c9cbf63a",
+      "data_date": null,
+      "status_updated_at": null
+    },
+    {
+      "file": "line_status.json",
+      "http_status": 200,
+      "matches_original": true,
+      "sha256": "d0d93aa42be405dfe5bc8c68300c27d7d5d82b1f2a2714d337eb385d17dfe651",
+      "data_date": null,
+      "status_updated_at": null
+    }
+  ],
+  "code_deployment": "CANCELED",
+  "data_deployment": "READY",
+  "production_deployment_id": "dpl_HSnq15mYaF1ipm8tiuWSQop18Lf1",
+  "ci_success": [
+    41893143399,
+    41893143447,
+    41893143480,
+    41893143398,
+    41893143387
+  ],
+  "line_actually_sent": false,
+  "android_device": "not_verified",
+  "fixed31": {
+    "passed": 0,
+    "partial": 30,
+    "incomplete": 1,
+    "numerator": 15,
+    "denominator": 31,
+    "pct": 48.39
+  }
+}
