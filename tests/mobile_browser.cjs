@@ -499,6 +499,20 @@ async function run(){
   assert.match(await page.locator('#pickRows').innerText(),/尚待第 7 個交易日/);
   console.log('PASS forward-only pick validation scorecard: 3-day complete, 7-day pending, no HTML injection');
 
+  await page.goto(base+'index.html',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>typeof systemFetchPending!=='undefined'&&!systemFetchPending);
+  await page.evaluate(()=>{
+    system={data_date:'2026-11-03',universe:[{code:'6150',name:'測試<img src=x>'}],market:{live_valid:false,no_new_picks:true,partial_live:{complete:false,quotes:[{code:'6150',price:72.9,quote_time:'2026-11-04 09:59:00'}]}}};
+    renderPartialQuotes(new Date('2026-11-04T10:00:00+08:00'));
+  });
+  assert.equal(await page.locator('#partialQuotesPanel').isVisible(),true);
+  assert.match(await page.locator('#partialQuotes').innerText(),/6150.*72.9/);
+  assert.equal(await page.locator('#partialQuotes img').count(),0);
+  assert.match(await page.locator('#partialQuotesNote').innerText(),/暫停新選股/);
+  await page.evaluate(()=>renderPartialQuotes(new Date('2026-11-04T10:10:01+08:00')));
+  assert.equal(await page.locator('#partialQuotesPanel').isVisible(),false);
+  console.log('PASS partial quote panel: dated prices, text-only names and automatic expiry');
+
   await page.goto(base+'paper.html',{waitUntil:'domcontentloaded'});
   await page.locator('h1').waitFor({state:'visible'});
   assert.match(await page.locator('h1').innerText(),/當沖/);

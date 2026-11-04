@@ -1327,6 +1327,8 @@ def main():
                 "stale":True,
                 "historical_readonly":True,
                 "live_valid":False,
+                "live_count":live_count,
+                "live_coverage_pct":round(live_coverage*100,1),
                 "no_new_picks":True,
                 "market_data_as_of":retained["data_date"],
                 "status_updated_at":stamp,

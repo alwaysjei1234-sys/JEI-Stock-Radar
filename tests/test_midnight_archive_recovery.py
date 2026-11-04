@@ -87,4 +87,16 @@ class MidnightArchiveRecoveryTests(unittest.TestCase):
             self.assertIn('週末',snapshot['market']['session_reason'])
             self.assertFalse(snapshot['market']['live_diagnostics']['attempted'])
 
+    def test_partial_live_metrics_match_canonical_fields_without_enabling_signals(self):
+        def partial(rows):
+            rows[0].update(live=True,quote_time='2026-11-04 09:05:00')
+            return rows,1,None,[],{}
+        snapshots=self.exercise([datetime(2026,11,4,9,5,tzinfo=TZ)],live_impl=partial)
+        market=snapshots[0]['market']
+        self.assertEqual(market['live_count'],market['partial_live']['verified_count'])
+        self.assertEqual(market['live_count'],market['live_diagnostics']['valid_trades'])
+        self.assertEqual(market['live_coverage_pct'],market['partial_live']['coverage_pct'])
+        self.assertFalse(market['live_valid'])
+        self.assertTrue(market['no_new_picks'])
+
 if __name__=='__main__':unittest.main()
