@@ -103,12 +103,13 @@ def parse_filing(content,code,year,quarter,today):
         buckets[end][field]=number
     current,previous=(buckets[end] for end in ends)
     if not any(current.values()):raise ValueError('No matching consolidated facts')
-    growth={key:round(100*(current[key]/previous[key]-1),3)
+    raw_growth={key:100*(current[key]/previous[key]-1)
             if key in current and previous.get(key,0)>0 else None for key in FIELDS}
+    growth={key:round(value,3) if value is not None else None for key,value in raw_growth.items()}
     alerts=[]
     for key in ('inventory','receivables'):
-        if (growth[key] is not None and growth['revenue_ytd'] is not None
-                and growth[key]>0 and growth[key]-growth['revenue_ytd']>=20):
+        if (raw_growth[key] is not None and raw_growth['revenue_ytd'] is not None
+                and raw_growth[key]>0 and raw_growth[key]-raw_growth['revenue_ytd']>=20-1e-9):
             alerts.append(key+'_growth_exceeds_revenue')
     complete=all(k in current and k in previous and growth[k] is not None for k in FIELDS)
     return {'code':code,'period':f'{year}-Q{quarter}','period_end':ends[0],

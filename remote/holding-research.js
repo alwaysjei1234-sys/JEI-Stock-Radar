@@ -102,7 +102,7 @@
     };
     const pct = n => n == null ? '缺值' : `${n.toFixed(2)}%`;
     const rev = growth('revenue_ytd');
-    const alerts = ['inventory', 'receivables'].filter(k => growth(k) > 0 && rev != null && growth(k) - rev >= 20)
+    const alerts = ['inventory', 'receivables'].filter(k => growth(k) > 0 && rev != null && growth(k) - rev >= 20 - 1e-9)
       .map(k => k === 'inventory' ? '存貨' : '應收帳款');
     return `官方合併報表 ${item.period}｜期末 ${item.period_end}／比較 ${item.comparison_period_end}｜新台幣百萬元：存貨 ${money(item.current.inventory)}（年增 ${pct(growth('inventory'))}）、應收帳款淨額 ${money(item.current.receivables)}（年增 ${pct(growth('receivables'))}）、同期間累計營收 ${money(item.current.revenue_ytd)}（年增 ${pct(rev)}）。${alerts.length ? `查核提醒：${alerts.join('、')}增加且年增率高於累計營收至少20百分點。` : '未觸發20百分點查核提醒；缺值不代表正常。'}依既有官方快照季度，不保證最新申報；觀測 ${String(item.observed_at).slice(0, 10)}，非公告日；非交易訊號，自由現金流仍未提供。`;
   }
