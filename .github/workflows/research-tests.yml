@@ -20,6 +20,7 @@ on:
       - 'remote/index.html'
       - 'tests/**'
       - 'scripts/update_pick_validation.py'
+      - 'scripts/market_sessions.py'
       - 'scripts/pick_risk_metrics.py'
       - 'remote/pick_history.json'
       - 'remote/pick_validation.json'
@@ -44,6 +45,7 @@ on:
       - 'scripts/update_gooaye_watch.py'
       - 'tests/**'
       - 'scripts/update_pick_validation.py'
+      - 'scripts/market_sessions.py'
       - 'scripts/pick_risk_metrics.py'
       - 'remote/pick_history.json'
       - 'remote/pick_validation.json'
@@ -75,7 +77,7 @@ jobs:
       - name: Frozen pick archive integrity
         run: node tests/pick_archive.test.cjs
       - name: Python pick validation
-        run: python3 -m unittest discover -s tests -p test_pick_validation.py
+        run: python3 -m unittest discover -s tests -p 'test_pick*.py'
       - name: Forecast audit
         run: node tests/forecast_audit.test.cjs
       - name: Target consensus

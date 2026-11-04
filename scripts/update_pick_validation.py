@@ -12,6 +12,7 @@ import statistics
 from scripts.pick_risk_metrics import max_close_drawdown, duplicate_signal_summary
 from scripts.public_holding_signals import is_safe_public_holdings
 from scripts.corporate_actions import validated_actions, actions_between
+from scripts.market_sessions import next_expected_session
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -113,13 +114,24 @@ def net_percent(start, finish):
 def compile_report(frozen, archive, updated_at):
     days_data = archive["days"]
     corporate_actions=validated_actions(archive)
-    days = sorted(k for k,v in days_data.items()
+    official_days = sorted(k for k,v in days_data.items()
                   if isinstance(k,str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}",k)
                   and isinstance(v,dict)
                   and sum(quote(v,c) is not None for c in v)>=500)
+    # A whole missing/low-coverage session cannot shorten a fixed horizon.
+    # The calendar supplies missing slots, never invented prices. Existing
+    # verified observations remain the authority for actual archived dates.
+    days_data={day:days_data[day] for day in official_days}
+    session_days=set(official_days)
+    for left,right in zip(official_days,official_days[1:]):
+        expected=next_expected_session(left)
+        while expected is not None and expected<right:
+            session_days.add(expected)
+            expected=next_expected_session(expected)
+    days=sorted(session_days)
     observed = []
     for p in frozen:
-        if p["day"] not in days:
+        if p["day"] not in days_data:
             continue
         first = quote(days_data[p["day"]], p["code"])
         if first is None or abs(first/p["signal_close"]-1) > 0.005:
@@ -133,12 +145,12 @@ def compile_report(frozen, archive, updated_at):
                 progression.append({"trading_days":horizon, "status":"pending"})
                 continue
             last_day = days[final_idx]
-            last_price = quote(days_data[last_day],p["code"])
+            last_price = quote(days_data.get(last_day,{}),p["code"])
             if last_price is None:
                 progression.append({"trading_days":horizon, "status":"missing_price",
                                     "end_day":last_day})
                 continue
-            closes = [quote(days_data[d],p["code"]) for d in days[origin_idx+1:final_idx+1]]
+            closes = [quote(days_data.get(d,{}),p["code"]) for d in days[origin_idx+1:final_idx+1]]
             close_returns = [(c/first-1)*100 for c in closes if c is not None]
             if len(close_returns) != horizon:
                 progression.append({"trading_days":horizon, "status":"missing_price",
@@ -164,7 +176,7 @@ def compile_report(frozen, archive, updated_at):
             })
         latest = None
         for d in reversed(days[origin_idx+1:]):
-            end = quote(days_data[d],p["code"])
+            end = quote(days_data.get(d,{}),p["code"])
             if end is not None:
                 latest={"day":d,"price":end,"gross_return_pct":round((end/first-1)*100,3)}
                 events=actions_between(corporate_actions,p['code'],p['day'],d)
@@ -199,7 +211,7 @@ def compile_report(frozen, archive, updated_at):
             }
     return {
         "schema":1, "mode":"forward_official_close_pick_validation",
-        "updated_at":updated_at, "latest_official_day":days[-1] if days else None,
+        "updated_at":updated_at, "latest_official_day":official_days[-1] if official_days else None,
         "horizons_trading_days":list(HORIZONS), "groups":groups, "picks":observed,
         "duplicate_signal_summary":duplicate_signal_summary(observed),
         "total_frozen_picks":len(frozen),
