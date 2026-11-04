@@ -6,6 +6,11 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 try:
+    from scripts.corporate_actions import action_note, validated_actions
+except ModuleNotFoundError as exc:
+    if exc.name not in ('scripts','scripts.corporate_actions'):raise
+    from corporate_actions import action_note, validated_actions
+try:
     from scripts.pattern_signals import build_pattern_signals, attach_verified_ohlcv
 except ModuleNotFoundError as exc:
     if exc.name not in ("scripts", "scripts.pattern_signals"):
@@ -245,6 +250,7 @@ def parse_tpex_dated_quotes(payload,date_obj):
             change=num(re.sub(r'<[^>]+>','',str(cell('漲跌'))))
             record={'date':expected,'market':'TPEX','code':code,'name':str(cell('名稱')).strip(),
                 'close':close,'change':change,'pct':pct_from_change(close,change),
+                'price_note':action_note(cell('漲跌')),
                 'open':num(cell('開盤')),'high':num(cell('最高')),'low':num(cell('最低')),
                 'volume':num(cell('成交股數')) or 0,'value':num(cell('成交金額(元)')) or 0}
             if record['volume']<0 or record['value']<0:continue
@@ -695,7 +701,7 @@ def norm_twse(r):
     close=num(r.get("ClosingPrice"));change=num(r.get("Change"))
     return {"date":str(r.get("Date","")).strip(),"code":str(r.get("Code","")).strip(),"name":str(r.get("Name","")).strip(),
             "open":num(r.get("OpeningPrice")),"high":num(r.get("HighestPrice")),"low":num(r.get("LowestPrice")),
-            "close":close,"change":change,"pct":pct_from_change(close,change),"volume":num(r.get("TradeVolume")) or 0,
+            "close":close,"change":change,"pct":pct_from_change(close,change),"price_note":action_note(r.get("Change")),"volume":num(r.get("TradeVolume")) or 0,
             "value":num(r.get("TradeValue")) or 0,"market":"TWSE"}
 
 def norm_tpex(r):
@@ -703,7 +709,7 @@ def norm_tpex(r):
     return {"date":str(pick(r,"Date") or "").strip(),"code":str(pick(r,"SecuritiesCompanyCode","Code","SecuritiesCode") or "").strip(),
             "name":str(pick(r,"CompanyName","SecuritiesCompanyName","Name") or "").strip(),
             "open":num(pick(r,"Open","OpeningPrice")),"high":num(pick(r,"High","HighestPrice")),"low":num(pick(r,"Low","LowestPrice")),
-            "close":close,"change":change,"pct":pct_from_change(close,change),
+            "close":close,"change":change,"pct":pct_from_change(close,change),"price_note":action_note(pick(r,"Change","ChangeAmount")),
             "volume":num(pick(r,"TradingShares","TradeVolume")) or 0,"value":num(pick(r,"TransactionAmount","TradeValue","TradingValue")) or 0,
             "market":"TPEX"}
 
@@ -721,6 +727,27 @@ def range_pct(s):
 
 def stock_only(s):
     return bool(re.fullmatch(r"\d{4}",s.get("code",""))) and s.get("close") and s.get("pct") is not None
+
+def official_close_observations(rows,day):
+    """Raw dated closes remain valid when an ex-rights note replaces change."""
+    if verified_archive_date(day) is None:raise ValueError('Invalid official close day')
+    prices={};events={}
+    for row in rows:
+        if (not isinstance(row,dict) or row.get('market') not in ('TWSE','TPEX')
+                or row.get('live') is True or normalize_exchange_date(row.get('date'))!=day):continue
+        code=row.get('code');raw=row.get('close')
+        if (not isinstance(code,str) or not re.fullmatch(r'[1-9][0-9]{3}',code)
+                or isinstance(raw,bool)):continue
+        price=num(raw)
+        if price is None or price<=0:continue
+        price=round(price,4)
+        if code in prices and prices[code]!=price:raise ValueError('Conflicting official close '+code)
+        prices[code]=price
+        note=action_note(row.get('price_note'))
+        if note:
+            if code in events and events[code]!=note:raise ValueError('Conflicting corporate action '+code)
+            events[code]=note
+    return prices,events
 
 def build_sector_stats(by_code):
     stats=[];stock_sector={}
@@ -1196,6 +1223,8 @@ def main():
                 errors.append(f"TPEx OpenAPI快取落後，已強制重抓 {len(fresh_tpex)} 檔")
         except Exception as e:errors.append("TPEx當日補資料:"+str(e))
 
+    # Freeze official source prices before MIS can mutate normalized rows.
+    official_prices,official_actions=official_close_observations(rows,today_iso)
     live_count=0;live_errors=[];taiex_live=None;live_stats={}
     # Session classification and quote collection are different: do not call final MIS
     # snapshots a live trading session after 13:30, and never trust an old quote date.
@@ -1792,14 +1821,17 @@ def main():
             archive=json.loads(DAILY_PRICES.read_text(encoding="utf-8")) if DAILY_PRICES.exists() else {}
             days=archive.get("days",{}) if isinstance(archive,dict) else {}
             if not isinstance(days,dict):days={}
-            quotes={x["code"]:round(float(x["close"]),4) for x in stocks
-                    if re.fullmatch(r"[1-9][0-9]{3}",x["code"])
-                    and x.get("close") and float(x["close"])>0}
+            quotes=official_prices
             if len(quotes)>=500:
+                actions={d:dict(v) for d,v in validated_actions(archive).items()}
+                if official_actions:
+                    actions.setdefault(today_iso,{}).update(official_actions)
                 days[today_iso]=quotes
                 days=dict(sorted(days.items())[-65:])
-                DAILY_PRICES.write_text(json.dumps({"schema":1,"kind":"official_daily_close",
-                    "days":days},ensure_ascii=False,separators=(",",":")),encoding="utf-8")
+                result={"schema":1,"kind":"official_daily_close","days":days}
+                actions={d:v for d,v in actions.items() if d in days}
+                if actions:result['corporate_actions']=actions
+                DAILY_PRICES.write_text(json.dumps(result,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
         except Exception as e:
             errors.append("每日收盤存檔:"+str(e))
     OUT.write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")

@@ -16,7 +16,12 @@ for (const p of feed.picks) {
   ids.add(p.id);
   for (const o of p.outcomes) {
     assert.ok(Number.isInteger(o.trading_days) && feed.horizons_trading_days.includes(o.trading_days), 'invalid horizon');
-    assert.ok(['complete', 'pending', 'missing_price'].includes(o.status), 'invalid outcome status');
+    assert.ok(['complete', 'pending', 'missing_price', 'corporate_action_unadjusted'].includes(o.status), 'invalid outcome status');
+    if(o.status==='corporate_action_unadjusted'){
+      assert.ok(o.end_day && Array.isArray(o.events) && o.events.length>0,'unadjusted action missing evidence');
+      assert.ok(!Object.hasOwn(o,'estimated_net_return_pct')&&!Object.hasOwn(o,'gross_return_pct'),'unadjusted action cannot claim a return');
+      assert.ok(o.events.every(e=>e&&e.day>p.day&&e.day<=o.end_day&&['除權','除息','除權息'].includes(e.note)),'invalid action evidence');
+    }
     if (o.status === 'complete') {
       assert.ok(Number.isFinite(o.estimated_net_return_pct) && o.end_day, 'complete outcome missing return or end date');
       assert.ok(o.end_day >= p.day, 'outcome predates recommendation');
@@ -32,11 +37,12 @@ for (const [strategy, horizons] of Object.entries(feed.groups || {})) {
     for (const k of ['completed', 'pending', 'missing_price']) {
       assert.ok(Number.isInteger(group[k]) && group[k] >= 0, strategy + '/' + days + ': invalid ' + k);
     }
+    assert.ok(Number.isInteger(group.corporate_action_unadjusted??0)&&(group.corporate_action_unadjusted??0)>=0,'invalid action count');
     if (group.completed === 0) assert.equal(group.win_rate_pct, null, 'zero completed must not claim win rate');
     const observations = feed.picks.filter(p => p.group === strategy).map(p => p.outcomes.find(o => o.trading_days === Number(days)));
     assert.ok(observations.every(Boolean), strategy + '/' + days + ': missing outcome');
-    for (const [status, key] of [['complete', 'completed'], ['pending', 'pending'], ['missing_price', 'missing_price']]) {
-      assert.equal(observations.filter(o => o.status === status).length, group[key], strategy + '/' + days + ': ' + key + ' mismatch');
+    for (const [status, key] of [['complete', 'completed'], ['pending', 'pending'], ['missing_price', 'missing_price'],['corporate_action_unadjusted','corporate_action_unadjusted']]) {
+      assert.equal(observations.filter(o => o.status === status).length, group[key]??0, strategy + '/' + days + ': ' + key + ' mismatch');
     }
     const completed = observations.filter(o => o.status === 'complete');
     if (completed.length) {

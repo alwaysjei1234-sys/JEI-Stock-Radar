@@ -1392,8 +1392,9 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
    const invalid=data.picks.some(p=>!p||!p.id||!p.day||!p.code||!Array.isArray(p.outcomes));
    if(invalid)throw Error('封存推薦缺少必要欄位');
    const ids=new Set(data.picks.map(p=>p.id));
-   const outcomesInvalid=data.picks.some(p=>p.outcomes.some(o=>!o||!Number.isInteger(o.trading_days)||!['complete','pending','missing_price'].includes(o.status)||
-    (o.status==='complete'&&(!Number.isFinite(o.estimated_net_return_pct)||!o.end_day))));
+   const outcomesInvalid=data.picks.some(p=>p.outcomes.some(o=>!o||!Number.isInteger(o.trading_days)||!['complete','pending','missing_price','corporate_action_unadjusted'].includes(o.status)||
+    (o.status==='complete'&&(!Number.isFinite(o.estimated_net_return_pct)||!o.end_day))||
+    (o.status==='corporate_action_unadjusted'&&(!o.end_day||!Array.isArray(o.events)||!o.events.length||Object.prototype.hasOwnProperty.call(o,'estimated_net_return_pct')))));
    if(outcomesInvalid)throw Error('績效明細含有無效狀態或報酬');
    if(ids.size!==actualCount)throw Error('封存推薦識別碼重複');
    const official=Date.parse(String(data.latest_official_day||'')+'T00:00:00+08:00');
@@ -1403,16 +1404,17 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
    if(future)throw Error('官方收盤日期晚於目前時間，暫停顯示績效');
    status.textContent=(stale?'⚠ 資料可能過期｜':'')+'官方收盤 '+(data.latest_official_day||'未知')+'｜產生 '+(data.updated_at||'未知');
    overview.textContent='封存 '+actualCount+' 筆推薦'+(dup?'｜不重複訊號 '+dup.unique_day_symbol_signals+'｜跨分類重複 '+dup.cross_category_duplicates:'｜新版風險欄位待更新');
-   const rows=[];let pendingTotal=0,missingTotal=0;
+   const rows=[];let pendingTotal=0,missingTotal=0,actionTotal=0;
    for(const [key,label] of Object.entries(names)){
     for(const days of [3,7,15,20,30,40,60]){
      const v=data.groups[key]&&data.groups[key][String(days)];if(!v)continue;
      pendingTotal+=Number(v.pending)||0;missingTotal+=Number(v.missing_price)||0;
+     actionTotal+=Number(v.corporate_action_unadjusted)||0;
      if(Number(v.completed)<=0)continue;
      rows.push('<tr style="border-top:1px solid #183e5c"><td style="text-align:left;padding:7px 3px">'+esc(label)+'</td><td>'+days+'</td><td>'+esc(v.completed)+'</td><td>'+pct(v.win_rate_pct)+'</td><td>'+pct(v.avg_estimated_net_pct)+'</td><td>'+pct(v.worst_estimated_net_pct)+'</td></tr>');
     }
    }
-   overview.textContent+='｜已成熟 '+rows.length+' 組；未到期週期追蹤 '+pendingTotal+' 項次、缺價 '+missingTotal+' 項次（未到期不列為 0%）';
+   overview.textContent+='｜已成熟 '+rows.length+' 組；未到期週期追蹤 '+pendingTotal+' 項次、缺價 '+missingTotal+' 項次、除權息待調整 '+actionTotal+' 項次（未到期不列為 0%；除權息待調整不計勝負）';
    detailsSummary.textContent='查看已完成的策略／週期明細（'+rows.length+' 組）';
    body.innerHTML=rows.length?rows.join(''):'<tr><td colspan="6" style="padding:12px;text-align:left;color:#8ca8bd">目前沒有可驗證的已完成績效；不得將缺值視為零報酬。</td></tr>';
   }catch(e){status.textContent='資料同步失敗';overview.textContent='無法取得績效報告：'+e.message;body.replaceChildren()}

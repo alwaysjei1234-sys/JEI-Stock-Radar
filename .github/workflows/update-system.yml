@@ -12,6 +12,8 @@ on:
     branches: [ "main" ]
     paths:
       - 'scripts/update_system.py'
+      - 'scripts/corporate_actions.py'
+      - 'tests/test_corporate_action_prices.py'
       - 'tests/test_update_system_recovery.py'
       - 'tests/test_financial_context.py'
       - 'tests/test_validate_market_session.py'
@@ -59,6 +61,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_update_system_recovery.py'
       - name: Test dated public financial context and look-ahead gate
         run: python -m unittest discover -s tests -p 'test_financial_context.py'
+      - name: Preserve ex-rights closes and stop unadjusted simulated returns
+        run: python -m unittest discover -s tests -p 'test_corporate_action_prices.py'
       - name: Test TPEx same-day close fallback
         run: python -m unittest discover -s tests -p 'test_tpex_latest_close_fallback.py'
       - name: Test current TPEx dated table and shared close

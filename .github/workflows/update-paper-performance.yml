@@ -9,6 +9,8 @@ on:
     branches: [ "main" ]
     paths:
       - 'scripts/update_paper_performance.py'
+      - 'scripts/corporate_actions.py'
+      - 'tests/test_corporate_action_prices.py'
       - 'scripts/paper_evidence.py'
       - 'tests/test_paper_evidence.py'
       - 'tests/test_paper_missing_valuation.py'
@@ -48,6 +50,8 @@ jobs:
           python-version: '3.12'
       - name: Test no-look-ahead and cost assumptions
         run: python -m unittest discover -s tests -p 'test_paper_performance.py' -v
+      - name: Stop held-position settlement across unadjusted corporate actions
+        run: python -m unittest discover -s tests -p 'test_corporate_action_prices.py' -v
       - name: Verify diagnostic costs and lifetime history
         run: python -m unittest discover -s tests -p 'test_paper_evidence.py' -v
       - name: Reject incomplete valuation drawdowns and boolean prices

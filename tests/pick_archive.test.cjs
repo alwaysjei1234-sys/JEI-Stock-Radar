@@ -34,7 +34,7 @@ for(const pick of data.picks){
   assert.ok(horizons.has(o.trading_days),'unknown horizon');
   assert.ok(!seen.has(o.trading_days),'duplicate horizon');
   seen.add(o.trading_days);
-  assert.ok(['complete','pending','missing_price'].includes(o.status),'invalid status');
+  assert.ok(['complete','pending','missing_price','corporate_action_unadjusted'].includes(o.status),'invalid status');
   if(o.status==='complete'){
    assert.ok(Number.isFinite(o.estimated_net_return_pct),'missing net return');
    assert.ok(o.end_day>pick.day&&o.end_day<=data.latest_official_day,'invalid settlement date');
@@ -52,7 +52,11 @@ for(const pick of data.picks){
  assert.ok(Number.isFinite(signal)&&signal>0,'missing official signal close: '+pick.id);
  assert.equal(signal,pick.signal_close,'signal close differs from official archive: '+pick.id);
  for(const outcome of pick.outcomes){
+  const actions=Object.entries(official.corporate_actions||{}).filter(([day,rows])=>pick.day<day&&day<=outcome.end_day&&rows[pick.code])
+   .sort(([a],[b])=>a.localeCompare(b)).map(([day,rows])=>({day,note:rows[pick.code]}));
+  if(outcome.status==='corporate_action_unadjusted')assert.deepEqual(outcome.events,actions,'corporate-action evidence differs from official archive');
   if(outcome.status!=='complete')continue;
+  assert.equal(actions.length,0,'unadjusted corporate action was graded as completed');
   const settlement=official.days?.[outcome.end_day]?.[pick.code];
   assert.ok(Number.isFinite(settlement)&&settlement>0,'missing official exit close: '+pick.id);
   assert.ok(Math.abs(settlement/outcome.end_close-1)<1e-9,'settlement close differs from archive: '+pick.id);
@@ -115,10 +119,10 @@ for(const [group,byHorizon] of Object.entries(data.groups)){
  for(const [horizon,summary] of Object.entries(byHorizon)){
   const records=data.picks.filter(p=>p.group===group).map(p=>p.outcomes.find(o=>o.trading_days===Number(horizon)));
   assert.ok(records.every(Boolean),'missing outcome for '+group+'/'+horizon);
-  for(const [state,key] of [['complete','completed'],['pending','pending'],['missing_price','missing_price']]){
-   assert.equal(summary[key],records.filter(o=>o.status===state).length,'incorrect '+key+' for '+group+'/'+horizon);
+  for(const [state,key] of [['complete','completed'],['pending','pending'],['missing_price','missing_price'],['corporate_action_unadjusted','corporate_action_unadjusted']]){
+   assert.equal(summary[key]??0,records.filter(o=>o.status===state).length,'incorrect '+key+' for '+group+'/'+horizon);
   }
-  const total=summary.completed+summary.pending+summary.missing_price;
+  const total=summary.completed+summary.pending+summary.missing_price+(summary.corporate_action_unadjusted||0);
   assert.equal(total,records.length,'unaccounted picks for '+group+'/'+horizon);
   const finished=records.filter(o=>o.status==='complete');
   if(!finished.length){

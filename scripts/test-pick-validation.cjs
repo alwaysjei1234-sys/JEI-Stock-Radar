@@ -23,7 +23,12 @@ try {
   check(mutated(d => { d.groups.attack['3'].win_rate_pct = 99; }), false, 'fabricated win rate');
   check(mutated(d => { d.groups.attack['3'].avg_estimated_net_pct = 99; }), false, 'fabricated return');
   check(mutated(d => { d.latest_official_day = '2999-01-01'; }), false, 'future date');
-  console.log('PASS: seven JEI feed integrity regression cases');
+  const actionOutcome=d=>d.picks.flatMap(p=>p.outcomes).find(o=>o.status==='corporate_action_unadjusted');
+  if(actionOutcome(source)){
+    check(mutated(d=>{actionOutcome(d).estimated_net_return_pct=0}),false,'unadjusted action cannot claim zero return');
+    check(mutated(d=>{actionOutcome(d).events=[]}),false,'unadjusted action requires evidence');
+  }
+  console.log('PASS: JEI feed integrity regression cases, including corporate-action evidence when present');
 } finally {
   fs.rmSync(dir, { recursive: true, force: true });
 }

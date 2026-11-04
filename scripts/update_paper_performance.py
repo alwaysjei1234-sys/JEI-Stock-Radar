@@ -22,6 +22,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(ROOT))
 from scripts.paper_evidence import trade_metrics, full_drawdown
 from scripts.market_sessions import next_expected_session
+from scripts.corporate_actions import validated_actions
 
 CAPITAL = 1_000_000.0
 LIMIT = 100_000.0
@@ -161,6 +162,10 @@ def advance(feed, archive, state, day):
     validate(feed, archive, day)
     if state.get("last_processed_day") and state["last_processed_day"] >= day:
         return False
+    events=validated_actions(archive).get(day,{})
+    held={p['code'] for a in state['strategies'].values() for p in a['positions']}
+    if held.intersection(events):
+        raise ValueError('持有部位跨越未調整除權息，停止模擬結算：'+','.join(sorted(held.intersection(events))))
     days = sorted(d for d in archive["days"] if re.fullmatch(r"\d{4}-\d{2}-\d{2}", d) and d <= day)
     prior_day = days[-2] if len(days) > 1 and days[-1] == day else None
     # A skipped *archived* trading session cannot be silently treated as one day.

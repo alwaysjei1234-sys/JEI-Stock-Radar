@@ -71,7 +71,8 @@ function render(){
  else cautions.push('樣本數達30筆仍不代表策略已驗證，仍須跨市場狀態與基準比較。');
  if(Number.isFinite(average)&&average<0)cautions.push('目前成熟樣本的平均估算淨報酬為負，策略尚未通過初步績效觀察。');
  if((stats.missing_price||0)>0)cautions.push('有到期但缺少有效收盤價的樣本，不列入勝負。');
- $('comparison').textContent='已完成 '+completed+' 筆｜待到期 '+(stats.pending||0)+' 筆｜缺有效收盤價 '+(stats.missing_price||0)+' 筆｜中位數 '+fmt(stats.median_estimated_net_pct)+'｜最差 '+fmt(stats.worst_estimated_net_pct)+'。'+cautions.join(' ');
+ if((stats.corporate_action_unadjusted||0)>0)cautions.push('除權息權利與現金尚未調整，保留樣本但不計勝負。');
+ $('comparison').textContent='已完成 '+completed+' 筆｜待到期 '+(stats.pending||0)+' 筆｜缺有效收盤價 '+(stats.missing_price||0)+' 筆｜除權息待調整 '+(stats.corporate_action_unadjusted||0)+' 筆｜中位數 '+fmt(stats.median_estimated_net_pct)+'｜最差 '+fmt(stats.worst_estimated_net_pct)+'。'+cautions.join(' ');
  const body=$('pickRows');body.replaceChildren();
  for(const x of records){
   const outcome=(x.outcomes||[]).find(z=>z.trading_days===h)||{status:'pending'};
@@ -80,8 +81,8 @@ function render(){
   cell(tr,x.code+' '+x.name);
   cell(tr,x.score);
   cell(tr,x.signal_close);
-  cell(tr,outcome.status==='complete'?outcome.end_day:outcome.status==='missing_price'?'到期但缺收盤':'尚待第 '+h+' 個交易日');
-  const val=outcome.status==='complete'?fmt(outcome.estimated_net_return_pct):'未到期';
+  cell(tr,outcome.status==='complete'?outcome.end_day:outcome.status==='missing_price'?'到期但缺收盤':outcome.status==='corporate_action_unadjusted'?'除權息待調整（'+outcome.end_day+'）':'尚待第 '+h+' 個交易日');
+  const val=outcome.status==='complete'?fmt(outcome.estimated_net_return_pct):outcome.status==='pending'?'未到期':'不計勝負';
   const td=cell(tr,val);
   if(outcome.status==='complete')td.className=outcome.estimated_net_return_pct>=0?'positive':'negative';
   else td.className='warn';

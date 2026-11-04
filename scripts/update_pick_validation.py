@@ -11,6 +11,7 @@ import re
 import statistics
 from scripts.pick_risk_metrics import max_close_drawdown, duplicate_signal_summary
 from scripts.public_holding_signals import is_safe_public_holdings
+from scripts.corporate_actions import validated_actions, actions_between
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -111,6 +112,7 @@ def net_percent(start, finish):
 
 def compile_report(frozen, archive, updated_at):
     days_data = archive["days"]
+    corporate_actions=validated_actions(archive)
     days = sorted(k for k,v in days_data.items()
                   if isinstance(k,str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}",k)
                   and isinstance(v,dict)
@@ -144,6 +146,12 @@ def compile_report(frozen, archive, updated_at):
                                     "observed_closes":len(close_returns),
                                     "expected_closes":horizon})
                 continue
+            events=actions_between(corporate_actions,p['code'],p['day'],last_day)
+            if events:
+                progression.append({'trading_days':horizon,'status':'corporate_action_unadjusted',
+                    'end_day':last_day,'events':events,'observed_closes':len(close_returns),
+                    'expected_closes':horizon})
+                continue
             progression.append({
                 "trading_days":horizon, "status":"complete", "end_day":last_day,
                 "end_close":last_price, "gross_return_pct":round((last_price/first-1)*100,3),
@@ -159,6 +167,8 @@ def compile_report(frozen, archive, updated_at):
             end = quote(days_data[d],p["code"])
             if end is not None:
                 latest={"day":d,"price":end,"gross_return_pct":round((end/first-1)*100,3)}
+                events=actions_between(corporate_actions,p['code'],p['day'],d)
+                if events:latest.update(gross_return_pct=None,corporate_action_unadjusted=True,events=events)
                 break
         observed.append({**p, "outcomes":progression, "latest_observation":latest})
     groups = {}
@@ -178,6 +188,8 @@ def compile_report(frozen, archive, updated_at):
                 "missing_price":sum(1 for p in observed if p["group"]==group
                                     for r in p["outcomes"] if r["trading_days"]==horizon
                                     and r["status"]=="missing_price"),
+                'corporate_action_unadjusted':sum(1 for p in observed if p['group']==group
+                    for r in p['outcomes'] if r['trading_days']==horizon and r['status']=='corporate_action_unadjusted'),
                 "win_rate_pct":round(100*sum(v>0 for v in values)/m,2) if m else None,
                 "avg_estimated_net_pct":round(statistics.mean(values),3) if m else None,
                 "median_estimated_net_pct":round(statistics.median(values),3) if m else None,
@@ -196,6 +208,7 @@ def compile_report(frozen, archive, updated_at):
             "3、7、15、20、30、40、60 為後續交易日數（20日約1個月、40日約2個月、60日約3個月），未到期一律 pending。",
             "假設訊號日收盤買入、指定未來收盤賣出，只是股價觀察；無法保證當時能成交。估算買賣兩端手續費及賣出交易稅；不含滑價、最低手續費。",
             "不同分類可能包含相同股票，不能把類別績效當成獨立投資組合；未成熟或缺價樣本不能算勝負。",
+            '跨越已知除權息且尚未核算權利/現金調整的樣本保留原訊號及收盤價，但不計勝負、報酬或回撤；未完整涵蓋所有公司行動。',
             "僅以事前保存名單與日後已驗證官方收盤計分。有效樣本不足時不選最佳策略、不自動修改參數。"
         ],
         "estimated_costs":{"buy_fee":FEE,"sell_fee":FEE,"sell_tax":SELL_TAX,
