@@ -1,0 +1,211 @@
+{
+  "checked_at_taipei": "2026-11-05 01:07–01:11",
+  "source_checks": [
+    {
+      "name": "TWSE_FMTQIK",
+      "url": "https://www.twse.com.tw/exchangeReport/FMTQIK?date=20261101&response=json",
+      "checked_at": "2026-11-05T01:07:43+08:00",
+      "error_type": "URLError"
+    },
+    {
+      "name": "TPEx_institutional",
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_3insti_daily_trading",
+      "checked_at": "2026-11-05T01:07:55+08:00",
+      "error_type": "URLError"
+    },
+    {
+      "name": "MIS_probe",
+      "url": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_2330.tw|otc_6488.tw&json=1&delay=0",
+      "checked_at": "2026-11-05T01:08:17+08:00",
+      "http_status": 200,
+      "sha256": "7ada3379facc672d6575c01b2bfefd5bcdfeee2ce9400192102fe8034e537b22",
+      "rtcode": "0000",
+      "quotes": [
+        {
+          "c": "2330",
+          "d": "20261104",
+          "t": "13:30:00",
+          "z": "2260.0000",
+          "y": "2295.0000",
+          "ex": "tse"
+        },
+        {
+          "c": "6488",
+          "d": "20261104",
+          "t": "13:30:00",
+          "z": "619.0000",
+          "y": "685.0000",
+          "ex": "otc"
+        }
+      ]
+    },
+    {
+      "name": "TWSE_rwd_FMTQIK",
+      "url": "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?date=20261101&response=json",
+      "checked_at": "2026-11-05T01:08:55+08:00",
+      "http_status": 200,
+      "sha256": "a0ea60623bd0fccc0431a1ba5e576512610e8b00d57e97b74134bdedcddef1f7",
+      "last_rows": [
+        [
+          "115/11/03",
+          "15,218,510,001",
+          "1,002,035,660,990",
+          "7,682,883",
+          "43,307.54",
+          "-1,612.60"
+        ],
+        [
+          "115/11/04",
+          "15,601,136,570",
+          "1,176,930,442,854",
+          "7,098,597",
+          "42,948.91",
+          "-358.63"
+        ]
+      ]
+    },
+    {
+      "name": "TPEx_correct_institutional",
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading",
+      "checked_at": "2026-11-05T01:09:07+08:00",
+      "http_status": 200,
+      "sha256": "658f59bf07758b90d017c7381c10010a860520cc1c69a01fb14eff5ab86e110c",
+      "rows": 918,
+      "dates": [
+        "1151104"
+      ]
+    }
+  ],
+  "paired_benchmark": {
+    "sources": [
+      {
+        "url": "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?date=20261001&response=json",
+        "checked_at": "2026-11-05T01:10:50+08:00",
+        "rows": 19
+      },
+      {
+        "url": "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?date=20261101&response=json",
+        "checked_at": "2026-11-05T01:10:58+08:00",
+        "rows": 3
+      }
+    ],
+    "metrics": [
+      {
+        "strategy": "fixed5",
+        "paired": 56,
+        "closed": 56,
+        "benchmark_mean_gross_pct": -1.481
+      },
+      {
+        "strategy": "fixed7",
+        "paired": 55,
+        "closed": 55,
+        "benchmark_mean_gross_pct": -1.58
+      },
+      {
+        "strategy": "fixed10",
+        "paired": 52,
+        "closed": 52,
+        "benchmark_mean_gross_pct": -1.857
+      },
+      {
+        "strategy": "trailing",
+        "paired": 49,
+        "closed": 49,
+        "benchmark_mean_gross_pct": -1.864
+      }
+    ]
+  },
+  "paper_metrics_recomputed": [
+    {
+      "strategy": "fixed5",
+      "closed": 56,
+      "wins": 14,
+      "win_rate": 25.0,
+      "ci95": [
+        15.52,
+        37.69
+      ],
+      "mean_net_return_pct": -3.427,
+      "expectancy_ntd": -3339.23,
+      "max_drawdown_pct": 19.869,
+      "open_coverage": "9/9"
+    },
+    {
+      "strategy": "fixed7",
+      "closed": 55,
+      "wins": 12,
+      "win_rate": 21.82,
+      "ci95": [
+        12.95,
+        34.37
+      ],
+      "mean_net_return_pct": -3.645,
+      "expectancy_ntd": -3503.63,
+      "max_drawdown_pct": 20.439,
+      "open_coverage": "9/9"
+    },
+    {
+      "strategy": "fixed10",
+      "closed": 52,
+      "wins": 7,
+      "win_rate": 13.46,
+      "ci95": [
+        6.68,
+        25.27
+      ],
+      "mean_net_return_pct": -4.354,
+      "expectancy_ntd": -3540.37,
+      "max_drawdown_pct": 17.723,
+      "open_coverage": "9/9"
+    },
+    {
+      "strategy": "trailing",
+      "closed": 49,
+      "wins": 9,
+      "win_rate": 18.37,
+      "ci95": [
+        9.98,
+        31.36
+      ],
+      "mean_net_return_pct": -4.205,
+      "expectancy_ntd": -3333.49,
+      "max_drawdown_pct": 16.686,
+      "open_coverage": "11/11"
+    }
+  ],
+  "public_holdings_whitelist_passed": 13,
+  "mis_close_pairs_matched": 2,
+  "new_trades": 0,
+  "qualified_out_of_sample_closed": 0,
+  "code_commit": "82280224e6b892f086bbbfd5389266ef6a0f81c4",
+  "tests": {
+    "python": 422,
+    "line_status_python": 8,
+    "mobile_390px_local": "passed",
+    "mobile_ci_run": 41875506305,
+    "mobile_ci_result": "success",
+    "apk_ci_run": 41875506144,
+    "apk_ci_result": "success",
+    "android_device": "not_verified",
+    "mobile_390px_production": "passed"
+  },
+  "deployment": {
+    "id": "dpl_B5Z162CCAG8ZuVVc81zsJdvnEwu3",
+    "status": "READY",
+    "target": "production",
+    "sha": "82280224e6b892f086bbbfd5389266ef6a0f81c4"
+  },
+  "production_files_match_tested": [
+    "brief.html",
+    "line_status.json",
+    "system.json",
+    "strategy_performance.json"
+  ],
+  "production_mobile": {
+    "status_text": "歷史紀錄（今天尚無發送紀錄）｜市場摘要｜API 已接受｜檢查 2026-11-04T19:15:51+08:00｜手機實收尚未確認。",
+    "report_sections": 4,
+    "horizontal_overflow": false,
+    "page_errors": []
+  }
+}
