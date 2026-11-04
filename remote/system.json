@@ -1,7 +1,7 @@
 {
   "selection_policy": "jei-user-radar-gates-v1",
   "schema": 4,
-  "updated_at": "2026-11-04 16:52",
+  "updated_at": "2026-11-04 21:07",
   "data_date": "2026-11-04",
   "source_data_date": "2026-11-04",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
@@ -17,7 +17,7 @@
       "上漲 836 / 下跌 970（廣度 46.3%）",
       "市場中位數 +0.00%",
       "跌逾3% 105｜跌逾5% 39｜跌停附近 6",
-      "法人偏賣 40.7%｜淨額 -500,377張｜已驗證歷史 1 日",
+      "法人偏賣 40.8%｜淨額 -501,743張｜已驗證歷史 1 日",
       "最強族群 IC設計 68分",
       "部分資料源降級：TWSE OpenAPI落後，已用當日MI_INDEX補入 1390 檔"
     ],
@@ -26,8 +26,8 @@
     "down5": 39,
     "limit_down": 6,
     "divergence": false,
-    "institutional_sell_ratio": 40.7,
-    "institutional_net_lots": -500377,
+    "institutional_sell_ratio": 40.8,
+    "institutional_net_lots": -501743,
     "institutional_3d_sell_avg": null,
     "institutional_5d_sell_avg": null,
     "institutional_withdrawal": false
@@ -35,13 +35,13 @@
   "market": {
     "status": "偏空",
     "mode": "今日收盤",
-    "last_checked_at": "2026-11-04 16:52",
+    "last_checked_at": "2026-11-04 21:07",
     "index": {
       "change_pct": -0.83,
       "data_date": "2026-11-04",
       "source": "TWSE MI_INDEX dated response",
       "date_verified": true,
-      "checked_at": "2026-11-04 16:52"
+      "checked_at": "2026-11-04 21:07"
     },
     "live_count": 0,
     "close_count": 1981,
@@ -54,7 +54,7 @@
       "attempted": false,
       "market_open": false,
       "quote_refresh_window": false,
-      "updater_time_taipei": "2026-11-04 16:52",
+      "updater_time_taipei": "2026-11-04 21:07",
       "valid_trades": 0,
       "mis_stats": {},
       "required_trades": 500,
@@ -76,7 +76,7 @@
       "median_pct": 1.09,
       "breadth": 85.7,
       "members": 7,
-      "value_billion": 974.0,
+      "value_billion": 990.6,
       "leaders": [
         {
           "code": "3443",
@@ -102,7 +102,7 @@
       "median_pct": 1.13,
       "breadth": 77.8,
       "members": 9,
-      "value_billion": 1778.8,
+      "value_billion": 1781.4,
       "leaders": [
         {
           "code": "2383",
@@ -154,7 +154,7 @@
       "median_pct": 0.57,
       "breadth": 75.0,
       "members": 4,
-      "value_billion": 269.3,
+      "value_billion": 269.5,
       "leaders": [
         {
           "code": "3711",
@@ -206,7 +206,7 @@
       "median_pct": 0.0,
       "breadth": 37.5,
       "members": 8,
-      "value_billion": 371.1,
+      "value_billion": 400.2,
       "leaders": [
         {
           "code": "2478",
@@ -10549,6 +10549,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "2891": {
+      "foreign": -11883476.0,
+      "trust": 8175370.0,
+      "dealer": 5282976.0,
+      "total": 1574870.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "3532": {
       "foreign": 1410099.0,
       "trust": 3000.0,
@@ -10562,30 +10570,6 @@
       "trust": 0.0,
       "dealer": -9000.0,
       "total": 1507582.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "2891": {
-      "foreign": -11883476.0,
-      "trust": 8032370.0,
-      "dealer": 5282976.0,
-      "total": 1431870.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "3042": {
-      "foreign": 1293428.0,
-      "trust": -135000.0,
-      "dealer": 164394.0,
-      "total": 1322822.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "2455": {
-      "foreign": 1668820.0,
-      "trust": 63000.0,
-      "dealer": -468460.0,
-      "total": 1263360.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -10634,6 +10618,14 @@
       "trust": -196778.0,
       "dealer": 375664.0,
       "total": 995890.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "3042": {
+      "foreign": 1293428.0,
+      "trust": -493000.0,
+      "dealer": 164394.0,
+      "total": 964822.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -10807,9 +10799,9 @@
     },
     "2360": {
       "foreign": 401051.0,
-      "trust": -138308.0,
+      "trust": -117178.0,
       "dealer": 254680.0,
-      "total": 517423.0,
+      "total": 538553.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -11213,14 +11205,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6515": {
-      "foreign": 225190.0,
-      "trust": 2000.0,
-      "dealer": 8988.0,
-      "total": 236178.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "1455": {
       "foreign": 279140.0,
       "trust": 0.0,
@@ -11293,6 +11277,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "6515": {
+      "foreign": 225190.0,
+      "trust": -18000.0,
+      "dealer": 8988.0,
+      "total": 216178.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "3321": {
       "foreign": 211149.0,
       "trust": 0.0,
@@ -11311,9 +11303,9 @@
     },
     "7769": {
       "foreign": 170861.0,
-      "trust": 9433.0,
+      "trust": 9479.0,
       "dealer": 28284.0,
-      "total": 208578.0,
+      "total": 208624.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -11461,6 +11453,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "6669": {
+      "foreign": 66631.0,
+      "trust": 59446.0,
+      "dealer": 42450.0,
+      "total": 168527.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "2059": {
       "foreign": 70806.0,
       "trust": 170011.0,
@@ -11474,14 +11474,6 @@
       "trust": 340373.0,
       "dealer": 59961.0,
       "total": 168051.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "6669": {
-      "foreign": 66631.0,
-      "trust": 58306.0,
-      "dealer": 42450.0,
-      "total": 167387.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -11554,6 +11546,14 @@
       "trust": 0.0,
       "dealer": 1000.0,
       "total": 153000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "1476": {
+      "foreign": -32031.0,
+      "trust": 185000.0,
+      "dealer": -3120.0,
+      "total": 149849.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -11970,14 +11970,6 @@
       "trust": 0.0,
       "dealer": -6000.0,
       "total": 96000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "1476": {
-      "foreign": -32031.0,
-      "trust": 128000.0,
-      "dealer": -3120.0,
-      "total": 92849.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -12861,10 +12853,10 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "4169": {
-      "foreign": 33000.0,
+    "2908": {
+      "foreign": 38000.0,
       "trust": 0.0,
-      "dealer": 5000.0,
+      "dealer": 0.0,
       "total": 38000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -12877,14 +12869,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2908": {
-      "foreign": 38000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 38000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "2227": {
       "foreign": 34000.0,
       "trust": 0.0,
@@ -12893,7 +12877,15 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1219": {
+    "4169": {
+      "foreign": 33000.0,
+      "trust": 0.0,
+      "dealer": 5000.0,
+      "total": 38000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6115": {
       "foreign": 37000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12901,7 +12893,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6115": {
+    "1219": {
       "foreign": 37000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -12997,6 +12989,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "6409": {
+      "foreign": -28967.0,
+      "trust": 70178.0,
+      "dealer": -8568.0,
+      "total": 32643.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "1615": {
       "foreign": 32481.0,
       "trust": 0.0,
@@ -13013,6 +13013,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "6614": {
+      "foreign": 32000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 32000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "9926": {
       "foreign": 32000.0,
       "trust": 0.0,
@@ -13025,14 +13033,6 @@
       "foreign": 36000.0,
       "trust": 0.0,
       "dealer": -4000.0,
-      "total": 32000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "6614": {
-      "foreign": 32000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
       "total": 32000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -13093,10 +13093,10 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2423": {
-      "foreign": 32000.0,
+    "9937": {
+      "foreign": 30000.0,
       "trust": 0.0,
-      "dealer": -2000.0,
+      "dealer": 0.0,
       "total": 30000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -13109,10 +13109,10 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "9937": {
-      "foreign": 30000.0,
+    "2423": {
+      "foreign": 32000.0,
       "trust": 0.0,
-      "dealer": 0.0,
+      "dealer": -2000.0,
       "total": 30000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -13333,10 +13333,10 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "4438": {
-      "foreign": 25000.0,
+    "4949": {
+      "foreign": 33000.0,
       "trust": 0.0,
-      "dealer": 0.0,
+      "dealer": -8000.0,
       "total": 25000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -13349,10 +13349,10 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "4949": {
-      "foreign": 33000.0,
+    "4438": {
+      "foreign": 25000.0,
       "trust": 0.0,
-      "dealer": -8000.0,
+      "dealer": 0.0,
       "total": 25000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -13362,14 +13362,6 @@
       "trust": 0.0,
       "dealer": -1000.0,
       "total": 25000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "6409": {
-      "foreign": -28967.0,
-      "trust": 62178.0,
-      "dealer": -8568.0,
-      "total": 24643.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -13413,18 +13405,18 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6969": {
-      "foreign": 24000.0,
-      "trust": 0.0,
-      "dealer": -1000.0,
-      "total": 23000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "4108": {
       "foreign": 23000.0,
       "trust": 0.0,
       "dealer": 0.0,
+      "total": 23000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6969": {
+      "foreign": 24000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
       "total": 23000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -13461,10 +13453,10 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6657": {
-      "foreign": 31000.0,
+    "1540": {
+      "foreign": 22000.0,
       "trust": 0.0,
-      "dealer": -9000.0,
+      "dealer": 0.0,
       "total": 22000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -13485,10 +13477,10 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1540": {
-      "foreign": 22000.0,
+    "6657": {
+      "foreign": 31000.0,
       "trust": 0.0,
-      "dealer": 0.0,
+      "dealer": -9000.0,
       "total": 22000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -13757,18 +13749,18 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6928": {
-      "foreign": 17000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 17000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "8438": {
       "foreign": 26000.0,
       "trust": 0.0,
       "dealer": -9000.0,
+      "total": 17000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6928": {
+      "foreign": 17000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
       "total": 17000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -13821,7 +13813,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1752": {
+    "1604": {
       "foreign": 16000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13829,7 +13821,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1604": {
+    "1752": {
       "foreign": 16000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13893,39 +13885,15 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "3021": {
-      "foreign": 22000.0,
+    "6183": {
+      "foreign": 15000.0,
       "trust": 0.0,
-      "dealer": -7000.0,
+      "dealer": 0.0,
       "total": 15000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2430": {
-      "foreign": 16000.0,
-      "trust": 0.0,
-      "dealer": -1000.0,
-      "total": 15000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "1225": {
-      "foreign": 16000.0,
-      "trust": 0.0,
-      "dealer": -1000.0,
-      "total": 15000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "1725": {
-      "foreign": 17000.0,
-      "trust": 0.0,
-      "dealer": -2000.0,
-      "total": 15000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "1903": {
+    "5538": {
       "foreign": 15000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13949,22 +13917,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6183": {
-      "foreign": 15000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 15000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "5538": {
-      "foreign": 15000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 15000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "6918": {
       "foreign": 15000.0,
       "trust": 0.0,
@@ -13973,7 +13925,47 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1460": {
+    "1225": {
+      "foreign": 16000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": 15000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "1903": {
+      "foreign": 15000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 15000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "1725": {
+      "foreign": 17000.0,
+      "trust": 0.0,
+      "dealer": -2000.0,
+      "total": 15000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "2430": {
+      "foreign": 16000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": 15000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "3021": {
+      "foreign": 22000.0,
+      "trust": 0.0,
+      "dealer": -7000.0,
+      "total": 15000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "1443": {
       "foreign": 15000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -13989,7 +13981,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1443": {
+    "1460": {
       "foreign": 15000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14053,15 +14045,15 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "4545": {
-      "foreign": 17000.0,
+    "2762": {
+      "foreign": 14000.0,
       "trust": 0.0,
-      "dealer": -3000.0,
+      "dealer": 0.0,
       "total": 14000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2762": {
+    "6230": {
       "foreign": 14000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14077,10 +14069,10 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6230": {
-      "foreign": 14000.0,
+    "4545": {
+      "foreign": 17000.0,
       "trust": 0.0,
-      "dealer": 0.0,
+      "dealer": -3000.0,
       "total": 14000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -14117,22 +14109,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1236": {
-      "foreign": 13000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 13000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "1512": {
-      "foreign": 13000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 13000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "5215": {
       "foreign": 14000.0,
       "trust": 0.0,
@@ -14145,6 +14121,22 @@
       "foreign": 15000.0,
       "trust": 0.0,
       "dealer": -2000.0,
+      "total": 13000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "1236": {
+      "foreign": 13000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 13000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "1512": {
+      "foreign": 13000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
       "total": 13000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -14301,14 +14293,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2432": {
-      "foreign": 8000.0,
-      "trust": 0.0,
-      "dealer": 2000.0,
-      "total": 10000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "5283": {
       "foreign": 10000.0,
       "trust": 0.0,
@@ -14317,18 +14301,10 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1583": {
-      "foreign": 9000.0,
+    "2432": {
+      "foreign": 8000.0,
       "trust": 0.0,
-      "dealer": 1000.0,
-      "total": 10000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "1432": {
-      "foreign": 10000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
+      "dealer": 2000.0,
       "total": 10000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -14341,10 +14317,26 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "1432": {
+      "foreign": 10000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 10000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "2237": {
       "foreign": 7000.0,
       "trust": 0.0,
       "dealer": 3000.0,
+      "total": 10000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "1583": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
       "total": 10000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -14501,14 +14493,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "8940": {
-      "foreign": 8000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 8000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "6965": {
       "foreign": 8000.0,
       "trust": 0.0,
@@ -14534,6 +14518,14 @@
       "data_date": "2026-11-04"
     },
     "4581": {
+      "foreign": 8000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 8000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "8940": {
       "foreign": 8000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14645,7 +14637,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1535": {
+    "2062": {
       "foreign": 7000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14661,7 +14653,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2062": {
+    "1535": {
       "foreign": 7000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14709,14 +14701,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2380": {
-      "foreign": 2000.0,
-      "trust": 0.0,
-      "dealer": 4000.0,
-      "total": 6000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "2705": {
       "foreign": 9000.0,
       "trust": 0.0,
@@ -14726,6 +14710,14 @@
       "data_date": "2026-11-04"
     },
     "4582": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 4000.0,
+      "total": 6000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "2380": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 4000.0,
@@ -14746,6 +14738,38 @@
       "trust": 0.0,
       "dealer": -3000.0,
       "total": 5052.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6117": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 5000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6794": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": -4000.0,
+      "total": 5000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6936": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 5000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "7791": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 5000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -14781,6 +14805,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "1438": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 5000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "1339": {
       "foreign": 4000.0,
       "trust": 0.0,
@@ -14790,46 +14822,6 @@
       "data_date": "2026-11-04"
     },
     "1337": {
-      "foreign": 5000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 5000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "1438": {
-      "foreign": 5000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 5000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "6794": {
-      "foreign": 9000.0,
-      "trust": 0.0,
-      "dealer": -4000.0,
-      "total": 5000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "6936": {
-      "foreign": 5000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 5000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "6117": {
-      "foreign": 5000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 5000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "7791": {
       "foreign": 5000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -14861,14 +14853,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1465": {
-      "foreign": 4000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 4000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "1541": {
       "foreign": 4000.0,
       "trust": 0.0,
@@ -14881,6 +14865,14 @@
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 1000.0,
+      "total": 4000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "1465": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
       "total": 4000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -14941,14 +14933,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "8011": {
-      "foreign": 9000.0,
-      "trust": 0.0,
-      "dealer": -5000.0,
-      "total": 4000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "6581": {
       "foreign": 4000.0,
       "trust": 0.0,
@@ -14961,6 +14945,14 @@
       "foreign": 4000.0,
       "trust": 0.0,
       "dealer": 0.0,
+      "total": 4000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "8011": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": -5000.0,
       "total": 4000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -14989,14 +14981,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "4440": {
-      "foreign": 8000.0,
-      "trust": 0.0,
-      "dealer": -5000.0,
-      "total": 3000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "6534": {
       "foreign": 2000.0,
       "trust": 0.0,
@@ -15005,7 +14989,15 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "8466": {
+    "4440": {
+      "foreign": 8000.0,
+      "trust": 0.0,
+      "dealer": -5000.0,
+      "total": 3000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "4148": {
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15021,6 +15013,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "8466": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "2024": {
       "foreign": 3000.0,
       "trust": 0.0,
@@ -15029,7 +15029,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1525": {
+    "1733": {
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15037,7 +15037,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1733": {
+    "1525": {
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15054,14 +15054,6 @@
       "data_date": "2026-11-04"
     },
     "3027": {
-      "foreign": 3000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 3000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "4148": {
       "foreign": 3000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15149,6 +15141,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "4178": {
+      "foreign": 13000.0,
+      "trust": 0.0,
+      "dealer": -11000.0,
+      "total": 2000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "4557": {
       "foreign": 2000.0,
       "trust": 0.0,
@@ -15173,22 +15173,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "4178": {
-      "foreign": 13000.0,
-      "trust": 0.0,
-      "dealer": -11000.0,
-      "total": 2000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "3308": {
-      "foreign": 0.0,
-      "trust": 0.0,
-      "dealer": 2000.0,
-      "total": 2000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "2939": {
       "foreign": 2000.0,
       "trust": 0.0,
@@ -15205,7 +15189,15 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2642": {
+    "3308": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 2000.0,
+      "total": 2000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "2616": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15213,7 +15205,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2616": {
+    "2642": {
       "foreign": 2000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15309,30 +15301,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6504": {
-      "foreign": 6000.0,
-      "trust": 0.0,
-      "dealer": -5000.0,
-      "total": 1000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "6671": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 1000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "6921": {
-      "foreign": 1000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": 1000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "7760": {
       "foreign": 1000.0,
       "trust": 0.0,
@@ -15353,6 +15321,30 @@
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6671": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6921": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6504": {
+      "foreign": 6000.0,
+      "trust": 0.0,
+      "dealer": -5000.0,
       "total": 1000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -15405,7 +15397,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "3018": {
+    "1516": {
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15413,7 +15405,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1516": {
+    "3018": {
       "foreign": 1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15437,6 +15429,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "6283": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "4807": {
       "foreign": 2000.0,
       "trust": 0.0,
@@ -15445,7 +15445,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6283": {
+    "9912": {
       "foreign": 0.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15457,14 +15457,6 @@
       "foreign": -1000.0,
       "trust": 0.0,
       "dealer": 1000.0,
-      "total": 0.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "9912": {
-      "foreign": 0.0,
-      "trust": 0.0,
-      "dealer": 0.0,
       "total": 0.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -15557,14 +15549,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1472": {
-      "foreign": -1000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -1000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "1517": {
       "foreign": -1000.0,
       "trust": 0.0,
@@ -15573,7 +15557,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2904": {
+    "1472": {
       "foreign": -1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15581,7 +15565,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "4133": {
+    "2904": {
       "foreign": -1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15598,6 +15582,14 @@
       "data_date": "2026-11-04"
     },
     "8443": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "4133": {
       "foreign": -1000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15653,18 +15645,18 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "7736": {
-      "foreign": 0.0,
-      "trust": 0.0,
-      "dealer": -2000.0,
-      "total": -2000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "8487": {
       "foreign": -13000.0,
       "trust": 0.0,
       "dealer": 11000.0,
+      "total": -2000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "7736": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -2000.0,
       "total": -2000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -15674,6 +15666,22 @@
       "trust": 0.0,
       "dealer": 0.0,
       "total": -2799.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6838": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "6674": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -15689,22 +15697,6 @@
       "foreign": -2000.0,
       "trust": 0.0,
       "dealer": -1000.0,
-      "total": -3000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "6674": {
-      "foreign": -3000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -3000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "6838": {
-      "foreign": -3000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
       "total": -3000.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
@@ -15725,14 +15717,6 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6666": {
-      "foreign": -4000.0,
-      "trust": 0.0,
-      "dealer": 0.0,
-      "total": -4000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "4190": {
       "foreign": -4000.0,
       "trust": 0.0,
@@ -15741,7 +15725,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "2431": {
+    "6666": {
       "foreign": -4000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -15750,6 +15734,14 @@
       "data_date": "2026-11-04"
     },
     "1324": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -4000.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "2431": {
       "foreign": -4000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -16133,7 +16125,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "3011": {
+    "1776": {
       "foreign": -16000.0,
       "trust": 0.0,
       "dealer": -2000.0,
@@ -16141,7 +16133,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1776": {
+    "3011": {
       "foreign": -16000.0,
       "trust": 0.0,
       "dealer": -2000.0,
@@ -16285,7 +16277,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "6216": {
+    "1473": {
       "foreign": -27000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -16293,7 +16285,7 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "1473": {
+    "6216": {
       "foreign": -27000.0,
       "trust": 0.0,
       "dealer": 0.0,
@@ -16701,6 +16693,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "1560": {
+      "foreign": -65344.0,
+      "trust": 0.0,
+      "dealer": 13192.0,
+      "total": -52152.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "8081": {
       "foreign": -95676.0,
       "trust": 47050.0,
@@ -16749,6 +16749,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "2455": {
+      "foreign": 1668820.0,
+      "trust": -1256000.0,
+      "dealer": -468460.0,
+      "total": -55640.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "6164": {
       "foreign": -38000.0,
       "trust": 0.0,
@@ -16778,14 +16786,6 @@
       "trust": 0.0,
       "dealer": 0.0,
       "total": -57000.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "3008": {
-      "foreign": -63138.0,
-      "trust": 25429.0,
-      "dealer": -19819.0,
-      "total": -57528.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -17021,19 +17021,19 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "2345": {
+      "foreign": -85184.0,
+      "trust": -26870.0,
+      "dealer": 18930.0,
+      "total": -93124.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "2427": {
       "foreign": -77330.0,
       "trust": 0.0,
       "dealer": -16000.0,
       "total": -93330.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "2345": {
-      "foreign": -85184.0,
-      "trust": -27370.0,
-      "dealer": 18930.0,
-      "total": -93624.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -17170,6 +17170,14 @@
       "trust": 0.0,
       "dealer": -9000.0,
       "total": -116900.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
+    "3008": {
+      "foreign": -63138.0,
+      "trust": -37035.0,
+      "dealer": -19819.0,
+      "total": -119992.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -17714,14 +17722,6 @@
       "trust": 0.0,
       "dealer": -146932.0,
       "total": -289200.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "1560": {
-      "foreign": -65344.0,
-      "trust": -238000.0,
-      "dealer": 13192.0,
-      "total": -290152.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -18461,6 +18461,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "3406": {
+      "foreign": -942489.0,
+      "trust": 199000.0,
+      "dealer": -63478.0,
+      "total": -806967.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "2201": {
       "foreign": -703000.0,
       "trust": 0.0,
@@ -18506,14 +18514,6 @@
       "trust": 0.0,
       "dealer": 1000.0,
       "total": -1010704.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
-    "3406": {
-      "foreign": -942489.0,
-      "trust": -28000.0,
-      "dealer": -63478.0,
-      "total": -1033967.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -18607,9 +18607,9 @@
     },
     "2327": {
       "foreign": -1267479.0,
-      "trust": -367840.0,
+      "trust": -390840.0,
       "dealer": 52809.0,
-      "total": -1582510.0,
+      "total": -1605510.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -18791,9 +18791,9 @@
     },
     "2308": {
       "foreign": -3127743.0,
-      "trust": -289905.0,
+      "trust": -299905.0,
       "dealer": 447215.0,
-      "total": -2970433.0,
+      "total": -2980433.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -18807,9 +18807,9 @@
     },
     "2890": {
       "foreign": -10208522.0,
-      "trust": 2718581.0,
+      "trust": 2958277.0,
       "dealer": 3862197.0,
-      "total": -3627744.0,
+      "total": -3388048.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -18829,6 +18829,14 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
+    "3711": {
+      "foreign": -8964763.0,
+      "trust": 4209045.0,
+      "dealer": 966137.0,
+      "total": -3789581.0,
+      "source": "TWSE T86",
+      "data_date": "2026-11-04"
+    },
     "1314": {
       "foreign": -3497407.0,
       "trust": 0.0,
@@ -18845,19 +18853,11 @@
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
-    "3711": {
-      "foreign": -8964763.0,
-      "trust": 3999045.0,
-      "dealer": 966137.0,
-      "total": -3999581.0,
-      "source": "TWSE T86",
-      "data_date": "2026-11-04"
-    },
     "2454": {
       "foreign": -5209569.0,
-      "trust": 882163.0,
+      "trust": 875163.0,
       "dealer": 265806.0,
-      "total": -4061600.0,
+      "total": -4068600.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -18919,9 +18919,9 @@
     },
     "3231": {
       "foreign": -10423574.0,
-      "trust": 1219964.0,
+      "trust": 1319964.0,
       "dealer": 853906.0,
-      "total": -8349704.0,
+      "total": -8249704.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -18967,9 +18967,9 @@
     },
     "2344": {
       "foreign": -12939071.0,
-      "trust": 110995.0,
+      "trust": 89995.0,
       "dealer": -76750.0,
-      "total": -12904826.0,
+      "total": -12925826.0,
       "source": "TWSE T86",
       "data_date": "2026-11-04"
     },
@@ -21567,9 +21567,9 @@
     },
     "4979": {
       "foreign": 1868933.0,
-      "trust": -683000.0,
+      "trust": -1494000.0,
       "dealer": -19896.0,
-      "total": 1166037.0,
+      "total": 355037.0,
       "source": "TPEx OpenAPI",
       "data_date": "2026-11-04"
     },
@@ -22775,9 +22775,9 @@
     },
     "6187": {
       "foreign": 293724.0,
-      "trust": -36321.0,
+      "trust": -19986.0,
       "dealer": -2369.0,
-      "total": 255034.0,
+      "total": 271369.0,
       "source": "TPEx OpenAPI",
       "data_date": "2026-11-04"
     },
@@ -24591,9 +24591,9 @@
     },
     "7856": {
       "foreign": 288040.0,
-      "trust": -19000.0,
+      "trust": -15330.0,
       "dealer": 3518.0,
-      "total": 272558.0,
+      "total": 276228.0,
       "source": "TPEx OpenAPI",
       "data_date": "2026-11-04"
     },
@@ -26006,7 +26006,7 @@
       "code": "2454",
       "name": "聯發科",
       "score": 70,
-      "reason": "1–4週價量潛力觀察｜IC設計熱度 68｜今日 +1.09%｜5日 -12.3%｜10日 -11.7%｜20日 -25.4%｜成交值 573.3億｜低過熱",
+      "reason": "1–4週價量潛力觀察｜IC設計熱度 68｜今日 +1.09%｜5日 -12.3%｜10日 -11.7%｜20日 -25.4%｜成交值 589.9億｜低過熱",
       "price": 3715.0,
       "change_pct": 1.09,
       "market": "TWSE",
@@ -26226,7 +26226,7 @@
       "code": "3037",
       "name": "欣興",
       "score": 65,
-      "reason": "1–4週價量潛力觀察｜PCB/載板熱度 66｜今日 -1.55%｜5日 -19.3%｜10日 -20.7%｜20日 -26.9%｜成交值 291.2億｜低過熱",
+      "reason": "1–4週價量潛力觀察｜PCB/載板熱度 66｜今日 -1.55%｜5日 -19.3%｜10日 -20.7%｜20日 -26.9%｜成交值 293.8億｜低過熱",
       "price": 888.0,
       "change_pct": -1.55,
       "market": "TWSE",
@@ -26305,8 +26305,8 @@
     {
       "icon": "🏦",
       "name": "法人籌碼廣度",
-      "note": "偏賣 40.7%｜合計 -500,377張",
-      "score": 40.7
+      "note": "偏賣 40.8%｜合計 -501,743張",
+      "score": 40.8
     }
   ],
   "avoid_chase": [
@@ -26794,7 +26794,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 83,
-          "reason": "收盤突破前20日收盤高點 56.00；突破 7.68%｜未驗證成交量"
+          "reason": "收盤突破前20日收盤高點 56.00；突破 7.68%｜官方成交量 0.59 倍；未達量價同步突破條件",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 34.9,
+              "high": 36.9,
+              "low": 34.15,
+              "close": 34.4,
+              "volume": 8738505
+            },
+            {
+              "date": "2026-10-02",
+              "open": 34.15,
+              "high": 34.95,
+              "low": 34.05,
+              "close": 34.3,
+              "volume": 1944905
+            },
+            {
+              "date": "2026-10-05",
+              "open": 34.4,
+              "high": 34.6,
+              "low": 33.5,
+              "close": 33.5,
+              "volume": 2005724
+            },
+            {
+              "date": "2026-10-06",
+              "open": 33.55,
+              "high": 34.7,
+              "low": 33.1,
+              "close": 33.75,
+              "volume": 3360899
+            },
+            {
+              "date": "2026-10-07",
+              "open": 34.1,
+              "high": 34.1,
+              "low": 33.35,
+              "close": 33.45,
+              "volume": 1089997
+            },
+            {
+              "date": "2026-10-12",
+              "open": 32.8,
+              "high": 33.1,
+              "low": 32.55,
+              "close": 32.6,
+              "volume": 866222
+            },
+            {
+              "date": "2026-10-13",
+              "open": 34.0,
+              "high": 34.35,
+              "low": 31.8,
+              "close": 33.05,
+              "volume": 3008880
+            },
+            {
+              "date": "2026-10-14",
+              "open": 33.4,
+              "high": 34.4,
+              "low": 33.35,
+              "close": 34.0,
+              "volume": 2128017
+            },
+            {
+              "date": "2026-10-15",
+              "open": 33.35,
+              "high": 33.65,
+              "low": 32.35,
+              "close": 32.9,
+              "volume": 1713938
+            },
+            {
+              "date": "2026-10-16",
+              "open": 34.4,
+              "high": 34.6,
+              "low": 32.95,
+              "close": 34.1,
+              "volume": 4144606
+            },
+            {
+              "date": "2026-10-19",
+              "open": 33.45,
+              "high": 36.3,
+              "low": 33.3,
+              "close": 35.65,
+              "volume": 12049730
+            },
+            {
+              "date": "2026-10-20",
+              "open": 35.65,
+              "high": 35.95,
+              "low": 34.6,
+              "close": 34.6,
+              "volume": 6848737
+            },
+            {
+              "date": "2026-10-21",
+              "open": 35.9,
+              "high": 38.05,
+              "low": 35.75,
+              "close": 38.05,
+              "volume": 10869645
+            },
+            {
+              "date": "2026-10-22",
+              "open": 39.25,
+              "high": 41.85,
+              "low": 38.8,
+              "close": 41.05,
+              "volume": 56896421
+            },
+            {
+              "date": "2026-10-27",
+              "open": 42.15,
+              "high": 45.15,
+              "low": 41.05,
+              "close": 45.15,
+              "volume": 52466217
+            },
+            {
+              "date": "2026-10-28",
+              "open": 46.35,
+              "high": 49.65,
+              "low": 45.45,
+              "close": 49.65,
+              "volume": 74182102
+            },
+            {
+              "date": "2026-10-29",
+              "open": 51.5,
+              "high": 54.6,
+              "low": 50.2,
+              "close": 52.8,
+              "volume": 109028855
+            },
+            {
+              "date": "2026-10-30",
+              "open": 50.2,
+              "high": 56.0,
+              "low": 48.75,
+              "close": 56.0,
+              "volume": 14661995
+            },
+            {
+              "date": "2026-11-02",
+              "open": 55.6,
+              "high": 61.0,
+              "low": 53.5,
+              "close": 55.5,
+              "volume": 13841711
+            },
+            {
+              "date": "2026-11-03",
+              "open": 55.0,
+              "high": 56.0,
+              "low": 49.95,
+              "close": 54.9,
+              "volume": 13013265
+            },
+            {
+              "date": "2026-11-04",
+              "open": 56.2,
+              "high": 60.3,
+              "low": 54.1,
+              "close": 60.3,
+              "volume": 11605178
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 61.0,
+            "prior_20_avg_volume_shares": 19643018.55,
+            "latest_volume_shares": 11605178,
+            "volume_ratio": 0.59,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "1410",
@@ -26897,7 +27079,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 83,
-          "reason": "收盤突破前20日收盤高點 24.15；突破 8.70%｜未驗證成交量"
+          "reason": "收盤突破前20日收盤高點 24.15；突破 8.70%｜官方成交量 5.92 倍；量價同步突破",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 24.0,
+              "high": 24.6,
+              "low": 24.0,
+              "close": 24.15,
+              "volume": 39399
+            },
+            {
+              "date": "2026-10-02",
+              "open": 24.05,
+              "high": 24.3,
+              "low": 23.95,
+              "close": 23.95,
+              "volume": 58572
+            },
+            {
+              "date": "2026-10-05",
+              "open": 24.1,
+              "high": 24.15,
+              "low": 23.8,
+              "close": 24.05,
+              "volume": 41948
+            },
+            {
+              "date": "2026-10-06",
+              "open": 24.05,
+              "high": 24.1,
+              "low": 23.85,
+              "close": 24.1,
+              "volume": 22477
+            },
+            {
+              "date": "2026-10-07",
+              "open": 23.95,
+              "high": 24.2,
+              "low": 23.85,
+              "close": 23.9,
+              "volume": 29726
+            },
+            {
+              "date": "2026-10-12",
+              "open": 23.75,
+              "high": 23.85,
+              "low": 23.55,
+              "close": 23.75,
+              "volume": 50513
+            },
+            {
+              "date": "2026-10-13",
+              "open": 23.55,
+              "high": 23.8,
+              "low": 23.55,
+              "close": 23.6,
+              "volume": 34273
+            },
+            {
+              "date": "2026-10-14",
+              "open": 23.65,
+              "high": 24.1,
+              "low": 23.6,
+              "close": 23.7,
+              "volume": 176699
+            },
+            {
+              "date": "2026-10-15",
+              "open": 23.85,
+              "high": 23.85,
+              "low": 23.35,
+              "close": 23.35,
+              "volume": 72193
+            },
+            {
+              "date": "2026-10-16",
+              "open": 23.3,
+              "high": 23.7,
+              "low": 23.25,
+              "close": 23.4,
+              "volume": 40003
+            },
+            {
+              "date": "2026-10-19",
+              "open": 23.3,
+              "high": 23.9,
+              "low": 23.25,
+              "close": 23.4,
+              "volume": 155068
+            },
+            {
+              "date": "2026-10-20",
+              "open": 23.6,
+              "high": 23.6,
+              "low": 23.4,
+              "close": 23.5,
+              "volume": 77006
+            },
+            {
+              "date": "2026-10-21",
+              "open": 23.55,
+              "high": 23.9,
+              "low": 23.55,
+              "close": 23.65,
+              "volume": 36300
+            },
+            {
+              "date": "2026-10-22",
+              "open": 23.6,
+              "high": 23.95,
+              "low": 23.5,
+              "close": 23.5,
+              "volume": 55008
+            },
+            {
+              "date": "2026-10-27",
+              "open": 23.45,
+              "high": 23.65,
+              "low": 23.45,
+              "close": 23.6,
+              "volume": 22364
+            },
+            {
+              "date": "2026-10-28",
+              "open": 23.55,
+              "high": 23.9,
+              "low": 23.55,
+              "close": 23.85,
+              "volume": 44029
+            },
+            {
+              "date": "2026-10-29",
+              "open": 23.65,
+              "high": 23.9,
+              "low": 23.6,
+              "close": 23.7,
+              "volume": 17171
+            },
+            {
+              "date": "2026-10-30",
+              "open": 23.75,
+              "high": 23.75,
+              "low": 23.5,
+              "close": 23.65,
+              "volume": 19305
+            },
+            {
+              "date": "2026-11-02",
+              "open": 23.15,
+              "high": 24.0,
+              "low": 23.15,
+              "close": 23.75,
+              "volume": 37000
+            },
+            {
+              "date": "2026-11-03",
+              "open": 23.6,
+              "high": 24.05,
+              "low": 23.6,
+              "close": 23.9,
+              "volume": 30099
+            },
+            {
+              "date": "2026-11-04",
+              "open": 23.75,
+              "high": 26.25,
+              "low": 23.75,
+              "close": 26.25,
+              "volume": 313525
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 24.6,
+            "prior_20_avg_volume_shares": 52957.65,
+            "latest_volume_shares": 313525,
+            "volume_ratio": 5.92,
+            "price_breakout": true,
+            "volume_expansion": true,
+            "confirmed_price_volume_breakout": true
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "2465",
@@ -27309,7 +27673,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 82,
-          "reason": "收盤突破前20日收盤高點 46.70；突破 3.00%｜未驗證成交量"
+          "reason": "收盤突破前20日收盤高點 46.70；突破 3.00%｜官方成交量 7.15 倍；量價同步突破",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 44.5,
+              "high": 44.55,
+              "low": 44.15,
+              "close": 44.55,
+              "volume": 22383
+            },
+            {
+              "date": "2026-10-02",
+              "open": 44.25,
+              "high": 44.5,
+              "low": 44.15,
+              "close": 44.4,
+              "volume": 43680
+            },
+            {
+              "date": "2026-10-05",
+              "open": 44.5,
+              "high": 44.5,
+              "low": 44.05,
+              "close": 44.05,
+              "volume": 58344
+            },
+            {
+              "date": "2026-10-06",
+              "open": 44.0,
+              "high": 44.5,
+              "low": 43.95,
+              "close": 44.0,
+              "volume": 46191
+            },
+            {
+              "date": "2026-10-07",
+              "open": 44.05,
+              "high": 44.4,
+              "low": 44.0,
+              "close": 44.25,
+              "volume": 9556
+            },
+            {
+              "date": "2026-10-12",
+              "open": 47.5,
+              "high": 47.5,
+              "low": 45.25,
+              "close": 45.95,
+              "volume": 166919
+            },
+            {
+              "date": "2026-10-13",
+              "open": 45.9,
+              "high": 45.95,
+              "low": 45.65,
+              "close": 45.95,
+              "volume": 28721
+            },
+            {
+              "date": "2026-10-14",
+              "open": 45.35,
+              "high": 46.05,
+              "low": 45.35,
+              "close": 46.05,
+              "volume": 37916
+            },
+            {
+              "date": "2026-10-15",
+              "open": 46.2,
+              "high": 46.2,
+              "low": 45.5,
+              "close": 46.05,
+              "volume": 33617
+            },
+            {
+              "date": "2026-10-16",
+              "open": 46.3,
+              "high": 46.45,
+              "low": 46.05,
+              "close": 46.35,
+              "volume": 7174
+            },
+            {
+              "date": "2026-10-19",
+              "open": 46.4,
+              "high": 46.5,
+              "low": 46.0,
+              "close": 46.1,
+              "volume": 15356
+            },
+            {
+              "date": "2026-10-20",
+              "open": 46.1,
+              "high": 46.1,
+              "low": 45.9,
+              "close": 46.0,
+              "volume": 6078
+            },
+            {
+              "date": "2026-10-21",
+              "open": 46.0,
+              "high": 46.3,
+              "low": 45.9,
+              "close": 46.3,
+              "volume": 27220
+            },
+            {
+              "date": "2026-10-22",
+              "open": 46.45,
+              "high": 46.45,
+              "low": 46.0,
+              "close": 46.0,
+              "volume": 29250
+            },
+            {
+              "date": "2026-10-27",
+              "open": 46.0,
+              "high": 46.7,
+              "low": 44.5,
+              "close": 46.6,
+              "volume": 101489
+            },
+            {
+              "date": "2026-10-28",
+              "open": 46.6,
+              "high": 46.7,
+              "low": 46.3,
+              "close": 46.7,
+              "volume": 18205
+            },
+            {
+              "date": "2026-10-29",
+              "open": 46.2,
+              "high": 46.7,
+              "low": 46.2,
+              "close": 46.7,
+              "volume": 5102
+            },
+            {
+              "date": "2026-10-30",
+              "open": 46.45,
+              "high": 46.45,
+              "low": 46.0,
+              "close": 46.25,
+              "volume": 11110
+            },
+            {
+              "date": "2026-11-02",
+              "open": 46.25,
+              "high": 46.5,
+              "low": 46.25,
+              "close": 46.5,
+              "volume": 19100
+            },
+            {
+              "date": "2026-11-03",
+              "open": 46.0,
+              "high": 46.5,
+              "low": 46.0,
+              "close": 46.25,
+              "volume": 15524
+            },
+            {
+              "date": "2026-11-04",
+              "open": 47.35,
+              "high": 48.8,
+              "low": 46.75,
+              "close": 48.1,
+              "volume": 251439
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 47.5,
+            "prior_20_avg_volume_shares": 35146.75,
+            "latest_volume_shares": 251439,
+            "volume_ratio": 7.15,
+            "price_breakout": true,
+            "volume_expansion": true,
+            "confirmed_price_volume_breakout": true
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "1528",
@@ -27723,7 +28269,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 63,
-          "reason": "收盤 26.25 > 前20日布林上軌 24.18｜使用收盤價、非盤中突破"
+          "reason": "收盤 26.25 > 前20日布林上軌 24.18｜使用收盤價、非盤中突破",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 24.0,
+              "high": 24.6,
+              "low": 24.0,
+              "close": 24.15,
+              "volume": 39399
+            },
+            {
+              "date": "2026-10-02",
+              "open": 24.05,
+              "high": 24.3,
+              "low": 23.95,
+              "close": 23.95,
+              "volume": 58572
+            },
+            {
+              "date": "2026-10-05",
+              "open": 24.1,
+              "high": 24.15,
+              "low": 23.8,
+              "close": 24.05,
+              "volume": 41948
+            },
+            {
+              "date": "2026-10-06",
+              "open": 24.05,
+              "high": 24.1,
+              "low": 23.85,
+              "close": 24.1,
+              "volume": 22477
+            },
+            {
+              "date": "2026-10-07",
+              "open": 23.95,
+              "high": 24.2,
+              "low": 23.85,
+              "close": 23.9,
+              "volume": 29726
+            },
+            {
+              "date": "2026-10-12",
+              "open": 23.75,
+              "high": 23.85,
+              "low": 23.55,
+              "close": 23.75,
+              "volume": 50513
+            },
+            {
+              "date": "2026-10-13",
+              "open": 23.55,
+              "high": 23.8,
+              "low": 23.55,
+              "close": 23.6,
+              "volume": 34273
+            },
+            {
+              "date": "2026-10-14",
+              "open": 23.65,
+              "high": 24.1,
+              "low": 23.6,
+              "close": 23.7,
+              "volume": 176699
+            },
+            {
+              "date": "2026-10-15",
+              "open": 23.85,
+              "high": 23.85,
+              "low": 23.35,
+              "close": 23.35,
+              "volume": 72193
+            },
+            {
+              "date": "2026-10-16",
+              "open": 23.3,
+              "high": 23.7,
+              "low": 23.25,
+              "close": 23.4,
+              "volume": 40003
+            },
+            {
+              "date": "2026-10-19",
+              "open": 23.3,
+              "high": 23.9,
+              "low": 23.25,
+              "close": 23.4,
+              "volume": 155068
+            },
+            {
+              "date": "2026-10-20",
+              "open": 23.6,
+              "high": 23.6,
+              "low": 23.4,
+              "close": 23.5,
+              "volume": 77006
+            },
+            {
+              "date": "2026-10-21",
+              "open": 23.55,
+              "high": 23.9,
+              "low": 23.55,
+              "close": 23.65,
+              "volume": 36300
+            },
+            {
+              "date": "2026-10-22",
+              "open": 23.6,
+              "high": 23.95,
+              "low": 23.5,
+              "close": 23.5,
+              "volume": 55008
+            },
+            {
+              "date": "2026-10-27",
+              "open": 23.45,
+              "high": 23.65,
+              "low": 23.45,
+              "close": 23.6,
+              "volume": 22364
+            },
+            {
+              "date": "2026-10-28",
+              "open": 23.55,
+              "high": 23.9,
+              "low": 23.55,
+              "close": 23.85,
+              "volume": 44029
+            },
+            {
+              "date": "2026-10-29",
+              "open": 23.65,
+              "high": 23.9,
+              "low": 23.6,
+              "close": 23.7,
+              "volume": 17171
+            },
+            {
+              "date": "2026-10-30",
+              "open": 23.75,
+              "high": 23.75,
+              "low": 23.5,
+              "close": 23.65,
+              "volume": 19305
+            },
+            {
+              "date": "2026-11-02",
+              "open": 23.15,
+              "high": 24.0,
+              "low": 23.15,
+              "close": 23.75,
+              "volume": 37000
+            },
+            {
+              "date": "2026-11-03",
+              "open": 23.6,
+              "high": 24.05,
+              "low": 23.6,
+              "close": 23.9,
+              "volume": 30099
+            },
+            {
+              "date": "2026-11-04",
+              "open": 23.75,
+              "high": 26.25,
+              "low": 23.75,
+              "close": 26.25,
+              "volume": 313525
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 24.6,
+            "prior_20_avg_volume_shares": 52957.65,
+            "latest_volume_shares": 313525,
+            "volume_ratio": 5.92,
+            "price_breakout": true,
+            "volume_expansion": true,
+            "confirmed_price_volume_breakout": true
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "2468",
@@ -28238,7 +28966,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 62,
-          "reason": "收盤 60.30 > 前20日布林上軌 57.10｜使用收盤價、非盤中突破"
+          "reason": "收盤 60.30 > 前20日布林上軌 57.10｜使用收盤價、非盤中突破",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 34.9,
+              "high": 36.9,
+              "low": 34.15,
+              "close": 34.4,
+              "volume": 8738505
+            },
+            {
+              "date": "2026-10-02",
+              "open": 34.15,
+              "high": 34.95,
+              "low": 34.05,
+              "close": 34.3,
+              "volume": 1944905
+            },
+            {
+              "date": "2026-10-05",
+              "open": 34.4,
+              "high": 34.6,
+              "low": 33.5,
+              "close": 33.5,
+              "volume": 2005724
+            },
+            {
+              "date": "2026-10-06",
+              "open": 33.55,
+              "high": 34.7,
+              "low": 33.1,
+              "close": 33.75,
+              "volume": 3360899
+            },
+            {
+              "date": "2026-10-07",
+              "open": 34.1,
+              "high": 34.1,
+              "low": 33.35,
+              "close": 33.45,
+              "volume": 1089997
+            },
+            {
+              "date": "2026-10-12",
+              "open": 32.8,
+              "high": 33.1,
+              "low": 32.55,
+              "close": 32.6,
+              "volume": 866222
+            },
+            {
+              "date": "2026-10-13",
+              "open": 34.0,
+              "high": 34.35,
+              "low": 31.8,
+              "close": 33.05,
+              "volume": 3008880
+            },
+            {
+              "date": "2026-10-14",
+              "open": 33.4,
+              "high": 34.4,
+              "low": 33.35,
+              "close": 34.0,
+              "volume": 2128017
+            },
+            {
+              "date": "2026-10-15",
+              "open": 33.35,
+              "high": 33.65,
+              "low": 32.35,
+              "close": 32.9,
+              "volume": 1713938
+            },
+            {
+              "date": "2026-10-16",
+              "open": 34.4,
+              "high": 34.6,
+              "low": 32.95,
+              "close": 34.1,
+              "volume": 4144606
+            },
+            {
+              "date": "2026-10-19",
+              "open": 33.45,
+              "high": 36.3,
+              "low": 33.3,
+              "close": 35.65,
+              "volume": 12049730
+            },
+            {
+              "date": "2026-10-20",
+              "open": 35.65,
+              "high": 35.95,
+              "low": 34.6,
+              "close": 34.6,
+              "volume": 6848737
+            },
+            {
+              "date": "2026-10-21",
+              "open": 35.9,
+              "high": 38.05,
+              "low": 35.75,
+              "close": 38.05,
+              "volume": 10869645
+            },
+            {
+              "date": "2026-10-22",
+              "open": 39.25,
+              "high": 41.85,
+              "low": 38.8,
+              "close": 41.05,
+              "volume": 56896421
+            },
+            {
+              "date": "2026-10-27",
+              "open": 42.15,
+              "high": 45.15,
+              "low": 41.05,
+              "close": 45.15,
+              "volume": 52466217
+            },
+            {
+              "date": "2026-10-28",
+              "open": 46.35,
+              "high": 49.65,
+              "low": 45.45,
+              "close": 49.65,
+              "volume": 74182102
+            },
+            {
+              "date": "2026-10-29",
+              "open": 51.5,
+              "high": 54.6,
+              "low": 50.2,
+              "close": 52.8,
+              "volume": 109028855
+            },
+            {
+              "date": "2026-10-30",
+              "open": 50.2,
+              "high": 56.0,
+              "low": 48.75,
+              "close": 56.0,
+              "volume": 14661995
+            },
+            {
+              "date": "2026-11-02",
+              "open": 55.6,
+              "high": 61.0,
+              "low": 53.5,
+              "close": 55.5,
+              "volume": 13841711
+            },
+            {
+              "date": "2026-11-03",
+              "open": 55.0,
+              "high": 56.0,
+              "low": 49.95,
+              "close": 54.9,
+              "volume": 13013265
+            },
+            {
+              "date": "2026-11-04",
+              "open": 56.2,
+              "high": 60.3,
+              "low": 54.1,
+              "close": 60.3,
+              "volume": 11605178
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 61.0,
+            "prior_20_avg_volume_shares": 19643018.55,
+            "latest_volume_shares": 11605178,
+            "volume_ratio": 0.59,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "2033",
@@ -28444,7 +29354,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 61,
-          "reason": "收盤 52.50 > 前20日布林上軌 51.90｜使用收盤價、非盤中突破"
+          "reason": "收盤 52.50 > 前20日布林上軌 51.90｜使用收盤價、非盤中突破",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 51.9,
+              "high": 52.0,
+              "low": 51.7,
+              "close": 52.0,
+              "volume": 92092
+            },
+            {
+              "date": "2026-10-02",
+              "open": 52.0,
+              "high": 52.0,
+              "low": 51.3,
+              "close": 51.4,
+              "volume": 93991
+            },
+            {
+              "date": "2026-10-05",
+              "open": 52.0,
+              "high": 52.0,
+              "low": 50.7,
+              "close": 50.7,
+              "volume": 221987
+            },
+            {
+              "date": "2026-10-06",
+              "open": 50.7,
+              "high": 52.2,
+              "low": 50.7,
+              "close": 51.0,
+              "volume": 310025
+            },
+            {
+              "date": "2026-10-07",
+              "open": 51.2,
+              "high": 51.3,
+              "low": 51.0,
+              "close": 51.2,
+              "volume": 53173
+            },
+            {
+              "date": "2026-10-12",
+              "open": 50.6,
+              "high": 51.6,
+              "low": 50.6,
+              "close": 51.3,
+              "volume": 131124
+            },
+            {
+              "date": "2026-10-13",
+              "open": 51.2,
+              "high": 51.4,
+              "low": 50.8,
+              "close": 51.3,
+              "volume": 130612
+            },
+            {
+              "date": "2026-10-14",
+              "open": 51.2,
+              "high": 51.2,
+              "low": 50.8,
+              "close": 51.2,
+              "volume": 117742
+            },
+            {
+              "date": "2026-10-15",
+              "open": 51.1,
+              "high": 51.8,
+              "low": 50.7,
+              "close": 50.7,
+              "volume": 135567
+            },
+            {
+              "date": "2026-10-16",
+              "open": 50.7,
+              "high": 52.2,
+              "low": 50.7,
+              "close": 50.8,
+              "volume": 243205
+            },
+            {
+              "date": "2026-10-19",
+              "open": 50.7,
+              "high": 50.7,
+              "low": 49.9,
+              "close": 49.9,
+              "volume": 244745
+            },
+            {
+              "date": "2026-10-20",
+              "open": 49.95,
+              "high": 50.3,
+              "low": 49.75,
+              "close": 49.75,
+              "volume": 64652
+            },
+            {
+              "date": "2026-10-21",
+              "open": 49.9,
+              "high": 50.4,
+              "low": 49.9,
+              "close": 49.95,
+              "volume": 54826
+            },
+            {
+              "date": "2026-10-22",
+              "open": 50.5,
+              "high": 52.1,
+              "low": 50.4,
+              "close": 50.4,
+              "volume": 321294
+            },
+            {
+              "date": "2026-10-27",
+              "open": 51.8,
+              "high": 51.8,
+              "low": 49.8,
+              "close": 50.5,
+              "volume": 164948
+            },
+            {
+              "date": "2026-10-28",
+              "open": 51.0,
+              "high": 51.0,
+              "low": 50.2,
+              "close": 50.4,
+              "volume": 73275
+            },
+            {
+              "date": "2026-10-29",
+              "open": 50.9,
+              "high": 50.9,
+              "low": 50.0,
+              "close": 50.3,
+              "volume": 65217
+            },
+            {
+              "date": "2026-10-30",
+              "open": 50.0,
+              "high": 50.0,
+              "low": 49.55,
+              "close": 50.0,
+              "volume": 124315
+            },
+            {
+              "date": "2026-11-02",
+              "open": 50.3,
+              "high": 51.1,
+              "low": 50.2,
+              "close": 51.1,
+              "volume": 225101
+            },
+            {
+              "date": "2026-11-03",
+              "open": 50.4,
+              "high": 51.9,
+              "low": 49.7,
+              "close": 49.85,
+              "volume": 338980
+            },
+            {
+              "date": "2026-11-04",
+              "open": 50.4,
+              "high": 53.5,
+              "low": 50.2,
+              "close": 52.5,
+              "volume": 1617840
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 52.2,
+            "prior_20_avg_volume_shares": 160343.55,
+            "latest_volume_shares": 1617840,
+            "volume_ratio": 10.09,
+            "price_breakout": true,
+            "volume_expansion": true,
+            "confirmed_price_volume_breakout": true
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "1416",
@@ -28650,7 +29742,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 61,
-          "reason": "收盤 48.10 > 前20日布林上軌 47.55｜使用收盤價、非盤中突破"
+          "reason": "收盤 48.10 > 前20日布林上軌 47.55｜使用收盤價、非盤中突破",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 44.5,
+              "high": 44.55,
+              "low": 44.15,
+              "close": 44.55,
+              "volume": 22383
+            },
+            {
+              "date": "2026-10-02",
+              "open": 44.25,
+              "high": 44.5,
+              "low": 44.15,
+              "close": 44.4,
+              "volume": 43680
+            },
+            {
+              "date": "2026-10-05",
+              "open": 44.5,
+              "high": 44.5,
+              "low": 44.05,
+              "close": 44.05,
+              "volume": 58344
+            },
+            {
+              "date": "2026-10-06",
+              "open": 44.0,
+              "high": 44.5,
+              "low": 43.95,
+              "close": 44.0,
+              "volume": 46191
+            },
+            {
+              "date": "2026-10-07",
+              "open": 44.05,
+              "high": 44.4,
+              "low": 44.0,
+              "close": 44.25,
+              "volume": 9556
+            },
+            {
+              "date": "2026-10-12",
+              "open": 47.5,
+              "high": 47.5,
+              "low": 45.25,
+              "close": 45.95,
+              "volume": 166919
+            },
+            {
+              "date": "2026-10-13",
+              "open": 45.9,
+              "high": 45.95,
+              "low": 45.65,
+              "close": 45.95,
+              "volume": 28721
+            },
+            {
+              "date": "2026-10-14",
+              "open": 45.35,
+              "high": 46.05,
+              "low": 45.35,
+              "close": 46.05,
+              "volume": 37916
+            },
+            {
+              "date": "2026-10-15",
+              "open": 46.2,
+              "high": 46.2,
+              "low": 45.5,
+              "close": 46.05,
+              "volume": 33617
+            },
+            {
+              "date": "2026-10-16",
+              "open": 46.3,
+              "high": 46.45,
+              "low": 46.05,
+              "close": 46.35,
+              "volume": 7174
+            },
+            {
+              "date": "2026-10-19",
+              "open": 46.4,
+              "high": 46.5,
+              "low": 46.0,
+              "close": 46.1,
+              "volume": 15356
+            },
+            {
+              "date": "2026-10-20",
+              "open": 46.1,
+              "high": 46.1,
+              "low": 45.9,
+              "close": 46.0,
+              "volume": 6078
+            },
+            {
+              "date": "2026-10-21",
+              "open": 46.0,
+              "high": 46.3,
+              "low": 45.9,
+              "close": 46.3,
+              "volume": 27220
+            },
+            {
+              "date": "2026-10-22",
+              "open": 46.45,
+              "high": 46.45,
+              "low": 46.0,
+              "close": 46.0,
+              "volume": 29250
+            },
+            {
+              "date": "2026-10-27",
+              "open": 46.0,
+              "high": 46.7,
+              "low": 44.5,
+              "close": 46.6,
+              "volume": 101489
+            },
+            {
+              "date": "2026-10-28",
+              "open": 46.6,
+              "high": 46.7,
+              "low": 46.3,
+              "close": 46.7,
+              "volume": 18205
+            },
+            {
+              "date": "2026-10-29",
+              "open": 46.2,
+              "high": 46.7,
+              "low": 46.2,
+              "close": 46.7,
+              "volume": 5102
+            },
+            {
+              "date": "2026-10-30",
+              "open": 46.45,
+              "high": 46.45,
+              "low": 46.0,
+              "close": 46.25,
+              "volume": 11110
+            },
+            {
+              "date": "2026-11-02",
+              "open": 46.25,
+              "high": 46.5,
+              "low": 46.25,
+              "close": 46.5,
+              "volume": 19100
+            },
+            {
+              "date": "2026-11-03",
+              "open": 46.0,
+              "high": 46.5,
+              "low": 46.0,
+              "close": 46.25,
+              "volume": 15524
+            },
+            {
+              "date": "2026-11-04",
+              "open": 47.35,
+              "high": 48.8,
+              "low": 46.75,
+              "close": 48.1,
+              "volume": 251439
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 47.5,
+            "prior_20_avg_volume_shares": 35146.75,
+            "latest_volume_shares": 251439,
+            "volume_ratio": 7.15,
+            "price_breakout": true,
+            "volume_expansion": true,
+            "confirmed_price_volume_breakout": true
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "6446",
@@ -29167,7 +30441,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 66,
-          "reason": "5日波幅 7.0% < 前期 10.5% < 更早 13.4%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 7.0% < 前期 10.5% < 更早 13.4%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 15.35,
+              "high": 15.45,
+              "low": 15.05,
+              "close": 15.45,
+              "volume": 1040623
+            },
+            {
+              "date": "2026-10-02",
+              "open": 15.35,
+              "high": 15.75,
+              "low": 15.35,
+              "close": 15.7,
+              "volume": 1576552
+            },
+            {
+              "date": "2026-10-05",
+              "open": 16.0,
+              "high": 17.25,
+              "low": 15.8,
+              "close": 17.25,
+              "volume": 8527404
+            },
+            {
+              "date": "2026-10-06",
+              "open": 18.95,
+              "high": 18.95,
+              "low": 18.9,
+              "close": 18.95,
+              "volume": 6161374
+            },
+            {
+              "date": "2026-10-07",
+              "open": 19.7,
+              "high": 20.1,
+              "low": 18.9,
+              "close": 19.8,
+              "volume": 22537105
+            },
+            {
+              "date": "2026-10-12",
+              "open": 19.5,
+              "high": 20.4,
+              "low": 18.9,
+              "close": 20.2,
+              "volume": 17159957
+            },
+            {
+              "date": "2026-10-13",
+              "open": 19.6,
+              "high": 19.7,
+              "low": 18.9,
+              "close": 18.95,
+              "volume": 11479083
+            },
+            {
+              "date": "2026-10-14",
+              "open": 18.95,
+              "high": 19.2,
+              "low": 18.2,
+              "close": 18.6,
+              "volume": 6973576
+            },
+            {
+              "date": "2026-10-15",
+              "open": 18.05,
+              "high": 18.5,
+              "low": 17.7,
+              "close": 17.7,
+              "volume": 4666943
+            },
+            {
+              "date": "2026-10-16",
+              "open": 17.7,
+              "high": 18.25,
+              "low": 17.7,
+              "close": 17.8,
+              "volume": 2455770
+            },
+            {
+              "date": "2026-10-19",
+              "open": 17.3,
+              "high": 18.0,
+              "low": 17.2,
+              "close": 17.45,
+              "volume": 2100936
+            },
+            {
+              "date": "2026-10-20",
+              "open": 17.45,
+              "high": 19.15,
+              "low": 17.3,
+              "close": 19.0,
+              "volume": 6404109
+            },
+            {
+              "date": "2026-10-21",
+              "open": 18.4,
+              "high": 19.0,
+              "low": 18.3,
+              "close": 18.35,
+              "volume": 4486972
+            },
+            {
+              "date": "2026-10-22",
+              "open": 18.45,
+              "high": 18.85,
+              "low": 18.0,
+              "close": 18.2,
+              "volume": 2751147
+            },
+            {
+              "date": "2026-10-27",
+              "open": 18.15,
+              "high": 18.2,
+              "low": 16.95,
+              "close": 17.1,
+              "volume": 2834056
+            },
+            {
+              "date": "2026-10-28",
+              "open": 17.5,
+              "high": 18.7,
+              "low": 17.5,
+              "close": 18.5,
+              "volume": 2693388
+            },
+            {
+              "date": "2026-10-29",
+              "open": 18.5,
+              "high": 19.3,
+              "low": 18.2,
+              "close": 18.9,
+              "volume": 4949822
+            },
+            {
+              "date": "2026-10-30",
+              "open": 18.6,
+              "high": 19.3,
+              "low": 18.05,
+              "close": 19.0,
+              "volume": 3935858
+            },
+            {
+              "date": "2026-11-02",
+              "open": 18.6,
+              "high": 19.2,
+              "low": 18.25,
+              "close": 18.3,
+              "volume": 5099132
+            },
+            {
+              "date": "2026-11-03",
+              "open": 17.9,
+              "high": 18.65,
+              "low": 17.4,
+              "close": 17.7,
+              "volume": 3284634
+            },
+            {
+              "date": "2026-11-04",
+              "open": 17.95,
+              "high": 18.75,
+              "low": 17.7,
+              "close": 18.5,
+              "volume": 3084607
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 20.4,
+            "prior_20_avg_volume_shares": 6055922.05,
+            "latest_volume_shares": 3084607,
+            "volume_ratio": 0.51,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "3045",
@@ -29270,7 +30726,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 65,
-          "reason": "5日波幅 1.5% < 前期 3.0% < 更早 7.5%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 1.5% < 前期 3.0% < 更早 7.5%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 120.0,
+              "high": 122.0,
+              "low": 119.5,
+              "close": 122.0,
+              "volume": 5834785
+            },
+            {
+              "date": "2026-10-02",
+              "open": 121.5,
+              "high": 122.0,
+              "low": 121.0,
+              "close": 122.0,
+              "volume": 3702973
+            },
+            {
+              "date": "2026-10-05",
+              "open": 123.0,
+              "high": 123.5,
+              "low": 122.0,
+              "close": 122.5,
+              "volume": 7130067
+            },
+            {
+              "date": "2026-10-06",
+              "open": 122.5,
+              "high": 123.0,
+              "low": 122.0,
+              "close": 123.0,
+              "volume": 3586355
+            },
+            {
+              "date": "2026-10-07",
+              "open": 123.0,
+              "high": 123.0,
+              "low": 122.0,
+              "close": 122.5,
+              "volume": 5429501
+            },
+            {
+              "date": "2026-10-12",
+              "open": 123.5,
+              "high": 124.0,
+              "low": 121.5,
+              "close": 121.5,
+              "volume": 6213122
+            },
+            {
+              "date": "2026-10-13",
+              "open": 121.5,
+              "high": 125.0,
+              "low": 121.5,
+              "close": 125.0,
+              "volume": 7304775
+            },
+            {
+              "date": "2026-10-14",
+              "open": 124.5,
+              "high": 127.5,
+              "low": 124.5,
+              "close": 126.5,
+              "volume": 8731201
+            },
+            {
+              "date": "2026-10-15",
+              "open": 127.0,
+              "high": 133.0,
+              "low": 126.5,
+              "close": 131.0,
+              "volume": 16412294
+            },
+            {
+              "date": "2026-10-16",
+              "open": 131.5,
+              "high": 132.5,
+              "low": 129.5,
+              "close": 130.5,
+              "volume": 9746487
+            },
+            {
+              "date": "2026-10-19",
+              "open": 131.0,
+              "high": 132.5,
+              "low": 130.0,
+              "close": 130.5,
+              "volume": 13037853
+            },
+            {
+              "date": "2026-10-20",
+              "open": 128.5,
+              "high": 131.0,
+              "low": 128.5,
+              "close": 130.5,
+              "volume": 7463254
+            },
+            {
+              "date": "2026-10-21",
+              "open": 130.0,
+              "high": 130.5,
+              "low": 129.0,
+              "close": 130.5,
+              "volume": 10412323
+            },
+            {
+              "date": "2026-10-22",
+              "open": 130.0,
+              "high": 134.0,
+              "low": 130.0,
+              "close": 133.0,
+              "volume": 9142975
+            },
+            {
+              "date": "2026-10-27",
+              "open": 134.0,
+              "high": 135.0,
+              "low": 132.5,
+              "close": 134.5,
+              "volume": 13515076
+            },
+            {
+              "date": "2026-10-28",
+              "open": 133.5,
+              "high": 133.5,
+              "low": 131.5,
+              "close": 132.5,
+              "volume": 10897794
+            },
+            {
+              "date": "2026-10-29",
+              "open": 131.5,
+              "high": 134.5,
+              "low": 131.0,
+              "close": 134.5,
+              "volume": 6579785
+            },
+            {
+              "date": "2026-10-30",
+              "open": 134.5,
+              "high": 135.5,
+              "low": 133.0,
+              "close": 133.5,
+              "volume": 8727843
+            },
+            {
+              "date": "2026-11-02",
+              "open": 134.5,
+              "high": 135.5,
+              "low": 132.0,
+              "close": 133.0,
+              "volume": 9657827
+            },
+            {
+              "date": "2026-11-03",
+              "open": 133.0,
+              "high": 134.5,
+              "low": 131.5,
+              "close": 133.0,
+              "volume": 10677945
+            },
+            {
+              "date": "2026-11-04",
+              "open": 133.0,
+              "high": 135.0,
+              "low": 132.5,
+              "close": 135.0,
+              "volume": 11190759
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 135.5,
+            "prior_20_avg_volume_shares": 8710211.75,
+            "latest_volume_shares": 11190759,
+            "volume_ratio": 1.28,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "4904",
@@ -29579,7 +31217,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 62,
-          "reason": "5日波幅 2.1% < 前期 4.6% < 更早 5.3%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 2.1% < 前期 4.6% < 更早 5.3%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 68.1,
+              "high": 68.4,
+              "low": 67.1,
+              "close": 67.9,
+              "volume": 28647138
+            },
+            {
+              "date": "2026-10-02",
+              "open": 67.3,
+              "high": 68.0,
+              "low": 67.3,
+              "close": 67.3,
+              "volume": 18882806
+            },
+            {
+              "date": "2026-10-05",
+              "open": 68.4,
+              "high": 68.4,
+              "low": 67.3,
+              "close": 67.4,
+              "volume": 16418201
+            },
+            {
+              "date": "2026-10-06",
+              "open": 67.5,
+              "high": 68.5,
+              "low": 67.5,
+              "close": 68.4,
+              "volume": 30124093
+            },
+            {
+              "date": "2026-10-07",
+              "open": 68.8,
+              "high": 69.5,
+              "low": 68.3,
+              "close": 68.7,
+              "volume": 21099687
+            },
+            {
+              "date": "2026-10-12",
+              "open": 68.2,
+              "high": 70.2,
+              "low": 67.4,
+              "close": 69.8,
+              "volume": 40618256
+            },
+            {
+              "date": "2026-10-13",
+              "open": 68.6,
+              "high": 72.0,
+              "low": 68.6,
+              "close": 71.6,
+              "volume": 60819848
+            },
+            {
+              "date": "2026-10-14",
+              "open": 71.9,
+              "high": 71.9,
+              "low": 70.6,
+              "close": 71.4,
+              "volume": 33119725
+            },
+            {
+              "date": "2026-10-15",
+              "open": 72.0,
+              "high": 73.6,
+              "low": 70.7,
+              "close": 72.9,
+              "volume": 77882506
+            },
+            {
+              "date": "2026-10-16",
+              "open": 72.6,
+              "high": 75.3,
+              "low": 72.6,
+              "close": 73.6,
+              "volume": 52048231
+            },
+            {
+              "date": "2026-10-19",
+              "open": 74.8,
+              "high": 74.8,
+              "low": 72.8,
+              "close": 73.4,
+              "volume": 35305334
+            },
+            {
+              "date": "2026-10-20",
+              "open": 72.0,
+              "high": 72.9,
+              "low": 71.5,
+              "close": 71.6,
+              "volume": 28956227
+            },
+            {
+              "date": "2026-10-21",
+              "open": 73.0,
+              "high": 74.9,
+              "low": 71.8,
+              "close": 74.8,
+              "volume": 44237923
+            },
+            {
+              "date": "2026-10-22",
+              "open": 73.9,
+              "high": 75.5,
+              "low": 73.9,
+              "close": 74.9,
+              "volume": 33144399
+            },
+            {
+              "date": "2026-10-27",
+              "open": 76.9,
+              "high": 76.9,
+              "low": 74.0,
+              "close": 75.0,
+              "volume": 54838088
+            },
+            {
+              "date": "2026-10-28",
+              "open": 74.1,
+              "high": 75.2,
+              "low": 73.8,
+              "close": 74.2,
+              "volume": 23915490
+            },
+            {
+              "date": "2026-10-29",
+              "open": 74.5,
+              "high": 76.2,
+              "low": 74.1,
+              "close": 75.3,
+              "volume": 38412046
+            },
+            {
+              "date": "2026-10-30",
+              "open": 75.0,
+              "high": 75.8,
+              "low": 74.0,
+              "close": 75.8,
+              "volume": 50114684
+            },
+            {
+              "date": "2026-11-02",
+              "open": 76.4,
+              "high": 76.4,
+              "low": 74.1,
+              "close": 75.0,
+              "volume": 47037762
+            },
+            {
+              "date": "2026-11-03",
+              "open": 75.5,
+              "high": 75.5,
+              "low": 72.9,
+              "close": 74.2,
+              "volume": 50316191
+            },
+            {
+              "date": "2026-11-04",
+              "open": 74.0,
+              "high": 74.5,
+              "low": 72.2,
+              "close": 73.2,
+              "volume": 41950417
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 76.9,
+            "prior_20_avg_volume_shares": 39296931.75,
+            "latest_volume_shares": 41950417,
+            "volume_ratio": 1.07,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "2412",
@@ -29682,7 +31502,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 61,
-          "reason": "5日波幅 2.2% < 前期 2.6% < 更早 4.3%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 2.2% < 前期 2.6% < 更早 4.3%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 144.0,
+              "high": 146.0,
+              "low": 143.0,
+              "close": 145.5,
+              "volume": 8628434
+            },
+            {
+              "date": "2026-10-02",
+              "open": 145.0,
+              "high": 146.5,
+              "low": 144.0,
+              "close": 146.0,
+              "volume": 10009961
+            },
+            {
+              "date": "2026-10-05",
+              "open": 147.0,
+              "high": 147.0,
+              "low": 144.0,
+              "close": 145.5,
+              "volume": 8515486
+            },
+            {
+              "date": "2026-10-06",
+              "open": 145.5,
+              "high": 145.5,
+              "low": 144.0,
+              "close": 145.5,
+              "volume": 7052714
+            },
+            {
+              "date": "2026-10-07",
+              "open": 145.5,
+              "high": 145.5,
+              "low": 144.0,
+              "close": 145.5,
+              "volume": 7080591
+            },
+            {
+              "date": "2026-10-12",
+              "open": 146.5,
+              "high": 147.0,
+              "low": 146.0,
+              "close": 146.5,
+              "volume": 7060560
+            },
+            {
+              "date": "2026-10-13",
+              "open": 145.5,
+              "high": 148.0,
+              "low": 145.5,
+              "close": 148.0,
+              "volume": 13418045
+            },
+            {
+              "date": "2026-10-14",
+              "open": 148.0,
+              "high": 149.5,
+              "low": 147.5,
+              "close": 148.5,
+              "volume": 9187455
+            },
+            {
+              "date": "2026-10-15",
+              "open": 149.5,
+              "high": 154.0,
+              "low": 149.0,
+              "close": 152.5,
+              "volume": 24575585
+            },
+            {
+              "date": "2026-10-16",
+              "open": 152.5,
+              "high": 153.5,
+              "low": 151.0,
+              "close": 153.0,
+              "volume": 13986087
+            },
+            {
+              "date": "2026-10-19",
+              "open": 153.5,
+              "high": 155.5,
+              "low": 152.5,
+              "close": 154.5,
+              "volume": 17922573
+            },
+            {
+              "date": "2026-10-20",
+              "open": 152.0,
+              "high": 155.5,
+              "low": 152.0,
+              "close": 154.5,
+              "volume": 9840337
+            },
+            {
+              "date": "2026-10-21",
+              "open": 153.5,
+              "high": 154.0,
+              "low": 152.5,
+              "close": 154.0,
+              "volume": 8492648
+            },
+            {
+              "date": "2026-10-22",
+              "open": 153.0,
+              "high": 158.0,
+              "low": 152.5,
+              "close": 158.0,
+              "volume": 15797921
+            },
+            {
+              "date": "2026-10-27",
+              "open": 159.5,
+              "high": 159.5,
+              "low": 156.0,
+              "close": 158.0,
+              "volume": 13312074
+            },
+            {
+              "date": "2026-10-28",
+              "open": 156.5,
+              "high": 158.0,
+              "low": 155.5,
+              "close": 156.5,
+              "volume": 7612229
+            },
+            {
+              "date": "2026-10-29",
+              "open": 155.5,
+              "high": 159.0,
+              "low": 155.5,
+              "close": 158.0,
+              "volume": 7968750
+            },
+            {
+              "date": "2026-10-30",
+              "open": 159.0,
+              "high": 160.0,
+              "low": 158.0,
+              "close": 160.0,
+              "volume": 16443940
+            },
+            {
+              "date": "2026-11-02",
+              "open": 161.0,
+              "high": 161.5,
+              "low": 157.5,
+              "close": 159.5,
+              "volume": 9728423
+            },
+            {
+              "date": "2026-11-03",
+              "open": 158.5,
+              "high": 160.5,
+              "low": 157.5,
+              "close": 159.0,
+              "volume": 10100237
+            },
+            {
+              "date": "2026-11-04",
+              "open": 159.5,
+              "high": 161.5,
+              "low": 159.0,
+              "close": 161.5,
+              "volume": 16362974
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 161.5,
+            "prior_20_avg_volume_shares": 11336702.5,
+            "latest_volume_shares": 16362974,
+            "volume_ratio": 1.44,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         },
         {
           "code": "6782",
@@ -29888,7 +31890,189 @@
             "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
           },
           "score": 60,
-          "reason": "5日波幅 1.0% < 前期 2.5% < 更早 3.0%｜僅價格近似，缺量能確認"
+          "reason": "5日波幅 1.0% < 前期 2.5% < 更早 3.0%｜僅價格近似，缺量能確認",
+          "ohlcv": [
+            {
+              "date": "2026-10-01",
+              "open": 56.6,
+              "high": 56.8,
+              "low": 56.2,
+              "close": 56.7,
+              "volume": 75603
+            },
+            {
+              "date": "2026-10-02",
+              "open": 56.3,
+              "high": 56.7,
+              "low": 56.3,
+              "close": 56.3,
+              "volume": 159794
+            },
+            {
+              "date": "2026-10-05",
+              "open": 56.8,
+              "high": 57.0,
+              "low": 56.5,
+              "close": 56.6,
+              "volume": 184491
+            },
+            {
+              "date": "2026-10-06",
+              "open": 56.8,
+              "high": 57.2,
+              "low": 56.6,
+              "close": 57.1,
+              "volume": 215446
+            },
+            {
+              "date": "2026-10-07",
+              "open": 57.1,
+              "high": 57.5,
+              "low": 56.7,
+              "close": 57.4,
+              "volume": 273853
+            },
+            {
+              "date": "2026-10-12",
+              "open": 59.7,
+              "high": 61.7,
+              "low": 58.6,
+              "close": 60.2,
+              "volume": 1209246
+            },
+            {
+              "date": "2026-10-13",
+              "open": 60.6,
+              "high": 61.5,
+              "low": 59.8,
+              "close": 60.7,
+              "volume": 699727
+            },
+            {
+              "date": "2026-10-14",
+              "open": 61.0,
+              "high": 61.0,
+              "low": 60.1,
+              "close": 60.3,
+              "volume": 466178
+            },
+            {
+              "date": "2026-10-15",
+              "open": 60.7,
+              "high": 61.3,
+              "low": 60.4,
+              "close": 61.0,
+              "volume": 648580
+            },
+            {
+              "date": "2026-10-16",
+              "open": 61.0,
+              "high": 62.0,
+              "low": 60.8,
+              "close": 62.0,
+              "volume": 928276
+            },
+            {
+              "date": "2026-10-19",
+              "open": 61.8,
+              "high": 61.8,
+              "low": 59.7,
+              "close": 59.9,
+              "volume": 400679
+            },
+            {
+              "date": "2026-10-20",
+              "open": 59.4,
+              "high": 59.6,
+              "low": 58.6,
+              "close": 58.9,
+              "volume": 304231
+            },
+            {
+              "date": "2026-10-21",
+              "open": 59.6,
+              "high": 59.6,
+              "low": 58.5,
+              "close": 58.9,
+              "volume": 418148
+            },
+            {
+              "date": "2026-10-22",
+              "open": 58.9,
+              "high": 59.6,
+              "low": 58.9,
+              "close": 59.1,
+              "volume": 181285
+            },
+            {
+              "date": "2026-10-27",
+              "open": 59.2,
+              "high": 60.4,
+              "low": 58.5,
+              "close": 60.4,
+              "volume": 523714
+            },
+            {
+              "date": "2026-10-28",
+              "open": 59.8,
+              "high": 59.8,
+              "low": 58.9,
+              "close": 59.2,
+              "volume": 215017
+            },
+            {
+              "date": "2026-10-29",
+              "open": 58.7,
+              "high": 59.8,
+              "low": 58.7,
+              "close": 59.8,
+              "volume": 104570
+            },
+            {
+              "date": "2026-10-30",
+              "open": 59.8,
+              "high": 60.0,
+              "low": 59.4,
+              "close": 59.7,
+              "volume": 183670
+            },
+            {
+              "date": "2026-11-02",
+              "open": 59.7,
+              "high": 60.4,
+              "low": 59.4,
+              "close": 59.7,
+              "volume": 166904
+            },
+            {
+              "date": "2026-11-03",
+              "open": 59.4,
+              "high": 59.9,
+              "low": 59.2,
+              "close": 59.3,
+              "volume": 278340
+            },
+            {
+              "date": "2026-11-04",
+              "open": 59.3,
+              "high": 59.7,
+              "low": 58.9,
+              "close": 59.6,
+              "volume": 191560
+            }
+          ],
+          "volume_price_observation": {
+            "basis": "20筆官方原始日K線；未還原除權息；非買賣建議",
+            "prior_20_high": 62.0,
+            "prior_20_avg_volume_shares": 381887.6,
+            "latest_volume_shares": 191560,
+            "volume_ratio": 0.5,
+            "price_breakout": false,
+            "volume_expansion": false,
+            "confirmed_price_volume_breakout": false
+          },
+          "ohlcv_source_verified": true,
+          "ohlcv_adjusted_for_corporate_actions": false
         }
       ],
       "sector": []
