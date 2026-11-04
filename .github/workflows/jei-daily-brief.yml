@@ -28,6 +28,7 @@ on:
       - 'scripts/publish_line_status.py'
       - 'tests/test_daily_brief.py'
       - 'tests/test_line_dispatch.py'
+      - 'tests/test_line_payload_coverage.py'
       - 'tests/test_line_status.py'
       - 'tests/line_status.test.cjs'
       - 'remote/brief.html'
@@ -55,6 +56,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_daily_brief.py' -v
           python -m unittest discover -s tests -p 'test_send_line_alert.py' -v
           python -m unittest discover -s tests -p 'test_line_dispatch.py' -v
+          python -m unittest discover -s tests -p 'test_line_payload_coverage.py' -v
           python -m unittest discover -s tests -p 'test_line_status.py' -v
           node tests/line_status.test.cjs
       - name: Select edition and LINE policy

@@ -27,16 +27,51 @@ def can_send(report,edition,now,enabled,token,recipient):
         return False,"LINE 當次報告未通過行情驗證"
     return True,"ready"
 
+def text_units(text):
+    """LINE counts UTF-16 units; an ordinary Unicode emoji consumes two."""
+    return sum(2 if ord(char)>0xffff else 1 for char in text)
+
+def clip_units(value,limit):
+    output=[];used=0
+    for char in str(value):
+        width=2 if ord(char)>0xffff else 1
+        if used+width>limit:break
+        output.append(char);used+=width
+    return "".join(output)
+
 def payload(report,recipient):
-    lines=[report.get("title") or "JEI 市場摘要",str(report.get("date") or ""),str(report.get("note") or "")]
-    for block in (report.get("blocks") or [])[:4]:
-        lines.append("【"+str(block.get("title") or "")[:40]+"】")
-        is_paper=block.get("kind")=="paper_performance" or block.get("title")=="四策略模擬復盤"
-        limit=8 if is_paper else 2
-        lines.extend(str(x)[:180] for x in (block.get("items") or [])[:limit])
-    lines.append("詳細內容："+str(report.get("report_url") or "https://jei-stock-radar.vercel.app/remote/brief.html"))
-    lines.append("僅研究參考，非即時行情或買賣建議。")
-    return {"to":recipient,"messages":[{"type":"text","text":"\n".join(lines)[:3500]}],"notificationDisabled":False}
+    lines=[clip_units(report.get("title") or "JEI 市場摘要",120),
+           clip_units(report.get("date") or "",20),clip_units(report.get("note") or "",400)]
+    default_url="https://jei-stock-radar.vercel.app/remote/brief.html"
+    url=report.get("report_url")
+    if not isinstance(url,str) or not url.startswith("https://") or text_units(url)>300:url=default_url
+    footer=["詳細內容："+url,"僅研究參考，非即時行情或買賣建議。"]
+    blocks=report.get("blocks")
+    blocks=[b for b in blocks[:64] if isinstance(b,dict)] if isinstance(blocks,list) else []
+    def priority(block):
+        title=str(block.get("title") or "")
+        if "風控" in title or title in ("大盤風險","未發布原因","資料尚未就緒"):return 0
+        if "主攻候選" in title:return 1
+        if block.get("kind")=="paper_performance" or title=="四策略模擬復盤":return 2
+        return 3
+    # Global blocks used to displace candidates beyond the first four slots.
+    # Protect risk, picks and paper results before spending the remaining space.
+    for block in sorted(blocks,key=priority)[:8]:
+        title=str(block.get("title") or "")
+        items=block.get("items")
+        if not isinstance(items,list):continue
+        is_paper=block.get("kind")=="paper_performance" or title=="四策略模擬復盤"
+        limit=(8 if is_paper or title.startswith("跨市場風險指標") else
+               3 if title.startswith("全球市場｜美股核心指數") else 2)
+        header="【"+clip_units(title,40)+"】"
+        kept=[]
+        for item in items[:limit]:
+            text=clip_units(item,180)
+            if text_units("\n".join(lines+[header]+kept+[text]+footer))>3500:break
+            kept.append(text)
+        if kept:lines.extend([header,*kept])
+    # Reserve the complete link and disclaimer instead of slicing them off.
+    return {"to":recipient,"messages":[{"type":"text","text":"\n".join(lines+footer)}],"notificationDisabled":False}
 
 def api_get(path,token):
     """Retry only transient read failures; never bypass a missing quota check."""
