@@ -37,7 +37,7 @@ class MidnightArchiveRecoveryTests(unittest.TestCase):
                 if url==u.TWSE_INDEX:return []
                 raise RuntimeError('No new official session in fixture')
             def offhours(rows,*args):return rows,None
-            def live(rows):return rows,0,None,[],{}
+            def live(rows,**kwargs):return rows,0,None,[],{}
             with patch.object(u,'OUT',out),patch.object(u,'HISTORY',history),patch.object(u,'DAILY_PRICES',daily),patch.object(u,'datetime',Clock),patch.object(u,'fetch_json',side_effect=get),patch.object(u,'fetch_latest_offhours_close',side_effect=offhours),patch.object(u,'fetch_institutional',return_value=({},['no new institutional session'],{})),patch.object(u,'enrich_live',side_effect=live_impl or live),contextlib.redirect_stdout(io.StringIO()):
                 for moment in moments:
                     Clock.current=moment

@@ -430,7 +430,35 @@ def recent_mis_time(message, asof):
     except (ValueError, TypeError):
         return False
 
-def enrich_live(rows, asof=None):
+def select_mis_retry_channels(messages, by_code, asof, priority_codes=()):
+    """Spend the existing 100-symbol retry budget on fresh, distinct symbols.
+
+    Priority is public ticker membership only, never private position size or
+    cost. Selection cannot validate a trade or bypass the normal quote gates.
+    """
+    priority={code for code in priority_codes if isinstance(code,str) and re.fullmatch(r"\d{4}",code)}
+    candidates={}
+    for message in messages:
+        code=str(message.get("c", ""))
+        row=by_code.get(code)
+        if (not re.fullmatch(r"\d{4}",code) or not row
+                or row.get("market") not in ("TWSE","TPEX")
+                or str(message.get("d", ""))!=asof.strftime("%Y%m%d")
+                or not recent_mis_time(message,asof)):
+            continue
+        if live_price(message) is not None:
+            # A usable-price duplicate needs no missing-price retry.
+            candidates[code]=False
+        elif (num(message.get("v")) or 0)>0 and code not in candidates:
+            candidates[code]=True
+    codes=[code for code,missing in candidates.items() if missing]
+    codes.sort(key=lambda code:code not in priority)  # stable within each group
+    selected=codes[:100]
+    return [(("tse_" if by_code[code]["market"]=="TWSE" else "otc_")+code+".tw")
+            for code in selected],set(selected)&priority
+
+
+def enrich_live(rows, asof=None, priority_codes=()):
     asof=asof or datetime.now(TZ)
     expected_day=asof.strftime("%Y%m%d")
     by_code={x["code"]:x for x in rows}
@@ -486,24 +514,22 @@ def enrich_live(rows, asof=None):
     stats["incomplete_with_volume"]=len(incomplete)
     stats["retry_requested"]=0
     stats["retry_recovered"]=0
-    retry_channels=[]
-    for m in incomplete[:100]:
-        code=str(m.get("c"))
-        row=by_code.get(code)
-        if row:
-            retry_channels.append(("tse_" if row.get("market")=="TWSE" else "otc_")+code+".tw")
+    retry_channels,priority_retries=select_mis_retry_channels(messages,by_code,asof,priority_codes)
     stats["retry_requested"]=len(retry_channels)
+    stats["priority_retry_requested"]=len(priority_retries)
+    stats["priority_retry_recovered"]=0
     replacements={}
+    requested_retry_codes={channel.split("_",1)[1][:-3] for channel in retry_channels}
     for j in range(0,len(retry_channels),20):
         try:
             for quote in fetch_mis_channels(retry_channels[j:j+20]):
-                if live_price(quote) is not None:
+                if (str(quote.get("c","")) in requested_retry_codes
+                        and live_price(quote) is not None):
                     replacements[str(quote.get("c",""))]=quote
         except Exception as exc:
             errors.append("MIS retry: "+str(exc)[:100])
     if replacements:
         messages=[replacements.get(str(m.get("c","")),m) for m in messages]
-        stats["retry_recovered"]=len(replacements)
     accepted_codes=set()
     for m in messages:
         code=str(m.get("c","")).strip()
@@ -553,6 +579,10 @@ def enrich_live(rows, asof=None):
         elif qt:
             x["quote_time"]=qt
         x["live"]=True;got+=1;accepted_codes.add(code)
+    # Count only replacements that survived the date/time/price gates above.
+    recovered=set(replacements)&accepted_codes
+    stats["retry_recovered"]=len(recovered)
+    stats["priority_retry_recovered"]=len(recovered&priority_retries)
     taiex=None
     try:
         idx=fetch_mis_channels(["tse_t00.tw"])
@@ -958,7 +988,10 @@ def main():
     quote_refresh_window=not known_closure and now.weekday()<5 and 525<=minutes<960
     post_close_refresh=not known_closure and now.weekday()<5 and 840<=minutes<960
     if quote_refresh_window:
-        try:rows,live_count,taiex_live,live_errors,live_stats=enrich_live(rows)
+        try:
+            public_tracked=previous_feed.get("holdings",{}) if isinstance(previous_feed,dict) else {}
+            rows,live_count,taiex_live,live_errors,live_stats=enrich_live(
+                rows,priority_codes=public_tracked if isinstance(public_tracked,dict) else ())
         except Exception as e:live_errors.append(str(e))
         if live_errors and live_count<100:errors.append("MIS盤中:"+(";".join(live_errors))[:120])
 
