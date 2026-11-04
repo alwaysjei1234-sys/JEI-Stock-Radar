@@ -25,8 +25,12 @@ on:
     paths:
       - 'scripts/build_daily_brief.py'
       - 'scripts/send_line_brief.py'
+      - 'scripts/publish_line_status.py'
       - 'tests/test_daily_brief.py'
       - 'tests/test_line_dispatch.py'
+      - 'tests/test_line_status.py'
+      - 'tests/line_status.test.cjs'
+      - 'remote/brief.html'
       - 'tests/test_send_line_alert.py'
       - 'scripts/send_line_alert.py'
       - '.github/workflows/jei-daily-brief.yml'
@@ -51,6 +55,8 @@ jobs:
           python -m unittest discover -s tests -p 'test_daily_brief.py' -v
           python -m unittest discover -s tests -p 'test_send_line_alert.py' -v
           python -m unittest discover -s tests -p 'test_line_dispatch.py' -v
+          python -m unittest discover -s tests -p 'test_line_status.py' -v
+          node tests/line_status.test.cjs
       - name: Select edition and LINE policy
         id: edition
         env:
@@ -119,3 +125,26 @@ jobs:
           path: ${{ runner.temp }}/jei-line-result.json
           if-no-files-found: warn
           retention-days: 14
+      - name: Publish public LINE decision without recipient or credentials
+        if: always() && steps.edition.outputs.send == 'true'
+        env:
+          LINE_RECEIPT_PATH: ${{ runner.temp }}/jei-line-result.json
+          LINE_RUN_ID: ${{ github.run_id }}
+        run: |
+          python scripts/publish_line_status.py --receipt "$LINE_RECEIPT_PATH" --run-id "$LINE_RUN_ID"
+          for i in 1 2 3; do
+            if git diff --quiet -- remote/line_status.json && git ls-files --error-unmatch remote/line_status.json >/dev/null 2>&1; then exit 0; fi
+            git config user.name 'JEI LINE Status Bot'
+            git config user.email 'actions@users.noreply.github.com'
+            git add remote/line_status.json
+            git commit -m 'Auto-update public LINE dispatch status'
+            if git push; then exit 0; fi
+            if [ "$i" = 3 ]; then break; fi
+            # Receipt lives outside checkout; merge it into the latest main
+            # after a race, preserving newer records and all unrelated files.
+            git fetch origin main
+            git reset --hard origin/main
+            python scripts/publish_line_status.py --receipt "$LINE_RECEIPT_PATH" --run-id "$LINE_RUN_ID"
+          done
+          echo 'LINE status could not be published; API artifact remains available'
+          exit 1

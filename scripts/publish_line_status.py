@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""Publish an allowlisted daily LINE decision, never a recipient or API body."""
+import argparse
+import json
+import re
+from datetime import date, datetime, timedelta
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+TAIPEI = ZoneInfo('Asia/Taipei')
+RUN_BASE = 'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/'
+STATUSES = {'accepted', 'already_accepted', 'blocked', 'quota_blocked', 'failed'}
+EDITIONS = {'morning', 'close', 'morning_unavailable', 'close_unavailable'}
+
+
+def public_record(receipt, run_id, now):
+    if not isinstance(receipt, dict) or not re.fullmatch(r'[1-9][0-9]{0,23}', str(run_id)):
+        raise ValueError('Invalid LINE evidence')
+    status, edition = receipt.get('status'), receipt.get('edition')
+    if status not in STATUSES or edition not in EDITIONS:
+        raise ValueError('Invalid LINE decision')
+    try:
+        day = date.fromisoformat(receipt['date'])
+        checked = datetime.fromisoformat(receipt['checked_at'])
+        if checked.tzinfo is None or now.tzinfo is None:
+            raise ValueError('Timezone required')
+        checked = checked.astimezone(TAIPEI)
+        if checked.date() != day or checked > now + timedelta(seconds=120):
+            raise ValueError('Invalid evidence date')
+    except (KeyError, TypeError, OverflowError) as error:
+        raise ValueError('Invalid evidence date') from error
+    http = receipt.get('http_status')
+    if status in {'accepted', 'already_accepted'} and (type(http) is not int or http != (200 if status == 'accepted' else 409)):
+        raise ValueError('Acceptance requires the matching HTTP result')
+    result = {'date': day.isoformat(), 'edition': edition,
+              'checked_at': checked.isoformat(timespec='seconds'), 'status': status,
+              'api_accepted': status in {'accepted', 'already_accepted'},
+              'delivery_confirmed': False, 'evidence_url': RUN_BASE + str(run_id)}
+    if type(http) is int and 100 <= http <= 599:
+        result['http_status'] = http
+    attempts = receipt.get('attempts')
+    if type(attempts) is int and 1 <= attempts <= 3:
+        result['attempts'] = attempts
+    # Intentionally exclude request_id, recipient, body, reason, exception text,
+    # environment and credentials, including arbitrary fields in older records.
+    return result
+
+
+def merge_status(document, receipt, run_id, now=None):
+    now = now or datetime.now(TAIPEI)
+    incoming = public_record(receipt, run_id, now)
+    records = {}
+    prior = document.get('editions') if isinstance(document, dict) else None
+    if isinstance(prior, dict):
+        for slot in ('morning', 'close'):
+            row = prior.get(slot)
+            if not isinstance(row, dict):
+                continue
+            url = row.get('evidence_url')
+            if not isinstance(url, str) or not url.startswith(RUN_BASE):
+                continue
+            try:
+                clean = public_record(row, url[len(RUN_BASE):], now)
+            except (ValueError, TypeError):
+                continue
+            if clean['edition'].split('_', 1)[0] == slot:
+                records[slot] = clean
+    slot = incoming['edition'].split('_', 1)[0]
+    previous = records.get(slot)
+    if previous is None or incoming['checked_at'] >= previous['checked_at']:
+        records[slot] = incoming
+    return {'schema': 1, 'updated_at': max(x['checked_at'] for x in records.values()),
+            'editions': records}
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--receipt', required=True)
+    parser.add_argument('--run-id', required=True)
+    parser.add_argument('--output', default='remote/line_status.json')
+    args = parser.parse_args()
+    output = Path(args.output)
+    try:
+        prior = json.loads(output.read_text(encoding='utf-8')) if output.exists() else {}
+        receipt = json.loads(Path(args.receipt).read_text(encoding='utf-8'))
+        result = merge_status(prior, receipt, args.run_id)
+    except (OSError, ValueError, TypeError, AttributeError):
+        raise SystemExit('LINE status evidence unavailable or invalid; nothing published') from None
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False)+'\n', encoding='utf-8')
+    print('Public LINE decision saved; phone delivery remains unconfirmed')
+
+
+if __name__ == '__main__':
+    main()

@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
+      - 'remote/brief.html'
+      - 'tests/line_status_browser.cjs'
       - 'tests/mobile_browser.cjs'
       - 'tests/fixtures/free_research.json'
       - 'tests/fixtures/working_capital.json'
@@ -26,6 +28,8 @@ on:
   push:
     branches: [main]
     paths:
+      - 'remote/brief.html'
+      - 'tests/line_status_browser.cjs'
       - 'tests/mobile_browser.cjs'
       - 'tests/fixtures/free_research.json'
       - 'tests/fixtures/working_capital.json'
@@ -65,5 +69,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Test mobile dashboard, private holding health, chat and cloud paper
         run: node tests/mobile_browser.cjs
+      - name: Test mobile LINE acceptance status and diagnostic outage isolation
+        run: node tests/line_status_browser.cjs
       - name: Verify private research calculations
         run: node tests/holding_research.test.cjs

@@ -23,15 +23,33 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--blue)}
 <p class="meta">每日公開市場早報與盤後復盤。非盤中即時行情；不公開你的私人持股或買進成本。</p>
 <div class="buttons"><button id="morning" aria-pressed="true">☀ 開盤前早報</button><button id="close" aria-pressed="false">🌙 盤後復盤</button></div>
 <div class="card" id="status" role="status">正在載入研究摘要…</div>
+<div class="card" role="status"><h2>LINE 推播狀態</h2><p id="line-status" class="meta">正在讀取發送紀錄…</p><a id="line-evidence" hidden target="_blank" rel="noopener noreferrer">查看發送紀錄</a></div>
 <div id="content"></div>
 <div class="card warning"><h2>閱讀提醒</h2><p class="meta">新聞標題不是投資建議；模擬績效以官方收盤價計算，不能代表實際成交與獲利。私人持股資料不會被發到公開網頁或 GitHub。LINE 未授權前也不會推播。</p></div>
 </main><script>
 'use strict';
-let briefData=null,edition='morning';
+let briefData=null,lineData=null,edition='morning';
 const $=id=>document.getElementById(id);
 function make(tag,value){const node=document.createElement(tag);node.textContent=String(value??'');return node}
 function safeUrl(raw){try{const u=new URL(raw);return u.protocol==='https:'?u.href:null}catch{return null}}
+function lineStatusText(document,selected,today){
+ const row=document&&document.schema===1&&document.editions&&document.editions[selected];
+ const labels={accepted:'API 已接受',already_accepted:'API 已接受過，這次未重複發送',blocked:'發送條件未通過',quota_blocked:'免費額度安全檢查未通過',failed:'發送失敗'};
+ if(!row||!Object.hasOwn(labels,row.status)||typeof row.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(row.date)||typeof row.checked_at!=='string'||!Number.isFinite(Date.parse(row.checked_at)))return '尚無可核對的發送紀錄；不能確認已發送或手機收到。';
+ const type=String(row.edition).endsWith('_unavailable')?'資料異常通知':'市場摘要';
+ const current=row.date===today?'今日紀錄':'歷史紀錄（今天尚無發送紀錄）';
+ return current+'｜'+type+'｜'+labels[row.status]+'｜檢查 '+row.checked_at+'｜手機實收尚未確認。';
+}
+function renderLineStatus(){
+ const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+ $('line-status').textContent=lineStatusText(lineData,edition,today);
+ const row=lineData&&lineData.editions&&lineData.editions[edition];
+ const link=row&&typeof row.evidence_url==='string'&&/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/actions\/runs\/[1-9][0-9]*$/.test(row.evidence_url)?row.evidence_url:null;
+ $('line-evidence').hidden=!link;
+ if(link)$('line-evidence').href=link;
+}
 function render(){
+ renderLineStatus();
  $('morning').setAttribute('aria-pressed',String(edition==='morning'));
  $('close').setAttribute('aria-pressed',String(edition==='close'));
  $('content').replaceChildren();
@@ -66,12 +84,15 @@ function render(){
 }
 async function reload(){
  $('status').textContent='正在更新報告…';
+ $('line-status').textContent='正在讀取發送紀錄…';
+ const lineRequest=fetch('./line_status.json?t='+Date.now(),{cache:'no-store'}).then(async r=>{if(!r.ok)throw Error('LINE record unavailable');const x=await r.json();lineData=x.schema===1?x:null}).catch(()=>{lineData=null}).finally(renderLineStatus);
  try{
   const r=await fetch('./brief.json?t='+Date.now(),{cache:'no-store'});
   if(!r.ok)throw Error('HTTP '+r.status);
   const x=await r.json();if(x.schema!==1)throw Error('版本格式不符');
   briefData=x;render();
  }catch(e){$('status').textContent='目前報告不可讀：'+String(e.message||e).slice(0,100)}
+ await lineRequest;
 }
 $('morning').onclick=()=>{edition='morning';render()};
 $('close').onclick=()=>{edition='close';render()};
