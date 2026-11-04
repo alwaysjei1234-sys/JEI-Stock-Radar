@@ -80,7 +80,8 @@
   }
   function workingCapitalFor(feed, code, today) {
     const item = feed && feed.schema === 1 && feed.rule_version === 'working-capital-yoy-v1' && feed.records && feed.records[code];
-    if (!item || item.code !== code || !['comparable', 'partial'].includes(item.status)) return null;
+    if (!item || item.code !== code || !['comparable', 'partial', 'cached'].includes(item.status)) return null;
+    if (item.status === 'cached' && (item.source_revalidated !== false || item.availability !== 'retained_previous_snapshot')) return null;
     if (item.unit !== 'TWD' || item.revenue_basis !== 'year_to_date' ||
         !/^20\d{2}-Q[1-4]$/.test(item.period || '') || !validDay(item.period_end) ||
         !validDay(item.comparison_period_end) || item.period_end > today ||
@@ -102,9 +103,11 @@
     };
     const pct = n => n == null ? '缺值' : `${n.toFixed(2)}%`;
     const rev = growth('revenue_ytd');
-    const alerts = ['inventory', 'receivables'].filter(k => growth(k) > 0 && rev != null && growth(k) - rev >= 20 - 1e-9)
+    const alerts = ['inventory', 'receivables'].filter(k => item.status !== 'cached' && growth(k) > 0 && rev != null && growth(k) - rev >= 20 - 1e-9)
       .map(k => k === 'inventory' ? '存貨' : '應收帳款');
-    return `官方合併報表 ${item.period}｜期末 ${item.period_end}／比較 ${item.comparison_period_end}｜新台幣百萬元：存貨 ${money(item.current.inventory)}（年增 ${pct(growth('inventory'))}）、應收帳款淨額 ${money(item.current.receivables)}（年增 ${pct(growth('receivables'))}）、同期間累計營收 ${money(item.current.revenue_ytd)}（年增 ${pct(rev)}）。${alerts.length ? `查核提醒：${alerts.join('、')}增加且年增率高於累計營收至少20百分點。` : '未觸發20百分點查核提醒；缺值不代表正常。'}依既有官方快照季度，不保證最新申報；觀測 ${String(item.observed_at).slice(0, 10)}，非公告日；非交易訊號，自由現金流仍未提供。`;
+    const retained = item.status === 'cached';
+    const reminder = retained ? '本次下載失敗，保留前次已驗證報表；非本次更新，不產生新查核提醒。' : alerts.length ? `查核提醒：${alerts.join('、')}增加且年增率高於累計營收至少20百分點。` : '未觸發20百分點查核提醒；缺值不代表正常。';
+    return `${retained ? '【保留前次，非本次驗證】' : ''}官方合併報表 ${item.period}｜期末 ${item.period_end}／比較 ${item.comparison_period_end}｜新台幣百萬元：存貨 ${money(item.current.inventory)}（年增 ${pct(growth('inventory'))}）、應收帳款淨額 ${money(item.current.receivables)}（年增 ${pct(growth('receivables'))}）、同期間累計營收 ${money(item.current.revenue_ytd)}（年增 ${pct(rev)}）。${reminder}依既有官方快照季度，不保證最新申報；觀測 ${String(item.observed_at).slice(0, 10)}，非公告日；非交易訊號，自由現金流仍未提供。`;
   }
   function renderWorkingCapital(doc, feed, today) {
     const target = doc.getElementById('workingCapitalRows');

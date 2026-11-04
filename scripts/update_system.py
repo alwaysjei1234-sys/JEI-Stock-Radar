@@ -206,7 +206,65 @@ def parse_tpex_latest_snapshot(payload, date_obj):
     return list(unique.values())
 
 
+def parse_tpex_dated_quotes(payload,date_obj):
+    """Parse the current official TPEx table using its own date and columns.
+
+    Return full OHLCV rows: close-only fallback rows cannot supply the OTC
+    breadth, names, liquidity or tracked ETF reference used by the updater.
+    """
+    expected=date_obj.isoformat()
+    if (not isinstance(payload,dict) or str(payload.get('stat','')).lower()!='ok'
+            or normalize_exchange_date(payload.get('date'))!=expected):
+        raise RuntimeError('TPEx dated root status/date mismatch')
+    tables=payload.get('tables')
+    if not isinstance(tables,list):raise RuntimeError('TPEx dated tables missing')
+    unique={}
+    for table in tables:
+        if not isinstance(table,dict):continue
+        fields=table.get('fields')
+        if not isinstance(fields,list) or not all(isinstance(x,str) for x in fields):continue
+        fields=[re.sub(r'<[^>]+>','',x).strip() for x in fields]
+        if '代號' not in fields or '收盤' not in fields:continue
+        # The official response also includes an empty, undated management
+        # table. It contributes no observations and must not invalidate stocks.
+        if table.get('data')==[]:continue
+        if normalize_exchange_date(table.get('date'))!=expected:
+            raise RuntimeError('TPEx dated table date mismatch')
+        if len(fields)!=len(set(fields)):raise RuntimeError('TPEx dated duplicate fields')
+        required={'代號','名稱','收盤','漲跌','開盤','最高','最低','成交股數','成交金額(元)'}
+        if not required.issubset(fields):raise RuntimeError('TPEx dated required columns missing')
+        positions={name:fields.index(name) for name in required}
+        rows=table.get('data')
+        if not isinstance(rows,list):raise RuntimeError('TPEx dated rows missing')
+        for row in rows:
+            if not isinstance(row,list) or len(row)<len(fields):continue
+            cell=lambda key:row[positions[key]]
+            code=str(cell('代號')).strip()
+            close=num(cell('收盤'))
+            if not re.fullmatch(r'(?:[1-9][0-9]{3}|0[0-9A-Z]{3,7})',code) or close is None or close<=0:continue
+            change=num(re.sub(r'<[^>]+>','',str(cell('漲跌'))))
+            record={'date':expected,'market':'TPEX','code':code,'name':str(cell('名稱')).strip(),
+                'close':close,'change':change,'pct':pct_from_change(close,change),
+                'open':num(cell('開盤')),'high':num(cell('最高')),'low':num(cell('最低')),
+                'volume':num(cell('成交股數')) or 0,'value':num(cell('成交金額(元)')) or 0}
+            if record['volume']<0 or record['value']<0:continue
+            if code in unique and unique[code]!=record:
+                raise RuntimeError('TPEx dated conflicting duplicate code')
+            unique[code]=record
+    ordinary=sum(bool(re.fullmatch(r'[1-9][0-9]{3}',code)) and row['pct'] is not None
+                 for code,row in unique.items())
+    if ordinary<500:raise RuntimeError(f'TPEx dated coverage too low: {ordinary} complete stocks')
+    return list(unique.values())
+
+
 def fetch_tpex_daily(date_obj):
+    # Current TPEx website endpoint, with both root and table dates verified.
+    modern_url='https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes?'+urllib.parse.urlencode({
+        'date':date_obj.strftime('%Y/%m/%d'),'id':'','response':'json'})
+    try:
+        return parse_tpex_dated_quotes(fetch_json_fast(modern_url,timeout=15,tries=1),date_obj)
+    except Exception as exc:
+        modern_problem=type(exc).__name__+': '+str(exc)[:100]
     # Try the date-specific historical endpoint first. When its CDN response
     # is empty, the official latest-only OpenAPI is a safe fallback ONLY if
     # its embedded Date matches the requested trading day exactly.
@@ -247,7 +305,7 @@ def fetch_tpex_daily(date_obj):
         snapshot=fetch_json_fast("https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes",timeout=12,tries=1)
         return parse_tpex_latest_snapshot(snapshot,date_obj)
     except Exception as exc:
-        raise RuntimeError(f"TPEx daily close unavailable: historical({old_problem}); latest({type(exc).__name__}: {str(exc)[:125]})") from exc
+        raise RuntimeError(f"TPEx daily close unavailable: dated({modern_problem}); historical({old_problem}); latest({type(exc).__name__}: {str(exc)[:125]})") from exc
 
 
 def fetch_latest_offhours_close(rows, now, previous_data_date):
@@ -268,7 +326,7 @@ def fetch_latest_offhours_close(rows, now, previous_data_date):
             twse_count=len(twse)
             tpex_count=len(tpex)
             twse_dates=sorted({normalize_exchange_date(x.get("date")) for x in twse if x.get("date")})
-            if twse_count<500 or tpex_count<500 or twse_dates!={day_key}:
+            if twse_count<500 or tpex_count<500 or twse_dates!=[day_key]:
                 print(json.dumps({"offhours_close_attempt":day_key,"twse_count":twse_count,
                                   "tpex_count":tpex_count,"twse_dates":twse_dates},ensure_ascii=False))
                 continue

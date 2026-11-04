@@ -287,6 +287,22 @@ async function run(){
   assert.equal(await health.evaluate(()=>localStorage.getItem('jei-holding-health-private-v2')),null);
   assert.equal(await health.locator('#ownerVault').isVisible(),false,'clearing private data returns to locked state');
   await health.close();
+  // An actual failed-refresh feed remains dated and cannot emit new reminders.
+  const cachedHealth=await context.newPage();
+  await cachedHealth.clock.setFixedTime(new Date('2026-11-04T15:00:00+08:00'));
+  const cachedFiling=JSON.parse(await fs.readFile(path.join(ROOT,'tests/fixtures/working_capital.json'),'utf8'));
+  Object.assign(cachedFiling.records['6150'],{status:'cached',availability:'retained_previous_snapshot',source_revalidated:false,last_checked_at:'2026-11-04T07:00:00Z'});
+  await cachedHealth.route('**/working_capital.json',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(cachedFiling)}));
+  await cachedHealth.goto(base+'holding-health.html',{waitUntil:'domcontentloaded'});
+  await cachedHealth.waitForFunction(()=>/保留前次，非本次驗證/.test(document.querySelector('#workingCapitalRows')?.textContent||''));
+  await cachedHealth.locator('#workingCapitalRows').locator('..').locator('summary').click();
+  assert.match(await cachedHealth.locator('#workingCapitalRows').innerText(),/存貨 1645\.831/);
+  assert.doesNotMatch(await cachedHealth.locator('#workingCapitalRows').innerText(),/查核提醒：/);
+  await cachedHealth.waitForFunction(()=>/台股資料日/.test(document.querySelector('#researchMarketStatus')?.textContent||''));
+  await cachedHealth.locator('#researchTicker').fill('6150');
+  await cachedHealth.locator('#researchTickerRun').click();
+  assert.match(await cachedHealth.locator('#researchTickerResult').innerText(),/非本次更新，不產生新查核提醒/);
+  await cachedHealth.close();
   // Weekend/holiday research is visible and dated, but no historical trade levels.
   await page.locator('[data-go="attack"]').first().click();
   await page.evaluate(()=>{
