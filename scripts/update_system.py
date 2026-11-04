@@ -488,6 +488,28 @@ def recent_mis_time(message, asof):
     except (ValueError, TypeError):
         return False
 
+def mis_index_change(messages, asof):
+    """Bind market risk to TAIEX identity, not response position or stock price."""
+    if not isinstance(messages,list):return None,"invalid_response"
+    if not messages:return None,"unavailable"
+    matching=[m for m in messages if isinstance(m,dict) and
+              m.get("c")=="t00" and m.get("ex")=="tse" and m.get("ch")=="t00.tw"]
+    if not matching:return None,"identity_mismatch"
+    current=[m for m in matching if m.get("d")==asof.strftime("%Y%m%d") and recent_mis_time(m,asof)]
+    if not current:return None,"stale_or_invalid_time"
+    values=set()
+    for m in current:
+        previous,price=num(m.get("y")),live_price(m)
+        if previous is None or previous<=0 or price is None:
+            return None,"invalid_price"
+        values.add((m["d"],m["t"],previous,price))
+    # Identical duplicates are harmless; differing timestamps or prices in a
+    # one-channel response are ambiguous and cannot set market risk.
+    if len(values)!=1:return None,"conflicting_quotes"
+    _,_,previous,price=values.pop()
+    change=(price-previous)/previous*100.0
+    return (change,"verified") if math.isfinite(change) else (None,"invalid_price")
+
 def select_mis_retry_channels(messages, by_code, asof, priority_codes=()):
     """Spend the existing 100-symbol retry budget on fresh, distinct symbols.
 
@@ -526,7 +548,7 @@ def enrich_live(rows, asof=None, priority_codes=()):
         prefix="tse_" if x.get("market")=="TWSE" else "otc_"
         channels.append(prefix+x["code"]+".tw")
     got=0;errors=[]
-    stats={"requested_channels":len(channels),"returned_messages":0,"matched_codes":0,"rejected_date":0,"rejected_time":0,"duplicate_messages":0,"rejected_price":0,"missing_last_trade":0,"missing_previous_close":0}
+    stats={"requested_channels":len(channels),"returned_messages":0,"matched_codes":0,"rejected_date":0,"rejected_time":0,"duplicate_messages":0,"rejected_price":0,"missing_last_trade":0,"missing_previous_close":0,"index_quote_status":"not_requested"}
     available,attempts,status=mis_service_probe(channels)
     stats.update(service_probe_attempts=attempts,bulk_scan_skipped=not available,
                  unavailable_http_status=status if isinstance(status,int) else None,
@@ -644,10 +666,10 @@ def enrich_live(rows, asof=None, priority_codes=()):
     taiex=None
     try:
         idx=fetch_mis_channels(["tse_t00.tw"])
-        if idx and recent_mis_time(idx[0], asof):
-            y=num(idx[0].get("y"));z=live_price(idx[0])
-            if z and y and y>0:taiex=(z-y)/y*100.0
-    except Exception as e:errors.append("TAIEX:"+str(e))
+        taiex,stats["index_quote_status"]=mis_index_change(idx,asof)
+    except Exception as e:
+        stats["index_quote_status"]="request_failed"
+        errors.append("TAIEX:"+str(e))
     return rows,got,taiex,errors,stats
 
 def num(v):

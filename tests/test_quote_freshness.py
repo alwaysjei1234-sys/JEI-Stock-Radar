@@ -20,7 +20,8 @@ class QuoteFreshnessTests(unittest.TestCase):
                  "close": 900.0, "pct": 0.0}
         def fake_mis(channels):
             if channels == ["tse_t00.tw"]:
-                return [{"d": index_day if index_day is not None else quote_day,
+                return [{"c":"t00", "ex":"tse", "ch":"t00.tw",
+                         "d": index_day if index_day is not None else quote_day,
                          "t": "10:15:00", "y": "10000", "z": "10100"}]
             return [{"c": "2330", "n": "台積電", "d": quote_day,
                      "t": "10:15:00", "y": "900", "z": "920", "v": "4500"}]
