@@ -21,6 +21,7 @@ TZ = ZoneInfo("Asia/Taipei")
 if __package__ in (None, ""):
     sys.path.insert(0, str(ROOT))
 from scripts.paper_evidence import trade_metrics, full_drawdown
+from scripts.market_sessions import next_expected_session
 
 CAPITAL = 1_000_000.0
 LIMIT = 100_000.0
@@ -169,6 +170,14 @@ def advance(feed, archive, state, day):
         raise ValueError("模擬交易日出現缺口：最後更新 " + str(last)
                          + "、本次前一封存交易日 " + str(prior_day)
                          + "；停止計算，必須核對補齊後才能繼續")
+    # The archive itself can omit a session too. Consecutive archive keys alone
+    # cannot prove consecutive sessions: a missing close could hide an exit.
+    # Confirmed weekends/closures are skipped by the shared exchange calendar;
+    # an unknown closure must be verified there before this guard can permit it.
+    if last and next_expected_session(last) != day:
+        raise ValueError("模擬交易日出現缺口：日曆預期 "
+                         + str(next_expected_session(last)) + "、本次 " + day
+                         + "；停止計算，須補齊收盤或核實休市")
     quotes = archive["days"][day]
     prior_signals = [x for x in state["signals"] if x.get("day") == prior_day]
 

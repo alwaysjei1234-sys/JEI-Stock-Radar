@@ -136,5 +136,41 @@ class TestDailyStrategyEngine(unittest.TestCase):
             self.assertLess(v["closed"][0]["net"], 0)
             self.assertGreaterEqual(v["cash"], 0)
 
+    def test_unarchived_session_cannot_be_skipped_for_entry(self):
+        state = initial_state()
+        a = archive(("2026-11-02", 100.0), ("2026-11-04", 106.0))
+        advance(feed("2026-11-02"), a, state, "2026-11-02")
+        previous = copy.deepcopy(state)
+        with self.assertRaisesRegex(ValueError, "日曆預期 2026-11-03"):
+            advance(feed("2026-11-04"), a, state, "2026-11-04")
+        self.assertEqual(state, previous)
+        # A verified missing close must be processed before the later close.
+        a["days"]["2026-11-03"] = prices(100)
+        advance(feed("2026-11-03", False), a, state, "2026-11-03")
+        advance(feed("2026-11-04", False), a, state, "2026-11-04")
+        trade = state["strategies"]["fixed5"]["closed"][0]
+        self.assertEqual(trade["entry_day"], "2026-11-03")
+        self.assertEqual(trade["exit_day"], "2026-11-04")
+
+    def test_unarchived_session_cannot_hide_an_open_position_exit(self):
+        state = initial_state()
+        a = archive((DAY1, 100), (DAY2, 100), (DAY4, 110))
+        advance(feed(DAY1), a, state, DAY1)
+        advance(feed(DAY2, False), a, state, DAY2)
+        previous = copy.deepcopy(state)
+        with self.assertRaisesRegex(ValueError, "日曆預期 " + DAY3):
+            advance(feed(DAY4, False), a, state, DAY4)
+        self.assertEqual(state, previous, "missing exits must not alter any account")
+
+    def test_calendar_weekends_and_confirmed_closures_are_not_gaps(self):
+        for first, following in [("2026-10-16", "2026-10-19"),
+                                 ("2026-10-08", "2026-10-12")]:
+            with self.subTest(first=first):
+                state = initial_state()
+                a = archive((first, 100), (following, 100))
+                advance(feed(first), a, state, first)
+                self.assertTrue(advance(feed(following, False), a, state, following))
+                self.assertEqual(state["strategies"]["fixed5"]["positions"][0]["entry_day"], following)
+
 if __name__ == "__main__":
     unittest.main()
