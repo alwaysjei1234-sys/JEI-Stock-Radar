@@ -1,0 +1,209 @@
+{
+  "source_checks": [
+    {
+      "name": "TWSE_FMTQIK",
+      "url": "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?date=20261101&response=json",
+      "checked_at": "2026-11-05T02:01:27+08:00",
+      "http_status": 200,
+      "sha256": "a0ea60623bd0fccc0431a1ba5e576512610e8b00d57e97b74134bdedcddef1f7",
+      "last_row": [
+        "115/11/04",
+        "15,601,136,570",
+        "1,176,930,442,854",
+        "7,098,597",
+        "42,948.91",
+        "-358.63"
+      ]
+    },
+    {
+      "name": "TPEx_institutional",
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading",
+      "checked_at": "2026-11-05T02:01:31+08:00",
+      "http_status": 200,
+      "sha256": "658f59bf07758b90d017c7381c10010a860520cc1c69a01fb14eff5ab86e110c",
+      "rows": 918,
+      "dates": [
+        "1151104"
+      ]
+    },
+    {
+      "name": "MIS_stock_and_index",
+      "url": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw%7Ctse_2330.tw%7Cotc_6488.tw&json=1&delay=0",
+      "checked_at": "2026-11-05T02:01:38+08:00",
+      "http_status": 200,
+      "sha256": "08d8699e59be9d6983a0f27fa9f03528748477c6727931fe80d5631408145096",
+      "rtcode": "0000",
+      "quotes": [
+        {
+          "c": "t00",
+          "ex": "tse",
+          "ch": "t00.tw",
+          "d": "20261104",
+          "t": "13:33:00",
+          "z": "42948.91",
+          "y": "43307.54"
+        },
+        {
+          "c": "2330",
+          "ex": "tse",
+          "ch": "2330.tw",
+          "d": "20261104",
+          "t": "13:30:00",
+          "z": "2260.0000",
+          "y": "2295.0000"
+        },
+        {
+          "c": "6488",
+          "ex": "otc",
+          "ch": "6488.tw",
+          "d": "20261104",
+          "t": "13:30:00",
+          "z": "619.0000",
+          "y": "685.0000"
+        }
+      ]
+    }
+  ],
+  "index_matches_official_close": true,
+  "stock_archive_matches": [
+    "2330",
+    "6488"
+  ],
+  "paper_metrics_recomputed": [
+    {
+      "strategy": "fixed5",
+      "closed": 56,
+      "wins": 14,
+      "win_rate_pct": 25.0,
+      "ci95": [
+        15.52,
+        37.69
+      ],
+      "mean_net_return_pct": -3.427,
+      "expectancy_ntd": -3339.23,
+      "max_drawdown_pct": 19.869,
+      "coverage": "9/9"
+    },
+    {
+      "strategy": "fixed7",
+      "closed": 55,
+      "wins": 12,
+      "win_rate_pct": 21.82,
+      "ci95": [
+        12.95,
+        34.37
+      ],
+      "mean_net_return_pct": -3.645,
+      "expectancy_ntd": -3503.63,
+      "max_drawdown_pct": 20.439,
+      "coverage": "9/9"
+    },
+    {
+      "strategy": "fixed10",
+      "closed": 52,
+      "wins": 7,
+      "win_rate_pct": 13.46,
+      "ci95": [
+        6.68,
+        25.27
+      ],
+      "mean_net_return_pct": -4.354,
+      "expectancy_ntd": -3540.37,
+      "max_drawdown_pct": 17.723,
+      "coverage": "9/9"
+    },
+    {
+      "strategy": "trailing",
+      "closed": 49,
+      "wins": 9,
+      "win_rate_pct": 18.37,
+      "ci95": [
+        9.98,
+        31.36
+      ],
+      "mean_net_return_pct": -4.205,
+      "expectancy_ntd": -3333.49,
+      "max_drawdown_pct": 16.686,
+      "coverage": "11/11"
+    }
+  ],
+  "paper_signal_count": 75,
+  "new_trades": 0,
+  "qualified_out_of_sample_closed": 0,
+  "public_holdings_whitelist_passed": 13,
+  "original_system_sha256": "5b33f4965fed1cb037df76c622697cb79baa0b71548f4b09194698bbc382ea82",
+  "original_paper_sha256": "20922851be1ca3bcf7ae7b4c78aef05aa6991a7162b07eaacb67bcbd7ca67aaa",
+  "public_signal_fields_unchanged": [
+    "holdings",
+    "attack",
+    "next",
+    "monster",
+    "tomorrow_monster",
+    "future_monster",
+    "rotate",
+    "priority",
+    "flow",
+    "backtest"
+  ],
+  "public_signal_fields_changed": [],
+  "formal_performance_readback": [
+    {
+      "file": "strategy_performance.json",
+      "matches_original": true,
+      "sha256": "20922851be1ca3bcf7ae7b4c78aef05aa6991a7162b07eaacb67bcbd7ca67aaa"
+    },
+    {
+      "file": "pick_validation.json",
+      "matches_original": true,
+      "sha256": "2fe90469589066c9b4dc1dcc86da5b5888fb48fd0d976e429cc3e5d4c9cbf63a"
+    }
+  ],
+  "delivery": [
+    {
+      "source": "github",
+      "url": "https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/system.json",
+      "sha256": "43d9866b882c4165566d01c9b2af4d89667600dcab505e0f06ac6c2cd9f9e533",
+      "data_date": "2026-11-04",
+      "updated_at": "2026-11-04 21:07",
+      "status_updated_at": "2026-11-05 02:03",
+      "session_status": "盤前準備",
+      "live_valid": false,
+      "no_new_picks": true
+    },
+    {
+      "source": "production",
+      "url": "https://jei-stock-radar.vercel.app/remote/system.json",
+      "sha256": "43d9866b882c4165566d01c9b2af4d89667600dcab505e0f06ac6c2cd9f9e533",
+      "data_date": "2026-11-04",
+      "updated_at": "2026-11-04 21:07",
+      "status_updated_at": "2026-11-05 02:03",
+      "session_status": "盤前準備",
+      "live_valid": false,
+      "no_new_picks": true
+    }
+  ],
+  "code_commit": "ebbbbc9f16d55f848eab1c08652791a400bbae9e",
+  "market_commit": "2d1a33b3e99987f22095185438ef9adef91dfaef",
+  "python_tests_passed": 430,
+  "new_index_tests_passed": 8,
+  "before_fix_reproduced_failures": 10,
+  "code_deployment_state": "CANCELED",
+  "market_deployment_state": "READY",
+  "market_deployment_id": "dpl_6RPPUwnhgMVA2tvmYn2RoxP7BVfJ",
+  "ci_runs_success": [
+    41883175095,
+    41883175139,
+    41883175008,
+    41883174958,
+    41883175128
+  ],
+  "android_device": "not_verified",
+  "fixed31": {
+    "passed": 0,
+    "partial": 30,
+    "incomplete": 1,
+    "numerator": 15,
+    "denominator": 31,
+    "pct": 48.39
+  }
+}
