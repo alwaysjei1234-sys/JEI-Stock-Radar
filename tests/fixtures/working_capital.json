@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "rule_version": "working-capital-yoy-v1",
+  "records": {
+    "6150": {
+      "code": "6150",
+      "period": "2026-Q2",
+      "period_end": "2026-06-30",
+      "comparison_period_end": "2025-06-30",
+      "unit": "TWD",
+      "revenue_basis": "year_to_date",
+      "current": {
+        "receivables": 391572000.0,
+        "inventory": 1645831000.0,
+        "revenue_ytd": 2592084000.0
+      },
+      "previous": {
+        "receivables": 1006933000.0,
+        "inventory": 938883000.0,
+        "revenue_ytd": 3819095000.0
+      },
+      "yoy_pct": {
+        "inventory": 75.297,
+        "receivables": -61.112,
+        "revenue_ytd": -32.128
+      },
+      "alerts": [
+        "inventory_growth_exceeds_revenue"
+      ],
+      "status": "comparable",
+      "rule_version": "working-capital-yoy-v1",
+      "growth_gap_threshold_pp": 20,
+      "source_sha256": "862e68cb8c9c4c604acdce8a01ce8753968f9b1ae7b196d65c4440639ef49a0f",
+      "not_for_historical_backtest": true,
+      "observed_at": "2026-11-04T04:47:00Z",
+      "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=6150&year=2026&season=2&report_id=C"
+    }
+  }
+}

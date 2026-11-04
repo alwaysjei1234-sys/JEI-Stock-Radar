@@ -140,3 +140,29 @@ console.log('PASS dated market context, scenario validation, in-memory journal m
 const cachedFinancial = research.lookupFreeEvidence({schemaVersion: 1, markets: {listed: {'2330': {financials: {period: '2026-Q2', publishedAt: '2026-10-30', availability: 'retained_previous_snapshot', eps: 49.33}}}}}, '2330', '2026-11-02');
 assert.equal(cachedFinancial.financialFreshness.state, 'cached', 'retained quarters never count as freshly synced evidence');
 assert.equal(cachedFinancial.financials.period, '2026-Q2');
+
+const workingFeed = {schema:1,rule_version:'working-capital-yoy-v1',records:{'6150':{
+ code:'6150',status:'comparable',unit:'TWD',revenue_basis:'year_to_date',period:'2026-Q2',period_end:'2026-06-30',comparison_period_end:'2025-06-30',observed_at:'2026-11-04T04:50:00Z',
+ current:{inventory:1645831000,receivables:391572000,revenue_ytd:2592084000},previous:{inventory:938883000,receivables:1006933000,revenue_ytd:3819095000}
+}}};
+const working = research.workingCapitalFor(workingFeed,'6150','2026-11-04');
+assert.ok(working);
+assert.match(research.workingCapitalDetail(working),/存貨 1645\.831/);
+assert.match(research.workingCapitalDetail(working),/查核提醒：存貨/);
+assert.match(research.workingCapitalDetail(working),/同期間累計營收/);
+assert.match(research.workingCapitalDetail(working),/不保證最新申報/);
+assert.equal(research.workingCapitalFor(workingFeed,'6150','2026-11-12'),null,'stale observation must not authorize a new check');
+assert.equal(research.workingCapitalFor(workingFeed,'6150','2026-11-03'),null,'future observation must not be trusted');
+for(const patch of [{unit:'USD'},{code:'2330'},{status:'unknown'},{revenue_basis:'quarter'},{current:{inventory:Infinity}},{current:{inventory:true}},{period_end:'2026-12-31'}]){
+ const broken=JSON.parse(JSON.stringify(workingFeed));Object.assign(broken.records['6150'],patch);
+ assert.equal(research.workingCapitalFor(broken,'6150','2026-11-04'),null);
+}
+assert.match(research.workingCapitalDetail(null),/不推算/);
+const nodes=[];
+const workingTarget={textContent:'',replaceChildren(){nodes.length=0},append(x){nodes.push(x)}};
+research.renderWorkingCapital({getElementById:()=>workingTarget,createElement:()=>({textContent:''})},workingFeed,'2026-11-04');
+assert.equal(nodes.length,1);assert.match(nodes[0].textContent,/6150.*查核提醒：存貨/);
+const missing=JSON.parse(JSON.stringify(workingFeed));missing.records['6150'].status='unavailable';
+research.renderWorkingCapital({getElementById:()=>workingTarget,createElement:()=>({textContent:''})},missing,'2026-11-04');
+assert.match(nodes[0].textContent,/未取得/);
+console.log('PASS official working capital: period, unit, freshness, missing values, inventory flag and text-only rendering');

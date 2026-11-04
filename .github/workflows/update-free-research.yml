@@ -5,6 +5,8 @@ on:
     paths:
       - 'scripts/update_free_research.py'
       - 'tests/test_free_research.py'
+      - 'scripts/update_working_capital.py'
+      - 'tests/test_working_capital.py'
       - 'remote/system.json'
       - '.github/workflows/update-free-research.yml'
   workflow_dispatch:
@@ -29,16 +31,20 @@ jobs:
         run: python3 scripts/update_free_research.py
       - name: Validate generated public feed
         run: python3 -m unittest discover -s tests -p 'test_free_research.py'
+      - name: Test period, unit and privacy gates for detailed filings
+        run: python3 -m unittest discover -s tests -p 'test_working_capital.py'
+      - name: Refresh tracked-company working capital from official iXBRL
+        run: python3 scripts/update_working_capital.py
       - name: Publish snapshot
         run: |
-          git add -N remote/free_research.json
-          if git diff --quiet -- remote/free_research.json; then
+          git add -N remote/free_research.json remote/working_capital.json
+          if git diff --quiet -- remote/free_research.json remote/working_capital.json; then
             echo 'No public-data change.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add remote/free_research.json
+          git add remote/free_research.json remote/working_capital.json
           git commit -m 'data: refresh free official stock research'
           for attempt in 1 2 3; do
             if git push; then exit 0; fi
