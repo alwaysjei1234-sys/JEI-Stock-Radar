@@ -1189,14 +1189,23 @@ def load_previous_risk(path=OUT):
             return {}, "前一版行情摘要與 Git 備份都無法解析（" + detail + "）；本次風險僅依新行情重算"
 
 
+def fetch_initial_market_sources(errors):
+    """Overlap independent hosts; retain deterministic source order and failures."""
+    sources=((TWSE_STOCK,"TWSE股票"),(TWSE_INDEX,"TWSE指數"),(TPEX_STOCK,"TPEX"))
+    results=[]
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        pending=[pool.submit(fetch_json,url) for url,_ in sources]
+        for future,(_,label) in zip(pending,sources):
+            try:results.append(future.result())
+            except Exception as exc:
+                results.append([])
+                errors.append(label+":"+str(exc))
+    return tuple(results)
+
+
 def main():
     errors=[]
-    try:twse_raw=fetch_json(TWSE_STOCK)
-    except Exception as e:twse_raw=[];errors.append("TWSE股票:"+str(e))
-    try:idx_raw=fetch_json(TWSE_INDEX)
-    except Exception as e:idx_raw=[];errors.append("TWSE指數:"+str(e))
-    try:tpex_raw=fetch_json(TPEX_STOCK)
-    except Exception as e:tpex_raw=[];errors.append("TPEX:"+str(e))
+    twse_raw,idx_raw,tpex_raw=fetch_initial_market_sources(errors)
 
     rows=[norm_twse(x) for x in twse_raw if isinstance(x,dict)]+[norm_tpex(x) for x in tpex_raw if isinstance(x,dict)]
     rows=[x for x in rows if x["code"] and x["close"]]
