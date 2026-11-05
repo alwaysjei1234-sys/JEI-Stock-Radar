@@ -185,19 +185,31 @@ class AcceptanceReceiptTests(unittest.TestCase):
 
 class WorkflowDispatchPolicyTests(unittest.TestCase):
     def test_schedule_and_manual_send_policy(self):
-        import os, subprocess, tempfile
+        import os, subprocess, tempfile, shlex, sys
         from pathlib import Path
         workflow=(Path(__file__).resolve().parents[1]/'.github/workflows/jei-daily-brief.yml').read_text()
         block=workflow.split('      - name: Select edition and LINE policy\n',1)[1].split('      - name:',1)[0]
         script='\n'.join(line[10:] for line in block.split('        run: |\n',1)[1].splitlines())
+        self.assertEqual(script.count('python -m scripts.brief_dispatch_policy'),1)
         cases=[('55 0 * * 1-5','','','morning','true'),('10 1 * * 1-5','','','morning','true'),('25 1 * * 1-5','','','morning','true'),('30 7 * * 1-5','','','close','false'),('10 10 * * 1-5','','','close','true'),('40 10 * * 1-5','','','close','true'),('10 11 * * 1-5','','','close','true'),('','morning','true','morning','true'),('','close','false','close','false'),('','','','close','false')]
+        fixtures=[(*case,'2026-11-05T09:30:00+08:00' if case[3]=='morning'else '2026-11-05T20:00:00+08:00')for case in cases]
+        fixtures.extend([('10 10 * * 1-5','','','close','false','2026-11-06T01:58:19+08:00'),
+                         ('55 0 * * 1-5','','','morning','false','2026-11-06T19:00:00+08:00'),
+                         ('10 10 * * 1-5','','','close','false','2026-11-07T20:00:00+08:00')])
         for schedule,_,_,_,_ in cases:
-            if schedule:
-                self.assertIn("- cron: '"+schedule+"'",workflow)
-        for schedule,selected,manual,edition,send in cases:
-            with self.subTest(schedule=schedule,selected=selected,manual=manual), tempfile.TemporaryDirectory() as directory:
+            if schedule:self.assertIn("- cron: '"+schedule+"'",workflow)
+        for schedule,selected,manual,edition,send,stamp in fixtures:
+            # Freeze only the test subprocess clock, never an environment
+            # override that could bypass the real production wall clock.
+            program=("from datetime import datetime\nfrom unittest.mock import patch\n"
+                     "import scripts.brief_dispatch_policy as policy\n"
+                     "with patch.object(policy,'datetime') as clock:\n"
+                     "    clock.now.return_value=datetime.fromisoformat("+repr(stamp)+")\n"
+                     "    policy.main()\n")
+            frozen=script.replace('python -m scripts.brief_dispatch_policy',shlex.quote(sys.executable)+' -c '+shlex.quote(program))
+            with self.subTest(schedule=schedule,stamp=stamp,manual=manual), tempfile.TemporaryDirectory() as directory:
                 output=Path(directory)/'output'
-                subprocess.run(['bash','-e','-c',script],check=True,env={**os.environ,'SCHEDULE':schedule,'SELECTED':selected,'MANUAL_SEND':manual,'EVENT':'schedule' if schedule else 'workflow_dispatch' if manual else 'push','COMMIT_MESSAGE':'','GITHUB_OUTPUT':str(output)})
+                subprocess.run(['bash','-e','-c',frozen],check=True,env={**os.environ,'SCHEDULE':schedule,'SELECTED':selected,'MANUAL_SEND':manual,'EVENT':'schedule' if schedule else 'workflow_dispatch' if manual else 'push','COMMIT_MESSAGE':'','GITHUB_OUTPUT':str(output)})
                 result=dict(line.split('=',1) for line in output.read_text().splitlines())
                 self.assertEqual(result,{'name':edition,'send':send})
 

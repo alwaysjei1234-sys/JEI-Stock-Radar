@@ -6,8 +6,13 @@ from zoneinfo import ZoneInfo
 TAIPEI=ZoneInfo('Asia/Taipei')
 VERIFY_MESSAGE='verify(line): dispatch 2026-11-05 close with immutable outbox'
 VERIFY_DAY='2026-11-05'
-MORNING={'55 0 * * 1-5','10 1 * * 1-5','25 1 * * 1-5'}
-CLOSE={'10 10 * * 1-5','40 10 * * 1-5','10 11 * * 1-5'}
+# Earliest local start for each configured UTC cron. A delayed schedule event
+# does not carry a trustworthy intended trading date, so fail closed when its
+# wall-clock slot has not started today (especially after midnight).
+MORNING={'55 0 * * 1-5':8*60+55,'10 1 * * 1-5':9*60+10,
+         '25 1 * * 1-5':9*60+25}
+CLOSE={'10 10 * * 1-5':18*60+10,'40 10 * * 1-5':18*60+40,
+       '10 11 * * 1-5':19*60+10}
 
 
 def select_policy(event,schedule,selected,manual_send,head_message,now):
@@ -18,8 +23,12 @@ def select_policy(event,schedule,selected,manual_send,head_message,now):
         raise ValueError('Invalid brief edition')
     local=now.astimezone(TAIPEI)
     if event=='schedule':
-        if schedule in MORNING:return 'morning',True
-        if schedule in CLOSE:return 'close',True
+        minute=local.hour*60+local.minute
+        weekday=local.weekday()<5
+        if schedule in MORNING:
+            return 'morning',weekday and MORNING[schedule]<=minute<13*60+30
+        if schedule in CLOSE:
+            return 'close',weekday and minute>=CLOSE[schedule]
         return 'close',False
     if (event=='push' and head_message==VERIFY_MESSAGE and local.date().isoformat()==VERIFY_DAY
             and local.hour*60+local.minute>=810):
