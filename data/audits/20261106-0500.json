@@ -1,0 +1,1027 @@
+{
+  "main_sha": "02f7800b23e027bb83268e96f2bcc69ef3ff100d",
+  "sources": {
+    "index_oct": {
+      "url": "https://www.twse.com.tw/exchangeReport/FMTQIK?response=json&date=20261001",
+      "checked_at": "2026-11-06T04:59:02.022232+08:00",
+      "http": 200,
+      "sha256": "23c2920bfdb3f891c6d5aed655262b5ea6d9c289752a7b0e2a434ac8d272bab9"
+    },
+    "index_nov": {
+      "url": "https://www.twse.com.tw/exchangeReport/FMTQIK?response=json&date=20261101",
+      "checked_at": "2026-11-06T04:59:02.022916+08:00",
+      "http": 200,
+      "sha256": "c04e0d1fb6a6e74e44b331e709cb0ebe8c23cbd1f017f79b94101cb737d837d5"
+    },
+    "tpex_inst": {
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading",
+      "checked_at": "2026-11-06T04:59:02.023504+08:00",
+      "error": "IncompleteRead",
+      "detail": "IncompleteRead(245363 bytes read, 617836 more expected)"
+    },
+    "twse_inst": {
+      "url": "https://www.twse.com.tw/rwd/zh/fund/T86?response=json&selectType=ALLBUT0999&date=20261105",
+      "checked_at": "2026-11-06T04:59:02.023970+08:00",
+      "http": 200,
+      "sha256": "b19be16209ca5f4d90a27f694c3211fe33790a3642c8c7df9bf71ad66026c160",
+      "error": "JSONDecodeError",
+      "detail": "Expecting value: line 1 column 1 (char 0)"
+    },
+    "mis": {
+      "url": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_2330.tw%7Cotc_6488.tw%7Ctse_t00.tw&json=1&delay=0",
+      "checked_at": "2026-11-06T04:59:02.024947+08:00",
+      "http": 200,
+      "sha256": "a29b8f90fab5aac8f0492bf5e3703f8ca2238d2fd18b24d5e102b54b10e322ac"
+    },
+    "paper_schedule": {
+      "url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/workflows/update-paper-performance.yml/runs?event=schedule&per_page=1",
+      "checked_at": "2026-11-06T04:59:02.025528+08:00",
+      "http": 200,
+      "sha256": "9a9a96b11f54d55c3442e2a6e8e1a1d7d1d6b5babfc0c7c02d0a77b0506b8645"
+    },
+    "feed_schedule": {
+      "url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/workflows/update-system.yml/runs?event=schedule&per_page=1",
+      "checked_at": "2026-11-06T04:59:08.117595+08:00",
+      "http": 200,
+      "sha256": "2502ab3dc97a7d49712a6f2dfa9fed6ab41af90c6fb5d547ea89998089b23c85"
+    },
+    "brief_schedule": {
+      "url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/workflows/jei-daily-brief.yml/runs?event=schedule&per_page=1",
+      "checked_at": "2026-11-06T04:59:08.163822+08:00",
+      "http": 200,
+      "sha256": "8ed2ef4eec53d7fb6a9067bb5f970802f6c10458f01866e216b4fd1da8b13d32"
+    },
+    "main_actions": {
+      "url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs?head_sha=02f7800b23e027bb83268e96f2bcc69ef3ff100d&per_page=10",
+      "checked_at": "2026-11-06T04:59:08.193394+08:00",
+      "http": 200,
+      "sha256": "a2790a384d7d281e7395679000c35d27768d89dbd7052f725b8f4688beb59915"
+    },
+    "archive_schedule": {
+      "url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/workflows/archive-daily-picks.yml/runs?event=schedule&per_page=2",
+      "checked_at": "2026-11-06T04:59:08.261311+08:00",
+      "http": 200,
+      "sha256": "eacb355310504e711a05a7055f97b4b5a4936ba1ff8576ea026e44c5dc712875"
+    },
+    "calendar_repo": {
+      "url": "https://api.github.com/repos/gerrymanoim/exchange_calendars",
+      "checked_at": "2026-11-06T04:59:08.263137+08:00",
+      "http": 200,
+      "sha256": "2382513084791fe282ebf9e807a4050ba732e72cc0b17d20f5a54c5a92984c31"
+    },
+    "calendar_source": {
+      "url": "https://raw.githubusercontent.com/gerrymanoim/exchange_calendars/master/exchange_calendars/exchange_calendar_xtai.py",
+      "checked_at": "2026-11-06T04:59:10.563418+08:00",
+      "http": 200,
+      "sha256": "4730141728325d2defcdcb5b8938eb0ea310dd17f6b5c5896d91372ac6afaffa",
+      "saved": "calendar_source"
+    },
+    "calendar_license": {
+      "url": "https://raw.githubusercontent.com/gerrymanoim/exchange_calendars/master/LICENSE",
+      "checked_at": "2026-11-06T04:59:17.161512+08:00",
+      "http": 200,
+      "sha256": "e35c4578f7db4498e62e278978f6c42e0fce6f21f9993a060b08a33549cd3044",
+      "saved": "calendar_license"
+    },
+    "twse_close": {
+      "url": "https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date=20261105&type=ALLBUT0999",
+      "checked_at": "2026-11-06T04:59:12.233647+08:00",
+      "http": 200,
+      "sha256": "d622493cd9d54183d895b32b94a806d12586af33fd54343c8670305ae1e39484"
+    },
+    "tpex_close_retry": {
+      "url": "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes?date=2026%2F11%2F05&id=&response=json",
+      "checked_at": "2026-11-06T04:59:12.232935+08:00",
+      "http": 200,
+      "sha256": "ff72a0f5eeade2da76d475a6bf276d583c64fedf16a9f01c4f13040431cda0e9"
+    },
+    "sdk_repo": {
+      "url": "https://api.github.com/repos/requests-cache/requests-cache",
+      "checked_at": "2026-11-06T04:59:12.234102+08:00",
+      "http": 200,
+      "sha256": "91a3ebb8316a4dfd5ab3d82fbc4b01ec8ca1ff070cc83110722f834137d60d21"
+    },
+    "sdk_code": {
+      "url": "https://raw.githubusercontent.com/requests-cache/requests-cache/main/requests_cache/session.py",
+      "checked_at": "2026-11-06T04:59:12.234675+08:00",
+      "http": 200,
+      "sha256": "fcb6798bc12afcf9dd63d6f6fc3fb438eae3057b6f18bf0cd7151b1ff6ccd333"
+    },
+    "sdk_license": {
+      "url": "https://raw.githubusercontent.com/requests-cache/requests-cache/main/LICENSE",
+      "checked_at": "2026-11-06T04:59:12.235299+08:00",
+      "http": 200,
+      "sha256": "1aedf075663a232d425816b8b6c6c852e7e7976b5f98b968643162ec593d0b69"
+    },
+    "research_actions": {
+      "url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs?head_sha=02f7800b23e027bb83268e96f2bcc69ef3ff100d&per_page=10",
+      "checked_at": "2026-11-06T04:59:12.236237+08:00",
+      "http": 200,
+      "sha256": "a2790a384d7d281e7395679000c35d27768d89dbd7052f725b8f4688beb59915"
+    },
+    "twse_inst_retry": {
+      "url": "https://www.twse.com.tw/rwd/zh/fund/T86?response=json&selectType=ALLBUT0999&date=20261105&jei_check=0500",
+      "checked_at": "2026-11-06T04:59:54.736582+08:00",
+      "http": 200,
+      "sha256": "b19be16209ca5f4d90a27f694c3211fe33790a3642c8c7df9bf71ad66026c160",
+      "error": "JSONDecodeError",
+      "detail": "Expecting value: line 1 column 1 (char 0)"
+    },
+    "tpex_inst_retry": {
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading?jei_check=0500",
+      "checked_at": "2026-11-06T04:59:54.737432+08:00",
+      "http": 200,
+      "sha256": "1d27ab9075dde4596ae3f127b924709c68031a37b7db2d5b04d25a9e6d3ff164"
+    }
+  },
+  "mops_checks": {
+    "1711": {
+      "code": "1711",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=1711&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T04:59:31.584946+08:00",
+      "http": 200,
+      "sha256": "61084ec1e53d04177709e308fa040becaa99bcc306f9e74b1e152e1056ab8af9",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    },
+    "2478": {
+      "code": "2478",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=2478&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T04:59:31.584237+08:00",
+      "http": 200,
+      "sha256": "8f06fe9b3e000b15ef274fb0c61df4ba9f8de62398fc48a3fe2d3e0ddb0d1457",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    },
+    "2609": {
+      "code": "2609",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=2609&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T04:59:42.432401+08:00",
+      "http": 200,
+      "sha256": "199c76e2bffe2af57e4a8395372359bfcd61157d1a997764ba9c298b5e94d748",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    },
+    "2748": {
+      "code": "2748",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=2748&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T04:59:42.532043+08:00",
+      "http": 200,
+      "sha256": "c6ee36bc5f144187f52dde4156861460739ca7348de4080ec6e856fba33b9a8a",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    },
+    "3162": {
+      "code": "3162",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=3162&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T04:59:50.440072+08:00",
+      "http": 200,
+      "sha256": "37296c1cc2bb1601057b9644aa6a8d3955387b3f819b38b677ab54d53639ad0f",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    },
+    "3289": {
+      "code": "3289",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=3289&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T04:59:51.067565+08:00",
+      "http": 200,
+      "sha256": "b797dd0668eb5ab10dae8b6ff5ea5d683fe448609b2eb0b3dcbcff11b280954e",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    },
+    "3707": {
+      "code": "3707",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=3707&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T04:59:57.470685+08:00",
+      "http": 200,
+      "sha256": "745ea5cc22fd2f9e1dee23891a340ebbb0734b47099fe5fa088a5e1c3d2ae89e",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    },
+    "5347": {
+      "code": "5347",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=5347&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T05:00:05.553045+08:00",
+      "http": 200,
+      "sha256": "7bd1b1331fc5a7c8b5bdaac9ac64d586366cd72e0b34850619a97a20cd310f68",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    },
+    "5425": {
+      "code": "5425",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=5425&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T05:00:10.439990+08:00",
+      "http": 200,
+      "sha256": "8f947effb6057abb01e98817158f4112b21ea28e77f09d8373f09bf8ed5e48a6",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    },
+    "6150": {
+      "code": "6150",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=6150&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T05:00:16.758529+08:00",
+      "http": 200,
+      "sha256": "862e68cb8c9c4c604acdce8a01ce8753968f9b1ae7b196d65c4440639ef49a0f",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    },
+    "7711": {
+      "code": "7711",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=7711&year=2026&season=3&report_id=C",
+      "checked_at": "2026-11-06T05:00:21.898752+08:00",
+      "http": 200,
+      "sha256": "cc921c2f62699f0d5ed386d67e686f9ca4399adf0ed84be6761db02d77d1de08",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q3",
+      "not_for_historical_backtest": true
+    },
+    "8070": {
+      "code": "8070",
+      "url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=8070&year=2026&season=2&report_id=C",
+      "checked_at": "2026-11-06T05:00:29.365906+08:00",
+      "http": 200,
+      "sha256": "4903558e707c9ef2a43a52f1bfd07c2a0cdf16d33359a005128368169043dc33",
+      "source_hash_equal": true,
+      "fields_equal": true,
+      "period": "2026-Q2",
+      "not_for_historical_backtest": true
+    }
+  },
+  "official_close_check": {
+    "twse": 1089,
+    "tpex": 882,
+    "ordinary_archive_count": 1971,
+    "mismatches": [],
+    "missing": [],
+    "analysis_count": 1977,
+    "tpex_dates": [
+      "2026-11-05 (root and table date verified)"
+    ],
+    "twse_date": "20261105",
+    "holdings_privacy_passed": true,
+    "tpex_institutional_rows_unchanged": true,
+    "twse_institutional_refresh": "HTTP 200 non-JSON twice; not verified this attempt",
+    "protocol_version_unchanged": true
+  },
+  "production": {
+    "checked_at": "2026-11-06T05:00:52.986576+08:00",
+    "files": {
+      "system": {
+        "url": "https://jei-stock-radar.vercel.app/remote/system.json",
+        "equal": true,
+        "sha256": "771d7d871bb2289d3955bb2bfca7ff74d7a9074bab2bb6e81c23e7f958330fbe"
+      },
+      "daily_prices": {
+        "url": "https://jei-stock-radar.vercel.app/remote/daily_prices.json",
+        "equal": true,
+        "sha256": "655e211056d0db434f828be422d9415504f7377f5b85c560a515c4f2f7740b7d"
+      },
+      "history": {
+        "url": "https://jei-stock-radar.vercel.app/remote/history.json",
+        "equal": true,
+        "sha256": "0000899877b6b8427f5f4c1dcb4942154c6101f4c601de6514bddb67a83a4985"
+      },
+      "strategy_performance": {
+        "url": "https://jei-stock-radar.vercel.app/remote/strategy_performance.json",
+        "equal": true,
+        "sha256": "2c1e2b54cd287e869acf71c9cbdd735a46a030fce42532382009904a47ed0fcc"
+      },
+      "pick_validation": {
+        "url": "https://jei-stock-radar.vercel.app/remote/pick_validation.json",
+        "equal": true,
+        "sha256": "6773734584cfe8505a1cd2194fa6c57b8dab5feca2424bf49d72b9f511130d65"
+      },
+      "brief": {
+        "url": "https://jei-stock-radar.vercel.app/remote/brief.json",
+        "equal": true,
+        "sha256": "a9907939c340578e6a15ecabdd97eb31b0cc6a4609c42eef3754365a6b550da5"
+      },
+      "line_outbox": {
+        "url": "https://jei-stock-radar.vercel.app/remote/line_outbox.json",
+        "equal": true,
+        "sha256": "3a1834d1694fad0a6a815148f625ceb0a92d557207ae5ecc8de13ceb233a13cb"
+      },
+      "line_status": {
+        "url": "https://jei-stock-radar.vercel.app/remote/line_status.json",
+        "equal": true,
+        "sha256": "a8c8255c38933ebd5ef5b3424ae1fface5bf999f38f13be29ad2c896dccff6f9"
+      },
+      "free_research": {
+        "url": "https://jei-stock-radar.vercel.app/remote/free_research.json",
+        "equal": true,
+        "sha256": "4289fd1bedd887ef197c4abb69560a7d9100c96bf5e19f420680f8ab6a0cb239"
+      },
+      "working_capital": {
+        "url": "https://jei-stock-radar.vercel.app/remote/working_capital.json",
+        "equal": true,
+        "sha256": "8c1e06eb5d4ccdf1b0e25aafd37a01f71f53bbbb772d038a89959792dd1178a8"
+      }
+    }
+  },
+  "paper_metrics": {
+    "fixed5": {
+      "summary": {
+        "closed": 65,
+        "wins": 14,
+        "win_rate_pct": 21.54,
+        "realized_net_ntd": -248458.27,
+        "realized_return_pct_of_initial": -24.846,
+        "open_positions": 5,
+        "cash_ntd": 251822.2,
+        "estimated_liquidation_equity_ntd": 748622.59,
+        "official_close_coverage": "5/5",
+        "evidence": {
+          "closed": 65,
+          "win_rate_ci95_pct": [
+            13.29,
+            32.97
+          ],
+          "mean_net_return_pct": -4.038,
+          "profit_factor": 0.335,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 65,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.23
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 65,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.421
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 65,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.038,
+              "mean_net_pnl_ntd": -3822.43,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 65,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.23,
+              "mean_net_pnl_ntd": -4014.4,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 65,
+              "affected_trades": 1,
+              "additional_commission_ntd": 3.23,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.038,
+              "mean_net_pnl_ntd": -3822.48,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 65,
+              "affected_trades": 1,
+              "additional_commission_ntd": 3.23,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.23,
+              "mean_net_pnl_ntd": -4014.45,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 25.138
+      },
+      "benchmark_net_mean_pct": -2.408,
+      "benchmark_pairs": 65,
+      "mean_net_pnl_ntd": -3822.43,
+      "benchmark_matched": 65
+    },
+    "fixed7": {
+      "summary": {
+        "closed": 64,
+        "wins": 12,
+        "win_rate_pct": 18.75,
+        "realized_net_ntd": -253559.81,
+        "realized_return_pct_of_initial": -25.356,
+        "open_positions": 5,
+        "cash_ntd": 246720.66,
+        "estimated_liquidation_equity_ntd": 743521.05,
+        "official_close_coverage": "5/5",
+        "evidence": {
+          "closed": 64,
+          "win_rate_ci95_pct": [
+            11.06,
+            29.97
+          ],
+          "mean_net_return_pct": -4.235,
+          "profit_factor": 0.314,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 64,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.426
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 64,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.617
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 64,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.235,
+              "mean_net_pnl_ntd": -3961.87,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 64,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.426,
+              "mean_net_pnl_ntd": -4151.16,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 64,
+              "affected_trades": 1,
+              "additional_commission_ntd": 18.77,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.238,
+              "mean_net_pnl_ntd": -3962.16,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 64,
+              "affected_trades": 1,
+              "additional_commission_ntd": 18.77,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.43,
+              "mean_net_pnl_ntd": -4151.45,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 25.648
+      },
+      "benchmark_net_mean_pct": -2.497,
+      "benchmark_pairs": 64,
+      "mean_net_pnl_ntd": -3961.87,
+      "benchmark_matched": 64
+    },
+    "fixed10": {
+      "summary": {
+        "closed": 59,
+        "wins": 7,
+        "win_rate_pct": 11.86,
+        "realized_net_ntd": -229041.58,
+        "realized_return_pct_of_initial": -22.904,
+        "open_positions": 6,
+        "cash_ntd": 171299.94,
+        "estimated_liquidation_equity_ntd": 771972.75,
+        "official_close_coverage": "6/6",
+        "evidence": {
+          "closed": 59,
+          "win_rate_ci95_pct": [
+            5.87,
+            22.52
+          ],
+          "mean_net_return_pct": -4.706,
+          "profit_factor": 0.304,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 59,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -4.897
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 59,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -5.087
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 59,
+              "affected_trades": 3,
+              "additional_commission_ntd": 5.07,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -4.789,
+              "mean_net_pnl_ntd": -3882.15,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 59,
+              "affected_trades": 3,
+              "additional_commission_ntd": 5.07,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -4.979,
+              "mean_net_pnl_ntd": -4052.84,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 59,
+              "affected_trades": 5,
+              "additional_commission_ntd": 162.37,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -6.361,
+              "mean_net_pnl_ntd": -3884.81,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 59,
+              "affected_trades": 5,
+              "additional_commission_ntd": 162.37,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -6.548,
+              "mean_net_pnl_ntd": -4055.5,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 22.803
+      },
+      "benchmark_net_mean_pct": -2.714,
+      "benchmark_pairs": 59,
+      "mean_net_pnl_ntd": -3882.06,
+      "benchmark_matched": 59
+    },
+    "trailing": {
+      "summary": {
+        "closed": 60,
+        "wins": 10,
+        "win_rate_pct": 16.67,
+        "realized_net_ntd": -211784.68,
+        "realized_return_pct_of_initial": -21.178,
+        "open_positions": 5,
+        "cash_ntd": 288495.77,
+        "estimated_liquidation_equity_ntd": 785296.15,
+        "official_close_coverage": "5/5",
+        "evidence": {
+          "closed": 60,
+          "win_rate_ci95_pct": [
+            9.31,
+            28.03
+          ],
+          "mean_net_return_pct": -4.684,
+          "profit_factor": 0.275,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 60,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -4.875
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 60,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -5.065
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 60,
+              "affected_trades": 5,
+              "additional_commission_ntd": 8.53,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -4.819,
+              "mean_net_pnl_ntd": -3529.89,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 60,
+              "affected_trades": 5,
+              "additional_commission_ntd": 8.53,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -5.009,
+              "mean_net_pnl_ntd": -3697.48,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 60,
+              "affected_trades": 6,
+              "additional_commission_ntd": 236.34,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -7.352,
+              "mean_net_pnl_ntd": -3533.68,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 60,
+              "affected_trades": 6,
+              "additional_commission_ntd": 236.34,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -7.538,
+              "mean_net_pnl_ntd": -3701.28,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 22.143
+      },
+      "benchmark_net_mean_pct": -2.817,
+      "benchmark_pairs": 60,
+      "mean_net_pnl_ntd": -3529.74,
+      "benchmark_matched": 60
+    }
+  },
+  "cache_boundary_research": {
+    "mode": "synthetic boundary checks; not live source validation",
+    "source_sha256": "8c1e06eb5d4ccdf1b0e25aafd37a01f71f53bbbb772d038a89959792dd1178a8",
+    "checks": [
+      {
+        "code": "1711",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "1711",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "1711",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "1711",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "2478",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "2478",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "2478",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "2478",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "2609",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "2609",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "2609",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "2609",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "2748",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "2748",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "2748",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "2748",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "3162",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "3162",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "3162",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "3162",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "3289",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "3289",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "3289",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "3289",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "3707",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "3707",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "3707",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "3707",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "5347",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "5347",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "5347",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "5347",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "5425",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "5425",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "5425",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "5425",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "6150",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "6150",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "6150",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "6150",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "7711",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "7711",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "7711",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "7711",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "8070",
+        "synthetic_age_seconds": 0,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "8070",
+        "synthetic_age_seconds": 604800,
+        "expected_retain": true,
+        "passed": true
+      },
+      {
+        "code": "8070",
+        "synthetic_age_seconds": 604801,
+        "expected_retain": false,
+        "passed": true
+      },
+      {
+        "code": "8070",
+        "synthetic_age_seconds": -1,
+        "expected_retain": false,
+        "passed": true
+      }
+    ],
+    "passed": 48,
+    "freshness_not_renewed": true
+  },
+  "cache_project": {
+    "repository": "https://github.com/requests-cache/requests-cache",
+    "license": "BSD-2-Clause",
+    "last_push": "2026-11-04T00:42:13Z",
+    "adopted": false,
+    "reason": "Generic stale response reuse does not establish financial validity; JEI requires same reporting period, original observed time, bounded age and no new alerts"
+  },
+  "tests": {
+    "working_capital_and_cache": 19,
+    "paper_evidence": 7,
+    "system_feed": "passed",
+    "synthetic_cache_boundaries": 48
+  },
+  "oos_gate": {
+    "qualified_closed": 0,
+    "required_closed": 100,
+    "gate_met": false
+  },
+  "acceptance": {
+    "passed": 1,
+    "partial": 29,
+    "unfinished": 1,
+    "numerator": 15.5,
+    "fixed_denominator": 31,
+    "weights": "each 1, partial credited 0.5",
+    "percent": 50
+  }
+}
