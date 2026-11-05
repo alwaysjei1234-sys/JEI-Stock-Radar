@@ -547,7 +547,7 @@ def mis_stock_identity(message, code, market):
             and message.get("ch")==code+".tw")
 
 
-def select_mis_retry_channels(messages, by_code, asof, priority_codes=()):
+def select_mis_retry_channels(messages, by_code, asof, priority_codes=(), omitted_codes=()):
     """Spend the existing 100-symbol retry budget on fresh, distinct symbols.
 
     Priority is public ticker membership only, never private position size or
@@ -568,6 +568,13 @@ def select_mis_retry_channels(messages, by_code, asof, priority_codes=()):
             # A usable-price duplicate needs no missing-price retry.
             candidates[code]=False
         elif (num(message.get("v")) or 0)>0 and code not in candidates:
+            candidates[code]=True
+    # A partial nonempty batch is not evidence that every requested symbol
+    # was returned. Omitted symbols share, rather than expand, the retry budget.
+    for code in omitted_codes:
+        if (isinstance(code,str) and re.fullmatch(r"\d{4}",code)
+                and by_code.get(code,{}).get("market") in ("TWSE","TPEX")
+                and code not in candidates):
             candidates[code]=True
     codes=[code for code,missing in candidates.items() if missing]
     codes.sort(key=lambda code:code not in priority)  # stable within each group
@@ -639,7 +646,12 @@ def enrich_live(rows, asof=None, priority_codes=()):
     stats["incomplete_with_volume"]=len(incomplete)
     stats["retry_requested"]=0
     stats["retry_recovered"]=0
-    retry_channels,priority_retries=select_mis_retry_channels(messages,by_code,asof,priority_codes)
+    returned_codes={str(m.get("c","")) for m in messages}
+    requested_codes=[channel.split("_",1)[1][:-3] for channel in channels]
+    omitted_codes=[code for code in requested_codes if code not in returned_codes]
+    stats["omitted_symbols"]=len(omitted_codes)
+    retry_channels,priority_retries=select_mis_retry_channels(
+        messages,by_code,asof,priority_codes,omitted_codes=omitted_codes)
     stats["retry_requested"]=len(retry_channels)
     stats["priority_retry_requested"]=len(priority_retries)
     stats["priority_retry_recovered"]=0
@@ -657,6 +669,7 @@ def enrich_live(rows, asof=None, priority_codes=()):
             errors.append("MIS retry: "+str(exc)[:100])
     if replacements:
         messages=[replacements.get(str(m.get("c","")),m) for m in messages]
+        messages.extend(replacements[code] for code in omitted_codes if code in replacements)
     if not fixed_asof:asof=datetime.now(TZ)
     stats["quotes_checked_at"]=asof.isoformat()
     accepted_codes=set()

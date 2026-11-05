@@ -90,12 +90,13 @@ class MisPriorityRetryTests(unittest.TestCase):
             nonlocal calls
             calls+=1
             if calls==1:return []
-            if calls==2:return [self.quote('6150')]
+            if calls==2:return [self.quote('6150'),self.quote('2330',z='100')]
             if calls==3:return [self.quote('2330',z='101')]
             return []
         with patch.object(u,'fetch_mis_channels',side_effect=fetch):
-            _,count,_,_,stats=u.enrich_live(rows,self.now,['6150'])
-        self.assertEqual(count,0)
+            actual,count,_,_,stats=u.enrich_live(rows,self.now,['6150'])
+        self.assertEqual(count,1)
+        self.assertEqual(actual[1]["close"],100)
         self.assertEqual(stats['retry_recovered'],0)
 
     def test_unavailable_service_still_stops_before_any_priority_retries(self):

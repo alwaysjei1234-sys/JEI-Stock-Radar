@@ -28,6 +28,7 @@ on:
       - 'tests/test_mis_stock_identity.py'
       - 'tests/test_mis_last_execution.py'
       - 'tests/test_mis_scan_clock.py'
+      - 'tests/test_mis_omitted_quotes.py'
       - 'tests/test_intraday_analysis_scope.py'
       - 'tests/test_tracked_etf_reference.py'
       - 'tests/test_radar_eligibility.py'
@@ -91,6 +92,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_mis_last_execution.py'
       - name: Verify quote freshness after network scan latency
         run: python -m unittest discover -s tests -p 'test_mis_scan_clock.py'
+      - name: Recover omitted MIS symbols within the shared retry budget
+        run: python -m unittest discover -s tests -p 'test_mis_omitted_quotes.py'
       - name: Verify tracked ETF reference dates and privacy
         run: python -m unittest discover -s tests -p 'test_tracked_etf_reference.py'
       - name: Enforce original formal radar eligibility gates
