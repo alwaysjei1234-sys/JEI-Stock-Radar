@@ -1,0 +1,82 @@
+{
+  "scope": "2026_official_scheduled_calendar_only",
+  "source_url": "https://www.twse.com.tw/rwd/zh/holidaySchedule/holidaySchedule?response=json&queryYear=115",
+  "source_checked_at": "2026-11-05T23:02:42.650844+08:00",
+  "raw_source_sha256": "7fefe785ea7155a5004a2eb74486ad865ea5c4b5f02ee0cffbbdacb1ca2ea390",
+  "official_rows": 27,
+  "open_day_markers": [
+    "2026-01-02",
+    "2026-02-11",
+    "2026-02-23"
+  ],
+  "official_weekday_closures": [
+    "2026-01-01",
+    "2026-02-12",
+    "2026-02-13",
+    "2026-02-16",
+    "2026-02-17",
+    "2026-02-18",
+    "2026-02-19",
+    "2026-02-20",
+    "2026-02-27",
+    "2026-04-03",
+    "2026-04-06",
+    "2026-05-01",
+    "2026-06-19",
+    "2026-09-25",
+    "2026-09-28",
+    "2026-10-09",
+    "2026-10-26",
+    "2026-12-25"
+  ],
+  "jei_weekday_closures": [
+    "2026-01-01",
+    "2026-02-12",
+    "2026-02-13",
+    "2026-02-16",
+    "2026-02-17",
+    "2026-02-18",
+    "2026-02-19",
+    "2026-02-20",
+    "2026-02-27",
+    "2026-04-03",
+    "2026-04-06",
+    "2026-05-01",
+    "2026-06-19",
+    "2026-09-25",
+    "2026-09-28",
+    "2026-10-09",
+    "2026-10-26",
+    "2026-12-25"
+  ],
+  "scheduled_mismatches": [],
+  "daily_classifications_checked": 364,
+  "daily_excluded_unscheduled": [
+    "2026-10-23"
+  ],
+  "next_session_transitions_checked": 363,
+  "next_session_exclusions": [
+    {
+      "from": "2026-10-22",
+      "reason": "requires_independent_unscheduled_closure_evidence"
+    },
+    {
+      "from": "2026-12-31",
+      "reason": "outside_verified_year"
+    }
+  ],
+  "limitations": [
+    "Annual table does not establish every unscheduled closure.",
+    "No 2027 opening or official quote/availability certification.",
+    "No OOS trading-performance qualification."
+  ],
+  "upstream_static_review": {
+    "source_sha256": "4730141728325d2defcdcb5b8938eb0ea310dd17f6b5c5896d91372ac6afaffa",
+    "static_typhoon_entries": 25,
+    "latest_static_typhoon_date": "2024-10-03",
+    "jei_exception_dates_absent_from_static_list": [
+      "2026-10-23"
+    ],
+    "scope": "static_source_list_only_not_package_runtime"
+  }
+}
