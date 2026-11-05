@@ -26,6 +26,8 @@ on:
       - 'scripts/build_daily_brief.py'
       - 'scripts/send_line_brief.py'
       - 'scripts/line_outbox.py'
+      - 'scripts/brief_dispatch_policy.py'
+      - 'tests/test_brief_dispatch_policy.py'
       - 'tests/test_line_outbox.py'
       - 'scripts/publish_line_status.py'
       - 'tests/test_daily_brief.py'
@@ -61,33 +63,20 @@ jobs:
           python -m unittest discover -s tests -p 'test_send_line_alert.py' -v
           python -m unittest discover -s tests -p 'test_line_dispatch.py' -v
           python -m unittest discover -s tests -p 'test_line_outbox.py' -v
+          python -m unittest discover -s tests -p 'test_brief_dispatch_policy.py' -v
           python -m unittest discover -s tests -p 'test_line_payload_coverage.py' -v
           python -m unittest discover -s tests -p 'test_line_status.py' -v
           node tests/line_status.test.cjs
       - name: Select edition and LINE policy
         id: edition
         env:
+          EVENT: ${{ github.event_name }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           SCHEDULE: ${{ github.event.schedule }}
           SELECTED: ${{ inputs.edition }}
           MANUAL_SEND: ${{ github.event_name == 'workflow_dispatch' && inputs.send_line }}
         run: |
-          if [ "$SCHEDULE" = '55 0 * * 1-5' ] || [ "$SCHEDULE" = '10 1 * * 1-5' ] || [ "$SCHEDULE" = '25 1 * * 1-5' ]; then
-            echo 'name=morning' >> "$GITHUB_OUTPUT"
-            echo 'send=true' >> "$GITHUB_OUTPUT"
-          elif [ "$SCHEDULE" = '10 10 * * 1-5' ] || [ "$SCHEDULE" = '40 10 * * 1-5' ] || [ "$SCHEDULE" = '10 11 * * 1-5' ]; then
-            echo 'name=close' >> "$GITHUB_OUTPUT"
-            echo 'send=true' >> "$GITHUB_OUTPUT"
-          elif [ "$SCHEDULE" = '30 7 * * 1-5' ]; then
-            echo 'name=close' >> "$GITHUB_OUTPUT"
-            echo 'send=false' >> "$GITHUB_OUTPUT"
-          else
-            echo "name=${SELECTED:-close}" >> "$GITHUB_OUTPUT"
-            if [ "$MANUAL_SEND" = 'true' ]; then
-              echo 'send=true' >> "$GITHUB_OUTPUT"
-            else
-              echo 'send=false' >> "$GITHUB_OUTPUT"
-            fi
-          fi
+          python -m scripts.brief_dispatch_policy >> "$GITHUB_OUTPUT"
       - name: Generate public brief using verified official close
         run: python scripts/build_daily_brief.py --edition "${{ steps.edition.outputs.name }}"
       - name: Publish verified report

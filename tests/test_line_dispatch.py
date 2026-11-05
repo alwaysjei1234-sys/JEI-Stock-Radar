@@ -197,7 +197,7 @@ class WorkflowDispatchPolicyTests(unittest.TestCase):
         for schedule,selected,manual,edition,send in cases:
             with self.subTest(schedule=schedule,selected=selected,manual=manual), tempfile.TemporaryDirectory() as directory:
                 output=Path(directory)/'output'
-                subprocess.run(['bash','-e','-c',script],check=True,env={**os.environ,'SCHEDULE':schedule,'SELECTED':selected,'MANUAL_SEND':manual,'GITHUB_OUTPUT':str(output)})
+                subprocess.run(['bash','-e','-c',script],check=True,env={**os.environ,'SCHEDULE':schedule,'SELECTED':selected,'MANUAL_SEND':manual,'EVENT':'schedule' if schedule else 'workflow_dispatch' if manual else 'push','COMMIT_MESSAGE':'','GITHUB_OUTPUT':str(output)})
                 result=dict(line.split('=',1) for line in output.read_text().splitlines())
                 self.assertEqual(result,{'name':edition,'send':send})
 
