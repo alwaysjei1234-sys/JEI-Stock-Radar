@@ -85,6 +85,29 @@ class TpexDatedCloseTests(unittest.TestCase):
         self.assertEqual(day,'2026-11-04');self.assertEqual(len(rows),1100)
         self.assertEqual(sum(r['market']=='TPEX' and u.stock_only(r) for r in rows),550)
 
+    def test_same_day_archive_does_not_disable_dated_source_recovery(self):
+        twse=[{'date':'20261104','code':str(1000+i),'market':'TWSE','close':100} for i in range(550)]
+        stale=[{'date':'20261103','code':'3000','market':'TPEX','close':90}]
+        with patch.object(u,'fetch_twse_daily',return_value=twse),patch.object(u,'fetch_json_fast',return_value=self.payload()):
+            rows,day=u.fetch_latest_offhours_close(stale,datetime(2026,11,4,16,tzinfo=u.TZ),'2026-11-04')
+        self.assertEqual(day,'2026-11-04')
+        self.assertEqual(len(rows),1100)
+
+    def test_complete_same_day_input_does_not_refetch(self):
+        rows=[{'date':'20261104','market':market,'code':str(i),'close':100}
+              for market in ('TWSE','TPEX') for i in range(550)]
+        with patch.object(u,'fetch_twse_daily') as fetch:
+            result,day=u.fetch_latest_offhours_close(rows,datetime(2026,11,4,16,tzinfo=u.TZ),'2026-11-04')
+        fetch.assert_not_called()
+        self.assertIs(result,rows)
+        self.assertIsNone(day)
+
+    def test_weekend_does_not_refetch_already_archived_friday(self):
+        with patch.object(u,'fetch_twse_daily') as fetch:
+            rows,day=u.fetch_latest_offhours_close([],datetime(2026,11,7,16,tzinfo=u.TZ),'2026-11-06')
+        fetch.assert_not_called()
+        self.assertIsNone(day)
+
     def test_offhours_still_refuses_wrong_twse_day(self):
         twse=[{'date':'20261103','code':str(1000+i),'market':'TWSE','close':100} for i in range(550)]
         with patch.object(u,'fetch_twse_daily',return_value=twse),patch.object(u,'fetch_json_fast',return_value=self.payload()):

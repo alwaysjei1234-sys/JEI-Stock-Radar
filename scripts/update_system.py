@@ -325,7 +325,19 @@ def fetch_latest_offhours_close(rows, now, previous_data_date):
         if day.weekday()>=5:
             continue
         if previous_data_date and day_key<=previous_data_date:
-            break
+            # A same-day archive must not disable recovery when an OpenAPI
+            # snapshot still lags. Revalidate dated sources so late official
+            # institutional data can be incorporated on subsequent refreshes.
+            if day_key!=now.date().isoformat() or day_key<previous_data_date:
+                break
+            complete=True
+            for market in ("TWSE","TPEX"):
+                observed=[x for x in rows if x.get("market")==market]
+                dates={normalize_exchange_date(x.get("date")) for x in observed}
+                if len(observed)<500 or dates!={day_key}:
+                    complete=False
+            if complete:
+                break
         try:
             twse=fetch_twse_daily(day.strftime("%Y%m%d"))
             tpex=fetch_tpex_daily(day)
