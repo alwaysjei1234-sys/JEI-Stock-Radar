@@ -1,0 +1,894 @@
+{
+  "scope": "synthetic_split_boundary_only",
+  "market_performance": false,
+  "qualified_oos_trades_added": 0,
+  "sessions": 120,
+  "folds": 3,
+  "test_sessions_per_fold": 15,
+  "sklearn_version": "1.8.0",
+  "installed_splitter_sha256": "f99e944080dca243fc97ba50ebf4c6c38934b38db81a8072fc1af8f3cd984a59",
+  "single_row_per_session": [
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 3,
+      "gap_rows": 0,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 75,
+          "test_rows": 15,
+          "last_train_session": 74,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 3,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 90,
+          "test_rows": 15,
+          "last_train_session": 89,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 3,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 105,
+          "test_rows": 15,
+          "last_train_session": 104,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 3,
+          "test_labels_not_yet_observable_at_end": 3
+        }
+      ],
+      "training_labels_reaching_test": 9
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 3,
+      "gap_rows": 2,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 73,
+          "test_rows": 15,
+          "last_train_session": 72,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 88,
+          "test_rows": 15,
+          "last_train_session": 87,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 103,
+          "test_rows": 15,
+          "last_train_session": 102,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 3
+        }
+      ],
+      "training_labels_reaching_test": 3
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 3,
+      "gap_rows": 3,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 72,
+          "test_rows": 15,
+          "last_train_session": 71,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 87,
+          "test_rows": 15,
+          "last_train_session": 86,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 102,
+          "test_rows": 15,
+          "last_train_session": 101,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 3
+        }
+      ],
+      "training_labels_reaching_test": 0
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 7,
+      "gap_rows": 0,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 75,
+          "test_rows": 15,
+          "last_train_session": 74,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 7,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 90,
+          "test_rows": 15,
+          "last_train_session": 89,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 7,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 105,
+          "test_rows": 15,
+          "last_train_session": 104,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 7,
+          "test_labels_not_yet_observable_at_end": 7
+        }
+      ],
+      "training_labels_reaching_test": 21
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 7,
+      "gap_rows": 6,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 69,
+          "test_rows": 15,
+          "last_train_session": 68,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 84,
+          "test_rows": 15,
+          "last_train_session": 83,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 99,
+          "test_rows": 15,
+          "last_train_session": 98,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 7
+        }
+      ],
+      "training_labels_reaching_test": 3
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 7,
+      "gap_rows": 7,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 68,
+          "test_rows": 15,
+          "last_train_session": 67,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 83,
+          "test_rows": 15,
+          "last_train_session": 82,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 98,
+          "test_rows": 15,
+          "last_train_session": 97,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 7
+        }
+      ],
+      "training_labels_reaching_test": 0
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 15,
+      "gap_rows": 0,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 75,
+          "test_rows": 15,
+          "last_train_session": 74,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 15,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 90,
+          "test_rows": 15,
+          "last_train_session": 89,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 15,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 105,
+          "test_rows": 15,
+          "last_train_session": 104,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 15,
+          "test_labels_not_yet_observable_at_end": 15
+        }
+      ],
+      "training_labels_reaching_test": 45
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 15,
+      "gap_rows": 14,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 61,
+          "test_rows": 15,
+          "last_train_session": 60,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 76,
+          "test_rows": 15,
+          "last_train_session": 75,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 91,
+          "test_rows": 15,
+          "last_train_session": 90,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 15
+        }
+      ],
+      "training_labels_reaching_test": 3
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 15,
+      "gap_rows": 15,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 60,
+          "test_rows": 15,
+          "last_train_session": 59,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 75,
+          "test_rows": 15,
+          "last_train_session": 74,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 90,
+          "test_rows": 15,
+          "last_train_session": 89,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 15
+        }
+      ],
+      "training_labels_reaching_test": 0
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 30,
+      "gap_rows": 0,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 75,
+          "test_rows": 15,
+          "last_train_session": 74,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 30,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 90,
+          "test_rows": 15,
+          "last_train_session": 89,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 30,
+          "test_labels_not_yet_observable_at_end": 15
+        },
+        {
+          "fold": 3,
+          "train_rows": 105,
+          "test_rows": 15,
+          "last_train_session": 104,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 30,
+          "test_labels_not_yet_observable_at_end": 15
+        }
+      ],
+      "training_labels_reaching_test": 90
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 30,
+      "gap_rows": 29,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 46,
+          "test_rows": 15,
+          "last_train_session": 45,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 61,
+          "test_rows": 15,
+          "last_train_session": 60,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 15
+        },
+        {
+          "fold": 3,
+          "train_rows": 76,
+          "test_rows": 15,
+          "last_train_session": 75,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 15
+        }
+      ],
+      "training_labels_reaching_test": 3
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 30,
+      "gap_rows": 30,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 45,
+          "test_rows": 15,
+          "last_train_session": 44,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 60,
+          "test_rows": 15,
+          "last_train_session": 59,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 15
+        },
+        {
+          "fold": 3,
+          "train_rows": 75,
+          "test_rows": 15,
+          "last_train_session": 74,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 15
+        }
+      ],
+      "training_labels_reaching_test": 0
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 60,
+      "gap_rows": 0,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 75,
+          "test_rows": 15,
+          "last_train_session": 74,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 60,
+          "test_labels_not_yet_observable_at_end": 15
+        },
+        {
+          "fold": 2,
+          "train_rows": 90,
+          "test_rows": 15,
+          "last_train_session": 89,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 60,
+          "test_labels_not_yet_observable_at_end": 15
+        },
+        {
+          "fold": 3,
+          "train_rows": 105,
+          "test_rows": 15,
+          "last_train_session": 104,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 60,
+          "test_labels_not_yet_observable_at_end": 15
+        }
+      ],
+      "training_labels_reaching_test": 180
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 60,
+      "gap_rows": 59,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 16,
+          "test_rows": 15,
+          "last_train_session": 15,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 15
+        },
+        {
+          "fold": 2,
+          "train_rows": 31,
+          "test_rows": 15,
+          "last_train_session": 30,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 15
+        },
+        {
+          "fold": 3,
+          "train_rows": 46,
+          "test_rows": 15,
+          "last_train_session": 45,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 1,
+          "test_labels_not_yet_observable_at_end": 15
+        }
+      ],
+      "training_labels_reaching_test": 3
+    },
+    {
+      "rows_per_session": 1,
+      "horizon_sessions": 60,
+      "gap_rows": 60,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 15,
+          "test_rows": 15,
+          "last_train_session": 14,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 15
+        },
+        {
+          "fold": 2,
+          "train_rows": 30,
+          "test_rows": 15,
+          "last_train_session": 29,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 15
+        },
+        {
+          "fold": 3,
+          "train_rows": 45,
+          "test_rows": 15,
+          "last_train_session": 44,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 15
+        }
+      ],
+      "training_labels_reaching_test": 0
+    }
+  ],
+  "four_rows_per_session": [
+    {
+      "rows_per_session": 4,
+      "horizon_sessions": 3,
+      "gap_rows": 3,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 297,
+          "test_rows": 60,
+          "last_train_session": 74,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 9,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 357,
+          "test_rows": 60,
+          "last_train_session": 89,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 9,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 417,
+          "test_rows": 60,
+          "last_train_session": 104,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 9,
+          "test_labels_not_yet_observable_at_end": 12
+        }
+      ],
+      "training_labels_reaching_test": 27
+    },
+    {
+      "rows_per_session": 4,
+      "horizon_sessions": 3,
+      "gap_rows": 12,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 288,
+          "test_rows": 60,
+          "last_train_session": 71,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 348,
+          "test_rows": 60,
+          "last_train_session": 86,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 408,
+          "test_rows": 60,
+          "last_train_session": 101,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 12
+        }
+      ],
+      "training_labels_reaching_test": 0
+    },
+    {
+      "rows_per_session": 4,
+      "horizon_sessions": 7,
+      "gap_rows": 7,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 293,
+          "test_rows": 60,
+          "last_train_session": 73,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 21,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 353,
+          "test_rows": 60,
+          "last_train_session": 88,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 21,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 413,
+          "test_rows": 60,
+          "last_train_session": 103,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 21,
+          "test_labels_not_yet_observable_at_end": 28
+        }
+      ],
+      "training_labels_reaching_test": 63
+    },
+    {
+      "rows_per_session": 4,
+      "horizon_sessions": 7,
+      "gap_rows": 28,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 272,
+          "test_rows": 60,
+          "last_train_session": 67,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 332,
+          "test_rows": 60,
+          "last_train_session": 82,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 392,
+          "test_rows": 60,
+          "last_train_session": 97,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 28
+        }
+      ],
+      "training_labels_reaching_test": 0
+    },
+    {
+      "rows_per_session": 4,
+      "horizon_sessions": 15,
+      "gap_rows": 15,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 285,
+          "test_rows": 60,
+          "last_train_session": 71,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 45,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 345,
+          "test_rows": 60,
+          "last_train_session": 86,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 45,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 405,
+          "test_rows": 60,
+          "last_train_session": 101,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 45,
+          "test_labels_not_yet_observable_at_end": 60
+        }
+      ],
+      "training_labels_reaching_test": 135
+    },
+    {
+      "rows_per_session": 4,
+      "horizon_sessions": 15,
+      "gap_rows": 60,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 240,
+          "test_rows": 60,
+          "last_train_session": 59,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 300,
+          "test_rows": 60,
+          "last_train_session": 74,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 3,
+          "train_rows": 360,
+          "test_rows": 60,
+          "last_train_session": 89,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 60
+        }
+      ],
+      "training_labels_reaching_test": 0
+    },
+    {
+      "rows_per_session": 4,
+      "horizon_sessions": 30,
+      "gap_rows": 30,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 270,
+          "test_rows": 60,
+          "last_train_session": 67,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 90,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 330,
+          "test_rows": 60,
+          "last_train_session": 82,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 90,
+          "test_labels_not_yet_observable_at_end": 60
+        },
+        {
+          "fold": 3,
+          "train_rows": 390,
+          "test_rows": 60,
+          "last_train_session": 97,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 90,
+          "test_labels_not_yet_observable_at_end": 60
+        }
+      ],
+      "training_labels_reaching_test": 270
+    },
+    {
+      "rows_per_session": 4,
+      "horizon_sessions": 30,
+      "gap_rows": 120,
+      "folds": [
+        {
+          "fold": 1,
+          "train_rows": 180,
+          "test_rows": 60,
+          "last_train_session": 44,
+          "first_test_session": 75,
+          "last_test_session": 89,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 0
+        },
+        {
+          "fold": 2,
+          "train_rows": 240,
+          "test_rows": 60,
+          "last_train_session": 59,
+          "first_test_session": 90,
+          "last_test_session": 104,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 60
+        },
+        {
+          "fold": 3,
+          "train_rows": 300,
+          "test_rows": 60,
+          "last_train_session": 74,
+          "first_test_session": 105,
+          "last_test_session": 119,
+          "training_labels_reaching_test": 0,
+          "test_labels_not_yet_observable_at_end": 60
+        }
+      ],
+      "training_labels_reaching_test": 0
+    }
+  ],
+  "limitations": [
+    "No market returns, execution or regime validation.",
+    "No publication-time or survivorship audit.",
+    "Terminal test labels may remain immature and must not be scored.",
+    "Date grouping and actual label-end purging still required for JEI."
+  ]
+}
