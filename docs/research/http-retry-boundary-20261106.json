@@ -1,0 +1,119 @@
+{
+  "scope": "loopback_synthetic_only",
+  "python": "3.12.14",
+  "jei_source_sha256": "7340fb63eef07826a49eee64785354535a30a2f84ddd1e73820690fd265fd1af",
+  "scenarios": [
+    {
+      "scenario": "/loop",
+      "current_jei": {
+        "outcome": "http_error",
+        "http_status": 307,
+        "http_requests": 15,
+        "backoff_seconds_requested": 3.6
+      },
+      "research_wrapper": {
+        "outcome": "http_error",
+        "http_status": 307,
+        "http_requests": 5,
+        "backoff_seconds_requested": 0
+      }
+    },
+    {
+      "scenario": "/missing",
+      "current_jei": {
+        "outcome": "http_error",
+        "http_status": 404,
+        "http_requests": 3,
+        "backoff_seconds_requested": 3.6
+      },
+      "research_wrapper": {
+        "outcome": "http_error",
+        "http_status": 404,
+        "http_requests": 1,
+        "backoff_seconds_requested": 0
+      }
+    },
+    {
+      "scenario": "/rate",
+      "current_jei": {
+        "outcome": "success",
+        "document": {
+          "synthetic": true
+        },
+        "http_requests": 2,
+        "backoff_seconds_requested": 1.2
+      },
+      "research_wrapper": {
+        "outcome": "success",
+        "document": {
+          "synthetic": true
+        },
+        "http_requests": 2,
+        "backoff_seconds_requested": 1.2
+      }
+    },
+    {
+      "scenario": "/unavailable",
+      "current_jei": {
+        "outcome": "success",
+        "document": {
+          "synthetic": true
+        },
+        "http_requests": 2,
+        "backoff_seconds_requested": 1.2
+      },
+      "research_wrapper": {
+        "outcome": "success",
+        "document": {
+          "synthetic": true
+        },
+        "http_requests": 2,
+        "backoff_seconds_requested": 1.2
+      }
+    },
+    {
+      "scenario": "/unavailable-always",
+      "current_jei": {
+        "outcome": "http_error",
+        "http_status": 503,
+        "http_requests": 3,
+        "backoff_seconds_requested": 3.6
+      },
+      "research_wrapper": {
+        "outcome": "http_error",
+        "http_status": 503,
+        "http_requests": 3,
+        "backoff_seconds_requested": 3.6
+      }
+    },
+    {
+      "scenario": "/redirect",
+      "current_jei": {
+        "outcome": "success",
+        "document": {
+          "synthetic": true
+        },
+        "http_requests": 2,
+        "backoff_seconds_requested": 0
+      },
+      "research_wrapper": {
+        "outcome": "success",
+        "document": {
+          "synthetic": true
+        },
+        "http_requests": 2,
+        "backoff_seconds_requested": 0
+      }
+    }
+  ],
+  "all_assertions_passed": true,
+  "product_changed": false,
+  "real_market_latency_measured": false,
+  "oos_trades_added": 0,
+  "limitations": [
+    "Real 307 cause and recoverability are unknown.",
+    "Requested waits are recorded with sleep suppressed, not wall-clock latency.",
+    "No price, availability or execution evidence is generated.",
+    "Do not change a registered strategy version on this experiment alone."
+  ]
+}
