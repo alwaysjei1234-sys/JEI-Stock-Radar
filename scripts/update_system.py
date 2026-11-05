@@ -438,7 +438,13 @@ def fetch_mis_channels(channels):
     })
     with urllib.request.urlopen(req,timeout=9) as r:
         j=json.loads(r.read().decode("utf-8-sig"))
-    return j.get("msgArray",[]) if isinstance(j,dict) else []
+    # A transport success can still carry an MIS application error. Do not
+    # let its payload reach quote validation or count a malformed envelope
+    # as a successful service response. Existing callers handle failures.
+    if (not isinstance(j,dict) or j.get("rtcode")!="0000"
+            or not isinstance(j.get("msgArray"),list)):
+        raise ValueError("MIS unsuccessful status or invalid response envelope")
+    return j["msgArray"]
 
 def quote_num(m,key):
     raw=str(m.get(key,"") or "")
