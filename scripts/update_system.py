@@ -1295,6 +1295,10 @@ def main():
 
     stocks=[x for x in rows if stock_only(x)]
     by_code={x["code"]:x for x in stocks}
+    # Coverage certifies a sample, not every official row. Keep stale closes
+    # for archives/universe only; never mix them into today's risk or picks.
+    analysis_stocks=[x for x in stocks if x.get("live") is True] if market_open else stocks
+    analysis_by_code={x["code"]:x for x in analysis_stocks}
     holdings_by_code={x["code"]:x for x in rows if x.get("code")}
     institutional,inst_errors,inst_debug=fetch_institutional(today_iso)
     institutional={k:v for k,v in institutional.items() if k in by_code}
@@ -1317,7 +1321,7 @@ def main():
     if taiex_live is not None:taiex_pct=taiex_live;taiex_source="TWSE MIS validated quote"
     if taiex_pct is None:errors.append("TWSE指數缺少同日有效資料；不使用舊日漲跌幅")
 
-    pcts=[x["pct"] for x in stocks if x["pct"] is not None]
+    pcts=[x["pct"] for x in analysis_stocks if x["pct"] is not None]
     adv=sum(1 for p in pcts if p>0);dec=sum(1 for p in pcts if p<0);flat=max(0,len(pcts)-adv-dec)
     adv_ratio=adv/max(1,adv+dec);median=statistics.median(pcts) if pcts else 0
     down3=sum(1 for p in pcts if p<=-3);down5=sum(1 for p in pcts if p<=-5);limit_down=sum(1 for p in pcts if p<=-9.4)
@@ -1379,8 +1383,8 @@ def main():
     elif risk>=45:level,label,cash="yellow",("權值撐盤警戒" if divergence else "震盪警戒"),"30%–50%"
     else:level,label,cash="green","正常","20%–30%"
 
-    sectors,stock_sector,sector_scores=build_sector_stats(by_code)
-    tradable=[x for x in stocks if x["value"]>=30000000]
+    sectors,stock_sector,sector_scores=build_sector_stats(analysis_by_code)
+    tradable=[x for x in analysis_stocks if x["value"]>=30000000]
 
     def secinfo(s):
         sec=stock_sector.get(s["code"],"未分類")
@@ -1541,6 +1545,7 @@ def main():
 
     reasons=[f"加權指數 {taiex_txt}",f"上漲 {adv} / 下跌 {dec}（廣度 {adv_ratio*100:.1f}%）",
              f"市場中位數 {median:+.2f}%",f"跌逾3% {down3}｜跌逾5% {down5}｜跌停附近 {limit_down}"]
+    if market_open:reasons.insert(0,f"已驗證盤中樣本 {len(analysis_stocks)}/{len(stocks)}；廣度、族群與候選只使用此樣本")
     if inst_vals:
         reasons.append(f"法人偏賣 {inst_sell_ratio*100:.1f}%｜淨額 {inst_total/1000:+,.0f}張｜已驗證歷史 {len(prev_sell)} 日")
         if inst_withdrawal:reasons.append("法人連續撤退警訊：3日偏賣率高檔且惡化")
@@ -1831,7 +1836,8 @@ def main():
                                 "盤中有效成交價與覆蓋率已達標" if live_valid else
                                 "交易時段外：僅供收盤資料參考" if not market_open else
                                 "MIS 查詢失敗或有效成交價覆蓋率不足")},
-                  "brief":f"{market_mode}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜行情時間以最近檢查時間為準",
+                  "analysis_scope":{"mode":"verified_live_sample" if market_open else "official_close","count":len(analysis_stocks),"universe_count":len(stocks)},
+                  "brief":(f"已驗證盤中樣本 {len(analysis_stocks)}/{len(stocks)}｜" if market_open else "")+f"{market_mode}多因子市場｜加權 {taiex_txt}｜廣度 {adv_ratio*100:.1f}%｜中位數 {median:+.2f}%｜跌逾5% {down5}｜行情時間以最近檢查時間為準",
                   "market_data_as_of":raw_date,
                   "session_status":("休市" if known_closure else "交易日資料待驗證" if stale_source else "已驗證"),
                   "no_new_picks":bool(stale_source),

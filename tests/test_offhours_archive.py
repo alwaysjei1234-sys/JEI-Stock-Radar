@@ -131,6 +131,15 @@ class OffhoursArchiveTests(unittest.TestCase):
             self.assertEqual(market["monster"],[])
             self.assertFalse(market["risk"].get("actionable",True))
             self.assertNotEqual(market["risk"]["level"],"green")
+        elif market["market"]["mode"]=="盤中即時":
+            # A verified live sample is not an official close archive. Formal
+            # picks may legitimately be empty; require actual quote coverage.
+            self.assertTrue(market["market"]["live_valid"])
+            self.assertFalse(market["market"]["stale"])
+            self.assertGreaterEqual(market["market"]["live_count"],500)
+            self.assertGreaterEqual(market["market"]["live_coverage_pct"],35)
+            self.assertEqual(updated.date(),data_day)
+            self.assertIsNone(MOD.validated_previous_close(market,updated+timedelta(minutes=1)))
         else:
             # updated_at may deliberately preserve the original quote time.
             # Cross-day status is evaluated at its separate check timestamp.

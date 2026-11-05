@@ -27,6 +27,7 @@ on:
       - 'tests/test_mis_index_identity.py'
       - 'tests/test_mis_stock_identity.py'
       - 'tests/test_mis_last_execution.py'
+      - 'tests/test_intraday_analysis_scope.py'
       - 'tests/test_tracked_etf_reference.py'
       - 'tests/test_radar_eligibility.py'
       - 'scripts/send_line_alert.py'
@@ -91,6 +92,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_tracked_etf_reference.py'
       - name: Enforce original formal radar eligibility gates
         run: python -m unittest discover -s tests -p 'test_radar_eligibility.py'
+      - name: Exclude unrefreshed closes from intraday risk and candidates
+        run: python -m unittest discover -s tests -p 'test_intraday_analysis_scope.py'
       - name: Build market feed
         run: python scripts/update_system.py
       - name: Reject stale holiday labels and false current closes
