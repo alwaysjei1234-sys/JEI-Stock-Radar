@@ -1,7 +1,7 @@
 {
   "selection_policy": "jei-user-radar-gates-v1",
   "schema": 4,
-  "updated_at": "2026-11-05 14:02",
+  "updated_at": "2026-11-05 14:06",
   "data_date": "2026-11-04",
   "source_data_date": "TWSE:2026-11-05 / TPEx:2026-11-04",
   "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
@@ -29,13 +29,13 @@
   "market": {
     "status": "資料過期",
     "mode": "資料過期",
-    "last_checked_at": "2026-11-05 14:02",
+    "last_checked_at": "2026-11-05 14:06",
     "index": {
       "change_pct": -3.2,
       "data_date": "2026-11-05",
       "source": "TWSE MI_INDEX dated response",
       "date_verified": true,
-      "checked_at": "2026-11-05 14:02"
+      "checked_at": "2026-11-05 14:06"
     },
     "live_count": 0,
     "close_count": 1979,
@@ -45,42 +45,16 @@
     "historical_readonly": true,
     "post_close_refresh": true,
     "live_diagnostics": {
-      "attempted": true,
+      "attempted": false,
       "market_open": false,
-      "quote_refresh_window": true,
-      "updater_time_taipei": "2026-11-05 14:02",
+      "quote_refresh_window": false,
+      "updater_time_taipei": "2026-11-05 14:06",
       "valid_trades": 0,
-      "mis_stats": {
-        "requested_channels": 1981,
-        "returned_messages": 1981,
-        "matched_codes": 1979,
-        "rejected_date": 0,
-        "rejected_time": 1979,
-        "duplicate_messages": 0,
-        "rejected_price": 0,
-        "missing_last_trade": 0,
-        "missing_previous_close": 0,
-        "index_quote_status": "stale_or_invalid_time",
-        "rejected_identity": 0,
-        "malformed_messages": 0,
-        "service_probe_attempts": 1,
-        "bulk_scan_skipped": false,
-        "unavailable_http_status": null,
-        "outage_reason": null,
-        "skipped_channels": 0,
-        "incomplete_with_volume": 0,
-        "retry_requested": 2,
-        "retry_recovered": 0,
-        "omitted_symbols": 2,
-        "priority_retry_requested": 0,
-        "priority_retry_recovered": 0,
-        "quotes_checked_at": "2026-11-05T14:03:56.919626+08:00",
-        "index_checked_at": "2026-11-05T14:03:57.460808+08:00"
-      },
+      "mis_stats": {},
       "required_trades": 500,
       "required_coverage_pct": 35,
       "errors": [],
-      "reason": "交易時段外：僅供收盤資料參考"
+      "reason": "非行情更新時段"
     },
     "analysis_scope": {
       "mode": "official_close",
@@ -92,7 +66,7 @@
     "session_status": "交易日資料待驗證",
     "no_new_picks": true,
     "partial_live": {
-      "asof": "2026-11-05 14:02",
+      "asof": "2026-11-05 14:06",
       "verified_count": 0,
       "complete": false,
       "quotes": []
