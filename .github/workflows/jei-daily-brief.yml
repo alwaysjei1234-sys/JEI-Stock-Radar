@@ -27,6 +27,7 @@ on:
       - 'scripts/send_line_brief.py'
       - 'scripts/publish_line_status.py'
       - 'tests/test_daily_brief.py'
+      - 'tests/test_daily_brief_publish.py'
       - 'tests/test_line_dispatch.py'
       - 'tests/test_line_payload_coverage.py'
       - 'tests/test_line_status.py'
@@ -54,6 +55,7 @@ jobs:
       - name: Test briefing and LINE safety
         run: |
           python -m unittest discover -s tests -p 'test_daily_brief.py' -v
+          python -m unittest discover -s tests -p 'test_daily_brief_publish.py' -v
           python -m unittest discover -s tests -p 'test_send_line_alert.py' -v
           python -m unittest discover -s tests -p 'test_line_dispatch.py' -v
           python -m unittest discover -s tests -p 'test_line_payload_coverage.py' -v
@@ -87,18 +89,23 @@ jobs:
         run: python scripts/build_daily_brief.py --edition "${{ steps.edition.outputs.name }}"
       - name: Publish verified report
         run: |
-          if git diff --quiet -- remote/brief.json; then
-            echo 'Brief unchanged'
-            exit 0
-          fi
           git config user.name 'JEI Research Brief Bot'
           git config user.email 'actions@users.noreply.github.com'
-          git add remote/brief.json
-          git commit -m 'Auto-update JEI daily research brief'
           for i in 1 2 3; do
+            if git diff --quiet -- remote/brief.json; then
+              echo 'Brief unchanged'
+              exit 0
+            fi
+            git add remote/brief.json
+            git commit -m 'Auto-update JEI daily research brief'
             if git push; then exit 0; fi
+            if [ "$i" = 3 ]; then break; fi
+            # Generated JSON must be rebuilt, not rebased through another
+            # writer's report. This is a disposable Actions checkout; keep
+            # all published main changes before rebuilding the selected edition.
             git fetch origin main
-            git rebase origin/main
+            git reset --hard origin/main
+            python scripts/build_daily_brief.py --edition "${{ steps.edition.outputs.name }}"
             sleep 3
           done
           echo 'Could not publish; LINE step will not run'
