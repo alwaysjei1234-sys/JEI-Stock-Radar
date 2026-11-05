@@ -57,8 +57,20 @@ class PaperProvenanceTests(unittest.TestCase):
     def test_same_day_replay_does_not_add_provenance_to_old_public_book(self):
         root=Path(__file__).resolve().parents[1]
         state=json.loads((root/'remote/strategy_performance.json').read_text());before=copy.deepcopy(state)
-        f=json.loads((root/'remote/system.json').read_text());a=json.loads((root/'remote/daily_prices.json').read_text())
+        # Same-day replay needs a verified-close fixture for the ledger day.
+        # The mutable public feed correctly becomes read-only after midnight.
+        f=feed(state['last_processed_day'],False)
+        a=json.loads((root/'remote/daily_prices.json').read_text())
         self.assertFalse(p.advance(f,a,state,state['last_processed_day']))
+        self.assertEqual(state,before)
+
+    def test_readonly_replay_is_rejected_without_changing_old_public_book(self):
+        root=Path(__file__).resolve().parents[1]
+        state=json.loads((root/'remote/strategy_performance.json').read_text());before=copy.deepcopy(state)
+        a=json.loads((root/'remote/daily_prices.json').read_text())
+        f=feed(state['last_processed_day'],False,stale=True,mode='最近收盤')
+        with self.assertRaisesRegex(ValueError,'拒絕更新模擬'):
+            p.advance(f,a,state,state['last_processed_day'])
         self.assertEqual(state,before)
 
     def test_copy_rejects_extra_private_fields_or_unverified_qualification(self):
