@@ -1,0 +1,683 @@
+{
+  "checked_at": "2026-11-05T21:18:20.085345+08:00",
+  "main_start": "e404f1bd3bce31318a85c36777d977bf807c5c7a",
+  "code_commit": "defea26ad967655ef6aa83f0bdbc2ed6511507aa",
+  "sources": {
+    "index_oct": {
+      "url": "https://www.twse.com.tw/exchangeReport/FMTQIK?response=json&date=20261001",
+      "checked_at": "2026-11-05T21:10:10.535998+08:00",
+      "http": 200,
+      "sha256": "23c2920bfdb3f891c6d5aed655262b5ea6d9c289752a7b0e2a434ac8d272bab9",
+      "stat": "OK",
+      "date": "20261001",
+      "latest_row": [
+        [
+          "115/10/30",
+          "13,112,939,113",
+          "939,605,267,660",
+          "6,365,634",
+          "45,211.83",
+          "-1,156.50"
+        ]
+      ]
+    },
+    "index_nov": {
+      "url": "https://www.twse.com.tw/exchangeReport/FMTQIK?response=json&date=20261101",
+      "checked_at": "2026-11-05T21:10:10.537086+08:00",
+      "http": 200,
+      "sha256": "c04e0d1fb6a6e74e44b331e709cb0ebe8c23cbd1f017f79b94101cb737d837d5",
+      "stat": "OK",
+      "date": "20261101",
+      "latest_row": [
+        [
+          "115/11/05",
+          "14,971,065,133",
+          "987,098,883,153",
+          "6,951,911",
+          "41,574.72",
+          "-1,374.19"
+        ]
+      ]
+    },
+    "tpex_inst": {
+      "url": "https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading",
+      "checked_at": "2026-11-05T21:10:10.537614+08:00",
+      "http": 200,
+      "sha256": "1d27ab9075dde4596ae3f127b924709c68031a37b7db2d5b04d25a9e6d3ff164",
+      "count": 910,
+      "dates": [
+        "1151105"
+      ]
+    },
+    "twse_inst": {
+      "url": "https://www.twse.com.tw/rwd/zh/fund/T86?response=json&selectType=ALLBUT0999&date=20261105",
+      "checked_at": "2026-11-05T21:10:10.538248+08:00",
+      "http": 200,
+      "sha256": "d9bd8956a5125b66c37ea1491b5f92e293fda41d91c7e565d0ac7656387670b5",
+      "stat": "OK",
+      "date": "20261105",
+      "count": 1353
+    },
+    "mis": {
+      "url": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_2330.tw%7Cotc_6488.tw%7Ctse_t00.tw&json=1&delay=0",
+      "checked_at": "2026-11-05T21:10:10.540123+08:00",
+      "http": 200,
+      "sha256": "4699214b909707306fa5541461a34553420df1629686ce9e133344ea3b3b4f31",
+      "rtcode": "0000",
+      "quotes": [
+        {
+          "ex": "tse",
+          "ch": "2330.tw",
+          "d": "20261105",
+          "t": "13:30:00",
+          "z": "2240.0000"
+        },
+        {
+          "ex": "otc",
+          "ch": "6488.tw",
+          "d": "20261105",
+          "t": "13:30:00",
+          "z": "564.0000"
+        },
+        {
+          "ex": "tse",
+          "ch": "t00.tw",
+          "d": "20261105",
+          "t": "13:33:00",
+          "z": "41574.72"
+        }
+      ]
+    }
+  },
+  "institutional_rows_vs_2000": {
+    "unchanged": true,
+    "twse_count": 1353,
+    "tpex_count": 910
+  },
+  "public_feed": {
+    "unchanged": true,
+    "updated_at": "2026-11-05 20:09",
+    "close_count": 1977,
+    "holdings_count": 13
+  },
+  "protocol": {
+    "schema": 1,
+    "declared_at": "2026-11-05T21:13:29+08:00",
+    "effective_from": "2026-11-06",
+    "qualification": "protocol_registration_only",
+    "rules": {
+      "schema": 1,
+      "model": "official_daily_close_paper_observation",
+      "settings": {
+        "capital": 1000000.0,
+        "position_limit": 100000.0,
+        "buy_fee_rate": 0.001425,
+        "sell_fee_rate": 0.001425,
+        "sell_tax_rate": 0.003,
+        "rules": {
+          "fixed5": {
+            "name": "固定 +5%",
+            "target": 5.0
+          },
+          "fixed7": {
+            "name": "固定 +7%",
+            "target": 7.0
+          },
+          "fixed10": {
+            "name": "固定 +10%",
+            "target": 10.0
+          },
+          "trailing": {
+            "name": "上漲5%啟動／高點回落2%",
+            "target": 5.0
+          }
+        },
+        "signal_groups": [
+          "attack",
+          "monster"
+        ],
+        "max_daily_signals": 5,
+        "entry": "next_valid_session_close",
+        "exit": "later_valid_session_close"
+      },
+      "files": {
+        "scripts/update_system.py": "7340fb63eef07826a49eee64785354535a30a2f84ddd1e73820690fd265fd1af",
+        "scripts/update_paper_performance.py": "bce0466ba0dabdeea0ff68ba1d2e316c345844fb53be2793e5eadcfa5e04953e",
+        "scripts/pattern_signals.py": "10eea6d00fc0df3cacde09ffdc44e1efc2aa5ae2e43f31a0c734211d0b7cea51",
+        "scripts/corporate_actions.py": "4cfc350799f87fcd51f5199f04fe059b5315e8a2faf86d27e86d31eefe1de448",
+        "scripts/market_sessions.py": "460a9b45d54d32de13862a07cc4c7843cf846c7071cac16facc5495241433e69",
+        "scripts/paper_evidence.py": "d54ae50fe443e091f23f4cc772cf2c39815e485627c88318b9c53b7732dca2ca",
+        "scripts/paper_provenance.py": "2ac0dcd47ee301241a1c7950d75c4f6566bd68cf8c15d16daacc0cb4396287bc",
+        ".github/workflows/update-paper-performance.yml": "6074f7f4ecfc97830630410fe474ac3a875f7e078de60c7668ca9bbe6d996dad"
+      },
+      "version": "2dd303452cbf124d462f269db41e6fd04a9388863d12e64881e88fb7ef8e97b7"
+    },
+    "note": "Published protocol and record hashes need independent audit; no OOS qualification is granted."
+  },
+  "strategies": {
+    "fixed5": {
+      "summary": {
+        "closed": 65,
+        "wins": 14,
+        "win_rate_pct": 21.54,
+        "realized_net_ntd": -248458.27,
+        "realized_return_pct_of_initial": -24.846,
+        "open_positions": 5,
+        "cash_ntd": 251822.2,
+        "estimated_liquidation_equity_ntd": 748622.59,
+        "official_close_coverage": "5/5",
+        "evidence": {
+          "closed": 65,
+          "win_rate_ci95_pct": [
+            13.29,
+            32.97
+          ],
+          "mean_net_return_pct": -4.038,
+          "profit_factor": 0.335,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 65,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.23
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 65,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.421
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 65,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.038,
+              "mean_net_pnl_ntd": -3822.43,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 65,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.23,
+              "mean_net_pnl_ntd": -4014.4,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 65,
+              "affected_trades": 1,
+              "additional_commission_ntd": 3.23,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.038,
+              "mean_net_pnl_ntd": -3822.48,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 65,
+              "affected_trades": 1,
+              "additional_commission_ntd": 3.23,
+              "win_rate_pct": 21.54,
+              "mean_net_return_pct": -4.23,
+              "mean_net_pnl_ntd": -4014.45,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 25.138
+      },
+      "benchmark_net_mean_pct": -2.408,
+      "benchmark_pairs": 65,
+      "mean_net_pnl_ntd": -3822.43
+    },
+    "fixed7": {
+      "summary": {
+        "closed": 64,
+        "wins": 12,
+        "win_rate_pct": 18.75,
+        "realized_net_ntd": -253559.81,
+        "realized_return_pct_of_initial": -25.356,
+        "open_positions": 5,
+        "cash_ntd": 246720.66,
+        "estimated_liquidation_equity_ntd": 743521.05,
+        "official_close_coverage": "5/5",
+        "evidence": {
+          "closed": 64,
+          "win_rate_ci95_pct": [
+            11.06,
+            29.97
+          ],
+          "mean_net_return_pct": -4.235,
+          "profit_factor": 0.314,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 64,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.426
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 64,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.617
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 64,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.235,
+              "mean_net_pnl_ntd": -3961.87,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 64,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0.0,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.426,
+              "mean_net_pnl_ntd": -4151.16,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 64,
+              "affected_trades": 1,
+              "additional_commission_ntd": 18.77,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.238,
+              "mean_net_pnl_ntd": -3962.16,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 64,
+              "affected_trades": 1,
+              "additional_commission_ntd": 18.77,
+              "win_rate_pct": 18.75,
+              "mean_net_return_pct": -4.43,
+              "mean_net_pnl_ntd": -4151.45,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 25.648
+      },
+      "benchmark_net_mean_pct": -2.497,
+      "benchmark_pairs": 64,
+      "mean_net_pnl_ntd": -3961.87
+    },
+    "fixed10": {
+      "summary": {
+        "closed": 59,
+        "wins": 7,
+        "win_rate_pct": 11.86,
+        "realized_net_ntd": -229041.58,
+        "realized_return_pct_of_initial": -22.904,
+        "open_positions": 6,
+        "cash_ntd": 171299.94,
+        "estimated_liquidation_equity_ntd": 771972.75,
+        "official_close_coverage": "6/6",
+        "evidence": {
+          "closed": 59,
+          "win_rate_ci95_pct": [
+            5.87,
+            22.52
+          ],
+          "mean_net_return_pct": -4.706,
+          "profit_factor": 0.304,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 59,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -4.897
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 59,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -5.087
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 59,
+              "affected_trades": 3,
+              "additional_commission_ntd": 5.07,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -4.789,
+              "mean_net_pnl_ntd": -3882.15,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 59,
+              "affected_trades": 3,
+              "additional_commission_ntd": 5.07,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -4.979,
+              "mean_net_pnl_ntd": -4052.84,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 59,
+              "affected_trades": 5,
+              "additional_commission_ntd": 162.37,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -6.361,
+              "mean_net_pnl_ntd": -3884.81,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 59,
+              "affected_trades": 5,
+              "additional_commission_ntd": 162.37,
+              "win_rate_pct": 11.86,
+              "mean_net_return_pct": -6.548,
+              "mean_net_pnl_ntd": -4055.5,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 22.803
+      },
+      "benchmark_net_mean_pct": -2.714,
+      "benchmark_pairs": 59,
+      "mean_net_pnl_ntd": -3882.06
+    },
+    "trailing": {
+      "summary": {
+        "closed": 60,
+        "wins": 10,
+        "win_rate_pct": 16.67,
+        "realized_net_ntd": -211784.68,
+        "realized_return_pct_of_initial": -21.178,
+        "open_positions": 5,
+        "cash_ntd": 288495.77,
+        "estimated_liquidation_equity_ntd": 785296.15,
+        "official_close_coverage": "5/5",
+        "evidence": {
+          "closed": 60,
+          "win_rate_ci95_pct": [
+            9.31,
+            28.03
+          ],
+          "mean_net_return_pct": -4.684,
+          "profit_factor": 0.275,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 60,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -4.875
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 60,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -5.065
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 60,
+              "affected_trades": 5,
+              "additional_commission_ntd": 8.53,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -4.819,
+              "mean_net_pnl_ntd": -3529.89,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 60,
+              "affected_trades": 5,
+              "additional_commission_ntd": 8.53,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -5.009,
+              "mean_net_pnl_ntd": -3697.48,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.0,
+              "closed": 60,
+              "affected_trades": 6,
+              "additional_commission_ntd": 236.34,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -7.352,
+              "mean_net_pnl_ntd": -3533.68,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20.0,
+              "slippage_per_side_pct": 0.1,
+              "closed": 60,
+              "affected_trades": 6,
+              "additional_commission_ntd": 236.34,
+              "win_rate_pct": 16.67,
+              "mean_net_return_pct": -7.538,
+              "mean_net_pnl_ntd": -3701.28,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 22.143
+      },
+      "benchmark_net_mean_pct": -2.817,
+      "benchmark_pairs": 60,
+      "mean_net_pnl_ntd": -3529.74
+    }
+  },
+  "qualified_oos_closed": 0,
+  "threshold_80_met": false,
+  "legacy_signals": 80,
+  "legacy_signals_backfilled": 0,
+  "tests": {
+    "python": 537,
+    "new_provenance_tests": 8,
+    "python_success": true,
+    "frontend_checks": 5,
+    "main_files_match_tested_files": true
+  },
+  "actions": [
+    {
+      "id": 42034050184,
+      "name": "JEI Research Engine Tests",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "defea26ad967655ef6aa83f0bdbc2ed6511507aa",
+      "created_at": "2026-11-05T13:14:44Z"
+    },
+    {
+      "id": 42034050180,
+      "name": "JEI feed acceptance",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "defea26ad967655ef6aa83f0bdbc2ed6511507aa",
+      "created_at": "2026-11-05T13:14:44Z"
+    },
+    {
+      "id": 42034050218,
+      "name": "JEI Daily Paper Strategy Benchmark",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "defea26ad967655ef6aa83f0bdbc2ed6511507aa",
+      "created_at": "2026-11-05T13:14:44Z"
+    },
+    {
+      "id": 42034050186,
+      "name": "JEI Smoke Tests",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "defea26ad967655ef6aa83f0bdbc2ed6511507aa",
+      "created_at": "2026-11-05T13:14:44Z"
+    },
+    {
+      "id": 42034050239,
+      "name": "Build JEI Android APK",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "defea26ad967655ef6aa83f0bdbc2ed6511507aa",
+      "created_at": "2026-11-05T13:14:44Z"
+    }
+  ],
+  "schedules": {
+    "paper": [
+      {
+        "id": 41869535572,
+        "event": "schedule",
+        "created_at": "2026-11-04T16:39:25Z",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5aaf268959aacf7f3f65d9401b007c2e34e05ef5"
+      }
+    ],
+    "feed": [
+      {
+        "id": 41988669170,
+        "event": "schedule",
+        "created_at": "2026-11-05T07:38:35Z",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "4e36de8579532f0a0aafafd7eee543ae9220df4b"
+      }
+    ],
+    "brief": [
+      {
+        "id": 41955116649,
+        "event": "schedule",
+        "created_at": "2026-11-05T02:25:33Z",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "fa3bb5f5c2b630426fa4ec9cd8e44b57ef0413ca"
+      }
+    ]
+  },
+  "production_readback": {
+    "checked_at": "2026-11-05T21:15:25.271990+08:00",
+    "files": {
+      "system": {
+        "equal": true,
+        "sha256": "ae81b1c4c42c89a44e99c9d48cee164e4380e2c419ed223defc874c34e4b874a",
+        "updated_at": "2026-11-05 20:09",
+        "url": "https://jei-stock-radar.vercel.app/remote/system.json"
+      },
+      "daily_prices": {
+        "equal": true,
+        "sha256": "40ed1b12d6a2af00362ed26efdad05565ec5df4392e98ccccb54a755284adb3d",
+        "updated_at": null,
+        "url": "https://jei-stock-radar.vercel.app/remote/daily_prices.json"
+      },
+      "history": {
+        "equal": true,
+        "sha256": "ff43869a6246ff57f10355e60cc0f7b729736bed9efaf55dc64cfaacf4b7ea24",
+        "updated_at": null,
+        "url": "https://jei-stock-radar.vercel.app/remote/history.json"
+      },
+      "strategy_performance": {
+        "equal": true,
+        "sha256": "f2aa57ce5a2f03767f521b6755c04ba77eab11aedabd22f37570e4dc00f1da45",
+        "updated_at": "2026-11-05 15:08",
+        "url": "https://jei-stock-radar.vercel.app/remote/strategy_performance.json"
+      },
+      "pick_validation": {
+        "equal": true,
+        "sha256": "3ac852c1559260bf27bdd3fbb21dcde6fea920465ee2e848aecae71248da8238",
+        "updated_at": "2026-11-05 15:08",
+        "url": "https://jei-stock-radar.vercel.app/remote/pick_validation.json"
+      },
+      "brief": {
+        "equal": true,
+        "sha256": "b5c858d41fddb9251b84bbf4550c2c9157a5681aa42dcf707f72c558325e6414",
+        "updated_at": null,
+        "url": "https://jei-stock-radar.vercel.app/remote/brief.json"
+      },
+      "line_outbox": {
+        "equal": true,
+        "sha256": "d4eef637a84c53cbef59e7f4278211db272921fb18d9d0c53757acfaa4300c31",
+        "updated_at": null,
+        "url": "https://jei-stock-radar.vercel.app/remote/line_outbox.json"
+      },
+      "line_status": {
+        "equal": true,
+        "sha256": "6fb83e547f6488d8436adc7b3c05340915e21e09bf54822f829b7940f7b995fd",
+        "updated_at": "2026-11-05T19:10:19+08:00",
+        "url": "https://jei-stock-radar.vercel.app/remote/line_status.json"
+      }
+    }
+  },
+  "deployment": {
+    "code_state": "CANCELED",
+    "code_id": "dpl_6pxVMok6oTQBTsgCNNDKYuvVoxkp",
+    "latest_ready_sha": "42242b9f5edf8267da610056aaf173f377b09f0a",
+    "latest_ready_id": "dpl_5i96FcgMpqNbrwLb4hwAC2qVeDPE",
+    "forced": false
+  },
+  "research": {
+    "url": "https://github.com/mlflow/mlflow",
+    "license": "Apache-2.0",
+    "pushed_at": "2026-11-05T12:37:20Z",
+    "code_url": "https://github.com/mlflow/mlflow/blob/master/mlflow/tracking/context/git_context.py",
+    "source_sha256": "b967965563dcc7792ffbaecd1bcaa338a36dbe28e60d51a0a4dda6710ab38364",
+    "license_sha256": "6395355de6f391afff35996a30fb41b189b4991a4cb54993ace35ab69a0bfa28",
+    "adoption": "Own stdlib rule/content hashes and real record time; no SDK, service, copied code, repo URL, usernames, environment or source diff. Provenance only, not OOS qualification."
+  },
+  "acceptance": {
+    "denominator": 31,
+    "weight_each": 1,
+    "passed": 1,
+    "partial": 29,
+    "not_completed": 1,
+    "weighted_numerator": 15.5,
+    "percent": 50
+  }
+}
