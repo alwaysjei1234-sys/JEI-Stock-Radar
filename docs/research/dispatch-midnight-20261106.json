@@ -1,0 +1,45 @@
+{
+  "cases": [
+    {
+      "case": "delayed_build",
+      "event": "schedule",
+      "cron": "30 7 * * 1-5",
+      "local_time": "2026-11-05T23:41:33+08:00",
+      "edition": "close",
+      "eligible": false
+    },
+    {
+      "case": "close_slot",
+      "event": "schedule",
+      "cron": "10 10 * * 1-5",
+      "local_time": "2026-11-05T18:10:00+08:00",
+      "edition": "close",
+      "eligible": true
+    },
+    {
+      "case": "expired_verification",
+      "event": "push",
+      "cron": "",
+      "local_time": "2026-11-06T00:03:00+08:00",
+      "edition": "close",
+      "eligible": false
+    },
+    {
+      "case": "ordinary_push",
+      "event": "push",
+      "cron": "",
+      "local_time": "2026-11-06T00:03:00+08:00",
+      "edition": "close",
+      "eligible": false
+    },
+    {
+      "case": "previous_day_brief_rejected",
+      "report_date": "2026-11-05",
+      "local_date": "2026-11-06",
+      "can_send": false,
+      "reason": "LINE 報告日期或版本不符"
+    }
+  ],
+  "network_sends": 0,
+  "all_assertions_passed": true
+}
