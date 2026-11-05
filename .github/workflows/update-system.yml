@@ -30,6 +30,7 @@ on:
       - 'tests/test_mis_scan_clock.py'
       - 'tests/test_mis_omitted_quotes.py'
       - 'tests/test_mis_response_status.py'
+      - 'tests/test_mis_closed_window.py'
       - 'tests/test_intraday_analysis_scope.py'
       - 'tests/test_tracked_etf_reference.py'
       - 'tests/test_radar_eligibility.py'
@@ -97,6 +98,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_mis_omitted_quotes.py'
       - name: Reject failed or malformed MIS application responses
         run: python -m unittest discover -s tests -p 'test_mis_response_status.py'
+      - name: Skip expired MIS scans while official close refresh continues
+        run: python -m unittest discover -s tests -p 'test_mis_closed_window.py'
       - name: Verify tracked ETF reference dates and privacy
         run: python -m unittest discover -s tests -p 'test_tracked_etf_reference.py'
       - name: Enforce original formal radar eligibility gates

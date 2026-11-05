@@ -1310,7 +1310,10 @@ def main():
     # also pass the exchange-date checks below before quotes become actionable.
     known_closure=closure_reason(now.date())
     market_open=not known_closure and now.weekday()<5 and 540<=minutes<810
-    quote_refresh_window=not known_closure and now.weekday()<5 and 525<=minutes<960
+    # Executions later than 13:30 are rejected, and quotes older than 600s
+    # are rejected. After the 13:40 minute no MIS execution can qualify;
+    # keep refreshing official closes without a futile full-universe scan.
+    quote_refresh_window=not known_closure and now.weekday()<5 and 525<=minutes<821
     post_close_refresh=not known_closure and now.weekday()<5 and 840<=minutes<960
     if quote_refresh_window:
         try:
