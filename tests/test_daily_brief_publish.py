@@ -48,10 +48,10 @@ class BriefPublicationRaceTests(unittest.TestCase):
         for key, value in [('user.name', 'peer'), ('user.email', 'peer@example.invalid')]:
             git(self.peer, 'config', key, value)
 
-    def publish(self):
+    def publish(self, send=False):
         workflow = WORKFLOW.read_text()
         block = workflow.split('      - name: Publish verified report\n        run: |\n', 1)[1].split('      - name:', 1)[0]
-        shell = textwrap.dedent(block).replace('${{ steps.edition.outputs.name }}', 'close')
+        shell = textwrap.dedent(block).replace('${{ steps.edition.outputs.name }}', 'close').replace('${{ steps.edition.outputs.send }}', 'true' if send else 'false')
         # sleep is not part of the behavior under test.
         shell = shell.replace('sleep 3', ':')
         return subprocess.run(['bash', '-e', '-c', shell], cwd=self.worker,
@@ -91,3 +91,43 @@ class BriefPublicationRaceTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('Could not publish', result.stdout)
         self.assertEqual(git(self.base, '--git-dir='+str(self.remote), 'rev-parse', 'main').stdout, before)
+
+    def test_send_race_keeps_first_published_outbox_and_other_edition(self):
+        import shutil
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        from scripts.line_outbox import freeze, load
+        now = datetime.now(ZoneInfo('Asia/Taipei'))
+        day = now.date().isoformat()
+        source = WORKFLOW.parents[2]
+        for name in ['send_line_brief.py', 'line_outbox.py']:
+            shutil.copy(source / 'scripts' / name, self.worker / 'scripts' / name)
+        # Make these helpers available in both checkouts before the race.
+        (self.worker / 'scripts/build_daily_brief.py').write_text(textwrap.dedent("""
+            import json
+            from pathlib import Path
+            p = Path('remote/brief.json')
+            doc = json.loads(p.read_text())
+            doc['close']['title'] = 'new report after race'
+            p.write_text(json.dumps(doc))
+        """))
+        git(self.worker, 'add', '.')
+        git(self.worker, 'commit', '-m', 'outbox helpers')
+        git(self.worker, 'push')
+        git(self.peer, 'pull', '--ff-only')
+        report = {'date': day, 'edition': 'close', 'status': 'ready', 'title': 'FIRST PUBLISHED'}
+        doc = {'morning': 'preserve peer edition', 'close': report}
+        (self.peer / 'remote/brief.json').write_text(json.dumps(doc))
+        freeze(doc, 'close', now, self.peer / 'remote/line_outbox.json', {})
+        original = (self.peer / 'remote/line_outbox.json').read_bytes()
+        git(self.peer, 'add', '.')
+        git(self.peer, 'commit', '-m', 'first published immutable message')
+        git(self.peer, 'push')
+        (self.worker / 'remote/brief.json').write_text(json.dumps({'close': {**report, 'title': 'losing concurrent report'}}))
+        result = self.publish(send=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        actual = git(self.base, '--git-dir='+str(self.remote), 'show', 'main:remote/line_outbox.json').stdout.encode()
+        self.assertEqual(actual, original)
+        published = json.loads(git(self.base, '--git-dir='+str(self.remote), 'show', 'main:remote/brief.json').stdout)
+        self.assertEqual(published['morning'], 'preserve peer edition')
+        self.assertIn('FIRST PUBLISHED', load(self.worker / 'remote/line_outbox.json', day, 'close')['messages'][0]['text'])

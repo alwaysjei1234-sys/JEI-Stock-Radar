@@ -25,6 +25,8 @@ on:
     paths:
       - 'scripts/build_daily_brief.py'
       - 'scripts/send_line_brief.py'
+      - 'scripts/line_outbox.py'
+      - 'tests/test_line_outbox.py'
       - 'scripts/publish_line_status.py'
       - 'tests/test_daily_brief.py'
       - 'tests/test_daily_brief_publish.py'
@@ -58,6 +60,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_daily_brief_publish.py' -v
           python -m unittest discover -s tests -p 'test_send_line_alert.py' -v
           python -m unittest discover -s tests -p 'test_line_dispatch.py' -v
+          python -m unittest discover -s tests -p 'test_line_outbox.py' -v
           python -m unittest discover -s tests -p 'test_line_payload_coverage.py' -v
           python -m unittest discover -s tests -p 'test_line_status.py' -v
           node tests/line_status.test.cjs
@@ -92,11 +95,15 @@ jobs:
           git config user.name 'JEI Research Brief Bot'
           git config user.email 'actions@users.noreply.github.com'
           for i in 1 2 3; do
-            if git diff --quiet -- remote/brief.json; then
+            if [ "${{ steps.edition.outputs.send }}" = 'true' ]; then
+              python -m scripts.line_outbox --edition "${{ steps.edition.outputs.name }}"
+            fi
+            git add remote/brief.json
+            if [ -f remote/line_outbox.json ]; then git add remote/line_outbox.json; fi
+            if git diff --cached --quiet; then
               echo 'Brief unchanged'
               exit 0
             fi
-            git add remote/brief.json
             git commit -m 'Auto-update JEI daily research brief'
             if git push; then exit 0; fi
             if [ "$i" = 3 ]; then break; fi
@@ -125,7 +132,7 @@ jobs:
           JEI_LINE_ENABLED: ${{ vars.JEI_LINE_ENABLED }}
           JEI_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.JEI_LINE_CHANNEL_ACCESS_TOKEN }}
           JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
-        run: python scripts/send_line_brief.py --edition "${{ steps.edition.outputs.name }}" --result-path "${{ runner.temp }}/jei-line-result.json"
+        run: python scripts/send_line_brief.py --edition "${{ steps.edition.outputs.name }}" --outbox remote/line_outbox.json --result-path "${{ runner.temp }}/jei-line-result.json"
       - name: Preserve LINE API acceptance result
         if: always() && steps.edition.outputs.send == 'true'
         uses: actions/upload-artifact@v4

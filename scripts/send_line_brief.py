@@ -6,6 +6,7 @@ import os
 import re
 import time
 import uuid
+import sys
 import urllib.error
 import urllib.request
 from datetime import datetime
@@ -13,6 +14,8 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 ROOT=Path(__file__).resolve().parents[1]
+if __package__ in (None, ""):
+    sys.path.insert(0,str(ROOT))
 TAIPEI=ZoneInfo("Asia/Taipei")
 BASE="https://api.line.me"
 PUSH=BASE+"/v2/bot/message/push"
@@ -102,7 +105,7 @@ def quota_ok(token,cap=55):
     return (quota.get("type")=="limited" and type(maximum) is int and 0<maximum<=200
             and type(used) is int and 0<=used<min(cap,maximum))
 
-def push(report,edition,token,recipient,receipt=None):
+def push(report,edition,token,recipient,receipt=None,message_payload=None):
     receipt = receipt if receipt is not None else {}
     receipt["stage"]="quota"
     if not quota_ok(token):
@@ -111,7 +114,12 @@ def push(report,edition,token,recipient,receipt=None):
     receipt["stage"]="push"
     # Official retry key: avoid duplicate acceptance for the same daily edition.
     key=str(uuid.uuid5(uuid.NAMESPACE_URL,"jei-stock-radar/"+recipient+"/"+report["date"]+"/"+edition))
-    body=json.dumps(payload(report,recipient),ensure_ascii=False).encode("utf-8")
+    if message_payload is None:
+        outgoing=payload(report,recipient)
+    else:
+        from scripts.line_outbox import validate_payload
+        outgoing={"to":recipient, **validate_payload(message_payload)}
+    body=json.dumps(outgoing,ensure_ascii=False).encode("utf-8")
     # Freeze content and recipient before retrying: a timeout may already have
     # been accepted upstream. Same key/body prevents a duplicate acceptance.
     for attempt in range(1,4):
@@ -143,6 +151,7 @@ def push(report,edition,token,recipient,receipt=None):
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--edition",choices=["morning","close"],required=True)
+    p.add_argument("--outbox",help="Require a previously published immutable public message")
     p.add_argument("--result-path",help="Write a credential-free API acceptance receipt")
     args=p.parse_args()
     now=datetime.now(TAIPEI)
@@ -159,7 +168,11 @@ def main():
         if not ok:
             receipt.update(status="blocked",reason=msg)
             raise SystemExit("未發送："+msg)
-        result=push(report,edition,token,recipient,receipt=receipt)
+        frozen=None
+        if args.outbox:
+            from scripts.line_outbox import load
+            frozen=load(args.outbox,report["date"],edition)
+        result=push(report,edition,token,recipient,receipt=receipt,message_payload=frozen)
         print(result)
         if receipt["status"] not in ("accepted","already_accepted"):
             raise SystemExit("未確認發送："+result)
