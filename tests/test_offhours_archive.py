@@ -68,6 +68,19 @@ class OffhoursArchiveTests(unittest.TestCase):
         self.assertEqual(after["market"]["mode"],"今日收盤")
         self.assertFalse(after["market"]["historical_readonly"])
 
+    def test_weekend_preserves_verified_empty_candidate_lists(self):
+        old=verified()
+        for group in ("attack","next","monster"):
+            old[group]=[]
+        original=json.loads(json.dumps(old))
+        after=MOD.validated_previous_close(old,SUNDAY)
+        self.assertIsNotNone(after)
+        for group in ("attack","next","monster"):
+            self.assertEqual(after[group],[])
+        self.assertTrue(after["market"]["no_new_picks"])
+        self.assertFalse(after["risk"]["actionable"])
+        self.assertEqual(old,original)
+
     def test_archive_date_key_never_substitutes_today_for_stale_or_invalid_data(self):
         self.assertEqual(MOD.verified_archive_date("2026-10-27"),"2026-10-27")
         for invalid in ("TWSE:2026-10-28 / TPEx:2026-10-27","2026-10-32",
@@ -153,10 +166,13 @@ class OffhoursArchiveTests(unittest.TestCase):
                 self.assertTrue(market["market"]["no_new_picks"])
                 self.assertFalse(market["risk"]["actionable"])
                 self.assertEqual(market["risk"]["as_of"],market["data_date"])
-            self.assertGreater(len(market["attack"]),0)
+            # A verified close can legitimately have no formal candidates.
+            # Require the list schema and exact retention, never a buy signal.
+            self.assertIsInstance(market["attack"],list)
             self.assertGreater(len(market["sectors"]),0)
-            self.assertIsNotNone(MOD.validated_previous_close(
-                market,checked+timedelta(minutes=1)))
+            retained=MOD.validated_previous_close(market,checked+timedelta(minutes=1))
+            self.assertIsNotNone(retained)
+            self.assertEqual(retained["attack"],market["attack"])
 
     def test_no_weekend_candle_in_published_history(self):
         history=json.loads((ROOT/"remote/history.json").read_text(encoding="utf-8"))
