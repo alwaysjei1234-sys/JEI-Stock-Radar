@@ -12,6 +12,8 @@ on:
       - 'scripts/corporate_actions.py'
       - 'tests/test_corporate_action_prices.py'
       - 'scripts/paper_evidence.py'
+      - 'scripts/paper_provenance.py'
+      - 'tests/test_paper_provenance.py'
       - 'tests/test_paper_evidence.py'
       - 'tests/test_paper_trade_dates.py'
       - 'tests/test_paper_missing_valuation.py'
@@ -55,6 +57,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_corporate_action_prices.py' -v
       - name: Verify diagnostic costs and lifetime history
         run: python -m unittest discover -s tests -p 'test_paper_evidence.py' -v
+      - name: Verify prospective rule version and record propagation
+        run: python -m unittest discover -s tests -p 'test_paper_provenance.py' -v
       - name: Reject invalid signal, entry and exit chronology before scoring
         run: python -m unittest discover -s tests -p 'test_paper_trade_dates.py' -v
       - name: Reject incomplete valuation drawdowns and boolean prices

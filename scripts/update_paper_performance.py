@@ -21,6 +21,7 @@ TZ = ZoneInfo("Asia/Taipei")
 if __package__ in (None, ""):
     sys.path.insert(0, str(ROOT))
 from scripts.paper_evidence import trade_metrics, full_drawdown
+from scripts.paper_provenance import capture as capture_provenance, copy_record as copy_provenance
 from scripts.market_sessions import next_expected_session
 from scripts.corporate_actions import validated_actions
 
@@ -34,6 +35,13 @@ RULES = {
     "fixed10": {"name": "固定 +10%", "target": 10.0},
     "trailing": {"name": "上漲5%啟動／高點回落2%", "target": 5.0},
 }
+
+def provenance_settings():
+    return {'capital':CAPITAL,'position_limit':LIMIT,'buy_fee_rate':FEE,
+            'sell_fee_rate':FEE,'sell_tax_rate':SELL_TAX,'rules':RULES,
+            'signal_groups':['attack','monster'],'max_daily_signals':5,
+            'entry':'next_valid_session_close','exit':'later_valid_session_close'}
+
 
 def initial_state():
     return {
@@ -115,7 +123,11 @@ def daily_signals(feed, quotes, day):
                 "signal_close": price_for(quotes, code),
             })
     candidates.sort(key=lambda x: (-x["score"], x["code"]))
-    return candidates[:5]
+    selected=candidates[:5]
+    if selected:
+        proof=capture_provenance(feed,day,selected,provenance_settings())
+        for signal in selected:signal['provenance']=copy_provenance(proof)
+    return selected
 
 def exit_reason(rule_key, pos, price):
     pct = (price / pos["entry_price"] - 1) * 100
@@ -185,6 +197,11 @@ def advance(feed, archive, state, day):
                          + "；停止計算，須補齊收盤或核實休市")
     quotes = archive["days"][day]
     prior_signals = [x for x in state["signals"] if x.get("day") == prior_day]
+    # Capture today's new evidence before mutating cash, positions or equity.
+    today_signals=daily_signals(feed,quotes,day)
+    for signal in prior_signals:copy_provenance(signal.get("provenance"))
+    for account in state["strategies"].values():
+        for position in account["positions"]:copy_provenance(position.get("provenance"))
 
     for key in RULES:
         a = state["strategies"][key]
@@ -198,6 +215,7 @@ def advance(feed, archive, state, day):
             if reason is None:
                 remaining.append(pos)
                 continue
+            proof=copy_provenance(pos.get("provenance"))
             proceeds = px * pos["qty"] * (1 - FEE - SELL_TAX)
             net = proceeds - pos["entry_cost"]
             a["cash"] += proceeds
@@ -209,6 +227,7 @@ def advance(feed, archive, state, day):
                 "net": round(net, 2),
                 "net_return_pct": round(100 * net / pos["entry_cost"], 3),
             })
+            if proof is not None:a["closed"][-1]["provenance"]=proof
         a["positions"] = remaining
 
         # Never enter a signal at its own closing price. Entries are a separate
@@ -220,6 +239,7 @@ def advance(feed, archive, state, day):
             px = price_for(quotes, code)
             if px is None:
                 continue
+            proof=copy_provenance(sig.get("provenance"))
             budget = min(LIMIT, a["cash"])
             qty = math.floor(budget / (px * (1 + FEE)))
             if qty < 1:
@@ -231,11 +251,12 @@ def advance(feed, archive, state, day):
                 "entry_day": day, "entry_price": px,
                 "entry_cost": entry_cost, "qty": qty, "peak": px,
             })
+            if proof is not None:a["positions"][-1]["provenance"]=proof
         summary = summarize(a, quotes)
         a["equity_history"].append({"day": day, "equity": summary["estimated_liquidation_equity_ntd"]})
         summary["max_drawdown_pct"] = full_drawdown(a["equity_history"], CAPITAL)
 
-    state["signals"].extend(daily_signals(feed, quotes, day))
+    state["signals"].extend(today_signals)
     state["signals"] = state["signals"][-400:]
     state["last_processed_day"] = day
     state["updated_at"] = datetime.now(TZ).strftime("%Y-%m-%d %H:%M")
