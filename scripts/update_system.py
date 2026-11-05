@@ -334,7 +334,7 @@ def fetch_latest_offhours_close(rows, now, previous_data_date):
             for market in ("TWSE","TPEX"):
                 observed=[x for x in rows if x.get("market")==market]
                 dates={normalize_exchange_date(x.get("date")) for x in observed}
-                if len(observed)<500 or dates!={day_key}:
+                if sum(bool(stock_only(x)) for x in observed)<500 or dates!={day_key}:
                     complete=False
             if complete:
                 break
@@ -344,7 +344,12 @@ def fetch_latest_offhours_close(rows, now, previous_data_date):
             twse_count=len(twse)
             tpex_count=len(tpex)
             twse_dates=sorted({normalize_exchange_date(x.get("date")) for x in twse if x.get("date")})
-            if twse_count<500 or tpex_count<500 or twse_dates!=[day_key]:
+            # Historical/latest fallbacks may return close-only rows. Those
+            # certify prices, not the changes needed for breadth and scoring.
+            # Never replace full analysis rows with an incomplete close table.
+            if (sum(bool(stock_only(x)) for x in twse)<500
+                    or sum(bool(stock_only(x)) for x in tpex)<500
+                    or twse_dates!=[day_key]):
                 print(json.dumps({"offhours_close_attempt":day_key,"twse_count":twse_count,
                                   "tpex_count":tpex_count,"twse_dates":twse_dates},ensure_ascii=False))
                 continue
