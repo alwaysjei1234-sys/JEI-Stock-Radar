@@ -1734,6 +1734,9 @@ def main():
                 elif market_open:
                     session_status="盤中資料不足"
                     session_reason="今日盤中成交價覆蓋未達驗證門檻，暫停新判讀"
+                elif retained["data_date"]==today_iso:
+                    session_status="收盤重驗失敗"
+                    session_reason="本次 TWSE／TPEx 來源重抓未通過；保留今日已驗證收盤，暫停新判讀"
                 else:
                     session_status="交易日資料待驗證"
                     session_reason="TWSE／TPEx 當日官方收盤尚未完成交叉驗證"

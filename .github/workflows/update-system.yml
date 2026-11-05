@@ -22,6 +22,7 @@ on:
       - 'tests/test_twse_response_dates.py'
       - 'tests/test_institutional_integrity.py'
       - 'tests/test_midnight_archive_recovery.py'
+      - 'tests/test_same_day_close_retry_status.py'
       - 'tests/test_mis_outage_probe.py'
       - 'tests/test_mis_priority_retry.py'
       - 'tests/test_mis_index_identity.py'
@@ -82,6 +83,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_send_line_alert*.py'
       - name: Preserve verified closes across repeated midnight refreshes
         run: python -m unittest discover -s tests -p 'test_midnight_archive_recovery.py'
+      - name: Distinguish failed same-day rechecks from an unverified new session
+        run: python -m unittest discover -s tests -p 'test_same_day_close_retry_status.py'
       - name: Bound MIS outage requests before full-market refresh
         run: python -m unittest discover -s tests -p 'test_mis_outage_probe.py'
       - name: Test bounded tracked-symbol quote recovery
