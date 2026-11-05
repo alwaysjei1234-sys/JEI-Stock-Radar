@@ -66,6 +66,7 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private final ExecutorService io = Executors.newFixedThreadPool(3);
+    private final RequestGate staticRequests = new RequestGate();
     private final AtomicBoolean marketScanRunning = new AtomicBoolean(false);
     private SharedPreferences prefs;
 
@@ -411,7 +412,7 @@ public class MainActivity extends Activity {
         else if ("daily".equals(kind)) sourceUrl = DAILY_JSON;
         else if ("performance".equals(kind)) sourceUrl = PERFORMANCE_JSON;
         else return;
-        io.execute(() -> {
+        staticRequests.execute(io, "static:" + kind, () -> {
             try {
                 jsStatic("onData", kind, getRemoteStatic(sourceUrl));
             } catch (Exception e) {
@@ -432,7 +433,7 @@ public class MainActivity extends Activity {
     }
 
     private void fetchSystem() {
-        io.execute(() -> {
+        staticRequests.execute(io, "system", () -> {
             try {
                 jsCall("onSystemData", getRemoteStatic(SYSTEM_JSON));
             } catch (Exception e) {
@@ -442,7 +443,7 @@ public class MainActivity extends Activity {
     }
 
     private void checkUpdate() {
-        io.execute(() -> {
+        staticRequests.execute(io, "update", () -> {
             try {
                 jsCall("onUpdateManifest", getRemoteStatic(UPDATE_JSON));
             } catch (Exception e) {
