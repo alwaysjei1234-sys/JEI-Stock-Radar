@@ -577,6 +577,7 @@ def select_mis_retry_channels(messages, by_code, asof, priority_codes=()):
 
 
 def enrich_live(rows, asof=None, priority_codes=()):
+    fixed_asof=asof is not None
     asof=asof or datetime.now(TZ)
     expected_day=asof.strftime("%Y%m%d")
     by_code={x["code"]:x for x in rows}
@@ -625,6 +626,9 @@ def enrich_live(rows, asof=None, priority_codes=()):
             try:
                 got_rows,errs=fut.result();messages.extend(got_rows);errors.extend(errs)
             except Exception as e:errors.append(str(e))
+    # Live scans can span several minutes. Compare observations with the
+    # collection clock, while explicit historical replay times stay frozen.
+    if not fixed_asof:asof=datetime.now(TZ)
     stats["returned_messages"]=len(messages)
     stats["malformed_messages"]=sum(not isinstance(m,dict) for m in messages)
     messages=[m for m in messages if isinstance(m,dict)]
@@ -653,6 +657,8 @@ def enrich_live(rows, asof=None, priority_codes=()):
             errors.append("MIS retry: "+str(exc)[:100])
     if replacements:
         messages=[replacements.get(str(m.get("c","")),m) for m in messages]
+    if not fixed_asof:asof=datetime.now(TZ)
+    stats["quotes_checked_at"]=asof.isoformat()
     accepted_codes=set()
     for m in messages:
         code=str(m.get("c","")).strip()
@@ -713,7 +719,9 @@ def enrich_live(rows, asof=None, priority_codes=()):
     taiex=None
     try:
         idx=fetch_mis_channels(["tse_t00.tw"])
-        taiex,stats["index_quote_status"]=mis_index_change(idx,asof)
+        index_asof=asof if fixed_asof else datetime.now(TZ)
+        stats["index_checked_at"]=index_asof.isoformat()
+        taiex,stats["index_quote_status"]=mis_index_change(idx,index_asof)
     except Exception as e:
         stats["index_quote_status"]="request_failed"
         errors.append("TAIEX:"+str(e))
