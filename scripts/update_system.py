@@ -447,12 +447,33 @@ def quote_num(m,key):
         if v is not None and v>0:return v
     return None
 
-def live_price(m):
-    # Only the exchange's actual last-traded price qualifies as a live trade.
-    # Bid/ask are indicative quotes; 'y' is yesterday's close. Neither may
-    # be counted as a fresh intraday transaction or used to lift coverage.
+def mis_execution(m):
+    """Return the price/time pair of an execution, never an order-book quote.
+
+    MIS may send z="-" for a book update and retain the last execution in
+    trade. Its own timestamp must travel with its price through every gate.
+    """
+    if not isinstance(m,dict):return None
     z=num(m.get("z"))
-    return z if z is not None and z>0 else None
+    if z is not None and z>0:return m
+    if m.get("z") not in (None,"","-"):return None
+    trade=m.get("trade")
+    if not isinstance(trade,dict):return None
+    price,volume=num(trade.get("z")),num(trade.get("v"))
+    if price is None or price<=0 or volume is None or volume<=0:return None
+    if trade.get("d",m.get("d"))!=m.get("d"):return None
+    try:
+        executed=datetime.strptime(str(trade.get("t","")),"%H:%M:%S").time()
+        reported=datetime.strptime(str(m.get("t","")),"%H:%M:%S").time()
+        if not (9<=executed.hour and (executed.hour,executed.minute,executed.second)<=(13,30,0)
+                and executed<=reported):return None
+    except (ValueError,TypeError):return None
+    return {**m,"z":trade["z"],"t":trade["t"]}
+
+
+def live_price(m):
+    execution=mis_execution(m)
+    return num(execution.get("z")) if execution is not None else None
 
 def mis_service_probe(channels):
     """Bound a known service outage before starting a full-universe fan-out.
@@ -486,6 +507,7 @@ def mis_service_probe(channels):
 def recent_mis_time(message, asof):
     """Count only executed quotes within two five-minute refresh intervals."""
     try:
+        message = mis_execution(message) or message
         stamp = datetime.strptime(str(message.get("d", "")) + " " + str(message.get("t", "")),
                                   "%Y%m%d %H:%M:%S").replace(tzinfo=TZ)
         seconds = (asof - stamp).total_seconds()
@@ -677,7 +699,8 @@ def enrich_live(rows, asof=None, priority_codes=()):
             x["live_volume"]=v
             if v>0:x["value"]=v*1000.0*price
         # MIS d/t are the exchange quote date/time; preserve them instead of using updater runtime.
-        qd=str(m.get("d","") or "").strip(); qt=str(m.get("t","") or "").strip()
+        execution=mis_execution(m) or m
+        qd=str(execution.get("d","") or "").strip(); qt=str(execution.get("t","") or "").strip()
         if qd and qt:
             x["quote_time"]=f"{qd[:4]}-{qd[4:6]}-{qd[6:8]} {qt}"
         elif qt:
