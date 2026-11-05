@@ -8,7 +8,8 @@ from test_paper_performance import archive, feed, DAY1, DAY2
 
 
 def trade(entry, exit_price, qty=100):
-    return {'entry_price':entry, 'exit_price':exit_price, 'qty':qty,
+    return {'signal_day':'2026-01-05','entry_day':'2026-01-06','exit_day':'2026-01-07',
+            'entry_price':entry, 'exit_price':exit_price, 'qty':qty,
             'net':round(qty*(exit_price*(1-FEE-SELL_TAX)-entry*(1+FEE)),2)}
 
 

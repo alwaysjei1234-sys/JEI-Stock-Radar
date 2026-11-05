@@ -1,5 +1,6 @@
 """Descriptive diagnostics for frozen paper trades; never changes fills or rules."""
 import math
+from datetime import date
 
 
 def wilson_interval(wins, count):
@@ -13,10 +14,33 @@ def wilson_interval(wins, count):
     return [round(100*max(0, center-radius), 2), round(100*min(1, center+radius), 2)]
 
 
+def validate_trade_chronology(trade):
+    """JEI's daily-close model enters after the signal and exits after entry.
+
+    This checks chronology only, not point-in-time publication or OOS provenance.
+    Reject the whole report instead of silently excluding a malformed trade.
+    """
+    try:
+        days=[]
+        for key in ('signal_day','entry_day','exit_day'):
+            value=trade[key]
+            if not isinstance(value,str):
+                raise ValueError('Date must be a canonical ISO string')
+            parsed=date.fromisoformat(value)
+            if parsed.isoformat()!=value:
+                raise ValueError('Noncanonical paper date')
+            days.append(parsed)
+        if not days[0]<days[1]<days[2]:
+            raise ValueError('Signal, entry and exit must be strictly ordered')
+    except (KeyError,TypeError,ValueError):
+        raise ValueError('Invalid paper trade chronology') from None
+
+
 def trade_metrics(trades, fee, sell_tax):
     """Same quantities and exit dates; stress is not a portfolio replay."""
     values = []
     for trade in trades:
+        validate_trade_chronology(trade)
         try:
             if any(isinstance(trade.get(key), bool) for key in ('entry_price', 'exit_price', 'qty', 'net')):
                 raise ValueError('Boolean paper trade value')
