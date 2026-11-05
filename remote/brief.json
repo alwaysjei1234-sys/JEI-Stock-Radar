@@ -4,9 +4,9 @@
   "morning": {
     "edition": "morning",
     "date": "2026-11-05",
-    "generated_at": "2026-11-05T09:54+08:00",
+    "generated_at": "2026-11-05T10:16+08:00",
     "status": "ready",
-    "note": "已核對封存收盤基準日 2026-11-04；歷史唯讀，非今日即時行情或新選股",
+    "note": "封存收盤基準日 2026-11-04；台股行情驗證未通過，評分與選股暫停；非即時行情",
     "source_date": "2026-11-04",
     "title": "JEI 開盤前早報",
     "blocks": [
@@ -24,37 +24,31 @@
           "費城半導體｜市場日 2026-11-04 日線參考價 10,268.65｜-3.13%｜Yahoo Finance；未獨立驗證收盤",
           "VIX 恐慌指數｜市場日 2026-11-04 日線參考價 16.61｜-20.26%｜Yahoo Finance；未獨立驗證收盤",
           "台積電 ADR｜市場日 2026-11-03 日線參考價 404.80｜+1.55%｜Yahoo Finance；未獨立驗證收盤",
-          "WTI 原油｜市場日 2026-11-04 日線參考價 87.13｜-1.12%｜Yahoo Finance；未獨立驗證收盤",
-          "美元指數｜市場日 2026-11-04 日線參考價 101.31｜-0.55%｜Yahoo Finance；未獨立驗證收盤",
-          "美元／新台幣｜市場日 2026-11-05 日線參考價 32.91｜+0.54%｜Yahoo Finance；未獨立驗證收盤",
-          "日經 225｜市場日 2026-11-05 日線參考價 61,897.70｜-1.88%｜Yahoo Finance；未獨立驗證收盤",
-          "韓國綜合｜市場日 2026-11-05 日線參考價 5,436.71｜-3.75%｜Yahoo Finance；未獨立驗證收盤"
+          "WTI 原油｜市場日 2026-11-04 日線參考價 86.93｜-1.35%｜Yahoo Finance；未獨立驗證收盤",
+          "美元指數｜市場日 2026-11-04 日線參考價 101.30｜-0.56%｜Yahoo Finance；未獨立驗證收盤",
+          "美元／新台幣｜市場日 2026-11-05 日線參考價 32.92｜+0.56%｜Yahoo Finance；未獨立驗證收盤",
+          "日經 225｜市場日 2026-11-05 日線參考價 61,893.31｜-1.88%｜Yahoo Finance；未獨立驗證收盤",
+          "韓國綜合｜市場日 2026-11-05 日線參考價 5,458.81｜-3.36%｜Yahoo Finance；未獨立驗證收盤"
         ]
       },
       {
         "title": "歷史收盤風控參考（非今日訊號）",
         "items": [
-          "基準日 2026-11-04｜偏空",
-          "市場風險 50/100｜震盪警戒｜現金參考 30%–50%",
-          "加權指數 -0.83%",
-          "上漲 836 / 下跌 970（廣度 46.3%）",
-          "市場中位數 +0.00%"
+          "基準日 2026-11-04｜封存收盤參考；即時行情未驗證",
+          "市場風險 --/100｜未驗證，暫停判讀｜現金參考 ",
+          "封存有效收盤價 1973 檔；不沿用未驗證評分"
         ]
       },
       {
         "title": "族群輪動",
         "items": [
-          "IC設計｜熱度 68｜平均 +1.20%｜代表 創意、M31",
-          "PCB/載板｜熱度 66｜平均 +1.25%｜代表 台光電、富喬",
-          "光通訊/CPO｜熱度 60｜平均 +1.20%｜代表 眾達-KY、前鼎",
-          "封測｜熱度 57｜平均 +0.24%｜代表 日月光投控、南茂"
+          "沒有可用族群資料"
         ]
       },
       {
         "title": "歷史主攻候選（非今日選股）",
         "items": [
-          "3443 創意｜評分 90｜收盤 7115.0｜+4.71%",
-          "3653 健策｜評分 88｜收盤 6450.0｜+6.88%"
+          "沒有通過資料檢查的候選"
         ]
       },
       {
@@ -75,7 +69,7 @@
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "America/New_York",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       },
       {
         "name": "NASDAQ",
@@ -87,7 +81,7 @@
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "America/New_York",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       },
       {
         "name": "道瓊",
@@ -99,7 +93,7 @@
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "America/New_York",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       }
     ],
     "global_market": [
@@ -113,7 +107,7 @@
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "America/New_York",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       },
       {
         "name": "VIX 恐慌指數",
@@ -125,7 +119,7 @@
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "America/Chicago",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       },
       {
         "name": "台積電 ADR",
@@ -137,70 +131,76 @@
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "America/New_York",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       },
       {
         "name": "WTI 原油",
         "date": "2026-11-04",
-        "close": 87.13,
-        "change_pct": -1.12,
+        "close": 86.93,
+        "change_pct": -1.35,
         "source": "Yahoo Finance",
         "bar_interval": "1d",
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "America/New_York",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       },
       {
         "name": "美元指數",
         "date": "2026-11-04",
-        "close": 101.31,
-        "change_pct": -0.55,
+        "close": 101.3,
+        "change_pct": -0.56,
         "source": "Yahoo Finance",
         "bar_interval": "1d",
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "America/New_York",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       },
       {
         "name": "美元／新台幣",
         "date": "2026-11-05",
-        "close": 32.91,
-        "change_pct": 0.54,
+        "close": 32.92,
+        "change_pct": 0.56,
         "source": "Yahoo Finance",
         "bar_interval": "1d",
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "Europe/London",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       },
       {
         "name": "日經 225",
         "date": "2026-11-05",
-        "close": 61897.7,
+        "close": 61893.31,
         "change_pct": -1.88,
         "source": "Yahoo Finance",
         "bar_interval": "1d",
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "Asia/Tokyo",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       },
       {
         "name": "韓國綜合",
         "date": "2026-11-05",
-        "close": 5436.71,
-        "change_pct": -3.75,
+        "close": 5458.81,
+        "change_pct": -3.36,
         "source": "Yahoo Finance",
         "bar_interval": "1d",
         "quote_kind": "daily_bar_reference",
         "closing_price_verified": false,
         "exchange_timezone": "Asia/Seoul",
-        "report_as_of": "2026-11-05T09:54+08:00"
+        "report_as_of": "2026-11-05T10:16+08:00"
       }
     ],
     "news": [
+      {
+        "title": "美期中選舉後美台股市七連紅 美股平均漲9.22%、台股漲9.61% - 經濟日報",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBDbWtkUEVLME5WcXhkejFQeWpScHFJeTJSVjZVVkR0QWwwLWhtdW4yMU5vMm8yR1N1OG91VlVlNkhiSkMtU3hPVmZvQUtFdlRrUDRXcThtY3ZLZ1QyZWd30gFfQVVfeXFMUENta2RQRUswTlZxeGR6MVB5alJwcUl5MlJWNlVWRHRBbDAtaG11bjIxTm8ybzJHU3U4b3VWVWU2SGJKQy1TeE9WZm9BS0V2VGtQNFdxOG1jdktnVDJlZ3c?oc=5",
+        "source": "經濟日報",
+        "published_at": "2026-11-05 07:52"
+      },
       {
         "title": "【盤前】道瓊暴漲費半重挫3%藏警訊！台指夜盤漲201點 台股拚反彈 - 三立新聞網SETN.com",
         "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE56ZENNZ21oaHlRS0dSeXkzWE5ic215RFU0U241eFUwSTcxZENYdjJLblBwZDVoVkZhdklqNGE0WGNBZFdJaWxncndCaw?oc=5",
@@ -208,22 +208,16 @@
         "published_at": "2026-11-05 09:38"
       },
       {
-        "title": "美期中選舉落幕掀資金洗牌，道瓊狂飆1569點，外資大賣台股1499億創紀錄-財經焦點情報站 - CMoney投資網誌",
-        "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNOUs3OVVCNzFrcktlSUlrRE9uVDZQRHR4ZWRWSzluakMzb2R1M3hTZU9fSHBVamI4S1dpRmlQU2lNMkYxbGxDal9JTzBkZzNFYWM4OHdKOFducVNXUkl4bjJfTU01RWFKSHg1dlpkUWxPZ3ZmTld5WWdqZlAyM0NVOFpR?oc=5",
+        "title": "AI監管疑慮升溫衝擊半導體供應鏈，最新費半重挫逾3%拖累台股震盪！-財經焦點情報站 - CMoney投資網誌",
+        "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPWGlZdjZ4QkMwb3JVZjVJdjZCU3lKaFpvTy03ZjloRDJyZk9BdlpLZ0FkQnJ6b29kWnBJbkk3X3VoYmxTTGoybmZueWxscHpEekNRLWpYZk9McnVHUWN6ZzVub0k1OGdaeGY4QnBtYklqRjY0Vk9wTjZpRE5KTExsblRR?oc=5",
         "source": "CMoney投資網誌",
-        "published_at": "2026-11-05 07:45"
+        "published_at": "2026-11-05 09:15"
       },
       {
         "title": "快訊／台股開盤大跌900點 「42K」快要失守 - 上報Up Media",
         "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFAxYl83QzhpMDMyLVM1TDkxeWhrMFBrVHZUbnBLcHRPYTV5SC1maGFidU0xOWpQM3pqSU15YWRNc2RIU2RSOVl6Nnd2NlN3d2t3ek5IWVg5NEtkQQ?oc=5",
         "source": "上報Up Media",
         "published_at": "2026-11-05 09:16"
-      },
-      {
-        "title": "美股布局契機浮現 高殖利率下多元風格輪番接棒 - UDN",
-        "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTFBkQzcxVi1wa25Ea2FucWZjRDV0Q19peDJIRVhBV3plMzZKOXJyNjJGQXFLUldNdGw3d2RMYjh1NkhyemVzdUhkOERRTzlTejZq0gFWQVVfeXFMUDU0QTNaUjJUbHhwa1BvOW5rVmV2WGgzUVBwbkFTWlpxWHV6SUQ0TzlkSTFpN3ozR3hXdnBjT2JqSnpZS2FndWxES24yaU5CWFNhdU5helE?oc=5",
-        "source": "UDN",
-        "published_at": "2026-11-05 07:53"
       },
       {
         "title": "外資砍1498億史上第5大！台股跌破4萬2上演千點回馬槍仍收黑聯發科、日月光翻紅突圍｜Yahoo財經掃描 - Yahoo股市",
@@ -304,9 +298,9 @@
     },
     "morning": {
       "date": "2026-11-05",
-      "checked_at": "2026-11-05T09:54+08:00",
+      "checked_at": "2026-11-05T10:16+08:00",
       "status": "ready",
-      "note": "已核對封存收盤基準日 2026-11-04；歷史唯讀，非今日即時行情或新選股"
+      "note": "封存收盤基準日 2026-11-04；台股行情驗證未通過，評分與選股暫停；非即時行情"
     }
   }
 }
