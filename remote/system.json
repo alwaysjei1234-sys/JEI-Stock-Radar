@@ -1,30 +1,30 @@
 {
   "selection_policy": "jei-user-radar-gates-v1",
   "schema": 4,
-  "updated_at": "2026-11-06 09:03",
+  "updated_at": "2026-11-06 10:13",
   "data_date": "2026-11-06",
   "source_data_date": "TWSE:2026-11-05 / TPEx:2026-11-05",
-  "summary": "2026-11-06 10:11 本次盤中更新未通過；保留 2026-11-06 09:03 已驗證快照，不重算風險或新選股。",
+  "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
   "risk": {
     "level": "red",
-    "label": "保留已驗證風險（快照過期）",
+    "label": "高風險防守",
     "score": 100,
-    "actionable": false,
+    "actionable": true,
     "as_of": "2026-11-06",
-    "cash": "暫停判讀",
+    "cash": "70%↑",
     "reasons": [
-      "已驗證盤中樣本 1771/1979；廣度、族群與候選只使用此樣本",
-      "加權指數 -8.77%",
-      "上漲 29 / 下跌 1725（廣度 1.7%）",
-      "市場中位數 -7.47%",
-      "跌逾3% 1461｜跌逾5% 1228｜跌停附近 578",
-      "最強族群 航運 4分",
+      "已驗證盤中樣本 1036/1978；廣度、族群與候選只使用此樣本",
+      "加權指數 -5.70%",
+      "上漲 57 / 下跌 968（廣度 5.6%）",
+      "市場中位數 -4.91%",
+      "跌逾3% 753｜跌逾5% 510｜跌停附近 126",
+      "最強族群 航運 8分",
       "部分資料源降級：TWSE當日補資料:MI_INDEX response status/date is not verified for 2026-11-06；法人籌碼:雙市場同日資料不完整，停用全市場法人評分與趨勢；TWSE法人:T86 response status/date not veri"
     ],
-    "breadth": 1.7,
-    "median_pct": -7.47,
-    "down5": 1228,
-    "limit_down": 578,
+    "breadth": 5.6,
+    "median_pct": -4.91,
+    "down5": 510,
+    "limit_down": 126,
     "divergence": false,
     "institutional_sell_ratio": null,
     "institutional_net_lots": null,
@@ -34,346 +34,346 @@
   },
   "market": {
     "status": "紅燈防守",
-    "mode": "資料過期",
-    "last_checked_at": "2026-11-06 10:11",
+    "mode": "盤中即時",
+    "last_checked_at": "2026-11-06 10:13",
     "index": {
-      "change_pct": -8.768357309441887,
+      "change_pct": -5.699040185959161,
       "data_date": "2026-11-06",
       "source": "TWSE MIS validated quote",
       "date_verified": true,
-      "checked_at": "2026-11-06 09:03"
+      "checked_at": "2026-11-06 10:13"
     },
-    "live_count": 0,
-    "close_count": 1979,
-    "live_coverage_pct": 0.0,
-    "live_valid": false,
-    "stale": true,
-    "historical_readonly": true,
+    "live_count": 1036,
+    "close_count": 1978,
+    "live_coverage_pct": 52.4,
+    "live_valid": true,
+    "stale": false,
+    "historical_readonly": false,
     "post_close_refresh": false,
     "live_diagnostics": {
       "attempted": true,
       "market_open": true,
       "quote_refresh_window": true,
-      "valid_trades": 0,
-      "coverage_pct": 0.0,
+      "updater_time_taipei": "2026-11-06 10:13",
+      "valid_trades": 1036,
       "mis_stats": {
         "requested_channels": 1979,
-        "returned_messages": 0,
-        "matched_codes": 0,
+        "returned_messages": 1979,
+        "matched_codes": 1979,
         "rejected_date": 0,
-        "rejected_time": 0,
+        "rejected_time": 920,
         "duplicate_messages": 0,
-        "rejected_price": 0,
-        "missing_last_trade": 0,
+        "rejected_price": 23,
+        "missing_last_trade": 23,
         "missing_previous_close": 0,
-        "index_quote_status": "not_requested",
+        "index_quote_status": "verified",
         "rejected_identity": 0,
         "malformed_messages": 0,
-        "service_probe_attempts": 3,
-        "bulk_scan_skipped": true,
-        "unavailable_http_status": 503,
-        "outage_reason": "HTTP_503",
-        "skipped_channels": 1979
+        "service_probe_attempts": 1,
+        "bulk_scan_skipped": false,
+        "unavailable_http_status": null,
+        "outage_reason": null,
+        "skipped_channels": 0,
+        "incomplete_with_volume": 1,
+        "retry_requested": 1,
+        "retry_recovered": 0,
+        "omitted_symbols": 0,
+        "priority_retry_requested": 0,
+        "priority_retry_recovered": 0,
+        "quotes_checked_at": "2026-11-06T10:15:41.462647+08:00",
+        "index_checked_at": "2026-11-06T10:15:43.012876+08:00"
       },
       "required_trades": 500,
       "required_coverage_pct": 35,
-      "errors": [
-        "MIS HTTP 503：連線探測未通過，停止本輪全市場掃描；下輪重新探測"
-      ],
-      "reason": "本次盤中成交價覆蓋未達驗證門檻，暫停新判讀"
+      "errors": [],
+      "reason": "盤中有效成交價與覆蓋率已達標"
     },
     "analysis_scope": {
-      "mode": "retained_intraday_sample",
-      "count": 1771,
-      "universe_count": 1979,
-      "as_of": "2026-11-06 09:03"
+      "mode": "verified_live_sample",
+      "count": 1036,
+      "universe_count": 1978
     },
-    "brief": "盤中更新失敗｜保留 2026-11-06 09:03 已驗證快照；非目前行情，暫停新判讀",
+    "brief": "已驗證盤中樣本 1036/1978｜盤中即時多因子市場｜加權 -5.70%｜廣度 5.6%｜中位數 -4.91%｜跌逾5% 510｜行情時間以最近檢查時間為準",
     "market_data_as_of": "2026-11-06",
-    "session_status": "盤中更新失敗",
-    "no_new_picks": true,
-    "partial_live": null,
-    "status_updated_at": "2026-11-06 10:11",
-    "session_reason": "本次成交資料未通過驗證；保留原盤中快照，暫停新判讀",
-    "retained_intraday_snapshot": {
-      "kind": "intraday",
-      "data_date": "2026-11-06",
-      "updated_at": "2026-11-06 09:03",
-      "live_count": 1771,
-      "close_count": 1979,
-      "live_coverage_pct": 89.5
-    }
+    "session_status": "已驗證",
+    "no_new_picks": false,
+    "partial_live": null
   },
   "sectors": [
     {
       "name": "航運",
-      "score": 4,
-      "avg_pct": -6.85,
-      "median_pct": -7.0,
+      "score": 8,
+      "avg_pct": -5.94,
+      "median_pct": -5.83,
       "breadth": 0.0,
       "members": 3,
-      "value_billion": 11.9,
+      "value_billion": 40.0,
       "leaders": [
         {
           "code": "2603",
           "name": "長榮",
-          "pct": -5.6
+          "pct": -5.79
         },
         {
           "code": "2609",
           "name": "陽明",
-          "pct": -7.0
+          "pct": -5.83
         },
         {
           "code": "2615",
           "name": "萬海",
-          "pct": -7.96
+          "pct": -6.19
         }
       ]
     },
     {
       "name": "IC設計",
-      "score": 0,
-      "avg_pct": -9.59,
-      "median_pct": -9.93,
+      "score": 5,
+      "avg_pct": -6.64,
+      "median_pct": -6.38,
       "breadth": 0.0,
-      "members": 7,
-      "value_billion": 47.1,
+      "members": 6,
+      "value_billion": 381.3,
       "leaders": [
         {
           "code": "3034",
           "name": "聯詠",
-          "pct": -7.84
+          "pct": -4.12
         },
         {
-          "code": "6643",
-          "name": "M31",
-          "pct": -9.52
+          "code": "2454",
+          "name": "聯發科",
+          "pct": -5.35
         },
         {
           "code": "6531",
           "name": "愛普*",
-          "pct": -9.88
-        }
-      ]
-    },
-    {
-      "name": "AI伺服器/散熱",
-      "score": 0,
-      "avg_pct": -9.51,
-      "median_pct": -9.89,
-      "breadth": 0.0,
-      "members": 8,
-      "value_billion": 38.1,
-      "leaders": [
-        {
-          "code": "2382",
-          "name": "廣達",
-          "pct": -7.67
-        },
-        {
-          "code": "3231",
-          "name": "緯創",
-          "pct": -8.9
-        },
-        {
-          "code": "2345",
-          "name": "智邦",
-          "pct": -9.78
+          "pct": -6.17
         }
       ]
     },
     {
       "name": "記憶體/儲存",
-      "score": 0,
-      "avg_pct": -9.66,
-      "median_pct": -9.88,
+      "score": 4,
+      "avg_pct": -6.76,
+      "median_pct": -6.67,
       "breadth": 0.0,
-      "members": 6,
-      "value_billion": 19.8,
+      "members": 5,
+      "value_billion": 195.3,
       "leaders": [
-        {
-          "code": "8271",
-          "name": "宇瞻",
-          "pct": -8.46
-        },
-        {
-          "code": "2344",
-          "name": "華邦電",
-          "pct": -9.8
-        },
         {
           "code": "3260",
           "name": "威剛",
-          "pct": -9.85
+          "pct": -4.84
+        },
+        {
+          "code": "2337",
+          "name": "旺宏",
+          "pct": -5.77
+        },
+        {
+          "code": "2408",
+          "name": "南亞科",
+          "pct": -6.67
+        }
+      ]
+    },
+    {
+      "name": "功率半導體",
+      "score": 1,
+      "avg_pct": -7.45,
+      "median_pct": -7.0,
+      "breadth": 0.0,
+      "members": 6,
+      "value_billion": 16.3,
+      "leaders": [
+        {
+          "code": "8261",
+          "name": "富鼎",
+          "pct": -6.49
+        },
+        {
+          "code": "3707",
+          "name": "漢磊",
+          "pct": -6.55
+        },
+        {
+          "code": "5425",
+          "name": "台半",
+          "pct": -6.67
         }
       ]
     },
     {
       "name": "PCB/載板",
       "score": 0,
-      "avg_pct": -9.96,
+      "avg_pct": -8.14,
       "median_pct": -9.98,
       "breadth": 0.0,
       "members": 9,
-      "value_billion": 19.0,
+      "value_billion": 182.0,
       "leaders": [
         {
           "code": "1815",
           "name": "富喬",
-          "pct": -9.88
+          "pct": -0.41
         },
         {
           "code": "2368",
           "name": "金像電",
-          "pct": -9.91
+          "pct": -6.45
         },
         {
           "code": "8039",
           "name": "台虹",
-          "pct": -9.93
+          "pct": -6.45
         }
       ]
     },
     {
-      "name": "封測",
+      "name": "AI伺服器/散熱",
       "score": 0,
-      "avg_pct": -9.95,
-      "median_pct": -9.98,
+      "avg_pct": -8.35,
+      "median_pct": -9.81,
       "breadth": 0.0,
-      "members": 4,
-      "value_billion": 13.8,
+      "members": 8,
+      "value_billion": 159.4,
       "leaders": [
         {
-          "code": "2449",
-          "name": "京元電子",
-          "pct": -9.85
+          "code": "2382",
+          "name": "廣達",
+          "pct": -5.0
         },
         {
-          "code": "3711",
-          "name": "日月光投控",
-          "pct": -9.97
+          "code": "3231",
+          "name": "緯創",
+          "pct": -5.34
         },
         {
-          "code": "8150",
-          "name": "南茂",
-          "pct": -10.0
+          "code": "6669",
+          "name": "緯穎",
+          "pct": -6.97
         }
       ]
     },
     {
       "name": "被動元件",
       "score": 0,
-      "avg_pct": -9.72,
-      "median_pct": -9.91,
+      "avg_pct": -7.73,
+      "median_pct": -7.93,
       "breadth": 0.0,
       "members": 8,
-      "value_billion": 13.2,
+      "value_billion": 111.3,
       "leaders": [
-        {
-          "code": "6127",
-          "name": "九豪",
-          "pct": -8.51
-        },
         {
           "code": "3090",
           "name": "日電貿",
-          "pct": -9.77
+          "pct": -4.69
         },
         {
-          "code": "2327",
-          "name": "國巨*",
-          "pct": -9.89
+          "code": "6127",
+          "name": "九豪",
+          "pct": -6.87
+        },
+        {
+          "code": "2375",
+          "name": "凱美",
+          "pct": -7.88
         }
       ]
     },
     {
-      "name": "光通訊/CPO",
+      "name": "封測",
       "score": 0,
-      "avg_pct": -9.52,
-      "median_pct": -9.9,
+      "avg_pct": -7.81,
+      "median_pct": -7.53,
       "breadth": 0.0,
-      "members": 9,
-      "value_billion": 10.0,
+      "members": 4,
+      "value_billion": 109.5,
       "leaders": [
         {
-          "code": "4977",
-          "name": "眾達-KY",
-          "pct": -6.55
+          "code": "8150",
+          "name": "南茂",
+          "pct": -6.32
         },
         {
-          "code": "3234",
-          "name": "光環",
-          "pct": -9.76
+          "code": "3711",
+          "name": "日月光投控",
+          "pct": -7.34
         },
         {
-          "code": "3081",
-          "name": "聯亞",
-          "pct": -9.79
+          "code": "6239",
+          "name": "力成",
+          "pct": -7.73
         }
       ]
     },
     {
       "name": "矽晶圓/材料",
       "score": 0,
-      "avg_pct": -9.85,
-      "median_pct": -9.93,
+      "avg_pct": -7.65,
+      "median_pct": -7.66,
       "breadth": 0.0,
       "members": 5,
-      "value_billion": 6.3,
+      "value_billion": 44.9,
       "leaders": [
         {
           "code": "5483",
           "name": "中美晶",
-          "pct": -9.46
+          "pct": -6.08
         },
         {
           "code": "6182",
           "name": "合晶",
-          "pct": -9.91
+          "pct": -7.63
         },
         {
-          "code": "6488",
-          "name": "環球晶",
-          "pct": -9.93
+          "code": "3016",
+          "name": "嘉晶",
+          "pct": -7.66
         }
       ]
     },
     {
-      "name": "功率半導體",
+      "name": "光通訊/CPO",
       "score": 0,
-      "avg_pct": -9.66,
-      "median_pct": -9.82,
+      "avg_pct": -8.87,
+      "median_pct": -9.79,
       "breadth": 0.0,
-      "members": 8,
-      "value_billion": 4.7,
+      "members": 9,
+      "value_billion": 41.7,
       "leaders": [
         {
-          "code": "8086",
-          "name": "宏捷科",
-          "pct": -8.71
+          "code": "4977",
+          "name": "眾達-KY",
+          "pct": -4.27
         },
         {
-          "code": "6138",
-          "name": "茂達",
-          "pct": -9.49
+          "code": "6442",
+          "name": "光聖",
+          "pct": -8.04
         },
         {
-          "code": "3317",
-          "name": "尼克森",
-          "pct": -9.58
+          "code": "4908",
+          "name": "前鼎",
+          "pct": -8.23
         }
       ]
     },
     {
       "name": "半導體設備/測試",
       "score": 0,
-      "avg_pct": -9.9,
-      "median_pct": -9.94,
+      "avg_pct": -9.39,
+      "median_pct": -9.86,
       "breadth": 0.0,
-      "members": 8,
-      "value_billion": 2.8,
+      "members": 6,
+      "value_billion": 12.8,
       "leaders": [
+        {
+          "code": "5443",
+          "name": "均豪",
+          "pct": -7.0
+        },
         {
           "code": "3289",
           "name": "宜特",
@@ -383,11 +383,6 @@
           "code": "6510",
           "name": "精測",
           "pct": -9.82
-        },
-        {
-          "code": "6187",
-          "name": "萬潤",
-          "pct": -9.91
         }
       ]
     }
@@ -8156,11 +8151,6 @@
       "market": "TPEX"
     },
     {
-      "code": "5523",
-      "name": "豐謙",
-      "market": "TPEX"
-    },
-    {
       "code": "5529",
       "name": "鉅陞",
       "market": "TPEX"
@@ -10475,12 +10465,12 @@
   "priority": [
     {
       "title": "市場風控",
-      "note": "已驗證盤中樣本 1771/1979；廣度、族群與候選只使用此樣本｜加權指數 -8.77%｜上漲 29 / 下跌 1725（廣度 1.7%）｜市場中位數 -7.47%",
+      "note": "已驗證盤中樣本 1036/1978；廣度、族群與候選只使用此樣本｜加權指數 -5.70%｜上漲 57 / 下跌 968（廣度 5.6%）｜市場中位數 -4.91%",
       "action": "高風險防守"
     },
     {
       "title": "族群主線：航運",
-      "note": "熱度 4｜平均 -6.85%｜上漲比 0.0%",
+      "note": "熱度 8｜平均 -5.94%｜上漲比 0.0%",
       "action": "主線"
     }
   ],
@@ -10488,10 +10478,82 @@
   "next": [],
   "monster": [
     {
+      "code": "3287",
+      "name": "廣寰科",
+      "score": 84,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.90%｜5日 +22.4%｜成交值 2.6億｜收盤位置 100%｜過熱警戒｜月營收 2026-09 公告 2026-10-17 YoY +34.5%／MoM +36.8%；季報 2026-Q2 公告 2026-10-30 EPS 5.88、毛利率 42.2%、負債率 33.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 73.3,
+      "change_pct": 9.9,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 71.25,
+      "entry_high": 73.3,
+      "defense": 67.07,
+      "target1": 81.71,
+      "target2": 88.02,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +34.5%／MoM +36.8%；季報 2026-Q2 公告 2026-10-30 EPS 5.88、毛利率 42.2%、負債率 33.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "5490",
+      "name": "同亨",
+      "score": 83,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.87%｜5日 +4.3%｜成交值 0.5億｜收盤位置 100%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -13.2%／MoM +27.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.29、毛利率 43.6%、負債率 32.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 25.6,
+      "change_pct": 9.87,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 25.15,
+      "entry_high": 25.6,
+      "defense": 23.42,
+      "target1": 28.54,
+      "target2": 30.74,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -13.2%／MoM +27.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.29、毛利率 43.6%、負債率 32.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
       "code": "6751",
       "name": "智聯服務",
       "score": 83,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.86%｜5日 -10.2%｜成交值 0.4億｜收盤位置 100%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +158.4%／MoM +87.4%；季報 2026-Q3 公告 2026-11-05 EPS 3.36、毛利率 13.6%、負債率 35.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.86%｜5日 -10.2%｜成交值 0.5億｜收盤位置 100%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +158.4%／MoM +87.4%；季報 2026-Q3 公告 2026-11-05 EPS 3.36、毛利率 13.6%、負債率 35.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
       "price": 72.4,
       "change_pct": 9.86,
       "market": "TPEX",
@@ -10505,7 +10567,7 @@
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-05T19:37:33+00:00",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
           "financials": "2026-11-05"
@@ -10524,67 +10586,24 @@
       }
     },
     {
-      "code": "6873",
-      "name": "泓德能源",
-      "score": 71,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +7.09%｜5日 +1.2%｜成交值 0.4億｜收盤位置 89%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -5.0%／MoM +129.5%；季報 2026-Q2 公告 2026-10-30 EPS -1.32、毛利率 24.6%、負債率 65.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 50.6,
-      "change_pct": 7.09,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 50.07,
-      "entry_high": 50.6,
-      "defense": 47.72,
-      "target1": 54.49,
-      "target2": 57.41,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-05T19:37:33+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY -5.0%／MoM +129.5%；季報 2026-Q2 公告 2026-10-30 EPS -1.32、毛利率 24.6%、負債率 65.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    }
-  ],
-  "tomorrow_monster": [],
-  "future_monster": [
-    {
-      "code": "6199",
-      "name": "天品",
-      "score": 62,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -1.80%｜5日 +3.5%｜10日 +11.6%｜20日 資料不足｜成交值 7.2億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 164.0,
-      "change_pct": -1.8,
+      "code": "5202",
+      "name": "力新",
+      "score": 79,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.91%｜5日 +32.1%｜成交值 1.5億｜收盤位置 100%｜過熱警戒｜月營收 2026-09 公告 2026-10-17 YoY -25.2%／MoM +1.7%；季報 2026-Q2 公告 2026-10-30 EPS -1.05、毛利率 72.3%、負債率 7.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 18.3,
+      "change_pct": 9.91,
       "market": "TPEX",
       "sector": "族群未分類",
       "sector_score": 50,
-      "entry_low": 161.34,
-      "entry_high": 164.0,
-      "defense": 150.49,
-      "target1": 182.25,
-      "target2": 195.93,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
+      "entry_low": 17.79,
+      "entry_high": 18.3,
+      "defense": 16.74,
+      "target1": 20.4,
+      "target2": 21.97,
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-05T19:37:33+00:00",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
           "financials": "2026-10-30"
@@ -10599,32 +10618,28 @@
           "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
           "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
         },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -25.2%／MoM +1.7%；季報 2026-Q2 公告 2026-10-30 EPS -1.05、毛利率 72.3%、負債率 7.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
       }
     },
     {
-      "code": "2412",
-      "name": "中華電",
-      "score": 58,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -1.86%｜5日 +0.3%｜10日 +2.6%｜20日 +8.6%｜成交值 2.9億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +20.9%／MoM +4.7%；季報 2026-Q2 公告 2026-10-30 EPS 2.68、毛利率 37.7%、負債率 31.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 158.5,
-      "change_pct": -1.86,
+      "code": "6446",
+      "name": "藥華藥",
+      "score": 78,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +5.49%｜5日 +0.8%｜成交值 42.1億｜收盤位置 97%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +100.0%／MoM +0.7%；季報 2026-Q2 公告 2026-10-30 EPS 11.35、毛利率 91.5%、負債率 16.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 1250.0,
+      "change_pct": 5.49,
       "market": "TWSE",
       "sector": "族群未分類",
       "sector_score": 50,
-      "entry_low": 157.23,
-      "entry_high": 158.5,
-      "defense": 151.37,
-      "target1": 168.13,
-      "target2": 175.35,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
+      "entry_low": 1215.0,
+      "entry_high": 1250.0,
+      "defense": 1143.75,
+      "target1": 1393.44,
+      "target2": 1501.02,
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-05T19:37:33+00:00",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
           "financials": "2026-10-30"
@@ -10639,72 +10654,28 @@
           "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
           "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
         },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +20.9%／MoM +4.7%；季報 2026-Q2 公告 2026-10-30 EPS 2.68、毛利率 37.7%、負債率 31.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "1216",
-      "name": "統一",
-      "score": 51,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -2.97%｜5日 -0.6%｜10日 +0.1%｜20日 +8.0%｜成交值 1.2億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +5.8%／MoM -2.1%；季報 2026-Q2 公告 2026-10-30 EPS 2.56、毛利率 33.9%、負債率 72.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 78.5,
-      "change_pct": -2.97,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 77.87,
-      "entry_high": 78.5,
-      "defense": 74.97,
-      "target1": 83.27,
-      "target2": 86.85,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-05T19:37:33+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +5.8%／MoM -2.1%；季報 2026-Q2 公告 2026-10-30 EPS 2.56、毛利率 33.9%、負債率 72.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +100.0%／MoM +0.7%；季報 2026-Q2 公告 2026-10-30 EPS 11.35、毛利率 91.5%、負債率 16.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
       }
     },
     {
       "code": "6925",
       "name": "意藍",
-      "score": 51,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -0.91%｜5日 -14.6%｜10日 +5.9%｜20日 資料不足｜成交值 0.6億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +21.4%／MoM +48.9%；季報 2026-Q2 公告 2026-10-30 EPS 1.08、毛利率 76.2%、負債率 23.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 108.5,
-      "change_pct": -0.91,
+      "score": 76,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +6.85%｜5日 -7.9%｜成交值 5.5億｜收盤位置 86%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +21.4%／MoM +48.9%；季報 2026-Q2 公告 2026-10-30 EPS 1.08、毛利率 76.2%、負債率 23.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 117.0,
+      "change_pct": 6.85,
       "market": "TPEX",
       "sector": "族群未分類",
       "sector_score": 50,
-      "entry_low": 105.46,
-      "entry_high": 108.5,
-      "defense": 99.28,
-      "target1": 120.95,
-      "target2": 130.29,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
+      "entry_low": 113.72,
+      "entry_high": 117.0,
+      "defense": 107.06,
+      "target1": 130.43,
+      "target2": 140.5,
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-05T19:37:33+00:00",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
           "financials": "2026-10-30"
@@ -10723,28 +10694,60 @@
       }
     },
     {
-      "code": "2542",
-      "name": "興富發",
-      "score": 50,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -2.98%｜5日 -4.9%｜10日 -6.6%｜20日 -3.2%｜成交值 0.4億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +103.7%／MoM +102.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.45、毛利率 31.0%、負債率 77.7%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 37.5,
-      "change_pct": -2.98,
+      "code": "6112",
+      "name": "邁達特",
+      "score": 74,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +6.29%｜5日 +3.5%｜成交值 2.7億｜收盤位置 97%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +6.9%／MoM -2.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 50.7,
+      "change_pct": 6.29,
       "market": "TWSE",
       "sector": "族群未分類",
       "sector_score": 50,
-      "entry_low": 37.2,
-      "entry_high": 37.5,
-      "defense": 35.81,
-      "target1": 39.78,
-      "target2": 41.49,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
+      "entry_low": 49.28,
+      "entry_high": 50.7,
+      "defense": 46.39,
+      "target1": 56.52,
+      "target2": 60.88,
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-05T19:37:33+00:00",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +6.9%／MoM -2.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6214",
+      "name": "精誠",
+      "score": 73,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +5.95%｜5日 -7.4%｜成交值 3.2億｜收盤位置 98%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +55.7%／MoM +41.9%；季報 2026-Q2 公告 2026-10-30 EPS 6.15、毛利率 18.6%、負債率 57.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 187.0,
+      "change_pct": 5.95,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 181.76,
+      "entry_high": 187.0,
+      "defense": 171.11,
+      "target1": 208.46,
+      "target2": 224.55,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
           "financials": "2026-10-30"
@@ -10759,7 +10762,923 @@
           "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
           "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
         },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +103.7%／MoM +102.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.45、毛利率 31.0%、負債率 77.7%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +55.7%／MoM +41.9%；季報 2026-Q2 公告 2026-10-30 EPS 6.15、毛利率 18.6%、負債率 57.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "2468",
+      "name": "華經",
+      "score": 67,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +5.08%｜5日 +21.3%｜成交值 15.4億｜收盤位置 77%｜過熱警戒｜月營收 2026-09 公告 2026-10-17 YoY +68.8%／MoM +55.0%；季報 2026-Q2 公告 2026-10-30 EPS 0.61、毛利率 10.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 62.0,
+      "change_pct": 5.08,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 60.26,
+      "entry_high": 62.0,
+      "defense": 56.73,
+      "target1": 69.11,
+      "target2": 74.45,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +68.8%／MoM +55.0%；季報 2026-Q2 公告 2026-10-30 EPS 0.61、毛利率 10.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "4741",
+      "name": "泓瀚",
+      "score": 66,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +5.95%｜5日 +2.0%｜成交值 0.7億｜收盤位置 86%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -4.0%／MoM +19.9%；季報 2026-Q2 公告 2026-10-30 EPS 0.83、毛利率 35.3%、負債率 19.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 55.2,
+      "change_pct": 5.95,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 53.65,
+      "entry_high": 55.2,
+      "defense": 50.51,
+      "target1": 61.53,
+      "target2": 66.28,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -4.0%／MoM +19.9%；季報 2026-Q2 公告 2026-10-30 EPS 0.83、毛利率 35.3%、負債率 19.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    }
+  ],
+  "tomorrow_monster": [
+    {
+      "code": "6221",
+      "name": "晉泰",
+      "score": 85,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +4.76%｜5日 +5.9%｜10日 +21.3%｜收盤位置 97%｜成交值 2.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +47.3%／MoM +31.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.22、毛利率 26.7%、負債率 53.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 40.7,
+      "change_pct": 4.76,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 39.56,
+      "entry_high": 40.7,
+      "defense": 37.24,
+      "target1": 45.37,
+      "target2": 48.87,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +47.3%／MoM +31.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.22、毛利率 26.7%、負債率 53.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "3576",
+      "name": "聯合再生",
+      "score": 83,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +4.27%｜5日 +2.1%｜10日 +0.6%｜收盤位置 83%｜成交值 3.3億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -8.3%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 0.93、毛利率 -22.6%、負債率 46.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 17.1,
+      "change_pct": 4.27,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 16.62,
+      "entry_high": 17.1,
+      "defense": 15.65,
+      "target1": 19.06,
+      "target2": 20.53,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -8.3%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 0.93、毛利率 -22.6%、負債率 46.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6148",
+      "name": "驊宏資",
+      "score": 80,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +4.15%｜5日 +15.9%｜10日 +13.4%｜收盤位置 79%｜成交值 12.5億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +4.1%／MoM -0.8%；季報 2026-Q2 公告 2026-10-30 EPS 0.17、毛利率 25.7%、負債率 53.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 45.2,
+      "change_pct": 4.15,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 43.93,
+      "entry_high": 45.2,
+      "defense": 41.36,
+      "target1": 50.39,
+      "target2": 54.28,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +4.1%／MoM -0.8%；季報 2026-Q2 公告 2026-10-30 EPS 0.17、毛利率 25.7%、負債率 53.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6538",
+      "name": "倉和",
+      "score": 79,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +2.57%｜5日 -11.6%｜10日 -4.8%｜收盤位置 84%｜成交值 10.3億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +43.1%／MoM +4.2%；季報 2026-Q2 公告 2026-10-30 EPS 2.10、毛利率 40.0%、負債率 36.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 279.5,
+      "change_pct": 2.57,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 271.67,
+      "entry_high": 279.5,
+      "defense": 255.74,
+      "target1": 311.57,
+      "target2": 335.63,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +43.1%／MoM +4.2%；季報 2026-Q2 公告 2026-10-30 EPS 2.10、毛利率 40.0%、負債率 36.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6443",
+      "name": "元晶",
+      "score": 79,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +2.97%｜5日 -0.6%｜10日 -2.0%｜收盤位置 86%｜成交值 4.6億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -48.2%／MoM +45.1%；季報 2026-Q2 公告 2026-10-30 EPS -0.60、毛利率 -24.0%、負債率 47.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 24.3,
+      "change_pct": 2.97,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 23.62,
+      "entry_high": 24.3,
+      "defense": 22.23,
+      "target1": 27.09,
+      "target2": 29.18,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -48.2%／MoM +45.1%；季報 2026-Q2 公告 2026-10-30 EPS -0.60、毛利率 -24.0%、負債率 47.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "1476",
+      "name": "儒鴻",
+      "score": 78,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +1.33%｜5日 +6.8%｜10日 +5.7%｜收盤位置 96%｜成交值 10.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 344.0,
+      "change_pct": 1.33,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 337.42,
+      "entry_high": 344.0,
+      "defense": 314.76,
+      "target1": 383.47,
+      "target2": 413.08,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "3029",
+      "name": "零壹",
+      "score": 73,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +1.77%｜5日 -7.6%｜10日 -3.0%｜收盤位置 88%｜成交值 3.7億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +38.6%／MoM -20.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 115.0,
+      "change_pct": 1.77,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 111.78,
+      "entry_high": 115.0,
+      "defense": 105.23,
+      "target1": 128.2,
+      "target2": 138.09,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +38.6%／MoM -20.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6199",
+      "name": "天品",
+      "score": 72,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +0.90%｜5日 +6.3%｜10日 +14.6%｜收盤位置 83%｜成交值 20.0億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 168.5,
+      "change_pct": 0.9,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 164.3,
+      "entry_high": 168.5,
+      "defense": 154.18,
+      "target1": 187.84,
+      "target2": 202.34,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6472",
+      "name": "保瑞",
+      "score": 72,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +1.29%｜5日 +0.5%｜10日 -4.6%｜收盤位置 90%｜成交值 5.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +35.1%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 4.56、毛利率 39.2%、負債率 66.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 394.0,
+      "change_pct": 1.29,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 382.97,
+      "entry_high": 394.0,
+      "defense": 360.51,
+      "target1": 439.21,
+      "target2": 473.12,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +35.1%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 4.56、毛利率 39.2%、負債率 66.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6689",
+      "name": "伊雲谷",
+      "score": 72,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +1.69%｜5日 +1.1%｜10日 -1.1%｜收盤位置 95%｜成交值 1.2億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +6.2%／MoM -4.7%；季報 2026-Q2 公告 2026-10-30 EPS 0.71、毛利率 9.6%、負債率 51.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 72.2,
+      "change_pct": 1.69,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 70.18,
+      "entry_high": 72.2,
+      "defense": 66.06,
+      "target1": 80.48,
+      "target2": 86.7,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +6.2%／MoM -4.7%；季報 2026-Q2 公告 2026-10-30 EPS 0.71、毛利率 9.6%、負債率 51.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    }
+  ],
+  "future_monster": [
+    {
+      "code": "2468",
+      "name": "華經",
+      "score": 71,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +5.08%｜5日 +21.3%｜10日 +27.2%｜20日 +36.7%｜成交值 15.4億｜控制追價｜月營收 2026-09 公告 2026-10-17 YoY +68.8%／MoM +55.0%；季報 2026-Q2 公告 2026-10-30 EPS 0.61、毛利率 10.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 62.0,
+      "change_pct": 5.08,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 60.26,
+      "entry_high": 62.0,
+      "defense": 56.73,
+      "target1": 69.11,
+      "target2": 74.45,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +68.8%／MoM +55.0%；季報 2026-Q2 公告 2026-10-30 EPS 0.61、毛利率 10.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6148",
+      "name": "驊宏資",
+      "score": 69,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +4.15%｜5日 +15.9%｜10日 +13.4%｜20日 資料不足｜成交值 12.5億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +4.1%／MoM -0.8%；季報 2026-Q2 公告 2026-10-30 EPS 0.17、毛利率 25.7%、負債率 53.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 45.2,
+      "change_pct": 4.15,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 43.93,
+      "entry_high": 45.2,
+      "defense": 41.36,
+      "target1": 50.39,
+      "target2": 54.28,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +4.1%／MoM -0.8%；季報 2026-Q2 公告 2026-10-30 EPS 0.17、毛利率 25.7%、負債率 53.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "1476",
+      "name": "儒鴻",
+      "score": 69,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +1.33%｜5日 +6.8%｜10日 +5.7%｜20日 +23.7%｜成交值 10.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 344.0,
+      "change_pct": 1.33,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 337.42,
+      "entry_high": 344.0,
+      "defense": 314.76,
+      "target1": 383.47,
+      "target2": 413.08,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6446",
+      "name": "藥華藥",
+      "score": 68,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +5.49%｜5日 +0.8%｜10日 +8.2%｜20日 +7.3%｜成交值 42.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +100.0%／MoM +0.7%；季報 2026-Q2 公告 2026-10-30 EPS 11.35、毛利率 91.5%、負債率 16.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 1250.0,
+      "change_pct": 5.49,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 1215.0,
+      "entry_high": 1250.0,
+      "defense": 1143.75,
+      "target1": 1393.44,
+      "target2": 1501.02,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +100.0%／MoM +0.7%；季報 2026-Q2 公告 2026-10-30 EPS 11.35、毛利率 91.5%、負債率 16.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6199",
+      "name": "天品",
+      "score": 68,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.90%｜5日 +6.3%｜10日 +14.6%｜20日 資料不足｜成交值 20.0億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 168.5,
+      "change_pct": 0.9,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 164.3,
+      "entry_high": 168.5,
+      "defense": 154.18,
+      "target1": 187.84,
+      "target2": 202.34,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "1786",
+      "name": "科妍",
+      "score": 67,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +2.85%｜5日 +16.8%｜10日 +26.7%｜20日 +18.3%｜成交值 1.9億｜控制追價｜月營收 2026-09 公告 2026-10-17 YoY +1.3%／MoM -7.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 50.5,
+      "change_pct": 2.85,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 49.09,
+      "entry_high": 50.5,
+      "defense": 46.21,
+      "target1": 56.29,
+      "target2": 60.64,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +1.3%／MoM -7.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "1416",
+      "name": "廣豐",
+      "score": 67,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.67%｜5日 +12.8%｜10日 +15.8%｜20日 +26.6%｜成交值 1.2億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +70.5%／MoM +13.7%；季報 2026-Q2 公告 2026-10-30 EPS 0.62、毛利率 39.9%、負債率 29.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 15.0,
+      "change_pct": 0.67,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 14.58,
+      "entry_high": 15.0,
+      "defense": 13.73,
+      "target1": 16.72,
+      "target2": 18.01,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +70.5%／MoM +13.7%；季報 2026-Q2 公告 2026-10-30 EPS 0.62、毛利率 39.9%、負債率 29.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6221",
+      "name": "晉泰",
+      "score": 66,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +4.76%｜5日 +5.9%｜10日 +21.3%｜20日 資料不足｜成交值 2.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +47.3%／MoM +31.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.22、毛利率 26.7%、負債率 53.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 40.7,
+      "change_pct": 4.76,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 39.56,
+      "entry_high": 40.7,
+      "defense": 37.24,
+      "target1": 45.37,
+      "target2": 48.87,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +47.3%／MoM +31.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.22、毛利率 26.7%、負債率 53.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "2254",
+      "name": "巨鎧精密-創",
+      "score": 65,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.00%｜5日 +7.4%｜10日 +14.9%｜20日 +15.6%｜成交值 3.2億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -92.5%／MoM -46.3%；季報 2026-Q2 公告 2026-10-30 EPS -2.12、毛利率 -65.2%、負債率 55.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 109.0,
+      "change_pct": 0.0,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 108.13,
+      "entry_high": 109.0,
+      "defense": 104.09,
+      "target1": 115.62,
+      "target2": 120.59,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -92.5%／MoM -46.3%；季報 2026-Q2 公告 2026-10-30 EPS -2.12、毛利率 -65.2%、負債率 55.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "2033",
+      "name": "佳大",
+      "score": 65,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.40%｜5日 +7.4%｜10日 +13.6%｜20日 +46.5%｜成交值 2.6億｜控制追價｜月營收 2026-09 公告 2026-10-17 YoY -7.5%／MoM -2.2%；季報 2026-Q2 公告 2026-10-30 EPS 0.15、毛利率 15.1%、負債率 15.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 75.0,
+      "change_pct": 0.4,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 72.9,
+      "entry_high": 75.0,
+      "defense": 68.62,
+      "target1": 83.61,
+      "target2": 90.06,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -7.5%／MoM -2.2%；季報 2026-Q2 公告 2026-10-30 EPS 0.15、毛利率 15.1%、負債率 15.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "2412",
+      "name": "中華電",
+      "score": 63,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -0.93%｜5日 +1.3%｜10日 +3.6%｜20日 +9.6%｜成交值 13.9億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +20.9%／MoM +4.7%；季報 2026-Q2 公告 2026-10-30 EPS 2.68、毛利率 37.7%、負債率 31.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 160.0,
+      "change_pct": -0.93,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 158.72,
+      "entry_high": 160.0,
+      "defense": 152.8,
+      "target1": 169.72,
+      "target2": 177.01,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +20.9%／MoM +4.7%；季報 2026-Q2 公告 2026-10-30 EPS 2.68、毛利率 37.7%、負債率 31.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6467",
+      "name": "泰合",
+      "score": 63,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -2.94%｜5日 +14.1%｜10日 +15.5%｜20日 資料不足｜成交值 1.7億｜低過熱｜季報 2026-Q2 公告 2026-10-30 EPS -1.83、毛利率 90.4%、負債率 5.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 231.0,
+      "change_pct": -2.94,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 224.53,
+      "entry_high": 231.0,
+      "defense": 211.37,
+      "target1": 257.51,
+      "target2": 277.39,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "publication_dates": {
+          "revenue": null,
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": null,
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": null,
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "季報 2026-Q2 公告 2026-10-30 EPS -1.83、毛利率 90.4%、負債率 5.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
       }
     }
   ],
@@ -10768,26 +11687,26 @@
     {
       "icon": "↗",
       "name": "市場廣度",
-      "note": "上漲 29 / 下跌 1725｜廣度 1.7%",
-      "score": 2
+      "note": "上漲 57 / 下跌 968｜廣度 5.6%",
+      "score": 6
     },
     {
       "icon": "⚠",
       "name": "尾端賣壓",
-      "note": "跌逾3% 1461｜跌逾5% 1228｜跌停附近 578",
-      "score": 1228
+      "note": "跌逾3% 753｜跌逾5% 510｜跌停附近 126",
+      "score": 510
     },
     {
       "icon": "🔥",
       "name": "強勢動能",
-      "note": "漲逾5% 7｜漲逾8% 1",
-      "score": 7
+      "note": "漲逾5% 16｜漲逾8% 6",
+      "score": 16
     },
     {
       "icon": "◎",
       "name": "市場中位數",
       "note": "排除權值股後觀察整體溫度",
-      "score": -7.47
+      "score": -4.91
     },
     {
       "icon": "🏦",
@@ -10798,10 +11717,34 @@
   ],
   "avoid_chase": [
     {
+      "code": "3287",
+      "name": "廣寰科",
+      "as_of": "2026-11-06",
+      "reason": "2026-11-06收盤漲幅 9.9%｜短線追高風險，等新交易日確認"
+    },
+    {
+      "code": "5490",
+      "name": "同亨",
+      "as_of": "2026-11-06",
+      "reason": "2026-11-06收盤漲幅 9.87%｜短線追高風險，等新交易日確認"
+    },
+    {
       "code": "6751",
       "name": "智聯服務",
       "as_of": "2026-11-06",
       "reason": "2026-11-06收盤漲幅 9.86%｜短線追高風險，等新交易日確認"
+    },
+    {
+      "code": "5202",
+      "name": "力新",
+      "as_of": "2026-11-06",
+      "reason": "2026-11-06收盤漲幅 9.91%｜短線追高風險，等新交易日確認"
+    },
+    {
+      "code": "2468",
+      "name": "華經",
+      "as_of": "2026-11-06",
+      "reason": "2026-11-06收盤漲幅 5.08%｜短線追高風險，等新交易日確認"
     }
   ],
   "backtest": {
