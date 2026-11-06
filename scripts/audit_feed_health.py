@@ -52,6 +52,19 @@ def check(feed):
         issues.append("inconsistent live coverage between market and partial_live")
     required = metric(diag, "required_trades", 500, whole=True, positive=True)
     min_pct = metric(diag, "required_coverage_pct", 35, positive=True, maximum=100)
+    # A large count must not hide a contradictory universe or inflated coverage.
+    # Older partial-only diagnostic documents may omit the canonical universe.
+    if "close_count" in market:
+        total = metric(market, "close_count", 0, whole=True, positive=True)
+        if total > 0:
+            if count > total:
+                issues.append("live count exceeds close_count")
+            elif abs(coverage - 100 * count / total) > 0.15:
+                issues.append("inconsistent live coverage with close_count")
+    if market.get("live_valid") is True:
+        for flag in ("stale", "historical_readonly", "no_new_picks"):
+            if market.get(flag) is True:
+                issues.append("live_valid conflicts with " + flag)
     returned = metric(stats, "returned_messages", 0, whole=True)
     missing = metric(stats, "missing_last_trade", 0, whole=True)
     if diag.get("market_open") and diag.get("quote_refresh_window"):

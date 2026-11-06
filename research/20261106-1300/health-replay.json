@@ -1,0 +1,299 @@
+{
+  "schema": 1,
+  "prior_sha": "7475d41e4fea67beb9213e18251257197b49fbe0",
+  "current_sha": "b41fd5614a044ecdf3372bc466e25d495a4909b9",
+  "prior_source_sha256": "783aa47c4f62527b75c3765075837c395f43530e31b3bb894b0fc1fbb4d9f3dd",
+  "cases": [
+    {
+      "kind": "flags",
+      "flags": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "live_valid conflicts with no_new_picks"
+      ]
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "live_valid conflicts with historical_readonly"
+      ]
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "live_valid conflicts with historical_readonly",
+        "live_valid conflicts with no_new_picks"
+      ]
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "live_valid conflicts with stale"
+      ]
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "live_valid conflicts with stale",
+        "live_valid conflicts with no_new_picks"
+      ]
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "live_valid conflicts with stale",
+        "live_valid conflicts with historical_readonly"
+      ]
+    },
+    {
+      "kind": "flags",
+      "flags": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "live_valid conflicts with stale",
+        "live_valid conflicts with historical_readonly",
+        "live_valid conflicts with no_new_picks"
+      ]
+    },
+    {
+      "kind": "coverage",
+      "close_count": 1500,
+      "coverage_pct": 40,
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "coverage",
+      "close_count": 2000,
+      "coverage_pct": 40,
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "inconsistent live coverage with close_count"
+      ]
+    },
+    {
+      "kind": "coverage",
+      "close_count": 500,
+      "coverage_pct": 40,
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "live count exceeds close_count"
+      ]
+    },
+    {
+      "kind": "coverage",
+      "close_count": 0,
+      "coverage_pct": 40,
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "invalid diagnostic metric: close_count"
+      ]
+    },
+    {
+      "kind": "coverage",
+      "close_count": true,
+      "coverage_pct": 40,
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "invalid diagnostic metric: close_count"
+      ]
+    },
+    {
+      "kind": "coverage",
+      "close_count": 1500.5,
+      "coverage_pct": 40,
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "invalid diagnostic metric: close_count"
+      ]
+    },
+    {
+      "kind": "coverage",
+      "close_count": 1500,
+      "coverage_pct": 39.9,
+      "should_degrade": false,
+      "old_issues": [],
+      "new_issues": []
+    },
+    {
+      "kind": "coverage",
+      "close_count": 1500,
+      "coverage_pct": 39.8,
+      "should_degrade": true,
+      "old_issues": [],
+      "new_issues": [
+        "inconsistent live coverage with close_count"
+      ]
+    }
+  ],
+  "case_count": 24,
+  "previous_false_passes": 13,
+  "current_false_passes": 0,
+  "scope": "synthetic diagnostics only; does not validate market availability or investment returns"
+}
