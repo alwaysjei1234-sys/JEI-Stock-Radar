@@ -1,0 +1,134 @@
+{
+  "source_sha256": "ff62d6a057fe9bfa38c5c55f42718347e210b7e444449f16969528f176d7479e",
+  "now": "2026-11-06T02:30:00.000Z",
+  "cases": [
+    {
+      "name": "fresh",
+      "quote": {
+        "c": "2330",
+        "ex": "tse",
+        "ch": "2330.tw",
+        "d": "20261106",
+        "t": "10:29:55",
+        "z": "100",
+        "y": "99",
+        "v": "50"
+      },
+      "cli_status": "今日成交",
+      "cli_timestamp": "2026-11-06 10:29:55",
+      "jei_valid_trades": 1
+    },
+    {
+      "name": "stale_same_day",
+      "quote": {
+        "c": "2330",
+        "ex": "tse",
+        "ch": "2330.tw",
+        "d": "20261106",
+        "t": "09:00:00",
+        "z": "100",
+        "y": "99",
+        "v": "50"
+      },
+      "cli_status": "今日成交",
+      "cli_timestamp": "2026-11-06 09:00:00",
+      "jei_valid_trades": 0
+    },
+    {
+      "name": "future_clock_same_day",
+      "quote": {
+        "c": "2330",
+        "ex": "tse",
+        "ch": "2330.tw",
+        "d": "20261106",
+        "t": "11:00:00",
+        "z": "100",
+        "y": "99",
+        "v": "50"
+      },
+      "cli_status": "今日成交",
+      "cli_timestamp": "2026-11-06 11:00:00",
+      "jei_valid_trades": 0
+    },
+    {
+      "name": "missing_time",
+      "quote": {
+        "c": "2330",
+        "ex": "tse",
+        "ch": "2330.tw",
+        "d": "20261106",
+        "t": "-",
+        "z": "100",
+        "y": "99",
+        "v": "50"
+      },
+      "cli_status": "今日成交",
+      "cli_timestamp": "2026-11-06 -",
+      "jei_valid_trades": 0
+    },
+    {
+      "name": "zero_price",
+      "quote": {
+        "c": "2330",
+        "ex": "tse",
+        "ch": "2330.tw",
+        "d": "20261106",
+        "t": "10:29:55",
+        "z": "0",
+        "y": "99",
+        "v": "50"
+      },
+      "cli_status": "今日成交",
+      "cli_timestamp": "2026-11-06 10:29:55",
+      "jei_valid_trades": 0
+    },
+    {
+      "name": "previous_day",
+      "quote": {
+        "c": "2330",
+        "ex": "tse",
+        "ch": "2330.tw",
+        "d": "20261105",
+        "t": "10:29:55",
+        "z": "100",
+        "y": "99",
+        "v": "50"
+      },
+      "cli_status": "前期成交",
+      "cli_timestamp": "2026-11-05 10:29:55",
+      "jei_valid_trades": 0
+    },
+    {
+      "name": "future_date",
+      "quote": {
+        "c": "2330",
+        "ex": "tse",
+        "ch": "2330.tw",
+        "d": "20261109",
+        "t": "10:29:55",
+        "z": "100",
+        "y": "99",
+        "v": "50"
+      },
+      "cli_status": "日期異常",
+      "cli_timestamp": "2026-11-09 10:29:55",
+      "jei_valid_trades": 0
+    },
+    {
+      "name": "no_trade",
+      "quote": {
+        "c": "2330",
+        "ex": "tse",
+        "ch": "2330.tw",
+        "d": "20261106",
+        "t": "10:29:55",
+        "z": "-",
+        "y": "99",
+        "v": "50"
+      },
+      "cli_status": "無成交價",
+      "cli_timestamp": "2026-11-06 10:29:55",
+      "jei_valid_trades": 0
+    }
+  ]
+}
