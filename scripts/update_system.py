@@ -1113,17 +1113,22 @@ def retained_intraday_snapshot(previous, now, diagnostics):
     if not all(isinstance(previous.get(k),list) for k in ("attack","next","sectors")):return None
     out=json.loads(json.dumps(previous,allow_nan=False))
     checked=local.strftime("%Y-%m-%d %H:%M")
+    after_close=diagnostics.get("market_open") is False
+    session="盤後資料待齊" if after_close else "盤中更新失敗"
+    reason=("雙市場同日官方收盤未通過驗證；保留原盤中快照，暫停新判讀" if after_close
+            else "本次成交資料未通過驗證；保留原盤中快照，暫停新判讀")
     out["market"].update(mode="資料過期",stale=True,historical_readonly=True,
         live_valid=False,live_count=diagnostics.get("valid_trades",0),
         live_coverage_pct=diagnostics.get("coverage_pct",0),no_new_picks=True,
-        status_updated_at=checked,last_checked_at=checked,session_status="盤中更新失敗",
-        session_reason="本次成交資料未通過驗證；保留原盤中快照，暫停新判讀",
+        status_updated_at=checked,last_checked_at=checked,session_status=session,
+        session_reason=reason,
         retained_intraday_snapshot=dict(marker),live_diagnostics=dict(diagnostics),partial_live=None,
-        brief=f"盤中更新失敗｜保留 {previous['updated_at']} 已驗證快照；非目前行情，暫停新判讀")
+        brief=f"{session}｜保留 {previous['updated_at']} 已驗證快照；非目前行情，暫停新判讀")
     out["risk"].update(actionable=False,cash="暫停判讀",label="保留已驗證風險（快照過期）")
     out["market"]["analysis_scope"]={"mode":"retained_intraday_sample","count":int(count),
         "universe_count":int(total),"as_of":previous["updated_at"]}
-    out["summary"]=f"{checked} 本次盤中更新未通過；保留 {previous['updated_at']} 已驗證快照，不重算風險或新選股。"
+    event="雙市場收盤資料未齊" if after_close else "本次盤中更新未通過"
+    out["summary"]=f"{checked} {event}；保留 {previous['updated_at']} 已驗證快照，不重算風險或新選股。"
     return out
 
 
@@ -1702,19 +1707,21 @@ def main():
     live_valid=market_open and live_count>=500 and live_coverage>=.35
     stale_source=not source_is_today
     if stale_source and not live_valid:
-        if market_open:
-            diagnostic={"attempted":quote_refresh_window,"market_open":market_open,
-                "quote_refresh_window":quote_refresh_window,"valid_trades":live_count,
-                "coverage_pct":round(live_coverage*100,1),"mis_stats":live_stats,
-                "required_trades":500,"required_coverage_pct":35,
-                "errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],
-                "reason":"本次盤中成交價覆蓋未達驗證門檻，暫停新判讀"}
-            retained_live=retained_intraday_snapshot(previous_feed,datetime.now(TZ),diagnostic)
-            if retained_live is not None:
-                OUT.write_text(json.dumps(retained_live,ensure_ascii=False,indent=2),encoding="utf-8")
-                print(json.dumps({"status":"retained_intraday_only","data_date":retained_live["data_date"],
-                    "updated_at":retained_live["updated_at"],"no_live_signal":True},ensure_ascii=False))
-                return
+        diagnostic={"attempted":quote_refresh_window,"market_open":market_open,
+            "quote_refresh_window":quote_refresh_window,"valid_trades":live_count,
+            "coverage_pct":round(live_coverage*100,1),"mis_stats":live_stats,
+            "required_trades":500,"required_coverage_pct":35,"source_data_date":source_data_date,
+            "errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],
+            "reason":("本次盤中成交價覆蓋未達驗證門檻，暫停新判讀" if market_open
+                      else "雙市場同日官方收盤未通過驗證，暫停新判讀")}
+        # The same-day, validated sample remains useful read-only after 13:30
+        # until both exchanges publish a verified close. Never promote it to a candle.
+        retained_live=retained_intraday_snapshot(previous_feed,datetime.now(TZ),diagnostic)
+        if retained_live is not None:
+            OUT.write_text(json.dumps(retained_live,ensure_ascii=False,indent=2),encoding="utf-8")
+            print(json.dumps({"status":"retained_intraday_only","data_date":retained_live["data_date"],
+                "updated_at":retained_live["updated_at"],"no_live_signal":True},ensure_ascii=False))
+            return
         # Exchange endpoints return Friday prices on weekends and holidays. Keep
         # the prior *audited* close for dated research, not today's trading/risk alerts.
         try:

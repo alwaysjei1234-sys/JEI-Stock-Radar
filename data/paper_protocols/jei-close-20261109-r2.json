@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "declared_at": "2026-11-06T14:07:21+08:00",
+  "effective_from": "2026-11-09",
+  "qualification": "protocol_registration_only",
+  "rules": {
+    "schema": 1,
+    "model": "official_daily_close_paper_observation",
+    "settings": {
+      "capital": 1000000.0,
+      "position_limit": 100000.0,
+      "buy_fee_rate": 0.001425,
+      "sell_fee_rate": 0.001425,
+      "sell_tax_rate": 0.003,
+      "rules": {
+        "fixed5": {
+          "name": "固定 +5%",
+          "target": 5.0
+        },
+        "fixed7": {
+          "name": "固定 +7%",
+          "target": 7.0
+        },
+        "fixed10": {
+          "name": "固定 +10%",
+          "target": 10.0
+        },
+        "trailing": {
+          "name": "上漲5%啟動／高點回落2%",
+          "target": 5.0
+        }
+      },
+      "signal_groups": [
+        "attack",
+        "monster"
+      ],
+      "max_daily_signals": 5,
+      "entry": "next_valid_session_close",
+      "exit": "later_valid_session_close"
+    },
+    "files": {
+      "scripts/update_system.py": "0403302f3e50e72fb28c48af2f2f28b2c743b22b4c52e7934e96cb67366e82a9",
+      "scripts/update_paper_performance.py": "bce0466ba0dabdeea0ff68ba1d2e316c345844fb53be2793e5eadcfa5e04953e",
+      "scripts/pattern_signals.py": "10eea6d00fc0df3cacde09ffdc44e1efc2aa5ae2e43f31a0c734211d0b7cea51",
+      "scripts/corporate_actions.py": "4cfc350799f87fcd51f5199f04fe059b5315e8a2faf86d27e86d31eefe1de448",
+      "scripts/market_sessions.py": "460a9b45d54d32de13862a07cc4c7843cf846c7071cac16facc5495241433e69",
+      "scripts/paper_evidence.py": "d54ae50fe443e091f23f4cc772cf2c39815e485627c88318b9c53b7732dca2ca",
+      "scripts/paper_provenance.py": "2ac0dcd47ee301241a1c7950d75c4f6566bd68cf8c15d16daacc0cb4396287bc",
+      ".github/workflows/update-paper-performance.yml": "6074f7f4ecfc97830630410fe474ac3a875f7e078de60c7668ca9bbe6d996dad"
+    },
+    "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068"
+  },
+  "note": "Published protocol and record hashes need independent audit; no OOS qualification is granted."
+}

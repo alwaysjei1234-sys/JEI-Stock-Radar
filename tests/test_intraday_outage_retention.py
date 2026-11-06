@@ -19,18 +19,19 @@ class IntradayOutageRetentionTests(unittest.TestCase):
                 'analysis_scope':{'mode':'verified_live_sample','count':600,'universe_count':1000}},
             'holdings':{},'priority':[],'attack':[],'next':[],'monster':[],'rotate':[],'flow':[],'sectors':[],'backtest':{}}
     def diagnostic(self):return {'valid_trades':0,'coverage_pct':0,'mis_stats':{'bulk_scan_skipped':True},'errors':['MIS HTTP 503']}
-    def run_main(self,count=0):
+    def run_main(self,count=0,hour=10,minute=2,source_today=False,previous=None):
         class Clock(datetime):
             @classmethod
-            def now(cls,tz=None):return cls(2026,11,6,10,2,tzinfo=u.TZ)
-        rows=[{'code':str(1000+i),'name':'fixture','market':'TWSE' if i<500 else 'TPEX','date':'1151105',
+            def now(cls,tz=None):return cls(2026,11,6,hour,minute,tzinfo=u.TZ)
+        rows=[{'code':str(1000+i),'name':'fixture','market':'TWSE' if i<500 else 'TPEX',
+               'date':'1151106' if source_today or (hour>=14 and i<500) else '1151105',
                'close':99,'change':-1,'pct':-1,'open':100,'high':100,'low':99,'value':100000000,'volume':1000000}for i in range(1000)]
         def live(actual,**kwargs):
             for row in actual[:count]:row.update(live=True,quote_time='2026-11-06 10:01:50')
             return actual,count,-1 if count else None,[] if count else ['MIS HTTP 503'],{'bulk_scan_skipped':not bool(count)}
         with tempfile.TemporaryDirectory() as temp:
             out=Path(temp)/'system.json';hist=Path(temp)/'history.json';daily=Path(temp)/'daily.json'
-            out.write_text(json.dumps(self.snapshot()));hist.write_text('[]');daily.write_text('{"schema":1,"days":{}}')
+            out.write_text(json.dumps(previous or self.snapshot()));hist.write_text('[]');daily.write_text('{"schema":1,"days":{}}')
             with patch.object(u,'OUT',out),patch.object(u,'HISTORY',hist),patch.object(u,'DAILY_PRICES',daily),patch.object(u,'datetime',Clock),patch.object(u,'fetch_initial_market_sources',return_value=(rows,[],[])),patch.object(u,'norm_twse',side_effect=lambda x:x),patch.object(u,'fetch_latest_offhours_close',side_effect=lambda rows,*args:(rows,None)),patch.object(u,'fetch_json',side_effect=RuntimeError('no current official data')),patch.object(u,'fetch_twse_daily',side_effect=RuntimeError('no current close')),patch.object(u,'fetch_institutional',return_value=({},['no current institutions'],{})),patch.object(u,'enrich_live',side_effect=live),patch.object(u,'backfill_twse_history',side_effect=lambda history,*args:(history,[])),contextlib.redirect_stdout(io.StringIO()):
                 u.main();snap=json.loads(out.read_text())
             return snap,json.loads(hist.read_text())
@@ -77,5 +78,25 @@ class IntradayOutageRetentionTests(unittest.TestCase):
         for now in [self.now.replace(day=7),self.now.replace(hour=8),self.now.replace(tzinfo=None)]:
             with self.subTest(now=now):
                 self.assertIsNone(u.retained_intraday_snapshot(self.snapshot(),now,self.diagnostic()))
+
+    def test_mixed_postclose_sources_preserve_original_snapshot_readonly(self):
+        old=self.snapshot();old['monster']=[{'code':'2330','score':80}]
+        snap,history=self.run_main(hour=14,previous=old)
+        self.assertEqual(snap['updated_at'],old['updated_at'])
+        self.assertEqual(snap['monster'],old['monster'])
+        self.assertEqual(snap['risk']['as_of'],old['risk']['as_of'])
+        self.assertFalse(snap['risk']['actionable'])
+        self.assertTrue(snap['market']['historical_readonly'])
+        self.assertEqual(snap['market']['session_status'],'盤後資料待齊')
+        self.assertIn('TWSE:2026-11-06 / TPEx:2026-11-05',
+                      snap['market']['live_diagnostics']['source_data_date'])
+        self.assertEqual(history,[])
+
+    def test_complete_official_postclose_replaces_intraday_retention(self):
+        snap,history=self.run_main(hour=14,source_today=True)
+        self.assertEqual(snap['market']['mode'],'今日收盤')
+        self.assertNotIn('retained_intraday_snapshot',snap['market'])
+        self.assertEqual(snap['updated_at'],'2026-11-06 14:02')
+        self.assertEqual(history[-1]['date'],'2026-11-06')
 
 if __name__=='__main__':unittest.main()
