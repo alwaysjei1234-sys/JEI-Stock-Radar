@@ -1,30 +1,29 @@
 {
   "selection_policy": "jei-user-radar-gates-v1",
   "schema": 4,
-  "updated_at": "2026-11-06 10:13",
+  "updated_at": "2026-11-06 15:06",
   "data_date": "2026-11-06",
-  "source_data_date": "TWSE:2026-11-05 / TPEx:2026-11-05",
-  "summary": "2026-11-06 14:12 雙市場收盤資料未齊；保留 2026-11-06 10:13 已驗證快照，不重算風險或新選股。",
+  "source_data_date": "2026-11-06",
+  "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
   "risk": {
     "level": "red",
-    "label": "保留已驗證風險（快照過期）",
+    "label": "高風險防守",
     "score": 100,
-    "actionable": false,
+    "actionable": true,
     "as_of": "2026-11-06",
-    "cash": "暫停判讀",
+    "cash": "70%↑",
     "reasons": [
-      "已驗證盤中樣本 1036/1978；廣度、族群與候選只使用此樣本",
-      "加權指數 -5.70%",
-      "上漲 57 / 下跌 968（廣度 5.6%）",
-      "市場中位數 -4.91%",
-      "跌逾3% 753｜跌逾5% 510｜跌停附近 126",
-      "最強族群 航運 8分",
-      "部分資料源降級：TWSE當日補資料:MI_INDEX response status/date is not verified for 2026-11-06；法人籌碼:雙市場同日資料不完整，停用全市場法人評分與趨勢；TWSE法人:T86 response status/date not veri"
+      "加權指數 -4.51%",
+      "上漲 210 / 下跌 1696（廣度 11.0%）",
+      "市場中位數 -2.87%",
+      "跌逾3% 958｜跌逾5% 527｜跌停附近 70",
+      "最強族群 記憶體/儲存 32分",
+      "部分資料源降級：法人籌碼:雙市場同日資料不完整，停用全市場法人評分與趨勢；TWSE法人:T86 response status/date not verified for 2026-11-06；TPEx法人:TPEx institutional response dates not verifi"
     ],
-    "breadth": 5.6,
-    "median_pct": -4.91,
-    "down5": 510,
-    "limit_down": 126,
+    "breadth": 11.0,
+    "median_pct": -2.87,
+    "down5": 527,
+    "limit_down": 70,
     "divergence": false,
     "institutional_sell_ratio": null,
     "institutional_net_lots": null,
@@ -34,279 +33,215 @@
   },
   "market": {
     "status": "紅燈防守",
-    "mode": "資料過期",
-    "last_checked_at": "2026-11-06 14:12",
+    "mode": "今日收盤",
+    "last_checked_at": "2026-11-06 15:06",
     "index": {
-      "change_pct": -5.699040185959161,
+      "change_pct": -4.51,
       "data_date": "2026-11-06",
-      "source": "TWSE MIS validated quote",
+      "source": "TWSE MI_INDEX dated response",
       "date_verified": true,
-      "checked_at": "2026-11-06 10:13"
+      "checked_at": "2026-11-06 15:06"
     },
     "live_count": 0,
-    "close_count": 1978,
+    "close_count": 1972,
     "live_coverage_pct": 0.0,
     "live_valid": false,
-    "stale": true,
-    "historical_readonly": true,
-    "post_close_refresh": false,
+    "stale": false,
+    "historical_readonly": false,
+    "post_close_refresh": true,
     "live_diagnostics": {
       "attempted": false,
       "market_open": false,
       "quote_refresh_window": false,
+      "updater_time_taipei": "2026-11-06 15:06",
       "valid_trades": 0,
-      "coverage_pct": 0.0,
       "mis_stats": {},
       "required_trades": 500,
       "required_coverage_pct": 35,
-      "source_data_date": "TWSE:2026-11-06 / TPEx:2026-11-05",
       "errors": [],
-      "reason": "雙市場同日官方收盤未通過驗證，暫停新判讀"
+      "reason": "非行情更新時段"
     },
     "analysis_scope": {
-      "mode": "retained_intraday_sample",
-      "count": 1036,
-      "universe_count": 1978,
-      "as_of": "2026-11-06 10:13"
+      "mode": "official_close",
+      "count": 1972,
+      "universe_count": 1972
     },
-    "brief": "盤後資料待齊｜保留 2026-11-06 10:13 已驗證快照；非目前行情，暫停新判讀",
+    "brief": "今日收盤多因子市場｜加權 -4.51%｜廣度 11.0%｜中位數 -2.87%｜跌逾5% 527｜行情時間以最近檢查時間為準",
     "market_data_as_of": "2026-11-06",
-    "session_status": "盤後資料待齊",
-    "no_new_picks": true,
-    "partial_live": null,
-    "status_updated_at": "2026-11-06 14:12",
-    "session_reason": "雙市場同日官方收盤未通過驗證；保留原盤中快照，暫停新判讀",
-    "retained_intraday_snapshot": {
-      "kind": "intraday",
-      "data_date": "2026-11-06",
-      "updated_at": "2026-11-06 10:13",
-      "live_count": 1036,
-      "close_count": 1978,
-      "live_coverage_pct": 52.4
-    }
+    "session_status": "已驗證",
+    "no_new_picks": false,
+    "partial_live": null
   },
   "sectors": [
     {
+      "name": "記憶體/儲存",
+      "score": 32,
+      "avg_pct": -2.35,
+      "median_pct": -4.21,
+      "breadth": 16.7,
+      "members": 6,
+      "value_billion": 486.1,
+      "leaders": [
+        {
+          "code": "8271",
+          "name": "宇瞻",
+          "pct": 4.7
+        },
+        {
+          "code": "3260",
+          "name": "威剛",
+          "pct": 0.0
+        },
+        {
+          "code": "8299",
+          "name": "群聯",
+          "pct": -3.85
+        }
+      ]
+    },
+    {
       "name": "航運",
-      "score": 8,
-      "avg_pct": -5.94,
-      "median_pct": -5.83,
+      "score": 14,
+      "avg_pct": -4.84,
+      "median_pct": -4.83,
       "breadth": 0.0,
       "members": 3,
-      "value_billion": 40.0,
+      "value_billion": 73.5,
       "leaders": [
         {
           "code": "2603",
           "name": "長榮",
-          "pct": -5.79
+          "pct": -4.83
         },
         {
           "code": "2609",
           "name": "陽明",
-          "pct": -5.83
+          "pct": -4.83
         },
         {
           "code": "2615",
           "name": "萬海",
-          "pct": -6.19
+          "pct": -4.87
         }
       ]
     },
     {
       "name": "IC設計",
-      "score": 5,
-      "avg_pct": -6.64,
-      "median_pct": -6.38,
+      "score": 12,
+      "avg_pct": -5.17,
+      "median_pct": -4.39,
       "breadth": 0.0,
-      "members": 6,
-      "value_billion": 381.3,
+      "members": 7,
+      "value_billion": 1188.4,
       "leaders": [
-        {
-          "code": "3034",
-          "name": "聯詠",
-          "pct": -4.12
-        },
         {
           "code": "2454",
           "name": "聯發科",
-          "pct": -5.35
+          "pct": -2.02
         },
         {
-          "code": "6531",
-          "name": "愛普*",
-          "pct": -6.17
-        }
-      ]
-    },
-    {
-      "name": "記憶體/儲存",
-      "score": 4,
-      "avg_pct": -6.76,
-      "median_pct": -6.67,
-      "breadth": 0.0,
-      "members": 5,
-      "value_billion": 195.3,
-      "leaders": [
-        {
-          "code": "3260",
-          "name": "威剛",
-          "pct": -4.84
+          "code": "3034",
+          "name": "聯詠",
+          "pct": -2.84
         },
         {
-          "code": "2337",
-          "name": "旺宏",
-          "pct": -5.77
-        },
-        {
-          "code": "2408",
-          "name": "南亞科",
-          "pct": -6.67
-        }
-      ]
-    },
-    {
-      "name": "功率半導體",
-      "score": 1,
-      "avg_pct": -7.45,
-      "median_pct": -7.0,
-      "breadth": 0.0,
-      "members": 6,
-      "value_billion": 16.3,
-      "leaders": [
-        {
-          "code": "8261",
-          "name": "富鼎",
-          "pct": -6.49
-        },
-        {
-          "code": "3707",
-          "name": "漢磊",
-          "pct": -6.55
-        },
-        {
-          "code": "5425",
-          "name": "台半",
-          "pct": -6.67
-        }
-      ]
-    },
-    {
-      "name": "PCB/載板",
-      "score": 0,
-      "avg_pct": -8.14,
-      "median_pct": -9.98,
-      "breadth": 0.0,
-      "members": 9,
-      "value_billion": 182.0,
-      "leaders": [
-        {
-          "code": "1815",
-          "name": "富喬",
-          "pct": -0.41
-        },
-        {
-          "code": "2368",
-          "name": "金像電",
-          "pct": -6.45
-        },
-        {
-          "code": "8039",
-          "name": "台虹",
-          "pct": -6.45
-        }
-      ]
-    },
-    {
-      "name": "AI伺服器/散熱",
-      "score": 0,
-      "avg_pct": -8.35,
-      "median_pct": -9.81,
-      "breadth": 0.0,
-      "members": 8,
-      "value_billion": 159.4,
-      "leaders": [
-        {
-          "code": "2382",
-          "name": "廣達",
-          "pct": -5.0
-        },
-        {
-          "code": "3231",
-          "name": "緯創",
-          "pct": -5.34
-        },
-        {
-          "code": "6669",
-          "name": "緯穎",
-          "pct": -6.97
+          "code": "3443",
+          "name": "創意",
+          "pct": -3.12
         }
       ]
     },
     {
       "name": "被動元件",
-      "score": 0,
-      "avg_pct": -7.73,
-      "median_pct": -7.93,
+      "score": 4,
+      "avg_pct": -6.76,
+      "median_pct": -7.6,
       "breadth": 0.0,
       "members": 8,
-      "value_billion": 111.3,
+      "value_billion": 291.3,
       "leaders": [
         {
           "code": "3090",
           "name": "日電貿",
-          "pct": -4.69
+          "pct": -1.95
         },
         {
-          "code": "6127",
-          "name": "九豪",
-          "pct": -6.87
+          "code": "8043",
+          "name": "蜜望實",
+          "pct": -5.01
         },
         {
-          "code": "2375",
-          "name": "凱美",
-          "pct": -7.88
+          "code": "2478",
+          "name": "大毅",
+          "pct": -6.58
         }
       ]
     },
     {
-      "name": "封測",
-      "score": 0,
-      "avg_pct": -7.81,
-      "median_pct": -7.53,
+      "name": "AI伺服器/散熱",
+      "score": 3,
+      "avg_pct": -7.04,
+      "median_pct": -6.5,
       "breadth": 0.0,
-      "members": 4,
-      "value_billion": 109.5,
+      "members": 8,
+      "value_billion": 620.2,
       "leaders": [
         {
-          "code": "8150",
-          "name": "南茂",
-          "pct": -6.32
+          "code": "2382",
+          "name": "廣達",
+          "pct": -3.17
         },
         {
-          "code": "3711",
-          "name": "日月光投控",
-          "pct": -7.34
+          "code": "3231",
+          "name": "緯創",
+          "pct": -5.04
         },
         {
-          "code": "6239",
-          "name": "力成",
-          "pct": -7.73
+          "code": "2059",
+          "name": "川湖",
+          "pct": -5.38
+        }
+      ]
+    },
+    {
+      "name": "功率半導體",
+      "score": 3,
+      "avg_pct": -6.94,
+      "median_pct": -6.61,
+      "breadth": 0.0,
+      "members": 8,
+      "value_billion": 86.4,
+      "leaders": [
+        {
+          "code": "8261",
+          "name": "富鼎",
+          "pct": -5.63
+        },
+        {
+          "code": "5425",
+          "name": "台半",
+          "pct": -5.85
+        },
+        {
+          "code": "3317",
+          "name": "尼克森",
+          "pct": -6.22
         }
       ]
     },
     {
       "name": "矽晶圓/材料",
-      "score": 0,
-      "avg_pct": -7.65,
-      "median_pct": -7.66,
+      "score": 1,
+      "avg_pct": -7.39,
+      "median_pct": -8.88,
       "breadth": 0.0,
       "members": 5,
-      "value_billion": 44.9,
+      "value_billion": 123.9,
       "leaders": [
         {
           "code": "5483",
           "name": "中美晶",
-          "pct": -6.08
+          "pct": -2.36
         },
         {
           "code": "6182",
@@ -316,59 +251,111 @@
         {
           "code": "3016",
           "name": "嘉晶",
-          "pct": -7.66
+          "pct": -8.88
+        }
+      ]
+    },
+    {
+      "name": "PCB/載板",
+      "score": 0,
+      "avg_pct": -7.85,
+      "median_pct": -9.12,
+      "breadth": 0.0,
+      "members": 9,
+      "value_billion": 1089.8,
+      "leaders": [
+        {
+          "code": "1815",
+          "name": "富喬",
+          "pct": -3.29
+        },
+        {
+          "code": "8039",
+          "name": "台虹",
+          "pct": -5.96
+        },
+        {
+          "code": "2368",
+          "name": "金像電",
+          "pct": -6.34
+        }
+      ]
+    },
+    {
+      "name": "封測",
+      "score": 0,
+      "avg_pct": -8.24,
+      "median_pct": -7.82,
+      "breadth": 0.0,
+      "members": 4,
+      "value_billion": 335.2,
+      "leaders": [
+        {
+          "code": "6239",
+          "name": "力成",
+          "pct": -7.5
+        },
+        {
+          "code": "8150",
+          "name": "南茂",
+          "pct": -7.76
+        },
+        {
+          "code": "3711",
+          "name": "日月光投控",
+          "pct": -7.87
         }
       ]
     },
     {
       "name": "光通訊/CPO",
       "score": 0,
-      "avg_pct": -8.87,
-      "median_pct": -9.79,
+      "avg_pct": -7.89,
+      "median_pct": -8.03,
       "breadth": 0.0,
       "members": 9,
-      "value_billion": 41.7,
+      "value_billion": 189.3,
       "leaders": [
         {
           "code": "4977",
           "name": "眾達-KY",
-          "pct": -4.27
+          "pct": -5.98
         },
         {
           "code": "6442",
           "name": "光聖",
-          "pct": -8.04
+          "pct": -6.07
         },
         {
-          "code": "4908",
-          "name": "前鼎",
-          "pct": -8.23
+          "code": "3234",
+          "name": "光環",
+          "pct": -6.5
         }
       ]
     },
     {
       "name": "半導體設備/測試",
       "score": 0,
-      "avg_pct": -9.39,
-      "median_pct": -9.86,
+      "avg_pct": -7.72,
+      "median_pct": -7.46,
       "breadth": 0.0,
-      "members": 6,
-      "value_billion": 12.8,
+      "members": 8,
+      "value_billion": 95.3,
       "leaders": [
-        {
-          "code": "5443",
-          "name": "均豪",
-          "pct": -7.0
-        },
         {
           "code": "3289",
           "name": "宜特",
-          "pct": -9.65
+          "pct": -6.58
         },
         {
-          "code": "6510",
-          "name": "精測",
-          "pct": -9.82
+          "code": "5443",
+          "name": "均豪",
+          "pct": -6.76
+        },
+        {
+          "code": "6640",
+          "name": "均華",
+          "pct": -7.35
         }
       ]
     }
@@ -6052,11 +6039,6 @@
       "market": "TPEX"
     },
     {
-      "code": "2064",
-      "name": "晉椿",
-      "market": "TPEX"
-    },
-    {
       "code": "2065",
       "name": "世豐",
       "market": "TPEX"
@@ -6129,11 +6111,6 @@
     {
       "code": "2719",
       "name": "燦星旅",
-      "market": "TPEX"
-    },
-    {
-      "code": "2724",
-      "name": "藝舍-KY",
       "market": "TPEX"
     },
     {
@@ -6242,6 +6219,11 @@
       "market": "TPEX"
     },
     {
+      "code": "2949",
+      "name": "欣新網",
+      "market": "TPEX"
+    },
+    {
       "code": "3064",
       "name": "泰偉",
       "market": "TPEX"
@@ -6249,11 +6231,6 @@
     {
       "code": "3066",
       "name": "李洲",
-      "market": "TPEX"
-    },
-    {
-      "code": "3067",
-      "name": "全域",
       "market": "TPEX"
     },
     {
@@ -6279,11 +6256,6 @@
     {
       "code": "3083",
       "name": "網龍",
-      "market": "TPEX"
-    },
-    {
-      "code": "3085",
-      "name": "新零售",
       "market": "TPEX"
     },
     {
@@ -6397,6 +6369,11 @@
       "market": "TPEX"
     },
     {
+      "code": "3191",
+      "name": "雲嘉南",
+      "market": "TPEX"
+    },
+    {
       "code": "3205",
       "name": "佰研",
       "market": "TPEX"
@@ -6444,6 +6421,11 @@
     {
       "code": "3224",
       "name": "三顧",
+      "market": "TPEX"
+    },
+    {
+      "code": "3226",
+      "name": "龍鋒",
       "market": "TPEX"
     },
     {
@@ -6829,11 +6811,6 @@
     {
       "code": "3529",
       "name": "力旺",
-      "market": "TPEX"
-    },
-    {
-      "code": "3531",
-      "name": "先益",
       "market": "TPEX"
     },
     {
@@ -7237,11 +7214,6 @@
       "market": "TPEX"
     },
     {
-      "code": "4183",
-      "name": "福永生技",
-      "market": "TPEX"
-    },
-    {
       "code": "4188",
       "name": "安克",
       "market": "TPEX"
@@ -7249,11 +7221,6 @@
     {
       "code": "4192",
       "name": "杏國",
-      "market": "TPEX"
-    },
-    {
-      "code": "4198",
-      "name": "欣大健康",
       "market": "TPEX"
     },
     {
@@ -7284,11 +7251,6 @@
     {
       "code": "4402",
       "name": "郡都開發",
-      "market": "TPEX"
-    },
-    {
-      "code": "4406",
-      "name": "新昕纖",
       "market": "TPEX"
     },
     {
@@ -7514,11 +7476,6 @@
     {
       "code": "4726",
       "name": "永昕",
-      "market": "TPEX"
-    },
-    {
-      "code": "4728",
-      "name": "雙美",
       "market": "TPEX"
     },
     {
@@ -7832,6 +7789,11 @@
       "market": "TPEX"
     },
     {
+      "code": "5276",
+      "name": "達輝-KY",
+      "market": "TPEX"
+    },
+    {
       "code": "5278",
       "name": "尚凡*",
       "market": "TPEX"
@@ -8134,6 +8096,11 @@
     {
       "code": "5520",
       "name": "力泰",
+      "market": "TPEX"
+    },
+    {
+      "code": "5523",
+      "name": "豐謙",
       "market": "TPEX"
     },
     {
@@ -8552,11 +8519,6 @@
       "market": "TPEX"
     },
     {
-      "code": "6212",
-      "name": "理銘",
-      "market": "TPEX"
-    },
-    {
       "code": "6217",
       "name": "中探針",
       "market": "TPEX"
@@ -8619,11 +8581,6 @@
     {
       "code": "6234",
       "name": "高僑",
-      "market": "TPEX"
-    },
-    {
-      "code": "6236",
-      "name": "中湛",
       "market": "TPEX"
     },
     {
@@ -9057,6 +9014,11 @@
       "market": "TPEX"
     },
     {
+      "code": "6615",
+      "name": "慧智",
+      "market": "TPEX"
+    },
+    {
       "code": "6616",
       "name": "特昇-KY",
       "market": "TPEX"
@@ -9069,11 +9031,6 @@
     {
       "code": "6620",
       "name": "漢達",
-      "market": "TPEX"
-    },
-    {
-      "code": "6624",
-      "name": "萬年清",
       "market": "TPEX"
     },
     {
@@ -9102,6 +9059,11 @@
       "market": "TPEX"
     },
     {
+      "code": "6649",
+      "name": "台生材",
+      "market": "TPEX"
+    },
+    {
       "code": "6651",
       "name": "全宇昕",
       "market": "TPEX"
@@ -9109,6 +9071,11 @@
     {
       "code": "6654",
       "name": "天正國際",
+      "market": "TPEX"
+    },
+    {
+      "code": "6661",
+      "name": "威健生技",
       "market": "TPEX"
     },
     {
@@ -9267,6 +9234,11 @@
       "market": "TPEX"
     },
     {
+      "code": "6767",
+      "name": "台微醫",
+      "market": "TPEX"
+    },
+    {
       "code": "6785",
       "name": "昱展新藥",
       "market": "TPEX"
@@ -9422,11 +9394,6 @@
       "market": "TPEX"
     },
     {
-      "code": "6904",
-      "name": "伯鑫",
-      "market": "TPEX"
-    },
-    {
       "code": "6907",
       "name": "雅特力-KY",
       "market": "TPEX"
@@ -9512,11 +9479,6 @@
       "market": "TPEX"
     },
     {
-      "code": "6997",
-      "name": "博弘",
-      "market": "TPEX"
-    },
-    {
       "code": "7402",
       "name": "邑錡",
       "market": "TPEX"
@@ -9579,6 +9541,11 @@
     {
       "code": "7715",
       "name": "裕山",
+      "market": "TPEX"
+    },
+    {
+      "code": "7716",
+      "name": "昱臺國際",
       "market": "TPEX"
     },
     {
@@ -9782,11 +9749,6 @@
       "market": "TPEX"
     },
     {
-      "code": "8047",
-      "name": "星雲",
-      "market": "TPEX"
-    },
-    {
       "code": "8048",
       "name": "德勝",
       "market": "TPEX"
@@ -9849,11 +9811,6 @@
     {
       "code": "8076",
       "name": "伍豐",
-      "market": "TPEX"
-    },
-    {
-      "code": "8077",
-      "name": "洛碁",
       "market": "TPEX"
     },
     {
@@ -10321,120 +10278,120 @@
       "score": 10,
       "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 33.56,
+      "defense": 33.02,
       "target": 43.04,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "2478": {
       "score": 10,
       "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 94.74,
+      "defense": 88.51,
       "target": 121.89,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "2609": {
-      "score": 20,
+      "score": 10,
       "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 59.4,
+      "defense": 56.53,
       "target": 65.28,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "2748": {
-      "score": 19,
+      "score": 16,
       "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 36.38,
+      "defense": 35.49,
       "target": 39.12,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "3162": {
-      "score": 18,
+      "score": 14,
       "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 70.59,
+      "defense": 67.32,
       "target": 76.91,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "3289": {
       "score": 10,
       "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 112.86,
+      "defense": 105.44,
       "target": 142.29,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "3707": {
       "score": 10,
       "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 54.45,
+      "defense": 50.39,
       "target": 73.44,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "5347": {
       "score": 10,
       "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 124.74,
+      "defense": 118.8,
       "target": 170.85,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "5425": {
       "score": 10,
       "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 72.77,
+      "defense": 68.51,
       "target": 94.15,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "6150": {
-      "score": 58,
-      "trend": "短線轉強",
+      "score": 14,
+      "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 64.35,
+      "defense": 61.38,
       "target": 74.36,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "7711": {
-      "score": 75,
-      "trend": "短線轉強",
+      "score": 31,
+      "trend": "整理",
       "action": "防守觀察",
       "defense": 538.56,
       "target": 639.54,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "8070": {
       "score": 10,
       "trend": "短線偏弱",
       "action": "防守觀察",
-      "defense": 45.34,
+      "defense": 43.51,
       "target": 52.33,
-      "reason": "2026-11-05已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06已驗證收盤；近8交易日技術面；財報與籌碼未驗證，防守/目標為歷史價位參考",
+      "as_of": "2026-11-06",
       "status": "歷史參考"
     },
     "00937B": {
@@ -10443,20 +10400,20 @@
       "action": "收盤參考",
       "defense": null,
       "target": null,
-      "reason": "2026-11-05 TPEx官方收盤14.55元；尚未驗證ETF技術評分、防守或目標價。",
-      "as_of": "2026-11-05",
+      "reason": "2026-11-06 TPEx官方收盤14.47元；尚未驗證ETF技術評分、防守或目標價。",
+      "as_of": "2026-11-06",
       "status": "官方收盤參考"
     }
   },
   "priority": [
     {
       "title": "市場風控",
-      "note": "已驗證盤中樣本 1036/1978；廣度、族群與候選只使用此樣本｜加權指數 -5.70%｜上漲 57 / 下跌 968（廣度 5.6%）｜市場中位數 -4.91%",
+      "note": "加權指數 -4.51%｜上漲 210 / 下跌 1696（廣度 11.0%）｜市場中位數 -2.87%｜跌逾3% 958｜跌逾5% 527｜跌停附近 70",
       "action": "高風險防守"
     },
     {
-      "title": "族群主線：航運",
-      "note": "熱度 8｜平均 -5.94%｜上漲比 0.0%",
+      "title": "族群主線：記憶體/儲存",
+      "note": "熱度 32｜平均 -2.35%｜上漲比 16.7%",
       "action": "主線"
     }
   ],
@@ -10464,10 +10421,262 @@
   "next": [],
   "monster": [
     {
+      "code": "6443",
+      "name": "元晶",
+      "score": 91,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.96%｜5日 +6.1%｜成交值 10.0億｜收盤位置 100%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -48.2%／MoM +45.1%；季報 2026-Q2 公告 2026-10-30 EPS -0.60、毛利率 -24.0%、負債率 47.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 25.95,
+      "change_pct": 9.96,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 25.22,
+      "entry_high": 25.95,
+      "defense": 23.74,
+      "target1": 28.93,
+      "target2": 31.16,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -48.2%／MoM +45.1%；季報 2026-Q2 公告 2026-10-30 EPS -0.60、毛利率 -24.0%、負債率 47.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "3219",
+      "name": "倚強科",
+      "score": 87,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.95%｜5日 -10.1%｜成交值 1.9億｜收盤位置 100%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +151.1%／MoM +0.2%；季報 2026-Q2 公告 2026-10-30 EPS 2.66、毛利率 69.2%、負債率 45.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 93.9,
+      "change_pct": 9.95,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 91.27,
+      "entry_high": 93.9,
+      "defense": 85.92,
+      "target1": 104.68,
+      "target2": 112.76,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +151.1%／MoM +0.2%；季報 2026-Q2 公告 2026-10-30 EPS 2.66、毛利率 69.2%、負債率 45.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6152",
+      "name": "百一",
+      "score": 86,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +10.00%｜5日 -1.1%｜成交值 1.4億｜收盤位置 100%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +76.8%／MoM -38.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 18.7,
+      "change_pct": 10.0,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 18.18,
+      "entry_high": 18.7,
+      "defense": 17.11,
+      "target1": 20.85,
+      "target2": 22.46,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +76.8%／MoM -38.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6214",
+      "name": "精誠",
+      "score": 85,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +8.78%｜5日 -5.0%｜成交值 6.7億｜收盤位置 96%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +55.7%／MoM +41.9%；季報 2026-Q2 公告 2026-10-30 EPS 6.15、毛利率 18.6%、負債率 57.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 192.0,
+      "change_pct": 8.78,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 186.62,
+      "entry_high": 192.0,
+      "defense": 175.68,
+      "target1": 214.03,
+      "target2": 230.56,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +55.7%／MoM +41.9%；季報 2026-Q2 公告 2026-10-30 EPS 6.15、毛利率 18.6%、負債率 57.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "3576",
+      "name": "聯合再生",
+      "score": 85,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +8.54%｜5日 +6.3%｜成交值 8.3億｜收盤位置 93%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -8.3%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 0.93、毛利率 -22.6%、負債率 46.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 17.8,
+      "change_pct": 8.54,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 17.3,
+      "entry_high": 17.8,
+      "defense": 16.29,
+      "target1": 19.84,
+      "target2": 21.37,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -8.3%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 0.93、毛利率 -22.6%、負債率 46.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6446",
+      "name": "藥華藥",
+      "score": 85,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +7.17%｜5日 +2.4%｜成交值 87.3億｜收盤位置 89%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +100.0%／MoM +0.7%；季報 2026-Q2 公告 2026-10-30 EPS 11.35、毛利率 91.5%、負債率 16.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 1270.0,
+      "change_pct": 7.17,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 1234.44,
+      "entry_high": 1270.0,
+      "defense": 1162.05,
+      "target1": 1415.73,
+      "target2": 1525.03,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +100.0%／MoM +0.7%；季報 2026-Q2 公告 2026-10-30 EPS 11.35、毛利率 91.5%、負債率 16.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "4741",
+      "name": "泓瀚",
+      "score": 84,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.98%｜5日 +5.9%｜成交值 1.3億｜收盤位置 100%｜過熱警戒｜月營收 2026-09 公告 2026-10-17 YoY -4.0%／MoM +19.9%；季報 2026-Q2 公告 2026-10-30 EPS 0.83、毛利率 35.3%、負債率 19.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 57.3,
+      "change_pct": 9.98,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 55.7,
+      "entry_high": 57.3,
+      "defense": 52.43,
+      "target1": 63.88,
+      "target2": 68.81,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -4.0%／MoM +19.9%；季報 2026-Q2 公告 2026-10-30 EPS 0.83、毛利率 35.3%、負債率 19.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
       "code": "3287",
       "name": "廣寰科",
       "score": 84,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.90%｜5日 +22.4%｜成交值 2.6億｜收盤位置 100%｜過熱警戒｜月營收 2026-09 公告 2026-10-17 YoY +34.5%／MoM +36.8%；季報 2026-Q2 公告 2026-10-30 EPS 5.88、毛利率 42.2%、負債率 33.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.90%｜5日 +22.4%｜成交值 2.5億｜收盤位置 100%｜過熱警戒｜月營收 2026-09 公告 2026-10-17 YoY +34.5%／MoM +36.8%；季報 2026-Q2 公告 2026-10-30 EPS 5.88、毛利率 42.2%、負債率 33.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
       "price": 73.3,
       "change_pct": 9.9,
       "market": "TPEX",
@@ -10481,7 +10690,7 @@
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
           "financials": "2026-10-30"
@@ -10502,8 +10711,8 @@
     {
       "code": "5490",
       "name": "同亨",
-      "score": 83,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.87%｜5日 +4.3%｜成交值 0.5億｜收盤位置 100%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -13.2%／MoM +27.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.29、毛利率 43.6%、負債率 32.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "score": 84,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.87%｜5日 +4.3%｜成交值 0.6億｜收盤位置 100%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -13.2%／MoM +27.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
       "price": 25.6,
       "change_pct": 9.87,
       "market": "TPEX",
@@ -10517,29 +10726,29 @@
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
-          "financials": "2026-10-30"
+          "financials": null
         },
         "periods": {
           "revenue": "2026-09",
-          "financials": "2026-Q2"
+          "financials": null
         },
-        "availability": "retained_previous_snapshot",
+        "availability": null,
         "sources": {
           "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+          "income": null,
+          "balance": null
         },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY -13.2%／MoM +27.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.29、毛利率 43.6%、負債率 32.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -13.2%／MoM +27.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
       }
     },
     {
       "code": "6751",
       "name": "智聯服務",
       "score": 83,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.86%｜5日 -10.2%｜成交值 0.5億｜收盤位置 100%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +158.4%／MoM +87.4%；季報 2026-Q3 公告 2026-11-05 EPS 3.36、毛利率 13.6%、負債率 35.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.86%｜5日 -10.2%｜成交值 0.6億｜收盤位置 100%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +158.4%／MoM +87.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
       "price": 72.4,
       "change_pct": 9.86,
       "market": "TPEX",
@@ -10553,151 +10762,7 @@
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-11-05"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q3"
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +158.4%／MoM +87.4%；季報 2026-Q3 公告 2026-11-05 EPS 3.36、毛利率 13.6%、負債率 35.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "5202",
-      "name": "力新",
-      "score": 79,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.91%｜5日 +32.1%｜成交值 1.5億｜收盤位置 100%｜過熱警戒｜月營收 2026-09 公告 2026-10-17 YoY -25.2%／MoM +1.7%；季報 2026-Q2 公告 2026-10-30 EPS -1.05、毛利率 72.3%、負債率 7.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 18.3,
-      "change_pct": 9.91,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 17.79,
-      "entry_high": 18.3,
-      "defense": 16.74,
-      "target1": 20.4,
-      "target2": 21.97,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY -25.2%／MoM +1.7%；季報 2026-Q2 公告 2026-10-30 EPS -1.05、毛利率 72.3%、負債率 7.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6446",
-      "name": "藥華藥",
-      "score": 78,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +5.49%｜5日 +0.8%｜成交值 42.1億｜收盤位置 97%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +100.0%／MoM +0.7%；季報 2026-Q2 公告 2026-10-30 EPS 11.35、毛利率 91.5%、負債率 16.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 1250.0,
-      "change_pct": 5.49,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 1215.0,
-      "entry_high": 1250.0,
-      "defense": 1143.75,
-      "target1": 1393.44,
-      "target2": 1501.02,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +100.0%／MoM +0.7%；季報 2026-Q2 公告 2026-10-30 EPS 11.35、毛利率 91.5%、負債率 16.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6925",
-      "name": "意藍",
-      "score": 76,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +6.85%｜5日 -7.9%｜成交值 5.5億｜收盤位置 86%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +21.4%／MoM +48.9%；季報 2026-Q2 公告 2026-10-30 EPS 1.08、毛利率 76.2%、負債率 23.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 117.0,
-      "change_pct": 6.85,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 113.72,
-      "entry_high": 117.0,
-      "defense": 107.06,
-      "target1": 130.43,
-      "target2": 140.5,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +21.4%／MoM +48.9%；季報 2026-Q2 公告 2026-10-30 EPS 1.08、毛利率 76.2%、負債率 23.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6112",
-      "name": "邁達特",
-      "score": 74,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +6.29%｜5日 +3.5%｜成交值 2.7億｜收盤位置 97%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +6.9%／MoM -2.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 50.7,
-      "change_pct": 6.29,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 49.28,
-      "entry_high": 50.7,
-      "defense": 46.39,
-      "target1": 56.52,
-      "target2": 60.88,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
           "financials": null
@@ -10708,322 +10773,70 @@
         },
         "availability": null,
         "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
           "income": null,
           "balance": null
         },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +6.9%／MoM -2.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6214",
-      "name": "精誠",
-      "score": 73,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +5.95%｜5日 -7.4%｜成交值 3.2億｜收盤位置 98%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +55.7%／MoM +41.9%；季報 2026-Q2 公告 2026-10-30 EPS 6.15、毛利率 18.6%、負債率 57.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 187.0,
-      "change_pct": 5.95,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 181.76,
-      "entry_high": 187.0,
-      "defense": 171.11,
-      "target1": 208.46,
-      "target2": 224.55,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +55.7%／MoM +41.9%；季報 2026-Q2 公告 2026-10-30 EPS 6.15、毛利率 18.6%、負債率 57.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "2468",
-      "name": "華經",
-      "score": 67,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +5.08%｜5日 +21.3%｜成交值 15.4億｜收盤位置 77%｜過熱警戒｜月營收 2026-09 公告 2026-10-17 YoY +68.8%／MoM +55.0%；季報 2026-Q2 公告 2026-10-30 EPS 0.61、毛利率 10.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 62.0,
-      "change_pct": 5.08,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 60.26,
-      "entry_high": 62.0,
-      "defense": 56.73,
-      "target1": 69.11,
-      "target2": 74.45,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +68.8%／MoM +55.0%；季報 2026-Q2 公告 2026-10-30 EPS 0.61、毛利率 10.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "4741",
-      "name": "泓瀚",
-      "score": 66,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +5.95%｜5日 +2.0%｜成交值 0.7億｜收盤位置 86%｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -4.0%／MoM +19.9%；季報 2026-Q2 公告 2026-10-30 EPS 0.83、毛利率 35.3%、負債率 19.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 55.2,
-      "change_pct": 5.95,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 53.65,
-      "entry_high": 55.2,
-      "defense": 50.51,
-      "target1": 61.53,
-      "target2": 66.28,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY -4.0%／MoM +19.9%；季報 2026-Q2 公告 2026-10-30 EPS 0.83、毛利率 35.3%、負債率 19.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +158.4%／MoM +87.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
       }
     }
   ],
   "tomorrow_monster": [
     {
-      "code": "6221",
-      "name": "晉泰",
-      "score": 85,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +4.76%｜5日 +5.9%｜10日 +21.3%｜收盤位置 97%｜成交值 2.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +47.3%／MoM +31.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.22、毛利率 26.7%、負債率 53.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 40.7,
-      "change_pct": 4.76,
-      "market": "TPEX",
+      "code": "4967",
+      "name": "十銓",
+      "score": 86,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +2.49%｜5日 -6.5%｜10日 +7.8%｜收盤位置 94%｜成交值 30.2億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +109.7%／MoM +16.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 268.0,
+      "change_pct": 2.49,
+      "market": "TWSE",
       "sector": "族群未分類",
       "sector_score": 50,
-      "entry_low": 39.56,
-      "entry_high": 40.7,
-      "defense": 37.24,
-      "target1": 45.37,
-      "target2": 48.87,
+      "entry_low": 260.5,
+      "entry_high": 268.0,
+      "defense": 245.22,
+      "target1": 298.75,
+      "target2": 321.82,
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
-          "financials": "2026-10-30"
+          "financials": null
         },
         "periods": {
           "revenue": "2026-09",
-          "financials": "2026-Q2"
+          "financials": null
         },
-        "availability": "retained_previous_snapshot",
+        "availability": null,
         "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
         },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +47.3%／MoM +31.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.22、毛利率 26.7%、負債率 53.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +109.7%／MoM +16.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
       }
     },
     {
-      "code": "3576",
-      "name": "聯合再生",
+      "code": "6561",
+      "name": "是方",
       "score": 83,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +4.27%｜5日 +2.1%｜10日 +0.6%｜收盤位置 83%｜成交值 3.3億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -8.3%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 0.93、毛利率 -22.6%、負債率 46.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 17.1,
-      "change_pct": 4.27,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 16.62,
-      "entry_high": 17.1,
-      "defense": 15.65,
-      "target1": 19.06,
-      "target2": 20.53,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY -8.3%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 0.93、毛利率 -22.6%、負債率 46.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6148",
-      "name": "驊宏資",
-      "score": 80,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +4.15%｜5日 +15.9%｜10日 +13.4%｜收盤位置 79%｜成交值 12.5億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +4.1%／MoM -0.8%；季報 2026-Q2 公告 2026-10-30 EPS 0.17、毛利率 25.7%、負債率 53.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 45.2,
-      "change_pct": 4.15,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +3.21%｜5日 -1.0%｜10日 +7.7%｜收盤位置 98%｜成交值 1.7億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +10.7%／MoM -0.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 337.5,
+      "change_pct": 3.21,
       "market": "TPEX",
       "sector": "族群未分類",
       "sector_score": 50,
-      "entry_low": 43.93,
-      "entry_high": 45.2,
-      "defense": 41.36,
-      "target1": 50.39,
-      "target2": 54.28,
+      "entry_low": 330.5,
+      "entry_high": 337.5,
+      "defense": 308.81,
+      "target1": 376.23,
+      "target2": 405.27,
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +4.1%／MoM -0.8%；季報 2026-Q2 公告 2026-10-30 EPS 0.17、毛利率 25.7%、負債率 53.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6538",
-      "name": "倉和",
-      "score": 79,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +2.57%｜5日 -11.6%｜10日 -4.8%｜收盤位置 84%｜成交值 10.3億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +43.1%／MoM +4.2%；季報 2026-Q2 公告 2026-10-30 EPS 2.10、毛利率 40.0%、負債率 36.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 279.5,
-      "change_pct": 2.57,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 271.67,
-      "entry_high": 279.5,
-      "defense": 255.74,
-      "target1": 311.57,
-      "target2": 335.63,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +43.1%／MoM +4.2%；季報 2026-Q2 公告 2026-10-30 EPS 2.10、毛利率 40.0%、負債率 36.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6443",
-      "name": "元晶",
-      "score": 79,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +2.97%｜5日 -0.6%｜10日 -2.0%｜收盤位置 86%｜成交值 4.6億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -48.2%／MoM +45.1%；季報 2026-Q2 公告 2026-10-30 EPS -0.60、毛利率 -24.0%、負債率 47.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 24.3,
-      "change_pct": 2.97,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 23.62,
-      "entry_high": 24.3,
-      "defense": 22.23,
-      "target1": 27.09,
-      "target2": 29.18,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY -48.2%／MoM +45.1%；季報 2026-Q2 公告 2026-10-30 EPS -0.60、毛利率 -24.0%、負債率 47.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "1476",
-      "name": "儒鴻",
-      "score": 78,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +1.33%｜5日 +6.8%｜10日 +5.7%｜收盤位置 96%｜成交值 10.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 344.0,
-      "change_pct": 1.33,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 337.42,
-      "entry_high": 344.0,
-      "defense": 314.76,
-      "target1": 383.47,
-      "target2": 413.08,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
           "financials": null
@@ -11034,582 +10847,32 @@
         },
         "availability": null,
         "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
           "income": null,
           "balance": null
         },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "3029",
-      "name": "零壹",
-      "score": 73,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +1.77%｜5日 -7.6%｜10日 -3.0%｜收盤位置 88%｜成交值 3.7億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +38.6%／MoM -20.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 115.0,
-      "change_pct": 1.77,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 111.78,
-      "entry_high": 115.0,
-      "defense": 105.23,
-      "target1": 128.2,
-      "target2": 138.09,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": null
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": null
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": null,
-          "balance": null
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +38.6%／MoM -20.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6199",
-      "name": "天品",
-      "score": 72,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +0.90%｜5日 +6.3%｜10日 +14.6%｜收盤位置 83%｜成交值 20.0億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 168.5,
-      "change_pct": 0.9,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 164.3,
-      "entry_high": 168.5,
-      "defense": 154.18,
-      "target1": 187.84,
-      "target2": 202.34,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6472",
-      "name": "保瑞",
-      "score": 72,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +1.29%｜5日 +0.5%｜10日 -4.6%｜收盤位置 90%｜成交值 5.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +35.1%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 4.56、毛利率 39.2%、負債率 66.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 394.0,
-      "change_pct": 1.29,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 382.97,
-      "entry_high": 394.0,
-      "defense": 360.51,
-      "target1": 439.21,
-      "target2": 473.12,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +35.1%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 4.56、毛利率 39.2%、負債率 66.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6689",
-      "name": "伊雲谷",
-      "score": 72,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +1.69%｜5日 +1.1%｜10日 -1.1%｜收盤位置 95%｜成交值 1.2億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +6.2%／MoM -4.7%；季報 2026-Q2 公告 2026-10-30 EPS 0.71、毛利率 9.6%、負債率 51.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 72.2,
-      "change_pct": 1.69,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 70.18,
-      "entry_high": 72.2,
-      "defense": 66.06,
-      "target1": 80.48,
-      "target2": 86.7,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +6.2%／MoM -4.7%；季報 2026-Q2 公告 2026-10-30 EPS 0.71、毛利率 9.6%、負債率 51.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    }
-  ],
-  "future_monster": [
-    {
-      "code": "2468",
-      "name": "華經",
-      "score": 71,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +5.08%｜5日 +21.3%｜10日 +27.2%｜20日 +36.7%｜成交值 15.4億｜控制追價｜月營收 2026-09 公告 2026-10-17 YoY +68.8%／MoM +55.0%；季報 2026-Q2 公告 2026-10-30 EPS 0.61、毛利率 10.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 62.0,
-      "change_pct": 5.08,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 60.26,
-      "entry_high": 62.0,
-      "defense": 56.73,
-      "target1": 69.11,
-      "target2": 74.45,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +68.8%／MoM +55.0%；季報 2026-Q2 公告 2026-10-30 EPS 0.61、毛利率 10.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6148",
-      "name": "驊宏資",
-      "score": 69,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +4.15%｜5日 +15.9%｜10日 +13.4%｜20日 資料不足｜成交值 12.5億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +4.1%／MoM -0.8%；季報 2026-Q2 公告 2026-10-30 EPS 0.17、毛利率 25.7%、負債率 53.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 45.2,
-      "change_pct": 4.15,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 43.93,
-      "entry_high": 45.2,
-      "defense": 41.36,
-      "target1": 50.39,
-      "target2": 54.28,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +4.1%／MoM -0.8%；季報 2026-Q2 公告 2026-10-30 EPS 0.17、毛利率 25.7%、負債率 53.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "1476",
-      "name": "儒鴻",
-      "score": 69,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +1.33%｜5日 +6.8%｜10日 +5.7%｜20日 +23.7%｜成交值 10.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 344.0,
-      "change_pct": 1.33,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 337.42,
-      "entry_high": 344.0,
-      "defense": 314.76,
-      "target1": 383.47,
-      "target2": 413.08,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": null
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": null
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": null,
-          "balance": null
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6446",
-      "name": "藥華藥",
-      "score": 68,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +5.49%｜5日 +0.8%｜10日 +8.2%｜20日 +7.3%｜成交值 42.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +100.0%／MoM +0.7%；季報 2026-Q2 公告 2026-10-30 EPS 11.35、毛利率 91.5%、負債率 16.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 1250.0,
-      "change_pct": 5.49,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 1215.0,
-      "entry_high": 1250.0,
-      "defense": 1143.75,
-      "target1": 1393.44,
-      "target2": 1501.02,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +100.0%／MoM +0.7%；季報 2026-Q2 公告 2026-10-30 EPS 11.35、毛利率 91.5%、負債率 16.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6199",
-      "name": "天品",
-      "score": 68,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.90%｜5日 +6.3%｜10日 +14.6%｜20日 資料不足｜成交值 20.0億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 168.5,
-      "change_pct": 0.9,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 164.3,
-      "entry_high": 168.5,
-      "defense": 154.18,
-      "target1": 187.84,
-      "target2": 202.34,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "1786",
-      "name": "科妍",
-      "score": 67,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +2.85%｜5日 +16.8%｜10日 +26.7%｜20日 +18.3%｜成交值 1.9億｜控制追價｜月營收 2026-09 公告 2026-10-17 YoY +1.3%／MoM -7.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 50.5,
-      "change_pct": 2.85,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 49.09,
-      "entry_high": 50.5,
-      "defense": 46.21,
-      "target1": 56.29,
-      "target2": 60.64,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": null
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": null
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": null,
-          "balance": null
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +1.3%／MoM -7.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "1416",
-      "name": "廣豐",
-      "score": 67,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.67%｜5日 +12.8%｜10日 +15.8%｜20日 +26.6%｜成交值 1.2億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +70.5%／MoM +13.7%；季報 2026-Q2 公告 2026-10-30 EPS 0.62、毛利率 39.9%、負債率 29.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 15.0,
-      "change_pct": 0.67,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 14.58,
-      "entry_high": 15.0,
-      "defense": 13.73,
-      "target1": 16.72,
-      "target2": 18.01,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +70.5%／MoM +13.7%；季報 2026-Q2 公告 2026-10-30 EPS 0.62、毛利率 39.9%、負債率 29.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "6221",
-      "name": "晉泰",
-      "score": 66,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +4.76%｜5日 +5.9%｜10日 +21.3%｜20日 資料不足｜成交值 2.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +47.3%／MoM +31.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.22、毛利率 26.7%、負債率 53.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 40.7,
-      "change_pct": 4.76,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 39.56,
-      "entry_high": 40.7,
-      "defense": 37.24,
-      "target1": 45.37,
-      "target2": 48.87,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY +47.3%／MoM +31.4%；季報 2026-Q2 公告 2026-10-30 EPS 1.22、毛利率 26.7%、負債率 53.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "2254",
-      "name": "巨鎧精密-創",
-      "score": 65,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.00%｜5日 +7.4%｜10日 +14.9%｜20日 +15.6%｜成交值 3.2億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -92.5%／MoM -46.3%；季報 2026-Q2 公告 2026-10-30 EPS -2.12、毛利率 -65.2%、負債率 55.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 109.0,
-      "change_pct": 0.0,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 108.13,
-      "entry_high": 109.0,
-      "defense": 104.09,
-      "target1": 115.62,
-      "target2": 120.59,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY -92.5%／MoM -46.3%；季報 2026-Q2 公告 2026-10-30 EPS -2.12、毛利率 -65.2%、負債率 55.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      }
-    },
-    {
-      "code": "2033",
-      "name": "佳大",
-      "score": 65,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.40%｜5日 +7.4%｜10日 +13.6%｜20日 +46.5%｜成交值 2.6億｜控制追價｜月營收 2026-09 公告 2026-10-17 YoY -7.5%／MoM -2.2%；季報 2026-Q2 公告 2026-10-30 EPS 0.15、毛利率 15.1%、負債率 15.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 75.0,
-      "change_pct": 0.4,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 72.9,
-      "entry_high": 75.0,
-      "defense": 68.62,
-      "target1": 83.61,
-      "target2": 90.06,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
-        "publication_dates": {
-          "revenue": "2026-10-17",
-          "financials": "2026-10-30"
-        },
-        "periods": {
-          "revenue": "2026-09",
-          "financials": "2026-Q2"
-        },
-        "availability": "retained_previous_snapshot",
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-09 公告 2026-10-17 YoY -7.5%／MoM -2.2%；季報 2026-Q2 公告 2026-10-30 EPS 0.15、毛利率 15.1%、負債率 15.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +10.7%／MoM -0.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
       }
     },
     {
       "code": "2412",
       "name": "中華電",
-      "score": 63,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -0.93%｜5日 +1.3%｜10日 +3.6%｜20日 +9.6%｜成交值 13.9億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +20.9%／MoM +4.7%；季報 2026-Q2 公告 2026-10-30 EPS 2.68、毛利率 37.7%、負債率 31.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 160.0,
-      "change_pct": -0.93,
+      "score": 81,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +1.24%｜5日 +3.5%｜10日 +5.8%｜收盤位置 93%｜成交值 43.8億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +20.9%／MoM +4.7%；季報 2026-Q2 公告 2026-10-30 EPS 2.68、毛利率 37.7%、負債率 31.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 163.5,
+      "change_pct": 1.24,
       "market": "TWSE",
       "sector": "族群未分類",
       "sector_score": 50,
-      "entry_low": 158.72,
-      "entry_high": 160.0,
-      "defense": 152.8,
-      "target1": 169.72,
-      "target2": 177.01,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
+      "entry_low": 161.4,
+      "entry_high": 163.5,
+      "defense": 152.49,
+      "target1": 178.36,
+      "target2": 189.51,
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
         "publication_dates": {
           "revenue": "2026-10-17",
           "financials": "2026-10-30"
@@ -11628,20 +10891,274 @@
       }
     },
     {
-      "code": "6467",
-      "name": "泰合",
-      "score": 63,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -2.94%｜5日 +14.1%｜10日 +15.5%｜20日 資料不足｜成交值 1.7億｜低過熱｜季報 2026-Q2 公告 2026-10-30 EPS -1.83、毛利率 90.4%、負債率 5.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 231.0,
-      "change_pct": -2.94,
+      "code": "6472",
+      "name": "保瑞",
+      "score": 79,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +2.70%｜5日 +1.9%｜10日 -3.3%｜收盤位置 85%｜成交值 9.3億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +35.1%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 4.56、毛利率 39.2%、負債率 66.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 399.5,
+      "change_pct": 2.7,
       "market": "TWSE",
       "sector": "族群未分類",
       "sector_score": 50,
-      "entry_low": 224.53,
-      "entry_high": 231.0,
-      "defense": 211.37,
-      "target1": 257.51,
-      "target2": 277.39,
+      "entry_low": 388.31,
+      "entry_high": 399.5,
+      "defense": 365.54,
+      "target1": 445.34,
+      "target2": 479.72,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +35.1%／MoM +6.4%；季報 2026-Q2 公告 2026-10-30 EPS 4.56、毛利率 39.2%、負債率 66.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6620",
+      "name": "漢達",
+      "score": 78,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +3.98%｜5日 -24.0%｜10日 -19.3%｜收盤位置 70%｜成交值 6.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -20.1%／MoM +5.6%；季報 2026-Q2 公告 2026-10-30 EPS 0.65、毛利率 80.5%、負債率 10.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 104.5,
+      "change_pct": 3.98,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 101.57,
+      "entry_high": 104.5,
+      "defense": 95.62,
+      "target1": 116.49,
+      "target2": 125.48,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -20.1%／MoM +5.6%；季報 2026-Q2 公告 2026-10-30 EPS 0.65、毛利率 80.5%、負債率 10.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "5469",
+      "name": "瀚宇博",
+      "score": 77,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +2.41%｜5日 -14.0%｜10日 -25.5%｜收盤位置 90%｜成交值 3.9億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +36.2%／MoM +8.9%；季報 2026-Q2 公告 2026-10-30 EPS 2.05、毛利率 15.6%、負債率 43.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 63.7,
+      "change_pct": 2.41,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 61.92,
+      "entry_high": 63.7,
+      "defense": 58.29,
+      "target1": 71.01,
+      "target2": 76.49,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +36.2%／MoM +8.9%；季報 2026-Q2 公告 2026-10-30 EPS 2.05、毛利率 15.6%、負債率 43.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6782",
+      "name": "視陽",
+      "score": 77,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +3.39%｜5日 +2.0%｜10日 +4.6%｜收盤位置 79%｜成交值 3.6億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +14.9%／MoM +1.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 274.5,
+      "change_pct": 3.39,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 266.81,
+      "entry_high": 274.5,
+      "defense": 251.17,
+      "target1": 306.0,
+      "target2": 329.62,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +14.9%／MoM +1.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "8069",
+      "name": "元太",
+      "score": 76,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +1.06%｜5日 -6.9%｜10日 -8.7%｜收盤位置 93%｜成交值 14.6億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +13.5%／MoM +4.9%；季報 2026-Q2 公告 2026-10-30 EPS 5.65、毛利率 59.2%、負債率 36.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 142.5,
+      "change_pct": 1.06,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 138.51,
+      "entry_high": 142.5,
+      "defense": 130.39,
+      "target1": 158.85,
+      "target2": 171.12,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +13.5%／MoM +4.9%；季報 2026-Q2 公告 2026-10-30 EPS 5.65、毛利率 59.2%、負債率 36.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6890",
+      "name": "來億-KY",
+      "score": 76,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +2.80%｜5日 +3.2%｜10日 +0.7%｜收盤位置 91%｜成交值 1.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +14.0%／MoM +6.2%；季報 2026-Q2 公告 2026-10-30 EPS 4.53、毛利率 15.1%、負債率 31.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 147.0,
+      "change_pct": 2.8,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 142.88,
+      "entry_high": 147.0,
+      "defense": 134.5,
+      "target1": 163.87,
+      "target2": 176.52,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +14.0%／MoM +6.2%；季報 2026-Q2 公告 2026-10-30 EPS 4.53、毛利率 15.1%、負債率 31.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "1476",
+      "name": "儒鴻",
+      "score": 75,
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +2.06%｜5日 +7.6%｜10日 +6.5%｜收盤位置 75%｜成交值 22.6億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 346.5,
+      "change_pct": 2.06,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 337.12,
+      "entry_high": 346.5,
+      "defense": 317.05,
+      "target1": 386.26,
+      "target2": 416.08,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    }
+  ],
+  "future_monster": [
+    {
+      "code": "2468",
+      "name": "華經",
+      "score": 73,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +2.03%｜5日 +17.8%｜10日 +23.5%｜20日 +32.7%｜成交值 26.5億｜控制追價｜月營收 2026-09 公告 2026-10-17 YoY +68.8%／MoM +55.0%；季報 2026-Q2 公告 2026-10-30 EPS 0.61、毛利率 10.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 60.2,
+      "change_pct": 2.03,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 58.51,
+      "entry_high": 60.2,
+      "defense": 55.08,
+      "target1": 67.11,
+      "target2": 72.29,
       "research_status": "尚無足夠產業研報佐證",
       "research_independent_sources": 0,
       "research_institutions": [],
@@ -11649,7 +11166,167 @@
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-06",
-        "snapshot_generated_at": "2026-11-06T01:12:52+00:00",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +68.8%／MoM +55.0%；季報 2026-Q2 公告 2026-10-30 EPS 0.61、毛利率 10.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "2254",
+      "name": "巨鎧精密-創",
+      "score": 70,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.92%｜5日 +8.4%｜10日 +15.9%｜20日 +16.6%｜成交值 4.1億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY -92.5%／MoM -46.3%；季報 2026-Q2 公告 2026-10-30 EPS -2.12、毛利率 -65.2%、負債率 55.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 110.0,
+      "change_pct": 0.92,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 109.12,
+      "entry_high": 110.0,
+      "defense": 105.05,
+      "target1": 116.68,
+      "target2": 121.69,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY -92.5%／MoM -46.3%；季報 2026-Q2 公告 2026-10-30 EPS -2.12、毛利率 -65.2%、負債率 55.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "2412",
+      "name": "中華電",
+      "score": 69,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +1.24%｜5日 +3.5%｜10日 +5.8%｜20日 +12.0%｜成交值 43.8億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +20.9%／MoM +4.7%；季報 2026-Q2 公告 2026-10-30 EPS 2.68、毛利率 37.7%、負債率 31.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 163.5,
+      "change_pct": 1.24,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 161.4,
+      "entry_high": 163.5,
+      "defense": 152.49,
+      "target1": 178.36,
+      "target2": 189.51,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +20.9%／MoM +4.7%；季報 2026-Q2 公告 2026-10-30 EPS 2.68、毛利率 37.7%、負債率 31.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "1476",
+      "name": "儒鴻",
+      "score": 68,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +2.06%｜5日 +7.6%｜10日 +6.5%｜20日 +24.6%｜成交值 22.6億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 346.5,
+      "change_pct": 2.06,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 337.12,
+      "entry_high": 346.5,
+      "defense": 317.05,
+      "target1": 386.26,
+      "target2": 416.08,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +8.3%／MoM +6.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6467",
+      "name": "泰合",
+      "score": 66,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -1.26%｜5日 +16.0%｜10日 +17.5%｜20日 資料不足｜成交值 2.5億｜低過熱｜季報 2026-Q2 公告 2026-10-30 EPS -1.83、毛利率 90.4%、負債率 5.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 235.0,
+      "change_pct": -1.26,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 228.42,
+      "entry_high": 235.0,
+      "defense": 215.03,
+      "target1": 261.97,
+      "target2": 282.19,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
         "publication_dates": {
           "revenue": null,
           "financials": "2026-10-30"
@@ -11666,6 +11343,286 @@
         },
         "text": "季報 2026-Q2 公告 2026-10-30 EPS -1.83、毛利率 90.4%、負債率 5.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
       }
+    },
+    {
+      "code": "2891",
+      "name": "中信金",
+      "score": 63,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -2.00%｜5日 -2.5%｜10日 +2.5%｜20日 +9.1%｜成交值 41.8億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +12.8%／MoM -12.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 73.4,
+      "change_pct": -2.0,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 71.47,
+      "entry_high": 73.4,
+      "defense": 67.16,
+      "target1": 81.82,
+      "target2": 88.14,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +12.8%／MoM -12.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6148",
+      "name": "驊宏資",
+      "score": 63,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -1.15%｜5日 +10.0%｜10日 +7.7%｜20日 資料不足｜成交值 19.0億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +4.1%／MoM -0.8%；季報 2026-Q2 公告 2026-10-30 EPS 0.17、毛利率 25.7%、負債率 53.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 42.9,
+      "change_pct": -1.15,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 41.7,
+      "entry_high": 42.9,
+      "defense": 39.25,
+      "target1": 47.82,
+      "target2": 51.51,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +4.1%／MoM -0.8%；季報 2026-Q2 公告 2026-10-30 EPS 0.17、毛利率 25.7%、負債率 53.3%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "3045",
+      "name": "台灣大",
+      "score": 63,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.38%｜5日 -1.1%｜10日 +1.9%｜20日 +9.0%｜成交值 18.0億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +10.3%／MoM +3.7%；季報 2026-Q2 公告 2026-10-30 EPS 2.86、毛利率 21.9%、負債率 61.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 133.0,
+      "change_pct": 0.38,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 131.6,
+      "entry_high": 133.0,
+      "defense": 125.42,
+      "target1": 143.23,
+      "target2": 150.91,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +10.3%／MoM +3.7%；季報 2026-Q2 公告 2026-10-30 EPS 2.86、毛利率 21.9%、負債率 61.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "2610",
+      "name": "華航",
+      "score": 63,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -2.08%｜5日 +4.7%｜10日 +3.9%｜20日 +4.2%｜成交值 10.7億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +31.9%／MoM -4.6%；季報 2026-Q2 公告 2026-10-30 EPS 1.08、毛利率 15.6%、負債率 73.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 21.2,
+      "change_pct": -2.08,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 20.89,
+      "entry_high": 21.2,
+      "defense": 19.61,
+      "target1": 23.34,
+      "target2": 24.95,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +31.9%／MoM -4.6%；季報 2026-Q2 公告 2026-10-30 EPS 1.08、毛利率 15.6%、負債率 73.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "5013",
+      "name": "強新",
+      "score": 63,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +4.55%｜5日 +23.8%｜10日 +25.0%｜20日 資料不足｜成交值 3.4億｜控制追價｜月營收 2026-09 公告 2026-10-17 YoY +17.0%／MoM -0.3%；季報 2026-Q2 公告 2026-10-30 EPS 1.36、毛利率 13.8%、負債率 40.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 62.0,
+      "change_pct": 4.55,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 60.26,
+      "entry_high": 62.0,
+      "defense": 56.73,
+      "target1": 69.11,
+      "target2": 74.45,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +17.0%／MoM -0.3%；季報 2026-Q2 公告 2026-10-30 EPS 1.36、毛利率 13.8%、負債率 40.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "6199",
+      "name": "天品",
+      "score": 62,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -2.10%｜5日 +3.2%｜10日 +11.2%｜20日 資料不足｜成交值 34.5億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 163.5,
+      "change_pct": -2.1,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 159.3,
+      "entry_high": 163.5,
+      "defense": 149.6,
+      "target1": 182.26,
+      "target2": 196.33,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": "2026-10-30"
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": "2026-Q2"
+        },
+        "availability": "retained_previous_snapshot",
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +146.6%／MoM +3.4%；季報 2026-Q2 公告 2026-10-30 EPS 2.07、毛利率 44.4%、負債率 44.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
+    },
+    {
+      "code": "4967",
+      "name": "十銓",
+      "score": 62,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +2.49%｜5日 -6.5%｜10日 +7.8%｜20日 -1.8%｜成交值 30.2億｜低過熱｜月營收 2026-09 公告 2026-10-17 YoY +109.7%／MoM +16.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "price": 268.0,
+      "change_pct": 2.49,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 260.5,
+      "entry_high": 268.0,
+      "defense": 245.22,
+      "target1": 298.75,
+      "target2": 321.82,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-06",
+        "snapshot_generated_at": "2026-11-06T06:11:48+00:00",
+        "publication_dates": {
+          "revenue": "2026-10-17",
+          "financials": null
+        },
+        "periods": {
+          "revenue": "2026-09",
+          "financials": null
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": null,
+          "balance": null
+        },
+        "text": "月營收 2026-09 公告 2026-10-17 YoY +109.7%／MoM +16.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      }
     }
   ],
   "rotate": [],
@@ -11673,26 +11630,26 @@
     {
       "icon": "↗",
       "name": "市場廣度",
-      "note": "上漲 57 / 下跌 968｜廣度 5.6%",
-      "score": 6
+      "note": "上漲 210 / 下跌 1696｜廣度 11.0%",
+      "score": 11
     },
     {
       "icon": "⚠",
       "name": "尾端賣壓",
-      "note": "跌逾3% 753｜跌逾5% 510｜跌停附近 126",
-      "score": 510
+      "note": "跌逾3% 958｜跌逾5% 527｜跌停附近 70",
+      "score": 527
     },
     {
       "icon": "🔥",
       "name": "強勢動能",
-      "note": "漲逾5% 16｜漲逾8% 6",
-      "score": 16
+      "note": "漲逾5% 39｜漲逾8% 25",
+      "score": 39
     },
     {
       "icon": "◎",
       "name": "市場中位數",
       "note": "排除權值股後觀察整體溫度",
-      "score": -4.91
+      "score": -2.87
     },
     {
       "icon": "🏦",
@@ -11702,6 +11659,30 @@
     }
   ],
   "avoid_chase": [
+    {
+      "code": "6443",
+      "name": "元晶",
+      "as_of": "2026-11-06",
+      "reason": "2026-11-06收盤漲幅 9.96%｜短線追高風險，等新交易日確認"
+    },
+    {
+      "code": "3219",
+      "name": "倚強科",
+      "as_of": "2026-11-06",
+      "reason": "2026-11-06收盤漲幅 9.95%｜短線追高風險，等新交易日確認"
+    },
+    {
+      "code": "6152",
+      "name": "百一",
+      "as_of": "2026-11-06",
+      "reason": "2026-11-06收盤漲幅 10.0%｜短線追高風險，等新交易日確認"
+    },
+    {
+      "code": "4741",
+      "name": "泓瀚",
+      "as_of": "2026-11-06",
+      "reason": "2026-11-06收盤漲幅 9.98%｜短線追高風險，等新交易日確認"
+    },
     {
       "code": "3287",
       "name": "廣寰科",
@@ -11719,25 +11700,13 @@
       "name": "智聯服務",
       "as_of": "2026-11-06",
       "reason": "2026-11-06收盤漲幅 9.86%｜短線追高風險，等新交易日確認"
-    },
-    {
-      "code": "5202",
-      "name": "力新",
-      "as_of": "2026-11-06",
-      "reason": "2026-11-06收盤漲幅 9.91%｜短線追高風險，等新交易日確認"
-    },
-    {
-      "code": "2468",
-      "name": "華經",
-      "as_of": "2026-11-06",
-      "reason": "2026-11-06收盤漲幅 5.08%｜短線追高風險，等新交易日確認"
     }
   ],
   "backtest": {
-    "hit3": null,
-    "hit5": null,
-    "hit10": null,
-    "samples": 0,
+    "hit3": 8.8,
+    "hit5": 9.2,
+    "hit10": 6.2,
+    "samples": 136,
     "validation": {
       "status": "insufficient_evidence",
       "threshold_80_met": false,
@@ -11754,12 +11723,2693 @@
     "schema": 1,
     "data_date": "2026-11-06",
     "basis": "官方歷史收盤價；無逐日量能、日內高低價與完整財報驗證",
-    "status": "not_official_close",
-    "history_sessions": 0,
+    "status": "ready",
+    "history_sessions": 44,
     "signals": {
-      "breakout": [],
-      "bollinger": [],
-      "vcp": [],
+      "breakout": [
+        {
+          "code": "1416",
+          "name": "廣豐",
+          "price": 16.35,
+          "change_pct": 9.73,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 11.85
+            },
+            {
+              "date": "2026-10-06",
+              "close": 11.75
+            },
+            {
+              "date": "2026-10-07",
+              "close": 11.85
+            },
+            {
+              "date": "2026-10-12",
+              "close": 12.65
+            },
+            {
+              "date": "2026-10-13",
+              "close": 12.95
+            },
+            {
+              "date": "2026-10-14",
+              "close": 13.05
+            },
+            {
+              "date": "2026-10-15",
+              "close": 13.25
+            },
+            {
+              "date": "2026-10-16",
+              "close": 13.2
+            },
+            {
+              "date": "2026-10-19",
+              "close": 13.15
+            },
+            {
+              "date": "2026-10-20",
+              "close": 12.95
+            },
+            {
+              "date": "2026-10-21",
+              "close": 13.2
+            },
+            {
+              "date": "2026-10-22",
+              "close": 13.25
+            },
+            {
+              "date": "2026-10-27",
+              "close": 13.3
+            },
+            {
+              "date": "2026-10-28",
+              "close": 13.45
+            },
+            {
+              "date": "2026-10-29",
+              "close": 13.3
+            },
+            {
+              "date": "2026-10-30",
+              "close": 12.95
+            },
+            {
+              "date": "2026-11-02",
+              "close": 13.55
+            },
+            {
+              "date": "2026-11-03",
+              "close": 13.6
+            },
+            {
+              "date": "2026-11-04",
+              "close": 14.15
+            },
+            {
+              "date": "2026-11-05",
+              "close": 14.9
+            },
+            {
+              "date": "2026-11-06",
+              "close": 16.35
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 14.9,
+            "prior_20_close_low": 11.75,
+            "prior_20_close_mean": 13.115,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 83,
+          "reason": "收盤突破前20日收盤高點 14.90；突破 9.73%｜未驗證成交量"
+        },
+        {
+          "code": "6112",
+          "name": "邁達特",
+          "price": 51.4,
+          "change_pct": 7.76,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 44.9
+            },
+            {
+              "date": "2026-10-06",
+              "close": 44.65
+            },
+            {
+              "date": "2026-10-07",
+              "close": 44.75
+            },
+            {
+              "date": "2026-10-12",
+              "close": 46.45
+            },
+            {
+              "date": "2026-10-13",
+              "close": 46.5
+            },
+            {
+              "date": "2026-10-14",
+              "close": 46.5
+            },
+            {
+              "date": "2026-10-15",
+              "close": 45.5
+            },
+            {
+              "date": "2026-10-16",
+              "close": 49.2
+            },
+            {
+              "date": "2026-10-19",
+              "close": 47.65
+            },
+            {
+              "date": "2026-10-20",
+              "close": 48.1
+            },
+            {
+              "date": "2026-10-21",
+              "close": 48.2
+            },
+            {
+              "date": "2026-10-22",
+              "close": 49.3
+            },
+            {
+              "date": "2026-10-27",
+              "close": 50.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 49.95
+            },
+            {
+              "date": "2026-10-29",
+              "close": 49.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 47.85
+            },
+            {
+              "date": "2026-11-02",
+              "close": 50.2
+            },
+            {
+              "date": "2026-11-03",
+              "close": 47.15
+            },
+            {
+              "date": "2026-11-04",
+              "close": 48.85
+            },
+            {
+              "date": "2026-11-05",
+              "close": 47.7
+            },
+            {
+              "date": "2026-11-06",
+              "close": 51.4
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 50.2,
+            "prior_20_close_low": 44.65,
+            "prior_20_close_mean": 47.62,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 77,
+          "reason": "收盤突破前20日收盤高點 50.20；突破 2.39%｜未驗證成交量"
+        },
+        {
+          "code": "1476",
+          "name": "儒鴻",
+          "price": 346.5,
+          "change_pct": 2.06,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 278.5
+            },
+            {
+              "date": "2026-10-06",
+              "close": 290.0
+            },
+            {
+              "date": "2026-10-07",
+              "close": 297.0
+            },
+            {
+              "date": "2026-10-12",
+              "close": 312.0
+            },
+            {
+              "date": "2026-10-13",
+              "close": 311.5
+            },
+            {
+              "date": "2026-10-14",
+              "close": 314.0
+            },
+            {
+              "date": "2026-10-15",
+              "close": 324.0
+            },
+            {
+              "date": "2026-10-16",
+              "close": 329.5
+            },
+            {
+              "date": "2026-10-19",
+              "close": 321.0
+            },
+            {
+              "date": "2026-10-20",
+              "close": 325.5
+            },
+            {
+              "date": "2026-10-21",
+              "close": 325.0
+            },
+            {
+              "date": "2026-10-22",
+              "close": 324.5
+            },
+            {
+              "date": "2026-10-27",
+              "close": 323.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 317.5
+            },
+            {
+              "date": "2026-10-29",
+              "close": 322.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 320.5
+            },
+            {
+              "date": "2026-11-02",
+              "close": 318.5
+            },
+            {
+              "date": "2026-11-03",
+              "close": 313.5
+            },
+            {
+              "date": "2026-11-04",
+              "close": 312.5
+            },
+            {
+              "date": "2026-11-05",
+              "close": 339.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 346.5
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 339.5,
+            "prior_20_close_low": 278.5,
+            "prior_20_close_mean": 315.975,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 74,
+          "reason": "收盤突破前20日收盤高點 339.50；突破 2.06%｜未驗證成交量"
+        },
+        {
+          "code": "6446",
+          "name": "藥華藥",
+          "price": 1270.0,
+          "change_pct": 7.17,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-10-06",
+              "close": 1175.0
+            },
+            {
+              "date": "2026-10-07",
+              "close": 1205.0
+            },
+            {
+              "date": "2026-10-12",
+              "close": 1185.0
+            },
+            {
+              "date": "2026-10-13",
+              "close": 1165.0
+            },
+            {
+              "date": "2026-10-14",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-10-15",
+              "close": 1205.0
+            },
+            {
+              "date": "2026-10-16",
+              "close": 1245.0
+            },
+            {
+              "date": "2026-10-19",
+              "close": 1175.0
+            },
+            {
+              "date": "2026-10-20",
+              "close": 1155.0
+            },
+            {
+              "date": "2026-10-21",
+              "close": 1175.0
+            },
+            {
+              "date": "2026-10-22",
+              "close": 1160.0
+            },
+            {
+              "date": "2026-10-27",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 1200.0
+            },
+            {
+              "date": "2026-10-29",
+              "close": 1240.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-11-02",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-11-03",
+              "close": 1225.0
+            },
+            {
+              "date": "2026-11-04",
+              "close": 1250.0
+            },
+            {
+              "date": "2026-11-05",
+              "close": 1185.0
+            },
+            {
+              "date": "2026-11-06",
+              "close": 1270.0
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 1250.0,
+            "prior_20_close_low": 1155.0,
+            "prior_20_close_mean": 1194.75,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 71,
+          "reason": "收盤突破前20日收盤高點 1250.00；突破 1.60%｜未驗證成交量"
+        },
+        {
+          "code": "6782",
+          "name": "視陽",
+          "price": 274.5,
+          "change_pct": 3.39,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 229.0
+            },
+            {
+              "date": "2026-10-06",
+              "close": 231.5
+            },
+            {
+              "date": "2026-10-07",
+              "close": 232.5
+            },
+            {
+              "date": "2026-10-12",
+              "close": 247.0
+            },
+            {
+              "date": "2026-10-13",
+              "close": 241.5
+            },
+            {
+              "date": "2026-10-14",
+              "close": 244.5
+            },
+            {
+              "date": "2026-10-15",
+              "close": 251.0
+            },
+            {
+              "date": "2026-10-16",
+              "close": 259.5
+            },
+            {
+              "date": "2026-10-19",
+              "close": 254.0
+            },
+            {
+              "date": "2026-10-20",
+              "close": 262.5
+            },
+            {
+              "date": "2026-10-21",
+              "close": 270.0
+            },
+            {
+              "date": "2026-10-22",
+              "close": 271.0
+            },
+            {
+              "date": "2026-10-27",
+              "close": 265.5
+            },
+            {
+              "date": "2026-10-28",
+              "close": 268.5
+            },
+            {
+              "date": "2026-10-29",
+              "close": 269.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 264.0
+            },
+            {
+              "date": "2026-11-02",
+              "close": 261.5
+            },
+            {
+              "date": "2026-11-03",
+              "close": 256.0
+            },
+            {
+              "date": "2026-11-04",
+              "close": 258.0
+            },
+            {
+              "date": "2026-11-05",
+              "close": 265.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 274.5
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 271.0,
+            "prior_20_close_low": 229.0,
+            "prior_20_close_mean": 255.1,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 68,
+          "reason": "收盤突破前20日收盤高點 271.00；突破 1.29%｜未驗證成交量"
+        },
+        {
+          "code": "2412",
+          "name": "中華電",
+          "price": 163.5,
+          "change_pct": 1.24,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 145.5
+            },
+            {
+              "date": "2026-10-06",
+              "close": 145.5
+            },
+            {
+              "date": "2026-10-07",
+              "close": 145.5
+            },
+            {
+              "date": "2026-10-12",
+              "close": 146.5
+            },
+            {
+              "date": "2026-10-13",
+              "close": 148.0
+            },
+            {
+              "date": "2026-10-14",
+              "close": 148.5
+            },
+            {
+              "date": "2026-10-15",
+              "close": 152.5
+            },
+            {
+              "date": "2026-10-16",
+              "close": 153.0
+            },
+            {
+              "date": "2026-10-19",
+              "close": 154.5
+            },
+            {
+              "date": "2026-10-20",
+              "close": 154.5
+            },
+            {
+              "date": "2026-10-21",
+              "close": 154.0
+            },
+            {
+              "date": "2026-10-22",
+              "close": 158.0
+            },
+            {
+              "date": "2026-10-27",
+              "close": 158.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 156.5
+            },
+            {
+              "date": "2026-10-29",
+              "close": 158.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 160.0
+            },
+            {
+              "date": "2026-11-02",
+              "close": 159.5
+            },
+            {
+              "date": "2026-11-03",
+              "close": 159.0
+            },
+            {
+              "date": "2026-11-04",
+              "close": 161.5
+            },
+            {
+              "date": "2026-11-05",
+              "close": 161.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 163.5
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 161.5,
+            "prior_20_close_low": 145.5,
+            "prior_20_close_mean": 154.0,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 68,
+          "reason": "收盤突破前20日收盤高點 161.50；突破 1.24%｜未驗證成交量"
+        },
+        {
+          "code": "2254",
+          "name": "巨鎧精密-創",
+          "price": 110.0,
+          "change_pct": 0.92,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 94.8
+            },
+            {
+              "date": "2026-10-06",
+              "close": 101.5
+            },
+            {
+              "date": "2026-10-07",
+              "close": 91.4
+            },
+            {
+              "date": "2026-10-12",
+              "close": 94.4
+            },
+            {
+              "date": "2026-10-13",
+              "close": 93.2
+            },
+            {
+              "date": "2026-10-14",
+              "close": 94.6
+            },
+            {
+              "date": "2026-10-15",
+              "close": 94.3
+            },
+            {
+              "date": "2026-10-16",
+              "close": 94.4
+            },
+            {
+              "date": "2026-10-19",
+              "close": 95.9
+            },
+            {
+              "date": "2026-10-20",
+              "close": 94.9
+            },
+            {
+              "date": "2026-10-21",
+              "close": 94.9
+            },
+            {
+              "date": "2026-10-22",
+              "close": 97.9
+            },
+            {
+              "date": "2026-10-27",
+              "close": 98.9
+            },
+            {
+              "date": "2026-10-28",
+              "close": 99.9
+            },
+            {
+              "date": "2026-10-29",
+              "close": 101.5
+            },
+            {
+              "date": "2026-10-30",
+              "close": 103.5
+            },
+            {
+              "date": "2026-11-02",
+              "close": 106.5
+            },
+            {
+              "date": "2026-11-03",
+              "close": 106.5
+            },
+            {
+              "date": "2026-11-04",
+              "close": 107.5
+            },
+            {
+              "date": "2026-11-05",
+              "close": 109.0
+            },
+            {
+              "date": "2026-11-06",
+              "close": 110.0
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 109.0,
+            "prior_20_close_low": 91.4,
+            "prior_20_close_mean": 98.775,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 65,
+          "reason": "收盤突破前20日收盤高點 109.00；突破 0.92%｜未驗證成交量"
+        },
+        {
+          "code": "9944",
+          "name": "新麗",
+          "price": 17.65,
+          "change_pct": 1.15,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 17.25
+            },
+            {
+              "date": "2026-10-06",
+              "close": 17.15
+            },
+            {
+              "date": "2026-10-07",
+              "close": 17.25
+            },
+            {
+              "date": "2026-10-12",
+              "close": 17.5
+            },
+            {
+              "date": "2026-10-13",
+              "close": 17.45
+            },
+            {
+              "date": "2026-10-14",
+              "close": 17.3
+            },
+            {
+              "date": "2026-10-15",
+              "close": 17.5
+            },
+            {
+              "date": "2026-10-16",
+              "close": 17.3
+            },
+            {
+              "date": "2026-10-19",
+              "close": 17.55
+            },
+            {
+              "date": "2026-10-20",
+              "close": 17.3
+            },
+            {
+              "date": "2026-10-21",
+              "close": 17.5
+            },
+            {
+              "date": "2026-10-22",
+              "close": 17.25
+            },
+            {
+              "date": "2026-10-27",
+              "close": 17.5
+            },
+            {
+              "date": "2026-10-28",
+              "close": 17.35
+            },
+            {
+              "date": "2026-10-29",
+              "close": 17.4
+            },
+            {
+              "date": "2026-10-30",
+              "close": 17.4
+            },
+            {
+              "date": "2026-11-02",
+              "close": 17.35
+            },
+            {
+              "date": "2026-11-03",
+              "close": 17.3
+            },
+            {
+              "date": "2026-11-04",
+              "close": 17.45
+            },
+            {
+              "date": "2026-11-05",
+              "close": 17.45
+            },
+            {
+              "date": "2026-11-06",
+              "close": 17.65
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 17.55,
+            "prior_20_close_low": 17.15,
+            "prior_20_close_mean": 17.375,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 63,
+          "reason": "收盤突破前20日收盤高點 17.55；突破 0.57%｜未驗證成交量"
+        },
+        {
+          "code": "2901",
+          "name": "欣欣",
+          "price": 25.1,
+          "change_pct": 2.45,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 25.0
+            },
+            {
+              "date": "2026-10-06",
+              "close": 24.75
+            },
+            {
+              "date": "2026-10-07",
+              "close": 24.9
+            },
+            {
+              "date": "2026-10-12",
+              "close": 24.7
+            },
+            {
+              "date": "2026-10-13",
+              "close": 24.45
+            },
+            {
+              "date": "2026-10-14",
+              "close": 24.4
+            },
+            {
+              "date": "2026-10-15",
+              "close": 24.4
+            },
+            {
+              "date": "2026-10-16",
+              "close": 24.35
+            },
+            {
+              "date": "2026-10-19",
+              "close": 24.3
+            },
+            {
+              "date": "2026-10-20",
+              "close": 24.5
+            },
+            {
+              "date": "2026-10-21",
+              "close": 24.55
+            },
+            {
+              "date": "2026-10-22",
+              "close": 24.7
+            },
+            {
+              "date": "2026-10-27",
+              "close": 24.8
+            },
+            {
+              "date": "2026-10-28",
+              "close": 24.55
+            },
+            {
+              "date": "2026-10-29",
+              "close": 24.8
+            },
+            {
+              "date": "2026-10-30",
+              "close": 24.4
+            },
+            {
+              "date": "2026-11-02",
+              "close": 24.9
+            },
+            {
+              "date": "2026-11-03",
+              "close": 24.55
+            },
+            {
+              "date": "2026-11-04",
+              "close": 24.5
+            },
+            {
+              "date": "2026-11-05",
+              "close": 24.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 25.1
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 25.0,
+            "prior_20_close_low": 24.3,
+            "prior_20_close_mean": 24.6,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "收盤突破前20日收盤高點 25.00；突破 0.40%｜未驗證成交量"
+        },
+        {
+          "code": "1626",
+          "name": "艾美特-KY",
+          "price": 9.84,
+          "change_pct": 1.03,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 9.65
+            },
+            {
+              "date": "2026-10-06",
+              "close": 9.8
+            },
+            {
+              "date": "2026-10-07",
+              "close": 9.79
+            },
+            {
+              "date": "2026-10-12",
+              "close": 9.72
+            },
+            {
+              "date": "2026-10-13",
+              "close": 9.73
+            },
+            {
+              "date": "2026-10-14",
+              "close": 9.8
+            },
+            {
+              "date": "2026-10-15",
+              "close": 9.75
+            },
+            {
+              "date": "2026-10-16",
+              "close": 9.77
+            },
+            {
+              "date": "2026-10-19",
+              "close": 9.71
+            },
+            {
+              "date": "2026-10-20",
+              "close": 9.7
+            },
+            {
+              "date": "2026-10-21",
+              "close": 9.67
+            },
+            {
+              "date": "2026-10-22",
+              "close": 9.69
+            },
+            {
+              "date": "2026-10-27",
+              "close": 9.7
+            },
+            {
+              "date": "2026-10-28",
+              "close": 9.75
+            },
+            {
+              "date": "2026-10-29",
+              "close": 9.79
+            },
+            {
+              "date": "2026-10-30",
+              "close": 9.67
+            },
+            {
+              "date": "2026-11-02",
+              "close": 9.8
+            },
+            {
+              "date": "2026-11-03",
+              "close": 9.78
+            },
+            {
+              "date": "2026-11-04",
+              "close": 9.81
+            },
+            {
+              "date": "2026-11-05",
+              "close": 9.74
+            },
+            {
+              "date": "2026-11-06",
+              "close": 9.84
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 9.81,
+            "prior_20_close_low": 9.65,
+            "prior_20_close_mean": 9.741,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 60,
+          "reason": "收盤突破前20日收盤高點 9.81；突破 0.31%｜未驗證成交量"
+        }
+      ],
+      "bollinger": [
+        {
+          "code": "6112",
+          "name": "邁達特",
+          "price": 51.4,
+          "change_pct": 7.76,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 44.9
+            },
+            {
+              "date": "2026-10-06",
+              "close": 44.65
+            },
+            {
+              "date": "2026-10-07",
+              "close": 44.75
+            },
+            {
+              "date": "2026-10-12",
+              "close": 46.45
+            },
+            {
+              "date": "2026-10-13",
+              "close": 46.5
+            },
+            {
+              "date": "2026-10-14",
+              "close": 46.5
+            },
+            {
+              "date": "2026-10-15",
+              "close": 45.5
+            },
+            {
+              "date": "2026-10-16",
+              "close": 49.2
+            },
+            {
+              "date": "2026-10-19",
+              "close": 47.65
+            },
+            {
+              "date": "2026-10-20",
+              "close": 48.1
+            },
+            {
+              "date": "2026-10-21",
+              "close": 48.2
+            },
+            {
+              "date": "2026-10-22",
+              "close": 49.3
+            },
+            {
+              "date": "2026-10-27",
+              "close": 50.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 49.95
+            },
+            {
+              "date": "2026-10-29",
+              "close": 49.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 47.85
+            },
+            {
+              "date": "2026-11-02",
+              "close": 50.2
+            },
+            {
+              "date": "2026-11-03",
+              "close": 47.15
+            },
+            {
+              "date": "2026-11-04",
+              "close": 48.85
+            },
+            {
+              "date": "2026-11-05",
+              "close": 47.7
+            },
+            {
+              "date": "2026-11-06",
+              "close": 51.4
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 50.2,
+            "prior_20_close_low": 44.65,
+            "prior_20_close_mean": 47.62,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "收盤 51.40 > 前20日布林上軌 51.09｜使用收盤價、非盤中突破"
+        },
+        {
+          "code": "6446",
+          "name": "藥華藥",
+          "price": 1270.0,
+          "change_pct": 7.17,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-10-06",
+              "close": 1175.0
+            },
+            {
+              "date": "2026-10-07",
+              "close": 1205.0
+            },
+            {
+              "date": "2026-10-12",
+              "close": 1185.0
+            },
+            {
+              "date": "2026-10-13",
+              "close": 1165.0
+            },
+            {
+              "date": "2026-10-14",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-10-15",
+              "close": 1205.0
+            },
+            {
+              "date": "2026-10-16",
+              "close": 1245.0
+            },
+            {
+              "date": "2026-10-19",
+              "close": 1175.0
+            },
+            {
+              "date": "2026-10-20",
+              "close": 1155.0
+            },
+            {
+              "date": "2026-10-21",
+              "close": 1175.0
+            },
+            {
+              "date": "2026-10-22",
+              "close": 1160.0
+            },
+            {
+              "date": "2026-10-27",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 1200.0
+            },
+            {
+              "date": "2026-10-29",
+              "close": 1240.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-11-02",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-11-03",
+              "close": 1225.0
+            },
+            {
+              "date": "2026-11-04",
+              "close": 1250.0
+            },
+            {
+              "date": "2026-11-05",
+              "close": 1185.0
+            },
+            {
+              "date": "2026-11-06",
+              "close": 1270.0
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 1250.0,
+            "prior_20_close_low": 1155.0,
+            "prior_20_close_mean": 1194.75,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "收盤 1270.00 > 前20日布林上軌 1247.52｜使用收盤價、非盤中突破"
+        },
+        {
+          "code": "2901",
+          "name": "欣欣",
+          "price": 25.1,
+          "change_pct": 2.45,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 25.0
+            },
+            {
+              "date": "2026-10-06",
+              "close": 24.75
+            },
+            {
+              "date": "2026-10-07",
+              "close": 24.9
+            },
+            {
+              "date": "2026-10-12",
+              "close": 24.7
+            },
+            {
+              "date": "2026-10-13",
+              "close": 24.45
+            },
+            {
+              "date": "2026-10-14",
+              "close": 24.4
+            },
+            {
+              "date": "2026-10-15",
+              "close": 24.4
+            },
+            {
+              "date": "2026-10-16",
+              "close": 24.35
+            },
+            {
+              "date": "2026-10-19",
+              "close": 24.3
+            },
+            {
+              "date": "2026-10-20",
+              "close": 24.5
+            },
+            {
+              "date": "2026-10-21",
+              "close": 24.55
+            },
+            {
+              "date": "2026-10-22",
+              "close": 24.7
+            },
+            {
+              "date": "2026-10-27",
+              "close": 24.8
+            },
+            {
+              "date": "2026-10-28",
+              "close": 24.55
+            },
+            {
+              "date": "2026-10-29",
+              "close": 24.8
+            },
+            {
+              "date": "2026-10-30",
+              "close": 24.4
+            },
+            {
+              "date": "2026-11-02",
+              "close": 24.9
+            },
+            {
+              "date": "2026-11-03",
+              "close": 24.55
+            },
+            {
+              "date": "2026-11-04",
+              "close": 24.5
+            },
+            {
+              "date": "2026-11-05",
+              "close": 24.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 25.1
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 25.0,
+            "prior_20_close_low": 24.3,
+            "prior_20_close_mean": 24.6,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "收盤 25.10 > 前20日布林上軌 25.00｜使用收盤價、非盤中突破"
+        },
+        {
+          "code": "1476",
+          "name": "儒鴻",
+          "price": 346.5,
+          "change_pct": 2.06,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 278.5
+            },
+            {
+              "date": "2026-10-06",
+              "close": 290.0
+            },
+            {
+              "date": "2026-10-07",
+              "close": 297.0
+            },
+            {
+              "date": "2026-10-12",
+              "close": 312.0
+            },
+            {
+              "date": "2026-10-13",
+              "close": 311.5
+            },
+            {
+              "date": "2026-10-14",
+              "close": 314.0
+            },
+            {
+              "date": "2026-10-15",
+              "close": 324.0
+            },
+            {
+              "date": "2026-10-16",
+              "close": 329.5
+            },
+            {
+              "date": "2026-10-19",
+              "close": 321.0
+            },
+            {
+              "date": "2026-10-20",
+              "close": 325.5
+            },
+            {
+              "date": "2026-10-21",
+              "close": 325.0
+            },
+            {
+              "date": "2026-10-22",
+              "close": 324.5
+            },
+            {
+              "date": "2026-10-27",
+              "close": 323.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 317.5
+            },
+            {
+              "date": "2026-10-29",
+              "close": 322.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 320.5
+            },
+            {
+              "date": "2026-11-02",
+              "close": 318.5
+            },
+            {
+              "date": "2026-11-03",
+              "close": 313.5
+            },
+            {
+              "date": "2026-11-04",
+              "close": 312.5
+            },
+            {
+              "date": "2026-11-05",
+              "close": 339.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 346.5
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 339.5,
+            "prior_20_close_low": 278.5,
+            "prior_20_close_mean": 315.975,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "收盤 346.50 > 前20日布林上軌 343.11｜使用收盤價、非盤中突破"
+        },
+        {
+          "code": "9944",
+          "name": "新麗",
+          "price": 17.65,
+          "change_pct": 1.15,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 17.25
+            },
+            {
+              "date": "2026-10-06",
+              "close": 17.15
+            },
+            {
+              "date": "2026-10-07",
+              "close": 17.25
+            },
+            {
+              "date": "2026-10-12",
+              "close": 17.5
+            },
+            {
+              "date": "2026-10-13",
+              "close": 17.45
+            },
+            {
+              "date": "2026-10-14",
+              "close": 17.3
+            },
+            {
+              "date": "2026-10-15",
+              "close": 17.5
+            },
+            {
+              "date": "2026-10-16",
+              "close": 17.3
+            },
+            {
+              "date": "2026-10-19",
+              "close": 17.55
+            },
+            {
+              "date": "2026-10-20",
+              "close": 17.3
+            },
+            {
+              "date": "2026-10-21",
+              "close": 17.5
+            },
+            {
+              "date": "2026-10-22",
+              "close": 17.25
+            },
+            {
+              "date": "2026-10-27",
+              "close": 17.5
+            },
+            {
+              "date": "2026-10-28",
+              "close": 17.35
+            },
+            {
+              "date": "2026-10-29",
+              "close": 17.4
+            },
+            {
+              "date": "2026-10-30",
+              "close": 17.4
+            },
+            {
+              "date": "2026-11-02",
+              "close": 17.35
+            },
+            {
+              "date": "2026-11-03",
+              "close": 17.3
+            },
+            {
+              "date": "2026-11-04",
+              "close": 17.45
+            },
+            {
+              "date": "2026-11-05",
+              "close": 17.45
+            },
+            {
+              "date": "2026-11-06",
+              "close": 17.65
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 17.55,
+            "prior_20_close_low": 17.15,
+            "prior_20_close_mean": 17.375,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "收盤 17.65 > 前20日布林上軌 17.59｜使用收盤價、非盤中突破"
+        },
+        {
+          "code": "1626",
+          "name": "艾美特-KY",
+          "price": 9.84,
+          "change_pct": 1.03,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 9.65
+            },
+            {
+              "date": "2026-10-06",
+              "close": 9.8
+            },
+            {
+              "date": "2026-10-07",
+              "close": 9.79
+            },
+            {
+              "date": "2026-10-12",
+              "close": 9.72
+            },
+            {
+              "date": "2026-10-13",
+              "close": 9.73
+            },
+            {
+              "date": "2026-10-14",
+              "close": 9.8
+            },
+            {
+              "date": "2026-10-15",
+              "close": 9.75
+            },
+            {
+              "date": "2026-10-16",
+              "close": 9.77
+            },
+            {
+              "date": "2026-10-19",
+              "close": 9.71
+            },
+            {
+              "date": "2026-10-20",
+              "close": 9.7
+            },
+            {
+              "date": "2026-10-21",
+              "close": 9.67
+            },
+            {
+              "date": "2026-10-22",
+              "close": 9.69
+            },
+            {
+              "date": "2026-10-27",
+              "close": 9.7
+            },
+            {
+              "date": "2026-10-28",
+              "close": 9.75
+            },
+            {
+              "date": "2026-10-29",
+              "close": 9.79
+            },
+            {
+              "date": "2026-10-30",
+              "close": 9.67
+            },
+            {
+              "date": "2026-11-02",
+              "close": 9.8
+            },
+            {
+              "date": "2026-11-03",
+              "close": 9.78
+            },
+            {
+              "date": "2026-11-04",
+              "close": 9.81
+            },
+            {
+              "date": "2026-11-05",
+              "close": 9.74
+            },
+            {
+              "date": "2026-11-06",
+              "close": 9.84
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 9.81,
+            "prior_20_close_low": 9.65,
+            "prior_20_close_mean": 9.741,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "收盤 9.84 > 前20日布林上軌 9.84｜使用收盤價、非盤中突破"
+        },
+        {
+          "code": "2254",
+          "name": "巨鎧精密-創",
+          "price": 110.0,
+          "change_pct": 0.92,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 94.8
+            },
+            {
+              "date": "2026-10-06",
+              "close": 101.5
+            },
+            {
+              "date": "2026-10-07",
+              "close": 91.4
+            },
+            {
+              "date": "2026-10-12",
+              "close": 94.4
+            },
+            {
+              "date": "2026-10-13",
+              "close": 93.2
+            },
+            {
+              "date": "2026-10-14",
+              "close": 94.6
+            },
+            {
+              "date": "2026-10-15",
+              "close": 94.3
+            },
+            {
+              "date": "2026-10-16",
+              "close": 94.4
+            },
+            {
+              "date": "2026-10-19",
+              "close": 95.9
+            },
+            {
+              "date": "2026-10-20",
+              "close": 94.9
+            },
+            {
+              "date": "2026-10-21",
+              "close": 94.9
+            },
+            {
+              "date": "2026-10-22",
+              "close": 97.9
+            },
+            {
+              "date": "2026-10-27",
+              "close": 98.9
+            },
+            {
+              "date": "2026-10-28",
+              "close": 99.9
+            },
+            {
+              "date": "2026-10-29",
+              "close": 101.5
+            },
+            {
+              "date": "2026-10-30",
+              "close": 103.5
+            },
+            {
+              "date": "2026-11-02",
+              "close": 106.5
+            },
+            {
+              "date": "2026-11-03",
+              "close": 106.5
+            },
+            {
+              "date": "2026-11-04",
+              "close": 107.5
+            },
+            {
+              "date": "2026-11-05",
+              "close": 109.0
+            },
+            {
+              "date": "2026-11-06",
+              "close": 110.0
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 109.0,
+            "prior_20_close_low": 91.4,
+            "prior_20_close_mean": 98.775,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "收盤 110.00 > 前20日布林上軌 109.31｜使用收盤價、非盤中突破"
+        }
+      ],
+      "vcp": [
+        {
+          "code": "1526",
+          "name": "日馳",
+          "price": 16.1,
+          "change_pct": -3.3,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 14.85
+            },
+            {
+              "date": "2026-10-06",
+              "close": 14.95
+            },
+            {
+              "date": "2026-10-07",
+              "close": 15.05
+            },
+            {
+              "date": "2026-10-12",
+              "close": 15.3
+            },
+            {
+              "date": "2026-10-13",
+              "close": 14.95
+            },
+            {
+              "date": "2026-10-14",
+              "close": 14.9
+            },
+            {
+              "date": "2026-10-15",
+              "close": 14.95
+            },
+            {
+              "date": "2026-10-16",
+              "close": 15.0
+            },
+            {
+              "date": "2026-10-19",
+              "close": 16.5
+            },
+            {
+              "date": "2026-10-20",
+              "close": 16.1
+            },
+            {
+              "date": "2026-10-21",
+              "close": 16.05
+            },
+            {
+              "date": "2026-10-22",
+              "close": 16.6
+            },
+            {
+              "date": "2026-10-27",
+              "close": 17.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 16.35
+            },
+            {
+              "date": "2026-10-29",
+              "close": 15.85
+            },
+            {
+              "date": "2026-10-30",
+              "close": 16.35
+            },
+            {
+              "date": "2026-11-02",
+              "close": 16.3
+            },
+            {
+              "date": "2026-11-03",
+              "close": 16.25
+            },
+            {
+              "date": "2026-11-04",
+              "close": 16.45
+            },
+            {
+              "date": "2026-11-05",
+              "close": 16.65
+            },
+            {
+              "date": "2026-11-06",
+              "close": 16.1
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 17.0,
+            "prior_20_close_low": 14.85,
+            "prior_20_close_mean": 15.82,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 67,
+          "reason": "5日波幅 2.4% < 前期 7.0% < 更早 10.3%｜僅價格近似，缺量能確認"
+        },
+        {
+          "code": "4904",
+          "name": "遠傳",
+          "price": 112.0,
+          "change_pct": -0.44,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 105.5
+            },
+            {
+              "date": "2026-10-06",
+              "close": 104.5
+            },
+            {
+              "date": "2026-10-07",
+              "close": 106.0
+            },
+            {
+              "date": "2026-10-12",
+              "close": 105.5
+            },
+            {
+              "date": "2026-10-13",
+              "close": 107.5
+            },
+            {
+              "date": "2026-10-14",
+              "close": 108.0
+            },
+            {
+              "date": "2026-10-15",
+              "close": 113.0
+            },
+            {
+              "date": "2026-10-16",
+              "close": 113.5
+            },
+            {
+              "date": "2026-10-19",
+              "close": 112.5
+            },
+            {
+              "date": "2026-10-20",
+              "close": 112.0
+            },
+            {
+              "date": "2026-10-21",
+              "close": 112.0
+            },
+            {
+              "date": "2026-10-22",
+              "close": 115.0
+            },
+            {
+              "date": "2026-10-27",
+              "close": 114.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 112.0
+            },
+            {
+              "date": "2026-10-29",
+              "close": 113.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 114.0
+            },
+            {
+              "date": "2026-11-02",
+              "close": 113.5
+            },
+            {
+              "date": "2026-11-03",
+              "close": 112.5
+            },
+            {
+              "date": "2026-11-04",
+              "close": 114.0
+            },
+            {
+              "date": "2026-11-05",
+              "close": 112.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 112.0
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 115.0,
+            "prior_20_close_low": 104.5,
+            "prior_20_close_mean": 111.025,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 62,
+          "reason": "5日波幅 1.3% < 前期 2.7% < 更早 4.9%｜僅價格近似，缺量能確認"
+        },
+        {
+          "code": "6446",
+          "name": "藥華藥",
+          "price": 1270.0,
+          "change_pct": 7.17,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-10-06",
+              "close": 1175.0
+            },
+            {
+              "date": "2026-10-07",
+              "close": 1205.0
+            },
+            {
+              "date": "2026-10-12",
+              "close": 1185.0
+            },
+            {
+              "date": "2026-10-13",
+              "close": 1165.0
+            },
+            {
+              "date": "2026-10-14",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-10-15",
+              "close": 1205.0
+            },
+            {
+              "date": "2026-10-16",
+              "close": 1245.0
+            },
+            {
+              "date": "2026-10-19",
+              "close": 1175.0
+            },
+            {
+              "date": "2026-10-20",
+              "close": 1155.0
+            },
+            {
+              "date": "2026-10-21",
+              "close": 1175.0
+            },
+            {
+              "date": "2026-10-22",
+              "close": 1160.0
+            },
+            {
+              "date": "2026-10-27",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 1200.0
+            },
+            {
+              "date": "2026-10-29",
+              "close": 1240.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-11-02",
+              "close": 1190.0
+            },
+            {
+              "date": "2026-11-03",
+              "close": 1225.0
+            },
+            {
+              "date": "2026-11-04",
+              "close": 1250.0
+            },
+            {
+              "date": "2026-11-05",
+              "close": 1185.0
+            },
+            {
+              "date": "2026-11-06",
+              "close": 1270.0
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 1250.0,
+            "prior_20_close_low": 1155.0,
+            "prior_20_close_mean": 1194.75,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "5日波幅 5.4% < 前期 6.7% < 更早 7.5%｜僅價格近似，缺量能確認"
+        },
+        {
+          "code": "2412",
+          "name": "中華電",
+          "price": 163.5,
+          "change_pct": 1.24,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 145.5
+            },
+            {
+              "date": "2026-10-06",
+              "close": 145.5
+            },
+            {
+              "date": "2026-10-07",
+              "close": 145.5
+            },
+            {
+              "date": "2026-10-12",
+              "close": 146.5
+            },
+            {
+              "date": "2026-10-13",
+              "close": 148.0
+            },
+            {
+              "date": "2026-10-14",
+              "close": 148.5
+            },
+            {
+              "date": "2026-10-15",
+              "close": 152.5
+            },
+            {
+              "date": "2026-10-16",
+              "close": 153.0
+            },
+            {
+              "date": "2026-10-19",
+              "close": 154.5
+            },
+            {
+              "date": "2026-10-20",
+              "close": 154.5
+            },
+            {
+              "date": "2026-10-21",
+              "close": 154.0
+            },
+            {
+              "date": "2026-10-22",
+              "close": 158.0
+            },
+            {
+              "date": "2026-10-27",
+              "close": 158.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 156.5
+            },
+            {
+              "date": "2026-10-29",
+              "close": 158.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 160.0
+            },
+            {
+              "date": "2026-11-02",
+              "close": 159.5
+            },
+            {
+              "date": "2026-11-03",
+              "close": 159.0
+            },
+            {
+              "date": "2026-11-04",
+              "close": 161.5
+            },
+            {
+              "date": "2026-11-05",
+              "close": 161.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 163.5
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 161.5,
+            "prior_20_close_low": 145.5,
+            "prior_20_close_mean": 154.0,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "5日波幅 1.6% < 前期 2.5% < 更早 3.9%｜僅價格近似，缺量能確認"
+        },
+        {
+          "code": "1236",
+          "name": "宏亞",
+          "price": 26.7,
+          "change_pct": 0.38,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 25.5
+            },
+            {
+              "date": "2026-10-06",
+              "close": 25.75
+            },
+            {
+              "date": "2026-10-07",
+              "close": 25.8
+            },
+            {
+              "date": "2026-10-12",
+              "close": 25.7
+            },
+            {
+              "date": "2026-10-13",
+              "close": 25.5
+            },
+            {
+              "date": "2026-10-14",
+              "close": 25.6
+            },
+            {
+              "date": "2026-10-15",
+              "close": 25.5
+            },
+            {
+              "date": "2026-10-16",
+              "close": 25.6
+            },
+            {
+              "date": "2026-10-19",
+              "close": 26.4
+            },
+            {
+              "date": "2026-10-20",
+              "close": 25.95
+            },
+            {
+              "date": "2026-10-21",
+              "close": 25.9
+            },
+            {
+              "date": "2026-10-22",
+              "close": 25.95
+            },
+            {
+              "date": "2026-10-27",
+              "close": 26.2
+            },
+            {
+              "date": "2026-10-28",
+              "close": 26.4
+            },
+            {
+              "date": "2026-10-29",
+              "close": 26.45
+            },
+            {
+              "date": "2026-10-30",
+              "close": 26.8
+            },
+            {
+              "date": "2026-11-02",
+              "close": 26.75
+            },
+            {
+              "date": "2026-11-03",
+              "close": 26.45
+            },
+            {
+              "date": "2026-11-04",
+              "close": 26.55
+            },
+            {
+              "date": "2026-11-05",
+              "close": 26.6
+            },
+            {
+              "date": "2026-11-06",
+              "close": 26.7
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 26.8,
+            "prior_20_close_low": 25.5,
+            "prior_20_close_mean": 26.0675,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 61,
+          "reason": "5日波幅 1.3% < 前期 2.1% < 更早 3.5%｜僅價格近似，缺量能確認"
+        },
+        {
+          "code": "8940",
+          "name": "新天地",
+          "price": 15.0,
+          "change_pct": 2.74,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 14.95
+            },
+            {
+              "date": "2026-10-06",
+              "close": 15.05
+            },
+            {
+              "date": "2026-10-07",
+              "close": 15.15
+            },
+            {
+              "date": "2026-10-12",
+              "close": 15.25
+            },
+            {
+              "date": "2026-10-13",
+              "close": 15.15
+            },
+            {
+              "date": "2026-10-14",
+              "close": 15.25
+            },
+            {
+              "date": "2026-10-15",
+              "close": 14.85
+            },
+            {
+              "date": "2026-10-16",
+              "close": 15.05
+            },
+            {
+              "date": "2026-10-19",
+              "close": 15.2
+            },
+            {
+              "date": "2026-10-20",
+              "close": 15.0
+            },
+            {
+              "date": "2026-10-21",
+              "close": 14.85
+            },
+            {
+              "date": "2026-10-22",
+              "close": 14.85
+            },
+            {
+              "date": "2026-10-27",
+              "close": 14.95
+            },
+            {
+              "date": "2026-10-28",
+              "close": 14.75
+            },
+            {
+              "date": "2026-10-29",
+              "close": 14.65
+            },
+            {
+              "date": "2026-10-30",
+              "close": 14.65
+            },
+            {
+              "date": "2026-11-02",
+              "close": 14.8
+            },
+            {
+              "date": "2026-11-03",
+              "close": 14.65
+            },
+            {
+              "date": "2026-11-04",
+              "close": 14.65
+            },
+            {
+              "date": "2026-11-05",
+              "close": 14.6
+            },
+            {
+              "date": "2026-11-06",
+              "close": 15.0
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 15.25,
+            "prior_20_close_low": 14.6,
+            "prior_20_close_mean": 14.915,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 60,
+          "reason": "5日波幅 1.4% < 前期 2.0% < 更早 2.7%｜僅價格近似，缺量能確認"
+        },
+        {
+          "code": "3045",
+          "name": "台灣大",
+          "price": 133.0,
+          "change_pct": 0.38,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 122.5
+            },
+            {
+              "date": "2026-10-06",
+              "close": 123.0
+            },
+            {
+              "date": "2026-10-07",
+              "close": 122.5
+            },
+            {
+              "date": "2026-10-12",
+              "close": 121.5
+            },
+            {
+              "date": "2026-10-13",
+              "close": 125.0
+            },
+            {
+              "date": "2026-10-14",
+              "close": 126.5
+            },
+            {
+              "date": "2026-10-15",
+              "close": 131.0
+            },
+            {
+              "date": "2026-10-16",
+              "close": 130.5
+            },
+            {
+              "date": "2026-10-19",
+              "close": 130.5
+            },
+            {
+              "date": "2026-10-20",
+              "close": 130.5
+            },
+            {
+              "date": "2026-10-21",
+              "close": 130.5
+            },
+            {
+              "date": "2026-10-22",
+              "close": 133.0
+            },
+            {
+              "date": "2026-10-27",
+              "close": 134.5
+            },
+            {
+              "date": "2026-10-28",
+              "close": 132.5
+            },
+            {
+              "date": "2026-10-29",
+              "close": 134.5
+            },
+            {
+              "date": "2026-10-30",
+              "close": 133.5
+            },
+            {
+              "date": "2026-11-02",
+              "close": 133.0
+            },
+            {
+              "date": "2026-11-03",
+              "close": 133.0
+            },
+            {
+              "date": "2026-11-04",
+              "close": 135.0
+            },
+            {
+              "date": "2026-11-05",
+              "close": 132.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 133.0
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 135.0,
+            "prior_20_close_low": 121.5,
+            "prior_20_close_mean": 129.775,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 60,
+          "reason": "5日波幅 1.9% < 前期 3.0% < 更早 3.5%｜僅價格近似，缺量能確認"
+        },
+        {
+          "code": "5880",
+          "name": "合庫金",
+          "price": 27.9,
+          "change_pct": -2.11,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 25.9
+            },
+            {
+              "date": "2026-10-06",
+              "close": 25.95
+            },
+            {
+              "date": "2026-10-07",
+              "close": 26.55
+            },
+            {
+              "date": "2026-10-12",
+              "close": 26.8
+            },
+            {
+              "date": "2026-10-13",
+              "close": 27.2
+            },
+            {
+              "date": "2026-10-14",
+              "close": 27.15
+            },
+            {
+              "date": "2026-10-15",
+              "close": 27.5
+            },
+            {
+              "date": "2026-10-16",
+              "close": 28.15
+            },
+            {
+              "date": "2026-10-19",
+              "close": 28.05
+            },
+            {
+              "date": "2026-10-20",
+              "close": 27.45
+            },
+            {
+              "date": "2026-10-21",
+              "close": 28.0
+            },
+            {
+              "date": "2026-10-22",
+              "close": 28.2
+            },
+            {
+              "date": "2026-10-27",
+              "close": 28.8
+            },
+            {
+              "date": "2026-10-28",
+              "close": 28.45
+            },
+            {
+              "date": "2026-10-29",
+              "close": 28.9
+            },
+            {
+              "date": "2026-10-30",
+              "close": 29.0
+            },
+            {
+              "date": "2026-11-02",
+              "close": 29.05
+            },
+            {
+              "date": "2026-11-03",
+              "close": 28.45
+            },
+            {
+              "date": "2026-11-04",
+              "close": 28.5
+            },
+            {
+              "date": "2026-11-05",
+              "close": 28.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 27.9
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 29.05,
+            "prior_20_close_low": 25.9,
+            "prior_20_close_mean": 27.8275,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 60,
+          "reason": "5日波幅 2.1% < 前期 3.2% < 更早 3.6%｜僅價格近似，缺量能確認"
+        },
+        {
+          "code": "4441",
+          "name": "振大環球",
+          "price": 166.5,
+          "change_pct": 0.0,
+          "sector": "其他",
+          "data_date": "2026-11-06",
+          "basis_sessions": 21,
+          "close_series": [
+            {
+              "date": "2026-10-05",
+              "close": 169.5
+            },
+            {
+              "date": "2026-10-06",
+              "close": 169.5
+            },
+            {
+              "date": "2026-10-07",
+              "close": 171.0
+            },
+            {
+              "date": "2026-10-12",
+              "close": 167.5
+            },
+            {
+              "date": "2026-10-13",
+              "close": 165.0
+            },
+            {
+              "date": "2026-10-14",
+              "close": 168.0
+            },
+            {
+              "date": "2026-10-15",
+              "close": 168.0
+            },
+            {
+              "date": "2026-10-16",
+              "close": 167.5
+            },
+            {
+              "date": "2026-10-19",
+              "close": 163.0
+            },
+            {
+              "date": "2026-10-20",
+              "close": 165.0
+            },
+            {
+              "date": "2026-10-21",
+              "close": 162.5
+            },
+            {
+              "date": "2026-10-22",
+              "close": 165.5
+            },
+            {
+              "date": "2026-10-27",
+              "close": 167.0
+            },
+            {
+              "date": "2026-10-28",
+              "close": 165.5
+            },
+            {
+              "date": "2026-10-29",
+              "close": 164.0
+            },
+            {
+              "date": "2026-10-30",
+              "close": 163.0
+            },
+            {
+              "date": "2026-11-02",
+              "close": 163.0
+            },
+            {
+              "date": "2026-11-03",
+              "close": 162.5
+            },
+            {
+              "date": "2026-11-04",
+              "close": 163.5
+            },
+            {
+              "date": "2026-11-05",
+              "close": 166.5
+            },
+            {
+              "date": "2026-11-06",
+              "close": 166.5
+            }
+          ],
+          "reference_levels": {
+            "prior_20_close_high": 171.0,
+            "prior_20_close_low": 162.5,
+            "prior_20_close_mean": 165.85,
+            "basis": "前20筆官方收盤價；非日內高低點、委託進場價或停損價"
+          },
+          "score": 59,
+          "reason": "5日波幅 2.4% < 前期 2.7% < 更早 3.0%｜僅價格近似，缺量能確認"
+        }
+      ],
       "sector": []
     },
     "names": {
@@ -11767,7 +14417,8 @@
       "bollinger": "布林上軌突破",
       "vcp": "VCP價格收斂觀察",
       "sector": "族群連動"
-    }
+    },
+    "coverage": 1066
   },
   "web_recommendations": [
     {
