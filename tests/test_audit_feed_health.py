@@ -90,6 +90,38 @@ class FeedAuditTests(unittest.TestCase):
         self.assertIn('inconsistent live count between market and partial_live',issues)
         self.assertIn('inconsistent live coverage between market and partial_live',issues)
 
+    def test_live_claim_cannot_override_explicit_readonly_flags(self):
+        for flag in ('stale', 'historical_readonly', 'no_new_picks'):
+            with self.subTest(flag=flag):
+                feed=self.healthy();feed['market'][flag]=True
+                self.assertIn('live_valid conflicts with '+flag,check(feed))
+
+    def test_live_universe_and_coverage_must_agree(self):
+        for total,issue in ((2000,'inconsistent live coverage with close_count'),
+                            (500,'live count exceeds close_count'),
+                            (True,'invalid diagnostic metric: close_count'),
+                            (0,'invalid diagnostic metric: close_count'),
+                            (1500.5,'invalid diagnostic metric: close_count'),
+                            (float('nan'),'invalid diagnostic metric: close_count')):
+            with self.subTest(total=total):
+                feed=self.healthy();feed['market'].update(live_count=600,live_coverage_pct=40,
+                                                        close_count=total,partial_live=None)
+                self.assertIn(issue,check(feed))
+
+    def test_real_sample_rounding_and_input_are_preserved(self):
+        for count,total,pct in ((1036,1978,52.4),(1771,1979,89.5)):
+            with self.subTest(count=count):
+                feed=self.healthy();feed['market'].update(live_count=count,close_count=total,
+                                                        live_coverage_pct=pct,partial_live=None)
+                before=copy.deepcopy(feed)
+                self.assertEqual(check(feed),[])
+                self.assertEqual(feed,before)
+
+    def test_readonly_flags_without_live_claim_are_not_contradictions(self):
+        feed=self.healthy();feed['market'].update(live_valid=False,stale=True,
+            historical_readonly=True,no_new_picks=True)
+        self.assertFalse(any('conflicts with' in issue for issue in check(feed)))
+
 
 if __name__ == "__main__":
     unittest.main()
