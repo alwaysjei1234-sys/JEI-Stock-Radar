@@ -133,7 +133,23 @@ class OffhoursArchiveTests(unittest.TestCase):
         self.assertTrue(MOD.is_safe_public_holdings(market["holdings"]))
         self.assertTrue(all("cost" not in row and "shares" not in row and "pnl" not in row
                             for row in market["holdings"].values()))
-        if market["market"]["mode"]=="資料過期":
+        if market["market"].get("retained_intraday_snapshot") is not None:
+            # An outage retains the original verified intraday research lists;
+            # validate its provenance and read-only gates instead of erasing them.
+            checked=datetime.strptime(market["market"]["status_updated_at"],
+                                      "%Y-%m-%d %H:%M").replace(tzinfo=TAIPEI)
+            retained=MOD.retained_intraday_snapshot(market,checked,{})
+            self.assertIsNotNone(retained)
+            self.assertEqual(market["market"]["mode"],"資料過期")
+            self.assertFalse(market["market"]["live_valid"])
+            self.assertFalse(market["risk"]["actionable"])
+            self.assertTrue(market["market"]["no_new_picks"])
+            self.assertTrue(market["market"]["historical_readonly"])
+            self.assertTrue(market["market"]["stale"])
+            self.assertEqual(retained["updated_at"],market["updated_at"])
+            for group in ("attack","next","monster"):
+                self.assertEqual(retained[group],market[group])
+        elif market["market"]["mode"]=="資料過期":
             # A mixed-source feed is valid only as explicitly non-actionable
             # historical research; it must never mint today's stock picks.
             self.assertTrue(market["market"]["stale"])
