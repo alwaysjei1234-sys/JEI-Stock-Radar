@@ -1078,6 +1078,55 @@ def load_history():
         return h if isinstance(h,list) else []
     except Exception:return []
 
+def retained_intraday_snapshot(previous, now, diagnostics):
+    """Retain a same-day verified sample as stale research, never as fresh quotes."""
+    if (not isinstance(previous,dict) or previous.get("schema")!=4
+            or now.tzinfo is None or not is_safe_public_holdings(previous.get("holdings"))):
+        return None
+    market=previous.get("market");risk=previous.get("risk")
+    if not isinstance(market,dict) or not isinstance(risk,dict):return None
+    local=now.astimezone(TZ)
+    try:
+        stamp=datetime.strptime(previous["updated_at"],"%Y-%m-%d %H:%M").replace(tzinfo=TZ)
+    except (KeyError,TypeError,ValueError):return None
+    day=local.date().isoformat()
+    if (previous.get("data_date")!=day or stamp.date()!=local.date() or stamp>local
+            or not 540<=stamp.hour*60+stamp.minute<810 or risk.get("as_of")!=day
+            or isinstance(risk.get("score"),bool) or num(risk.get("score")) is None
+            or not 0<=num(risk["score"])<=100):return None
+    marker=market.get("retained_intraday_snapshot")
+    if market.get("mode")=="盤中即時" and market.get("live_valid") is True and market.get("stale") is False:
+        marker={"kind":"intraday","data_date":day,"updated_at":previous["updated_at"],
+                "live_count":market.get("live_count"),"close_count":market.get("close_count"),
+                "live_coverage_pct":market.get("live_coverage_pct")}
+    elif not (market.get("mode")=="資料過期" and market.get("stale") is True
+              and market.get("historical_readonly") is True and market.get("no_new_picks") is True
+              and market.get("live_valid") is False and risk.get("actionable") is False
+              and isinstance(marker,dict) and marker.get("kind")=="intraday"
+              and marker.get("data_date")==day and marker.get("updated_at")==previous["updated_at"]):
+        return None
+    values=[marker.get(k) for k in ("live_count","close_count","live_coverage_pct")]
+    if any(isinstance(v,bool) or num(v) is None for v in values):return None
+    count,total,coverage=map(float,values)
+    if not (500<=count<=total and 35<=coverage<=100 and count/total>=.35
+            and abs(coverage-100*count/total)<=.15):return None
+    if not all(isinstance(previous.get(k),list) for k in ("attack","next","sectors")):return None
+    out=json.loads(json.dumps(previous,allow_nan=False))
+    checked=local.strftime("%Y-%m-%d %H:%M")
+    out["market"].update(mode="資料過期",stale=True,historical_readonly=True,
+        live_valid=False,live_count=diagnostics.get("valid_trades",0),
+        live_coverage_pct=diagnostics.get("coverage_pct",0),no_new_picks=True,
+        status_updated_at=checked,last_checked_at=checked,session_status="盤中更新失敗",
+        session_reason="本次成交資料未通過驗證；保留原盤中快照，暫停新判讀",
+        retained_intraday_snapshot=dict(marker),live_diagnostics=dict(diagnostics),partial_live=None,
+        brief=f"盤中更新失敗｜保留 {previous['updated_at']} 已驗證快照；非目前行情，暫停新判讀")
+    out["risk"].update(actionable=False,cash="暫停判讀",label="保留已驗證風險（快照過期）")
+    out["market"]["analysis_scope"]={"mode":"retained_intraday_sample","count":int(count),
+        "universe_count":int(total),"as_of":previous["updated_at"]}
+    out["summary"]=f"{checked} 本次盤中更新未通過；保留 {previous['updated_at']} 已驗證快照，不重算風險或新選股。"
+    return out
+
+
 def validated_previous_close(previous, now, max_age_days=7):
     """Keep a verified official close available for read-only research after the session.
 
@@ -1653,6 +1702,19 @@ def main():
     live_valid=market_open and live_count>=500 and live_coverage>=.35
     stale_source=not source_is_today
     if stale_source and not live_valid:
+        if market_open:
+            diagnostic={"attempted":quote_refresh_window,"market_open":market_open,
+                "quote_refresh_window":quote_refresh_window,"valid_trades":live_count,
+                "coverage_pct":round(live_coverage*100,1),"mis_stats":live_stats,
+                "required_trades":500,"required_coverage_pct":35,
+                "errors":list(dict.fromkeys(str(e)[:160] for e in live_errors))[:8],
+                "reason":"本次盤中成交價覆蓋未達驗證門檻，暫停新判讀"}
+            retained_live=retained_intraday_snapshot(previous_feed,datetime.now(TZ),diagnostic)
+            if retained_live is not None:
+                OUT.write_text(json.dumps(retained_live,ensure_ascii=False,indent=2),encoding="utf-8")
+                print(json.dumps({"status":"retained_intraday_only","data_date":retained_live["data_date"],
+                    "updated_at":retained_live["updated_at"],"no_live_signal":True},ensure_ascii=False))
+                return
         # Exchange endpoints return Friday prices on weekends and holidays. Keep
         # the prior *audited* close for dated research, not today's trading/risk alerts.
         try:
