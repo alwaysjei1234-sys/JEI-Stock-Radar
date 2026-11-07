@@ -2,6 +2,15 @@ name: JEI Multi-AI Evolution Gate
 on:
   workflow_dispatch:
     inputs:
+      trade_csv:
+        description: 'Optional PUBLIC, anonymized trade CSV; no holdings or secrets (max GitHub input size)'
+        required: false
+        type: string
+      round_trip_cost:
+        description: 'Round-trip cost fraction, e.g. 0.005'
+        required: false
+        default: '0.005'
+        type: string
       candidate_evaluation_json:
         description: 'Optional public, non-sensitive multi-model evaluation JSON (no keys/holdings)'
         required: false
@@ -28,6 +37,16 @@ jobs:
           python-version: '3.11'
       - run: python -m unittest discover -s tests -p 'test_jei_evolution_gate.py' -v
       - run: python -m unittest discover -s tests -p 'test_jei_trade_backtest.py' -v
+      - name: Calculate independent OOS trade metrics from submitted rows
+        if: github.event_name == 'workflow_dispatch' && inputs.trade_csv != ''
+        env:
+          TRADE_CSV: ${{ inputs.trade_csv }}
+          ROUND_TRIP_COST: ${{ inputs.round_trip_cost }}
+        run: |
+          mkdir -p evolution-output
+          printf '%s\n' "$TRADE_CSV" > evolution-output/submitted-trades.csv
+          python -m tools.jei_trade_backtest --trades evolution-output/submitted-trades.csv --cost "$ROUND_TRIP_COST" --out evolution-output/oos-metrics.json || true
+          cat evolution-output/oos-metrics.json
       - name: Evaluate supplied candidate without promotion
         if: github.event_name == 'workflow_dispatch' && inputs.candidate_evaluation_json != ''
         env:
