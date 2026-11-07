@@ -14,6 +14,19 @@ class AuditTests(unittest.TestCase):
         self.assertIsNone(report['completion_percent'])
         self.assertEqual(report['source_commit'], 'abc')
 
+    def test_critical_missing_fields_fail(self):
+        result = inspect_feed({'data_date': '2026-11-06', 'risk': {}, 'market': {}})
+        self.assertEqual(result['status'], 'failed')
+        self.assertIn('missing:summary', result['critical_issues'])
+
+    def test_valid_feed_does_not_claim_live_delivery(self):
+        from tools.jei_actions_audit import REQUIRED
+        feed = {key: {} for key in REQUIRED}
+        feed.update({'data_date': '2026-11-06', 'risk': {'level': 'red', 'score': 100}, 'market': {}})
+        result = inspect_feed(feed)
+        self.assertEqual(result['status'], 'ok')
+        self.assertEqual(result['line_delivery'], 'NOT_TESTED')
+
     def test_working_31_labels(self):
         self.assertEqual(len(AREAS), 31)
 
