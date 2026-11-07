@@ -1,0 +1,36 @@
+name: JEI Colab Audit (GitHub Actions)
+on:
+  push:
+    branches:
+      - feature/actions-colab-audit-20261107
+  pull_request:
+    paths:
+      - 'tools/jei_actions_audit.py'
+      - 'tests/test_jei_actions_audit.py'
+      - '.github/workflows/jei-colab-audit.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '20 1,5,9 * * 1-5'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify audit logic
+        run: python -m unittest discover -s tests -p 'test_jei_actions_audit.py' -v
+      - name: Audit checked-out public feed
+        run: python -m tools.jei_actions_audit --feed remote/system.json --out audit-output --commit "$GITHUB_SHA"
+      - name: Store audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jei-colab-audit-${{ github.run_id }}
+          path: audit-output/
+          if-no-files-found: warn
+          retention-days: 30
