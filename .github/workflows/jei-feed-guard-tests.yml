@@ -1,0 +1,23 @@
+name: JEI Feed Guard Unit Tests
+on:
+  push:
+    branches:
+      - feature/colab-free-feed-guard-20261107
+  pull_request:
+    paths:
+      - 'tools/jei_feed_guard.py'
+      - 'tools/jei_risk_alert.py'
+      - 'tests/test_jei_feed_guard.py'
+      - 'tests/test_jei_risk_alert.py'
+      - '.github/workflows/jei-feed-guard-tests.yml'
+  workflow_dispatch:
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run read-only unit tests
+        run: python -m unittest discover -s tests -p 'test_jei_*.py' -v
