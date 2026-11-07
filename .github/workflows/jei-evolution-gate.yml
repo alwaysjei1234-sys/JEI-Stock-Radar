@@ -1,6 +1,8 @@
 name: JEI Multi-AI Evolution Gate
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '40 9 * * 1-5'
   pull_request:
     paths:
       - 'tools/jei_evolution_gate.py'
@@ -18,6 +20,18 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m unittest discover -s tests -p 'test_jei_evolution_gate.py' -v
+      - name: Verify scheduled run does not claim model collaboration
+        run: |
+          mkdir -p evolution-output
+          python - <<'PY'
+          import json, datetime, pathlib
+          result = {'checked_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                    'model_collaboration': 'NOT_CONNECTED',
+                    'backtest': 'NOT_EXECUTED',
+                    'promotion': 'BLOCKED',
+                    'reason': 'No verified independent AI proposals and out-of-sample evidence supplied'}
+          pathlib.Path('evolution-output/status.json').write_text(json.dumps(result, indent=2))
+          PY
       - name: Example fail-closed rejection
         run: |
           mkdir -p evolution-output
