@@ -12,6 +12,8 @@ on:
     paths:
       - 'tools/jei_evolution_gate.py'
       - 'tests/test_jei_evolution_gate.py'
+      - 'tools/jei_trade_backtest.py'
+      - 'tests/test_jei_trade_backtest.py'
       - '.github/workflows/jei-evolution-gate.yml'
 permissions:
   contents: read
@@ -25,6 +27,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m unittest discover -s tests -p 'test_jei_evolution_gate.py' -v
+      - run: python -m unittest discover -s tests -p 'test_jei_trade_backtest.py' -v
       - name: Evaluate supplied candidate without promotion
         if: github.event_name == 'workflow_dispatch' && inputs.candidate_evaluation_json != ''
         env:
