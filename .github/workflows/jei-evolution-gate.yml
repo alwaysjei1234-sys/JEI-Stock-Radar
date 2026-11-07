@@ -1,6 +1,11 @@
 name: JEI Multi-AI Evolution Gate
 on:
   workflow_dispatch:
+    inputs:
+      candidate_evaluation_json:
+        description: 'Optional public, non-sensitive multi-model evaluation JSON (no keys/holdings)'
+        required: false
+        type: string
   schedule:
     - cron: '40 9 * * 1-5'
   pull_request:
@@ -20,6 +25,15 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m unittest discover -s tests -p 'test_jei_evolution_gate.py' -v
+      - name: Evaluate supplied candidate without promotion
+        if: github.event_name == 'workflow_dispatch' && inputs.candidate_evaluation_json != ''
+        env:
+          CANDIDATE_JSON: ${{ inputs.candidate_evaluation_json }}
+        run: |
+          mkdir -p evolution-output
+          printf '%s' "$CANDIDATE_JSON" > evolution-output/candidate.json
+          python -m tools.jei_evolution_gate --input evolution-output/candidate.json --output evolution-output/candidate-evaluation.json || true
+          cat evolution-output/candidate-evaluation.json
       - name: Verify scheduled run does not claim model collaboration
         run: |
           mkdir -p evolution-output
