@@ -26,7 +26,9 @@ def inspect_feed(feed):
         issues.append('invalid_risk_score')
     if market.get('live_valid') is False and market.get('live_count', 0) == 0:
         issues.append('live_not_verified (may be expected outside session)')
-    return {'feed_date': date, 'updated_at': feed.get('updated_at'),
+    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score')]
+    return {'status': 'failed' if critical else 'ok', 'critical_issues': critical,
+            'feed_date': date, 'updated_at': feed.get('updated_at'),
             'risk_level': risk.get('level'), 'risk_score': risk.get('score'),
             'live_valid': market.get('live_valid'), 'live_count': market.get('live_count'),
             'issues': issues, 'line_delivery': 'NOT_TESTED', 'android_device': 'NOT_TESTED'}
@@ -49,7 +51,7 @@ def main():
     try:
         feed = json.loads(pathlib.Path(args.feed).read_text(encoding='utf-8'))
         report = build_report(feed, args.commit)
-        status = 0
+        status = 1 if report['results']['critical_issues'] else 0
     except (OSError, ValueError, TypeError) as exc:
         report = {'error': str(exc), 'completion_percent': None,
                   'line_delivery': 'NOT_TESTED', 'android_device': 'NOT_TESTED'}
