@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "market_priority": [
+    "TW",
+    "US"
+  ],
+  "style": [
+    "swing",
+    "momentum_trend"
+  ],
+  "risk_appetite": "aggressive",
+  "analysis_priority": [
+    "capital_flow",
+    "technical",
+    "institutional_flows",
+    "fundamental",
+    "news"
+  ],
+  "mandatory_guards": [
+    "as_of_timestamp",
+    "source_provenance",
+    "fact_vs_inference",
+    "invalidating_conditions",
+    "risk_controls",
+    "out_of_sample_backtest"
+  ],
+  "auto_trade": false,
+  "auto_promote": false
+}
