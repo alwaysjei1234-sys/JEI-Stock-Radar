@@ -13,7 +13,9 @@ class TechnicalCandidateTests(unittest.TestCase):
 
     def test_future_bar_cannot_affect_prior_signal(self):
         prices = [100 + (i % 7) - 3 for i in range(90)]
-        self.assertEqual(signal(prices), signal(prices + [1000]) if False else signal(prices))
+        first = signal(prices)
+        extended = prices + [1000]
+        self.assertEqual(first, signal(extended[:-1]))
 
     def test_invalid_prices(self):
         with self.assertRaises(ValueError):
