@@ -1,0 +1,17 @@
+name: JEI FinMind Screen Tests
+on:
+  pull_request:
+    paths:
+      - 'tools/jei_finmind_screen.py'
+      - 'tests/test_jei_finmind_screen.py'
+      - '.github/workflows/jei-finmind-screen-tests.yml'
+  workflow_dispatch:
+jobs:
+  screen-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s tests -p 'test_jei_finmind_screen.py' -v
