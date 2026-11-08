@@ -1,0 +1,17 @@
+name: JEI Technical Candidate Tests
+on:
+  pull_request:
+    paths:
+      - 'tools/jei_technical_candidate.py'
+      - 'tests/test_jei_technical_candidate.py'
+      - '.github/workflows/jei-technical-candidate-tests.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s tests -p 'test_jei_technical_candidate.py' -v
