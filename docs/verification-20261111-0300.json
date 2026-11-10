@@ -1,0 +1,1332 @@
+{
+  "checked_at": "2026-11-11T03:07:21.395694+08:00",
+  "starting_main": "4c596699e57ea26ecdf935890efefb8cb0cd2d43",
+  "verified_copy_same_sha": true,
+  "product_code_changed_this_round": false,
+  "market_feed_changed_this_round": false,
+  "completed_work": [
+    "官方收盤1957普通股逐筆核對",
+    "95訊號/284平倉費稅、完整回撤、TWSE配對基準重算",
+    "正式桌面瀏覽器UI跨日防護與四策略表格重讀",
+    "DQN原始現金公式3組成本反例重播並保存腳本"
+  ],
+  "prior_fixes_verified": [
+    {
+      "pr": 63,
+      "commit": "3085c7a23bdee33c74e717dc7f1e6ccd2a095984",
+      "merge": "9bbf2ac9d42b8db59e7103f03cc3a70e263aab81",
+      "result": "594測試後合併；觸發器整段訊息比對造成實際工作skipped，未當發送成功",
+      "run": 42830245541
+    },
+    {
+      "pr": 64,
+      "commit": "754f48dca8a9316f1b829d6af512433af0b2f128",
+      "merge": "ee846fa906c61f407fdffe2aa7d2ca9c9452a953",
+      "result": "保留日期/opt-in/免費配額/去重，修正merge訊息觸發；真實測試accepted",
+      "run": 42830740424
+    },
+    {
+      "pr": 65,
+      "commit": "1fffe00ef581d135827701632f0ca3c483b9c2a1",
+      "merge": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+      "result": "缺日/規則/價格不吻合則停止；同日main原檔復原3天；597測試與3CI通過後合併",
+      "pipeline": 42831039282
+    }
+  ],
+  "paths_explored": {
+    "browser": [
+      "預設Playwright缺chromium_headless_shell-1234；官方下載檔不完整",
+      "系統Chromium啟動socket Operation not permitted，未繞過權限",
+      "已連線雲端瀏覽器成功實際載入正式頁並重讀四策略表格"
+    ],
+    "paper": [
+      "直接更新因11/6、11/9缺口正確拒絕",
+      "原不可變快照路徑無新檔，不能憑空跨日",
+      "同日main第一有效發布+原始價格+規則全部相同，原80/248保留後復原"
+    ],
+    "line": [
+      "原整段訊息判斷令merge工作略過，保留失敗run",
+      "日期限制與免費配額不放寬；修正標題前綴觸發並取得API200，不計手機實收"
+    ]
+  },
+  "market": {
+    "checked_at": "2026-11-11T03:07:21.395694+08:00",
+    "sources": {
+      "TWSE": {
+        "status": "verified",
+        "count": 1089,
+        "mismatches": [],
+        "dates": [
+          "20261110"
+        ]
+      },
+      "TPEx": {
+        "status": "verified",
+        "count": 868,
+        "mismatches": [],
+        "dates": [
+          "2026-11-10"
+        ]
+      },
+      "MIS": {
+        "status": "failed",
+        "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      }
+    }
+  },
+  "public_readback": {
+    "remote/system.json": {
+      "status": 200,
+      "matches_main": true,
+      "sha256": "87a66e00d285d7ee6b93d9872ca866acf01043fdccaf26866651ebe9d2e7cc19",
+      "data_date": "2026-11-10",
+      "last_processed_day": null
+    },
+    "remote/strategy_performance.json": {
+      "status": 200,
+      "matches_main": true,
+      "sha256": "af210958c46966ac67292a700fd18ec0dad161b9e06b619adea4259908f11fdf",
+      "data_date": null,
+      "last_processed_day": "2026-11-10"
+    },
+    "remote/pick_validation.json": {
+      "status": 200,
+      "matches_main": true,
+      "sha256": "3a015232e054b5e829953b61241adf387bed9fb6c76568631f0e0b5e5f979565",
+      "data_date": null,
+      "last_processed_day": null
+    },
+    "remote/update.json": {
+      "status": 200,
+      "matches_main": true,
+      "sha256": "82e17ac6f22e4956445275d241318f5dc2e29acdae33ce3e059190da93fa3624",
+      "data_date": null,
+      "last_processed_day": null
+    }
+  },
+  "source_urls": {
+    "TWSE": "https://www.twse.com.tw/exchangeReport/MI_INDEX?date=20261110&type=ALLBUT0999&response=json",
+    "TPEx": "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes?date=2026%2F11%2F10&id=&response=json",
+    "MIS": "https://mis.twse.com.tw/stock/api/getStockInfo.jsp"
+  },
+  "freshness": {
+    "data_date": "2026-11-10",
+    "quote_updated_at": "2026-11-10 15:57",
+    "status_updated_at": "2026-11-11 00:09",
+    "mode": "最近收盤",
+    "stale": true,
+    "historical_readonly": true,
+    "risk_actionable": false,
+    "ordinary_matched": 1957,
+    "feed_count": 1965,
+    "note": "分析筆數含8個四位ETF；不稱1965普通股、不把11/10資料冒稱11/11"
+  },
+  "tests": {
+    "main_sha": "4c596699e57ea26ecdf935890efefb8cb0cd2d43",
+    "python": 597,
+    "result": "PASS",
+    "elapsed_seconds": 66.021,
+    "pick_archive": "PASS 360",
+    "research_cost_replay": "PASS 3",
+    "product_tests_repeated_reason": "驗證復原資料、當前封存與最新主線相容",
+    "note": "測試中保護頁拒絕輸出屬合成失敗案例，整體unittest結果OK"
+  },
+  "ui": {
+    "browser": "cloud Chromium",
+    "site": "https://jei-stock-radar.vercel.app/",
+    "observed_home": "前次官方收盤2026-11-10，僅可歷史研究；今日買賣分級暫停",
+    "page": "https://jei-stock-radar.vercel.app/remote/cash.html",
+    "interaction": "點擊重新讀取雲端績效",
+    "cloud_closed": {
+      "fixed5": 76,
+      "fixed7": 73,
+      "fixed10": 69,
+      "trailing": 66
+    },
+    "quote_scan": "資料不是今日有效盤中或正式收盤行情，暫停新增",
+    "physical_android_test": false,
+    "mobile_viewport_test": false
+  },
+  "line": {
+    "date": "2026-11-10",
+    "checked_at": "2026-11-10T22:06:29+08:00",
+    "status": "accepted",
+    "http_status": 200,
+    "attempts": 1,
+    "api_accepted": true,
+    "delivery_confirmed": false,
+    "run_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/42830740424",
+    "receipt_artifact": "jei-line-test-42830740424-1;14-day retention",
+    "new_test_sent_this_round": false
+  },
+  "paper": {
+    "last_processed_day": "2026-11-10",
+    "signals": 95,
+    "strategies": {
+      "fixed5": {
+        "signals": 95,
+        "closed": 76,
+        "wins": 18,
+        "win_rate_pct": 23.68421052631579,
+        "gross_average_return_pct": -3.1056253424963898,
+        "mean_net_expectancy_ntd": -3487.307105263158,
+        "metrics": {
+          "closed": 76,
+          "win_rate_ci95_pct": [
+            15.54,
+            34.36
+          ],
+          "mean_net_return_pct": -3.672,
+          "profit_factor": 0.366,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 76,
+              "win_rate_pct": 23.68,
+              "mean_net_return_pct": -3.864
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 76,
+              "win_rate_pct": 23.68,
+              "mean_net_return_pct": -4.056
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1,
+              "slippage_per_side_pct": 0,
+              "closed": 76,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0,
+              "win_rate_pct": 23.68,
+              "mean_net_return_pct": -3.672,
+              "mean_net_pnl_ntd": -3487.31,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1,
+              "slippage_per_side_pct": 0.1,
+              "closed": 76,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0,
+              "win_rate_pct": 23.68,
+              "mean_net_return_pct": -3.864,
+              "mean_net_pnl_ntd": -3680.21,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20,
+              "slippage_per_side_pct": 0,
+              "closed": 76,
+              "affected_trades": 1,
+              "additional_commission_ntd": 3.23,
+              "win_rate_pct": 23.68,
+              "mean_net_return_pct": -3.672,
+              "mean_net_pnl_ntd": -3487.35,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20,
+              "slippage_per_side_pct": 0.1,
+              "closed": 76,
+              "affected_trades": 1,
+              "additional_commission_ntd": 3.23,
+              "win_rate_pct": 23.68,
+              "mean_net_return_pct": -3.864,
+              "mean_net_pnl_ntd": -3680.25,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 27.566,
+        "benchmark_mean_gross_pct": -1.3815290935532152,
+        "benchmark_matched_closed": 76,
+        "range": [
+          "2026-10-14",
+          "2026-11-10"
+        ],
+        "summary": {
+          "closed": 76,
+          "wins": 18,
+          "win_rate_pct": 23.68,
+          "realized_net_ntd": -265035.34,
+          "realized_return_pct_of_initial": -26.504,
+          "open_positions": 8,
+          "cash_ntd": 161.17,
+          "estimated_liquidation_equity_ntd": 736710.1,
+          "official_close_coverage": "8/8",
+          "evidence": {
+            "closed": 76,
+            "win_rate_ci95_pct": [
+              15.54,
+              34.36
+            ],
+            "mean_net_return_pct": -3.672,
+            "profit_factor": 0.366,
+            "profit_factor_note": "measured",
+            "slippage_scenarios": [
+              {
+                "slippage_per_side_pct": 0.1,
+                "closed": 76,
+                "win_rate_pct": 23.68,
+                "mean_net_return_pct": -3.864
+              },
+              {
+                "slippage_per_side_pct": 0.2,
+                "closed": 76,
+                "win_rate_pct": 23.68,
+                "mean_net_return_pct": -4.056
+              }
+            ],
+            "minimum_fee_scenarios": [
+              {
+                "minimum_fee_per_side_ntd": 1,
+                "slippage_per_side_pct": 0,
+                "closed": 76,
+                "affected_trades": 0,
+                "additional_commission_ntd": 0,
+                "win_rate_pct": 23.68,
+                "mean_net_return_pct": -3.672,
+                "mean_net_pnl_ntd": -3487.31,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 1,
+                "slippage_per_side_pct": 0.1,
+                "closed": 76,
+                "affected_trades": 0,
+                "additional_commission_ntd": 0,
+                "win_rate_pct": 23.68,
+                "mean_net_return_pct": -3.864,
+                "mean_net_pnl_ntd": -3680.21,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 20,
+                "slippage_per_side_pct": 0,
+                "closed": 76,
+                "affected_trades": 1,
+                "additional_commission_ntd": 3.23,
+                "win_rate_pct": 23.68,
+                "mean_net_return_pct": -3.672,
+                "mean_net_pnl_ntd": -3487.35,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 20,
+                "slippage_per_side_pct": 0.1,
+                "closed": 76,
+                "affected_trades": 1,
+                "additional_commission_ntd": 3.23,
+                "win_rate_pct": 23.68,
+                "mean_net_return_pct": -3.864,
+                "mean_net_pnl_ntd": -3680.25,
+                "scope": "fixed_closed_trades_only"
+              }
+            ],
+            "qualification": "research_only",
+            "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+          },
+          "max_drawdown_pct": 27.566
+        }
+      },
+      "fixed7": {
+        "signals": 95,
+        "closed": 73,
+        "wins": 14,
+        "win_rate_pct": 19.17808219178082,
+        "gross_average_return_pct": -3.5335305267911417,
+        "mean_net_expectancy_ntd": -3857.4675342465753,
+        "metrics": {
+          "closed": 73,
+          "win_rate_ci95_pct": [
+            11.78,
+            29.66
+          ],
+          "mean_net_return_pct": -4.097,
+          "profit_factor": 0.319,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 73,
+              "win_rate_pct": 19.18,
+              "mean_net_return_pct": -4.289
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 73,
+              "win_rate_pct": 19.18,
+              "mean_net_return_pct": -4.48
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1,
+              "slippage_per_side_pct": 0,
+              "closed": 73,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0,
+              "win_rate_pct": 19.18,
+              "mean_net_return_pct": -4.097,
+              "mean_net_pnl_ntd": -3857.47,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1,
+              "slippage_per_side_pct": 0.1,
+              "closed": 73,
+              "affected_trades": 0,
+              "additional_commission_ntd": 0,
+              "win_rate_pct": 19.18,
+              "mean_net_return_pct": -4.289,
+              "mean_net_pnl_ntd": -4047.68,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20,
+              "slippage_per_side_pct": 0,
+              "closed": 73,
+              "affected_trades": 1,
+              "additional_commission_ntd": 18.77,
+              "win_rate_pct": 19.18,
+              "mean_net_return_pct": -4.1,
+              "mean_net_pnl_ntd": -3857.72,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20,
+              "slippage_per_side_pct": 0.1,
+              "closed": 73,
+              "affected_trades": 1,
+              "additional_commission_ntd": 18.77,
+              "win_rate_pct": 19.18,
+              "mean_net_return_pct": -4.292,
+              "mean_net_pnl_ntd": -4047.94,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 28.076,
+        "benchmark_mean_gross_pct": -1.5943696570539556,
+        "benchmark_matched_closed": 73,
+        "range": [
+          "2026-10-14",
+          "2026-11-10"
+        ],
+        "summary": {
+          "closed": 73,
+          "wins": 14,
+          "win_rate_pct": 19.18,
+          "realized_net_ntd": -281595.13,
+          "realized_return_pct_of_initial": -28.16,
+          "open_positions": 8,
+          "cash_ntd": 0.2,
+          "estimated_liquidation_equity_ntd": 729414.85,
+          "official_close_coverage": "8/8",
+          "evidence": {
+            "closed": 73,
+            "win_rate_ci95_pct": [
+              11.78,
+              29.66
+            ],
+            "mean_net_return_pct": -4.097,
+            "profit_factor": 0.319,
+            "profit_factor_note": "measured",
+            "slippage_scenarios": [
+              {
+                "slippage_per_side_pct": 0.1,
+                "closed": 73,
+                "win_rate_pct": 19.18,
+                "mean_net_return_pct": -4.289
+              },
+              {
+                "slippage_per_side_pct": 0.2,
+                "closed": 73,
+                "win_rate_pct": 19.18,
+                "mean_net_return_pct": -4.48
+              }
+            ],
+            "minimum_fee_scenarios": [
+              {
+                "minimum_fee_per_side_ntd": 1,
+                "slippage_per_side_pct": 0,
+                "closed": 73,
+                "affected_trades": 0,
+                "additional_commission_ntd": 0,
+                "win_rate_pct": 19.18,
+                "mean_net_return_pct": -4.097,
+                "mean_net_pnl_ntd": -3857.47,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 1,
+                "slippage_per_side_pct": 0.1,
+                "closed": 73,
+                "affected_trades": 0,
+                "additional_commission_ntd": 0,
+                "win_rate_pct": 19.18,
+                "mean_net_return_pct": -4.289,
+                "mean_net_pnl_ntd": -4047.68,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 20,
+                "slippage_per_side_pct": 0,
+                "closed": 73,
+                "affected_trades": 1,
+                "additional_commission_ntd": 18.77,
+                "win_rate_pct": 19.18,
+                "mean_net_return_pct": -4.1,
+                "mean_net_pnl_ntd": -3857.72,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 20,
+                "slippage_per_side_pct": 0.1,
+                "closed": 73,
+                "affected_trades": 1,
+                "additional_commission_ntd": 18.77,
+                "win_rate_pct": 19.18,
+                "mean_net_return_pct": -4.292,
+                "mean_net_pnl_ntd": -4047.94,
+                "scope": "fixed_closed_trades_only"
+              }
+            ],
+            "qualification": "research_only",
+            "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+          },
+          "max_drawdown_pct": 28.076
+        }
+      },
+      "fixed10": {
+        "signals": 95,
+        "closed": 69,
+        "wins": 10,
+        "win_rate_pct": 14.492753623188406,
+        "gross_average_return_pct": -3.5918224056374197,
+        "mean_net_expectancy_ntd": -3379.6530434782608,
+        "metrics": {
+          "closed": 69,
+          "win_rate_ci95_pct": [
+            8.07,
+            24.66
+          ],
+          "mean_net_return_pct": -4.155,
+          "profit_factor": 0.367,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 69,
+              "win_rate_pct": 14.49,
+              "mean_net_return_pct": -4.347
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 69,
+              "win_rate_pct": 14.49,
+              "mean_net_return_pct": -4.538
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1,
+              "slippage_per_side_pct": 0,
+              "closed": 69,
+              "affected_trades": 3,
+              "additional_commission_ntd": 5.07,
+              "win_rate_pct": 14.49,
+              "mean_net_return_pct": -4.225,
+              "mean_net_pnl_ntd": -3379.73,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1,
+              "slippage_per_side_pct": 0.1,
+              "closed": 69,
+              "affected_trades": 3,
+              "additional_commission_ntd": 5.07,
+              "win_rate_pct": 14.49,
+              "mean_net_return_pct": -4.417,
+              "mean_net_pnl_ntd": -3553.09,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20,
+              "slippage_per_side_pct": 0,
+              "closed": 69,
+              "affected_trades": 5,
+              "additional_commission_ntd": 162.37,
+              "win_rate_pct": 14.49,
+              "mean_net_return_pct": -5.57,
+              "mean_net_pnl_ntd": -3382.01,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20,
+              "slippage_per_side_pct": 0.1,
+              "closed": 69,
+              "affected_trades": 5,
+              "additional_commission_ntd": 162.37,
+              "win_rate_pct": 14.49,
+              "mean_net_return_pct": -5.759,
+              "mean_net_pnl_ntd": -3555.36,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 24.744,
+        "benchmark_mean_gross_pct": -1.8972017110857622,
+        "benchmark_matched_closed": 69,
+        "range": [
+          "2026-10-14",
+          "2026-11-10"
+        ],
+        "summary": {
+          "closed": 69,
+          "wins": 10,
+          "win_rate_pct": 14.49,
+          "realized_net_ntd": -233196.06,
+          "realized_return_pct_of_initial": -23.32,
+          "open_positions": 8,
+          "cash_ntd": 0.37,
+          "estimated_liquidation_equity_ntd": 779009.58,
+          "official_close_coverage": "8/8",
+          "evidence": {
+            "closed": 69,
+            "win_rate_ci95_pct": [
+              8.07,
+              24.66
+            ],
+            "mean_net_return_pct": -4.155,
+            "profit_factor": 0.367,
+            "profit_factor_note": "measured",
+            "slippage_scenarios": [
+              {
+                "slippage_per_side_pct": 0.1,
+                "closed": 69,
+                "win_rate_pct": 14.49,
+                "mean_net_return_pct": -4.347
+              },
+              {
+                "slippage_per_side_pct": 0.2,
+                "closed": 69,
+                "win_rate_pct": 14.49,
+                "mean_net_return_pct": -4.538
+              }
+            ],
+            "minimum_fee_scenarios": [
+              {
+                "minimum_fee_per_side_ntd": 1,
+                "slippage_per_side_pct": 0,
+                "closed": 69,
+                "affected_trades": 3,
+                "additional_commission_ntd": 5.07,
+                "win_rate_pct": 14.49,
+                "mean_net_return_pct": -4.225,
+                "mean_net_pnl_ntd": -3379.73,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 1,
+                "slippage_per_side_pct": 0.1,
+                "closed": 69,
+                "affected_trades": 3,
+                "additional_commission_ntd": 5.07,
+                "win_rate_pct": 14.49,
+                "mean_net_return_pct": -4.417,
+                "mean_net_pnl_ntd": -3553.09,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 20,
+                "slippage_per_side_pct": 0,
+                "closed": 69,
+                "affected_trades": 5,
+                "additional_commission_ntd": 162.37,
+                "win_rate_pct": 14.49,
+                "mean_net_return_pct": -5.57,
+                "mean_net_pnl_ntd": -3382.01,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 20,
+                "slippage_per_side_pct": 0.1,
+                "closed": 69,
+                "affected_trades": 5,
+                "additional_commission_ntd": 162.37,
+                "win_rate_pct": 14.49,
+                "mean_net_return_pct": -5.759,
+                "mean_net_pnl_ntd": -3555.36,
+                "scope": "fixed_closed_trades_only"
+              }
+            ],
+            "qualification": "research_only",
+            "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+          },
+          "max_drawdown_pct": 24.744
+        }
+      },
+      "trailing": {
+        "signals": 95,
+        "closed": 66,
+        "wins": 10,
+        "win_rate_pct": 15.151515151515152,
+        "gross_average_return_pct": -4.311835595813654,
+        "mean_net_expectancy_ntd": -3821.162878787879,
+        "metrics": {
+          "closed": 66,
+          "win_rate_ci95_pct": [
+            8.44,
+            25.69
+          ],
+          "mean_net_return_pct": -4.871,
+          "profit_factor": 0.242,
+          "profit_factor_note": "measured",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 66,
+              "win_rate_pct": 15.15,
+              "mean_net_return_pct": -5.061
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 66,
+              "win_rate_pct": 15.15,
+              "mean_net_return_pct": -5.251
+            }
+          ],
+          "minimum_fee_scenarios": [
+            {
+              "minimum_fee_per_side_ntd": 1,
+              "slippage_per_side_pct": 0,
+              "closed": 66,
+              "affected_trades": 5,
+              "additional_commission_ntd": 8.53,
+              "win_rate_pct": 15.15,
+              "mean_net_return_pct": -4.993,
+              "mean_net_pnl_ntd": -3821.29,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 1,
+              "slippage_per_side_pct": 0.1,
+              "closed": 66,
+              "affected_trades": 5,
+              "additional_commission_ntd": 8.53,
+              "win_rate_pct": 15.15,
+              "mean_net_return_pct": -5.183,
+              "mean_net_pnl_ntd": -3991.22,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20,
+              "slippage_per_side_pct": 0,
+              "closed": 66,
+              "affected_trades": 6,
+              "additional_commission_ntd": 236.34,
+              "win_rate_pct": 15.15,
+              "mean_net_return_pct": -7.296,
+              "mean_net_pnl_ntd": -3824.74,
+              "scope": "fixed_closed_trades_only"
+            },
+            {
+              "minimum_fee_per_side_ntd": 20,
+              "slippage_per_side_pct": 0.1,
+              "closed": 66,
+              "affected_trades": 6,
+              "additional_commission_ntd": 236.34,
+              "win_rate_pct": 15.15,
+              "mean_net_return_pct": -7.482,
+              "mean_net_pnl_ntd": -3994.67,
+              "scope": "fixed_closed_trades_only"
+            }
+          ],
+          "qualification": "research_only",
+          "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+        },
+        "max_drawdown_pct": 24.55,
+        "benchmark_mean_gross_pct": -2.0559199182847703,
+        "benchmark_matched_closed": 66,
+        "range": [
+          "2026-10-14",
+          "2026-11-10"
+        ],
+        "summary": {
+          "closed": 66,
+          "wins": 10,
+          "win_rate_pct": 15.15,
+          "realized_net_ntd": -252196.75,
+          "realized_return_pct_of_initial": -25.22,
+          "open_positions": 9,
+          "cash_ntd": 341.07,
+          "estimated_liquidation_equity_ntd": 778044.44,
+          "official_close_coverage": "9/9",
+          "evidence": {
+            "closed": 66,
+            "win_rate_ci95_pct": [
+              8.44,
+              25.69
+            ],
+            "mean_net_return_pct": -4.871,
+            "profit_factor": 0.242,
+            "profit_factor_note": "measured",
+            "slippage_scenarios": [
+              {
+                "slippage_per_side_pct": 0.1,
+                "closed": 66,
+                "win_rate_pct": 15.15,
+                "mean_net_return_pct": -5.061
+              },
+              {
+                "slippage_per_side_pct": 0.2,
+                "closed": 66,
+                "win_rate_pct": 15.15,
+                "mean_net_return_pct": -5.251
+              }
+            ],
+            "minimum_fee_scenarios": [
+              {
+                "minimum_fee_per_side_ntd": 1,
+                "slippage_per_side_pct": 0,
+                "closed": 66,
+                "affected_trades": 5,
+                "additional_commission_ntd": 8.53,
+                "win_rate_pct": 15.15,
+                "mean_net_return_pct": -4.993,
+                "mean_net_pnl_ntd": -3821.29,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 1,
+                "slippage_per_side_pct": 0.1,
+                "closed": 66,
+                "affected_trades": 5,
+                "additional_commission_ntd": 8.53,
+                "win_rate_pct": 15.15,
+                "mean_net_return_pct": -5.183,
+                "mean_net_pnl_ntd": -3991.22,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 20,
+                "slippage_per_side_pct": 0,
+                "closed": 66,
+                "affected_trades": 6,
+                "additional_commission_ntd": 236.34,
+                "win_rate_pct": 15.15,
+                "mean_net_return_pct": -7.296,
+                "mean_net_pnl_ntd": -3824.74,
+                "scope": "fixed_closed_trades_only"
+              },
+              {
+                "minimum_fee_per_side_ntd": 20,
+                "slippage_per_side_pct": 0.1,
+                "closed": 66,
+                "affected_trades": 6,
+                "additional_commission_ntd": 236.34,
+                "win_rate_pct": 15.15,
+                "mean_net_return_pct": -7.482,
+                "mean_net_pnl_ntd": -3994.67,
+                "scope": "fixed_closed_trades_only"
+              }
+            ],
+            "qualification": "research_only",
+            "notes": "勝率區間是描述性估計；同日、同股與重疊交易相關，不能當獨立樣本或樣本外驗證。滑價及最低手續費僅重估原平倉、股數與日期，不重跑資金配置、出場或未平倉部位；不代表可成交。最低費1／20元僅為每邊手續費假設，非使用者實際費率，賣出稅另計；不修改原帳本，未重算情境投組回撤。"
+          },
+          "max_drawdown_pct": 24.55
+        }
+      }
+    },
+    "benchmark": {
+      "checked_at": "2026-11-11T03:07:34.105389+08:00",
+      "sources": [
+        {
+          "url": "https://www.twse.com.tw/exchangeReport/FMTQIK?response=json&date=20261001",
+          "sha256": "23c2920bfdb3f891c6d5aed655262b5ea6d9c289752a7b0e2a434ac8d272bab9"
+        },
+        {
+          "url": "https://www.twse.com.tw/exchangeReport/FMTQIK?response=json&date=20261101",
+          "sha256": "d9b73953ad0c7ef709efdbd41047a0ee920148b1abd6442976c1aeed5917e2f2"
+        }
+      ],
+      "closes": {
+        "2026-10-01": 48353.49,
+        "2026-10-02": 48475.74,
+        "2026-10-05": 49712.04,
+        "2026-10-06": 49822.55,
+        "2026-10-07": 49806.37,
+        "2026-10-08": 49313.44,
+        "2026-10-12": 49301.96,
+        "2026-10-13": 48341.31,
+        "2026-10-14": 48625.83,
+        "2026-10-15": 46969.87,
+        "2026-10-16": 47111.26,
+        "2026-10-19": 46822.08,
+        "2026-10-20": 46292.93,
+        "2026-10-21": 46887.77,
+        "2026-10-22": 46041.43,
+        "2026-10-27": 46096.23,
+        "2026-10-28": 47035.58,
+        "2026-10-29": 46368.33,
+        "2026-10-30": 45211.83,
+        "2026-11-02": 44920.14,
+        "2026-11-03": 43307.54,
+        "2026-11-04": 42948.91,
+        "2026-11-05": 41574.72,
+        "2026-11-06": 39701.64,
+        "2026-11-09": 41661.7,
+        "2026-11-10": 42711.92
+      }
+    },
+    "win_rate_definition": "net-positive closed trades / closed trades",
+    "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+    "qualified_oos_closed": 0,
+    "costs": {
+      "buy_fee": 0.001425,
+      "sell_fee": 0.001425,
+      "sell_tax": 0.003
+    }
+  },
+  "paper_recovery_proof": [
+    {
+      "day": "2026-11-06",
+      "source_commit": "28b0c9383a2b1c64b16fec3d55199655a5f9b68b",
+      "source_blob": "85d4f241503c7aaee4aba441cd5032bacd66b9ab",
+      "source_committed_at": "2026-11-06T07:07:28Z",
+      "recovered_at": "2026-11-10T22:08:17+08:00",
+      "signals_added": 5,
+      "qualified_oos": false,
+      "official_prices_sha256": "dda47c90dad450db87fc69b2c69a56f50e874cc743bb9a7e07e997f8f5a1f0cd"
+    },
+    {
+      "day": "2026-11-09",
+      "source_commit": "ed3c9c5822a2a9bd471bafff39e71699e6523406",
+      "source_blob": "8e743397c656c5fd4b20df708d3f5586271a2194",
+      "source_committed_at": "2026-11-09T06:58:05Z",
+      "recovered_at": "2026-11-10T22:08:17+08:00",
+      "signals_added": 5,
+      "qualified_oos": false,
+      "official_prices_sha256": "7559115709891e8397569c45c3f35bd30fb392696895fac4748351ced5c79d31"
+    },
+    {
+      "day": "2026-11-10",
+      "source_commit": "52bd1e7ec185cab35f4840c80ae99546a38efd56",
+      "source_blob": "66f98ba3d4d36d2b144dfa1348c389949496dfe2",
+      "source_committed_at": "2026-11-10T07:35:00Z",
+      "recovered_at": "2026-11-10T22:08:17+08:00",
+      "signals_added": 5,
+      "qualified_oos": false,
+      "official_prices_sha256": "92b181a6332d560b684866f75173688d658931643c6037f8e8b95e99c5e8ffac"
+    }
+  ],
+  "paper_qualifications": {
+    "verdict": "證據不足；非已驗證OOS勝率",
+    "recovered_signals": 15,
+    "old_signals_preserved": 80,
+    "old_closed_preserved": 248,
+    "total_closed_cross_strategy": 284,
+    "overlapping_trades": true,
+    "net_expectancy_positive": false,
+    "qualified_oos_closed_verified": 0,
+    "regimes_verified": 0,
+    "walk_forward_complete": false,
+    "leakage_audit_complete": false,
+    "benchmark_note": "TWSE加權價格指數；按每筆entry/exit日期配對之毛變動，不是可交易ETF淨報酬、不含股息；不可直接宣稱成本口徑完全相同。",
+    "slippage_note": "0.1%/0.2%每邊及最低費1/20元為固定成交清單重估，未重跑資金配置/出場，不能稱可成交或情境投組回撤。"
+  },
+  "pick_horizons": {
+    "3": {
+      "signals": 360,
+      "statuses": {
+        "complete": 303,
+        "corporate_action_unadjusted": 1,
+        "pending": 56
+      },
+      "positive_observations": 76,
+      "mean_net_observation_pct": -4.766838283828383
+    },
+    "7": {
+      "signals": 360,
+      "statuses": {
+        "complete": 224,
+        "corporate_action_unadjusted": 1,
+        "pending": 135
+      },
+      "positive_observations": 29,
+      "mean_net_observation_pct": -10.903281250000001
+    },
+    "15": {
+      "signals": 360,
+      "statuses": {
+        "complete": 25,
+        "pending": 335
+      },
+      "positive_observations": 1,
+      "mean_net_observation_pct": -18.45796
+    },
+    "30": {
+      "signals": 360,
+      "statuses": {
+        "pending": 360
+      },
+      "positive_observations": 0,
+      "mean_net_observation_pct": null
+    },
+    "60": {
+      "signals": 360,
+      "statuses": {
+        "pending": 360
+      },
+      "positive_observations": 0,
+      "mean_net_observation_pct": null
+    }
+  },
+  "pick_note": "360分類觀察/284不重複日期代號/76跨分類重複；收盤訊號觀察不是已平倉模擬交易；缺除權調整不列勝負。",
+  "gate_80_win_rate": {
+    "met": false,
+    "qualified_oos_closed": 0,
+    "required": 100,
+    "regimes": 0,
+    "required_regimes": 3,
+    "reason": "未達樣本/市場狀態要求，四策略費稅後期望為負；不發達標通知"
+  },
+  "research": {
+    "url": "https://github.com/sachink2010/AutomatedStockTrading-DeepQ-Learning",
+    "commit": "a95bb6231b71723dc13b0501fc072b4bcfcda773",
+    "license": "MIT",
+    "last_push": "2021-08-31T15:34:07Z",
+    "archived": false,
+    "source_hashes": {
+      "agent/agent.py": {
+        "sha256": "ce49d629482797507554327e20f149172f449cfc4f159356b8f756c3e6bf2a65",
+        "bytes": 2322
+      },
+      "Trading.ipynb": {
+        "sha256": "34874ca568b56b69b4513ec64f047baecf09b04a9e9de3bfdbc1b641a5799940",
+        "bytes": 304371
+      },
+      "LICENSE": {
+        "sha256": "4f75e96484ba05208abb277ea52381c16385c94b350a5ec7b57ea3836fb4661d",
+        "bytes": 1068
+      }
+    },
+    "reviewed": [
+      "Trading.ipynb 訓練/測試切片、買賣現金與reward分支",
+      "agent/agent.py Keras與experience replay",
+      "LICENSE"
+    ],
+    "observed": "買賣現金以價格直接增減，未扣手續費/證交稅/滑價；舊Keras API與美股兩資產設定不直接符合台股現行資料",
+    "replay": {
+      "scope": "cash-expression-only; no model training or performance claim",
+      "source_sha256": "f74d020c4e4baff4bc7ba25fa98a8f8f55e20d61815d9eb373b5602f5f96ebd1",
+      "cases": [
+        {
+          "entry": 100,
+          "exit": 95,
+          "quantity": 1000,
+          "original_cash_pnl": -5000,
+          "jei_fee_tax_net_pnl": -5562.875,
+          "omitted_cost": 562.875
+        },
+        {
+          "entry": 100,
+          "exit": 100,
+          "quantity": 1000,
+          "original_cash_pnl": 0,
+          "jei_fee_tax_net_pnl": -585,
+          "omitted_cost": 585
+        },
+        {
+          "entry": 100,
+          "exit": 105,
+          "quantity": 1000,
+          "original_cash_pnl": 5000,
+          "jei_fee_tax_net_pnl": 4392.875,
+          "omitted_cost": 607.125
+        }
+      ],
+      "slippage_included": false,
+      "minimum_fee_included": false
+    },
+    "decision": "保留為隔離研究參考；不把原reward/weights直接接入正式推薦，先完成台股成本、時間序列隔離與基準adapter",
+    "model_trained": false,
+    "model_installed": false,
+    "improved_win_rate_claim": false,
+    "reproduce": "由固定SHA Trading.ipynb取code cells，依原順序以換行join；執行 docs/research/dqn-cash-cost-20261111.py --training-source <flattened.py>，需吻合source SHA256"
+  },
+  "deployment": {
+    "production_sha": "76d4d59c87e1389950b501c9f913bd6401c562bd",
+    "state": "READY",
+    "id": "dpl_B4h23veZcFsVPFec2m5QCVeqDajD",
+    "latest_main_sha": "4c596699e57ea26ecdf935890efefb8cb0cd2d43",
+    "latest_main_deployment": "CANCELED (OHLCV-only update)",
+    "content_verified": "system/strategy_performance/pick_validation/update 4份JSON與受驗main逐位元相同",
+    "manual_redeploy": false
+  },
+  "acceptance": {
+    "denominator": 31,
+    "weight_each": 1,
+    "scoring": "only true PASS=1; FAIL/BLOCKED=0",
+    "pass": 2,
+    "fail": 3,
+    "blocked": 26,
+    "numerator": 2,
+    "required_pass_count": 25,
+    "threshold_met": false,
+    "rows": [
+      {
+        "id": 1,
+        "requirement": "手機瀏覽器逾時處理",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "手機與Android實機逾時流程尚無驗收"
+      },
+      {
+        "id": 2,
+        "requirement": "休市與假日判斷",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "完整雙市場及臨時休市日曆仍缺端到端證據"
+      },
+      {
+        "id": 3,
+        "requirement": "開盤後自動恢復更新",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺本輪開盤自動恢復證據"
+      },
+      {
+        "id": 4,
+        "requirement": "盤中每5分鐘更新及新鮮度",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "今日晨報排程延至16:34執行，eligible=false；未證明5分鐘更新"
+      },
+      {
+        "id": 5,
+        "requirement": "TWSE／TPEx／MIS交叉驗證",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/11 03:07重取11/10 TWSE1089+TPEx868普通股全吻合；MIS503，未完成盤中三源驗證。"
+      },
+      {
+        "id": 6,
+        "requirement": "缺漏、過期、異常資料保護",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "590項Python與資料保護回歸通過；完整實機異常流程尚未驗收"
+      },
+      {
+        "id": 7,
+        "requirement": "每日選股封存與歷史紀錄",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "同日main最早有效發布復原56筆；360筆選股封存完整性及正式站逐位元讀回通過"
+      },
+      {
+        "id": 8,
+        "requirement": "模擬績效及交易日計算",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "#65依原始同日main逐日復原；舊80訊號/248平倉完整保留；正式597測試、雲端284平倉與四策略表格實際讀取通過。OOS另列#19，不視為有效策略證明。"
+      },
+      {
+        "id": 9,
+        "requirement": "LINE盤前、盤中、盤後推播",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/10 22:06真實測試HTTP200 accepted（run42830740424），delivery_confirmed=false；手機實收與準時早晚報仍無證據。"
+      },
+      {
+        "id": 10,
+        "requirement": "GitHub、Vercel、Android串接",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "597測試、正式4份JSON逐位元相同；Android APK build success，尚未安裝/啟動/同步實機驗收。"
+      },
+      {
+        "id": 11,
+        "requirement": "持股成本、股數與分類",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "為保護隱私未讀私人部位；匯入持久化仍待裝置驗證"
+      },
+      {
+        "id": 12,
+        "requirement": "持股權重與集中度",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺私人裝置集中度計算端到端驗收"
+      },
+      {
+        "id": 13,
+        "requirement": "營收、毛利與獲利品質",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺逐欄公告日期與財報來源核對"
+      },
+      {
+        "id": 14,
+        "requirement": "EPS與自由現金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "EPS與自由現金流完整來源驗收不足"
+      },
+      {
+        "id": 15,
+        "requirement": "存貨、應收帳款異常",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "既有單元測試不等於全公司財報監測已實測"
+      },
+      {
+        "id": 16,
+        "requirement": "同業、產業與估值",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同業估值自動比較未驗收"
+      },
+      {
+        "id": 17,
+        "requirement": "法人與大戶資金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪未完成法人與大戶資金來源核驗"
+      },
+      {
+        "id": 18,
+        "requirement": "強勢、震盪、轉弱情境",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "情境單元測試存在；實際資料端到端未驗"
+      },
+      {
+        "id": 19,
+        "requirement": "模擬勝率、盈虧與回撤",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "95訊號/284跨策略重疊平倉可重算；淨平均報酬全負，合格OOS0/100及市場狀態不足，80%勝率門檻未達。"
+      },
+      {
+        "id": 20,
+        "requirement": "每日續抱／減碼理由",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "公開信號存在；八模組與私人端決策未實機驗證"
+      },
+      {
+        "id": 21,
+        "requirement": "主流資金與族群輪動",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "主流資金與族群輪動缺完整端到端核驗"
+      },
+      {
+        "id": 22,
+        "requirement": "突破、妖股與潛力妖股",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "未放寬選股；未有完整前瞻有效性證據"
+      },
+      {
+        "id": 23,
+        "requirement": "3–5個獨立來源財經新聞",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "來源去重及逐條新聞核實未完成"
+      },
+      {
+        "id": 24,
+        "requirement": "券商報告、目標價與催化劑自動取得",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "免費券商目標價及催化劑自動取得未驗收"
+      },
+      {
+        "id": 25,
+        "requirement": "AI多模型會診及失敗復原",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "正式健康GET及錯誤token401通過；未實際呼叫多模型"
+      },
+      {
+        "id": 26,
+        "requirement": "個股決策儀表板與手機首頁",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "替代雲端Chromium實際打開首頁與績效頁、重讀表格成功；本地Playwright缺執行檔/系統socket拒絕，Android與手機尺寸實機仍未驗。"
+      },
+      {
+        "id": 27,
+        "requirement": "大盤修正與逃命警示",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "真實急跌偵測至手機通知尚未端到端驗證"
+      },
+      {
+        "id": 28,
+        "requirement": "現金與當沖分開模擬",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "現股及當沖分開實際驗證未完成"
+      },
+      {
+        "id": 29,
+        "requirement": "3／7／15／30／60交易日績效及策略調整",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "3/7/15日觀察已更新；30/60日樣本未成熟，非OOS成交績效"
+      },
+      {
+        "id": 30,
+        "requirement": "自動測試、部署與缺陷追蹤",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪對4c59669主線597 Python通過、360選股封存檢查通過；prod READY 76d4d59與4份JSON相同；最新OHLCV提交部署被略過，未強制重部署。"
+      },
+      {
+        "id": 31,
+        "requirement": "推薦顯示八大指標、AI與全球市場影響",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "八指標、多模型與全球影響整合未完整驗收"
+      }
+    ],
+    "note": "整項端到端證據可計分項數；不以單元測試數、程式存在或部分項目0.5分冒稱完成率"
+  },
+  "blockers": [
+    "LINE手機實收確認與準時常態推送",
+    "Android實機啟動/離線/同步/背景通知",
+    "MIS503及盤中三源新鮮度完整驗證",
+    "多AI實際會診與私人端授權驗收",
+    "100筆合格OOS及3市場狀態、walk-forward、成本後正期望",
+    "31項未達25真PASS；不開發美股分散台股收尾"
+  ],
+  "user_data": {
+    "private_positions_read": false,
+    "private_positions_published": false,
+    "attachment_re_read": false,
+    "note": "已知11/7診斷摘要明載無LINE delivery/Android device test，不當成新實測；DQN附件未重新解讀，不冒稱已整合。",
+    "colab": "未直接執行；使用CI及本機測試，不宣稱Colab訓練"
+  },
+  "schedule_evidence": {
+    "new_github_runs": [
+      42851724200,
+      42864689309,
+      42878222441
+    ],
+    "stable_5minute_verified": false,
+    "next_actual_start_unverified": true
+  }
+}
