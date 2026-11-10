@@ -54,7 +54,7 @@ async function run(){
   assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   policyChecks.close.policy_code='SECRET';
   await p.locator('#reload').click();
-  await p.waitForFunction(()=>!document.querySelector('#line-status').textContent.includes('排程檢查'));
+  await p.waitForFunction(()=>{const text=document.querySelector('#line-status').textContent;return text.includes('免費額度安全檢查未通過')&&!text.includes('排程檢查')});
   assert.ok(await p.locator('#line-evidence').isHidden());
   recordStatus=503;await p.locator('#reload').click();
   await p.waitForFunction(()=>document.querySelector('#line-status').textContent.includes('尚無可核對'));
