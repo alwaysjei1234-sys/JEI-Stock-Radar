@@ -11,6 +11,7 @@ TAIPEI = ZoneInfo('Asia/Taipei')
 RUN_BASE = 'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/'
 STATUSES = {'accepted', 'already_accepted', 'blocked', 'quota_blocked', 'failed'}
 EDITIONS = {'morning', 'close', 'morning_unavailable', 'close_unavailable'}
+POLICY_CODES = {'non_weekday', 'morning_window_expired', 'dispatch_window_not_open'}
 
 
 def public_record(receipt, run_id, now):
@@ -44,6 +45,31 @@ def public_record(receipt, run_id, now):
     # Intentionally exclude request_id, recipient, body, reason, exception text,
     # environment and credentials, including arbitrary fields in older records.
     return result
+
+
+def public_policy_record(receipt, run_id, now):
+    if (not isinstance(receipt,dict) or receipt.get('record_kind') != 'policy_check'
+            or receipt.get('status') != 'policy_skipped' or receipt.get('policy_code') not in POLICY_CODES
+            or receipt.get('edition') not in {'morning','close'}):
+        raise ValueError('Invalid schedule policy evidence')
+    row=public_record({key:receipt.get(key) for key in ('date','edition','checked_at')}
+                      | {'status':'blocked'},run_id,now)
+    row.update(record_kind='policy_check',status='policy_skipped',policy_code=receipt['policy_code'])
+    return row
+
+
+def clean_policy_checks(document, now):
+    cleaned={}
+    checks=document.get('policy_checks') if isinstance(document,dict) else None
+    for slot in ('morning','close'):
+        row=checks.get(slot) if isinstance(checks,dict) else None
+        if not isinstance(row,dict):continue
+        url=row.get('evidence_url')
+        if not isinstance(url,str) or not url.startswith(RUN_BASE):continue
+        try:clean=public_policy_record(row,url[len(RUN_BASE):],now)
+        except (ValueError,TypeError):continue
+        if clean['edition']==slot:cleaned[slot]=clean
+    return cleaned
 
 
 def merge_status(document, receipt, run_id, now=None):
@@ -95,8 +121,36 @@ def merge_status(document, receipt, run_id, now=None):
                     and accepted['checked_at'] <= row['checked_at']]
         if matching:
             row['accepted_attempt'] = dict(min(matching, key=lambda item: item['checked_at']))
-    return {'schema': 1, 'updated_at': max(x['checked_at'] for x in records.values()),
-            'editions': records}
+    checks=clean_policy_checks(document,now)
+    result={'schema':1,'updated_at':max(x['checked_at'] for x in [*records.values(),*checks.values()]),
+            'editions':records}
+    if checks:result['policy_checks']=checks
+    return result
+
+
+def merge_policy_status(document, receipt, run_id, now=None):
+    now=now or datetime.now(TAIPEI)
+    incoming=public_policy_record(receipt,run_id,now)
+    result={'schema':1,'editions':{},'policy_checks':clean_policy_checks(document,now)}
+    # Reuse the acceptance sanitizer, including same-day accepted_attempt
+    # preservation. A policy decision must never replace an API attempt.
+    prior=document.get('editions') if isinstance(document,dict) else None
+    for slot in ('morning','close'):
+        row=prior.get(slot) if isinstance(prior,dict) else None
+        if not isinstance(row,dict):continue
+        if str(row.get('edition','')).split('_',1)[0]!=slot:continue
+        url=row.get('evidence_url')
+        if not isinstance(url,str) or not url.startswith(RUN_BASE):continue
+        try:result=merge_status(document,row,url[len(RUN_BASE):],now)
+        except (ValueError,TypeError):continue
+        break
+    checks=result.setdefault('policy_checks',{})
+    previous=checks.get(incoming['edition'])
+    repeated=previous is not None and previous['date']==incoming['date'] and previous['policy_code']==incoming['policy_code']
+    if previous is None or (not repeated and incoming['checked_at']>=previous['checked_at']):
+        checks[incoming['edition']]=incoming
+    result['updated_at']=max(x['checked_at'] for x in [*result['editions'].values(),*checks.values()])
+    return result
 
 
 def main():
@@ -109,7 +163,8 @@ def main():
     try:
         prior = json.loads(output.read_text(encoding='utf-8')) if output.exists() else {}
         receipt = json.loads(Path(args.receipt).read_text(encoding='utf-8'))
-        result = merge_status(prior, receipt, args.run_id)
+        merge=merge_policy_status if receipt.get('record_kind')=='policy_check' else merge_status
+        result = merge(prior, receipt, args.run_id)
     except (OSError, ValueError, TypeError, AttributeError):
         raise SystemExit('LINE status evidence unavailable or invalid; nothing published') from None
     output.parent.mkdir(parents=True, exist_ok=True)
