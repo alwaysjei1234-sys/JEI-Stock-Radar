@@ -106,6 +106,11 @@ def recover_pending(state, snapshot_dir=SNAPSHOT_DIR, close_dir=CLOSE_DIR):
 def main():
     state = json.loads(STATE_PATH.read_text(encoding="utf-8"))
     count = recover_pending(state)
+    # A scheduler outage may leave no dated snapshots at all. Only actual
+    # same-day main publications with identical rules/prices can fill that gap.
+    from scripts.recover_mainline_paper import recover_checkout
+    state, proof = recover_checkout(state)
+    count += len(proof)
     if count:
         STATE_PATH.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"Recovered {count} consecutive archived paper day(s); last={state['last_processed_day']}")
