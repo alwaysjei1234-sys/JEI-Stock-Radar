@@ -1,5 +1,6 @@
 import json
 import unittest
+from pathlib import Path
 from unittest.mock import Mock,patch
 from urllib.error import HTTPError,URLError
 from scripts import diagnose_line_recipient as d
@@ -13,6 +14,16 @@ class LineRecipientDiagnosticTests(unittest.TestCase):
         r=Mock();r.status=status;r.read.return_value=body
         r.__enter__=Mock(return_value=r);r.__exit__=Mock(return_value=False)
         return r
+
+    def test_workflow_is_repeatable_read_only_and_does_not_send_messages(self):
+        workflow=(Path(__file__).resolve().parents[1]/".github/workflows/line-recipient-diagnostic.yml").read_text()
+        self.assertIn("  workflow_dispatch:",workflow)
+        self.assertIn("  contents: read",workflow)
+        self.assertIn("python scripts/diagnose_line_recipient.py",workflow)
+        self.assertNotIn("Diagnostic expired",workflow)
+        self.assertNotIn("head_commit.message",workflow)
+        self.assertNotIn("send_line",workflow)
+        self.assertNotIn("contents: write",workflow)
 
     def test_accessible_is_read_only_and_never_returns_profile_information(self):
         opener=Mock();opener.open.return_value=self.response(json.dumps({'userId':self.uid,'displayName':'PRIVATE_NAME','pictureUrl':'PRIVATE_URL'}).encode())
