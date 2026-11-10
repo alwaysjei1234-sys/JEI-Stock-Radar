@@ -85,6 +85,11 @@ public class RiskWorker extends Worker {
         JSONObject market = root.optJSONObject("market");
         if (market == null || market.optBoolean("stale", true) || !market.optBoolean("live_valid", false)
                 || !"盤中即時".equals(market.optString("mode", ""))) return false;
+        // Respect the same explicit suspension switches as web/LINE before
+        // checking either public market risk or private holding notifications.
+        JSONObject risk = root.optJSONObject("risk");
+        if (risk == null || Boolean.FALSE.equals(risk.opt("actionable"))
+                || Boolean.TRUE.equals(market.opt("no_new_picks"))) return false;
         // Match the web and LINE coverage gate; sparse snapshots must not trigger background alerts.
         Object liveCount = market.opt("live_count");
         if (!(liveCount instanceof Number) || ((Number)liveCount).doubleValue() < 500) return false;
