@@ -183,7 +183,12 @@ async function run(){
   const hasActionableRows=await page.evaluate(()=>
     (isTrustedFeed()||isRecentCloseObservation())&&Array.isArray(system.attack)&&system.attack.length>0);
   if(hasActionableRows){
-    assert.match(attackText,/IC設計熱度|記憶體\/儲存熱度|族群未分類（中性計分）|族群資料未涵蓋/);
+    const expectedHeat=await page.evaluate(()=>system.attack
+      .filter(row=>typeof row.sector==='string'&&row.sector.trim()&&Number.isFinite(row.sector_score))
+      .map(row=>row.sector+'熱度 '+row.sector_score));
+    assert.ok(expectedHeat.some(label=>attackText.includes(label))||
+      /族群未分類（中性計分）|族群資料未涵蓋/.test(attackText),
+      'rendered heat must match the current input sector and measured score');
   }else{
     assert.match(attackText,/未驗證|暫停|沒有符合/,'unverified market must not mint current attack picks');
   }

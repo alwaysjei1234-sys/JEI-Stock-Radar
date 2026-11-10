@@ -23,8 +23,8 @@ async function run(){
   const errors=[];p.on('pageerror',e=>errors.push(e.message));
   await p.clock.setFixedTime(new Date('2026-11-05T01:10:00+08:00'));
   const record={date:'2026-11-04',edition:'close',checked_at:'2026-11-04T19:15:51+08:00',status:'accepted',evidence_url:'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/123'};
-  let recordStatus=200;
-  await p.route('**/line_status.json*',route=>route.fulfill({status:recordStatus,contentType:'application/json',body:JSON.stringify({schema:1,editions:{close:record}})}));
+  let recordStatus=200,policyChecks={};
+  await p.route('**/line_status.json*',route=>route.fulfill({status:recordStatus,contentType:'application/json',body:JSON.stringify({schema:1,editions:{close:record},policy_checks:policyChecks})}));
   await p.route('**/brief.json*',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({schema:1,close:{date:'2026-11-04',status:'ready',blocks:[{title:'測試摘要',items:['公開行情測試資料']}]}})}));
   await p.goto('http://127.0.0.1:'+server.address().port+'/remote/brief.html',{waitUntil:'networkidle'});
   await p.waitForFunction(()=>document.querySelector('#line-status').textContent.includes('尚無可核對'));
@@ -45,6 +45,17 @@ async function run(){
   assert.match(await p.locator('#line-status').innerText(),/免費額度安全檢查未通過.*先前已獲 API 接受.*手機實收尚未確認/);
   assert.ok(!(await p.locator('#line-status').innerText()).includes('SECRET'));
   assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  policyChecks.close={record_kind:'policy_check',date:'2026-11-05',edition:'close',checked_at:'2026-11-05T01:09:30+08:00',status:'policy_skipped',policy_code:'dispatch_window_not_open',evidence_url:'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/456',reason:'SECRET'};
+  await p.locator('#reload').click();
+  await p.waitForFunction(()=>document.querySelector('#line-status').textContent.includes('本次未發送'));
+  assert.match(await p.locator('#line-status').innerText(),/免費額度安全檢查未通過.*先前已獲 API 接受.*本日發送時段未開始.*不是 API 發送嘗試/);
+  assert.equal(await p.locator('#line-evidence').getAttribute('href'),policyChecks.close.evidence_url);
+  assert.ok(!(await p.locator('#line-status').innerText()).includes('SECRET'));
+  assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  policyChecks.close.policy_code='SECRET';
+  await p.locator('#reload').click();
+  await p.waitForFunction(()=>!document.querySelector('#line-status').textContent.includes('排程檢查'));
+  assert.ok(await p.locator('#line-evidence').isHidden());
   recordStatus=503;await p.locator('#reload').click();
   await p.waitForFunction(()=>document.querySelector('#line-status').textContent.includes('尚無可核對'));
   assert.ok(await p.locator('#content section').count()>0,'diagnostic failure must not hide the valid report');
