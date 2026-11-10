@@ -1,13 +1,56 @@
 import copy
+import json
+import os
+from pathlib import Path
+import subprocess
+import tempfile
 import unittest
+from unittest.mock import patch
 from datetime import datetime
 
 from scripts.recover_pick_history import recover
+from scripts import recover_pick_history as recovery
 from scripts.update_pick_validation import TZ, freeze_picks
 from test_pick_validation import archive, feed, DATES
 
 
 class RecoveryTests(unittest.TestCase):
+    def test_real_git_history_recovers_earliest_publication_and_is_idempotent(self):
+        prior, prices, sources, now = self.fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'remote').mkdir()
+            def git(*args, stamp=None):
+                env = dict(os.environ)
+                if stamp:
+                    env.update(GIT_AUTHOR_DATE=stamp, GIT_COMMITTER_DATE=stamp)
+                return subprocess.check_output(['git', *args], cwd=root, env=env,
+                                               stderr=subprocess.DEVNULL).decode().strip()
+            git('init', '-b', 'main')
+            git('config', 'user.email', 'test@example.invalid')
+            git('config', 'user.name', 'Recovery Test')
+            first = None
+            for source in sources:
+                path = root / 'remote/system.json'
+                path.write_text(json.dumps(source['feed']))
+                git('add', 'remote/system.json')
+                git('commit', '-m', 'contemporaneous close', stamp=source['committed_at'])
+                if first is None:
+                    first = git('rev-parse', 'HEAD')
+                    revised = copy.deepcopy(source['feed'])
+                    revised['attack'][0]['score'] = 99
+                    path.write_text(json.dumps(revised))
+                    git('add', 'remote/system.json')
+                    git('commit', '-m', 'later revision', stamp=source['committed_at'])
+            with patch.object(recovery, 'ROOT', root):
+                snapshots = list(recovery.git_snapshots('HEAD', DATES[0]))
+            self.assertEqual(len(snapshots), 3)
+            state, proof = recover(prior, prices, snapshots, now)
+            self.assertEqual(proof[0]['source_commit'], first)
+            self.assertEqual(state['picks'][10]['score'], 95)
+            self.assertEqual(state['picks'][:10], prior['picks'])
+            self.assertEqual(recover(state, prices, snapshots, now), (state, []))
+
     def fixture(self):
         a = archive(3)
         prior = {"schema": 1, "picks": freeze_picks(feed(), a["days"][DATES[0]], DATES[0])}
