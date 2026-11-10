@@ -66,10 +66,12 @@ jobs:
           python -m unittest discover -s tests -p 'test_brief_dispatch_policy.py' -v
           python -m unittest discover -s tests -p 'test_line_payload_coverage.py' -v
           python -m unittest discover -s tests -p 'test_line_status.py' -v
+          python -m unittest discover -s tests -p 'test_line_policy_receipt.py' -v
           node tests/line_status.test.cjs
       - name: Select edition and LINE policy
         id: edition
         env:
+          LINE_POLICY_RECEIPT_PATH: ${{ runner.temp }}/jei-line-result.json
           EVENT: ${{ github.event_name }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           SCHEDULE: ${{ github.event.schedule }}
@@ -123,7 +125,7 @@ jobs:
           JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
         run: python scripts/send_line_brief.py --edition "${{ steps.edition.outputs.name }}" --outbox remote/line_outbox.json --result-path "${{ runner.temp }}/jei-line-result.json"
       - name: Preserve LINE API acceptance result
-        if: always() && steps.edition.outputs.send == 'true'
+        if: always() && (steps.edition.outputs.send == 'true' || steps.edition.outputs.policy_recorded == 'true')
         uses: actions/upload-artifact@v4
         with:
           name: jei-line-result-${{ github.run_id }}-${{ github.run_attempt }}
@@ -131,7 +133,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
       - name: Publish public LINE decision without recipient or credentials
-        if: always() && steps.edition.outputs.send == 'true'
+        if: always() && (steps.edition.outputs.send == 'true' || steps.edition.outputs.policy_recorded == 'true')
         env:
           LINE_RECEIPT_PATH: ${{ runner.temp }}/jei-line-result.json
           LINE_RUN_ID: ${{ github.run_id }}

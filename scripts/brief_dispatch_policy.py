@@ -1,5 +1,7 @@
 """Keep routine builds silent; allow an expiring, explicitly named close verification."""
 import os
+import json
+from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -36,12 +38,35 @@ def select_policy(event,schedule,selected,manual_send,head_message,now):
     return selected,event=='workflow_dispatch' and manual_send=='true'
 
 
+def skipped_receipt(event, schedule, now):
+    """Only actual send schedules get diagnostics; routine builds stay silent."""
+    if event != 'schedule' or schedule not in {*MORNING, *CLOSE}:
+        return None
+    edition, send = select_policy(event, schedule, 'close', 'false', '', now)
+    if send:
+        return None
+    local = now.astimezone(TAIPEI)
+    code = ('non_weekday' if local.weekday() >= 5 else
+            'morning_window_expired' if schedule in MORNING and local.hour*60+local.minute >= 810
+            else 'dispatch_window_not_open')
+    return {'record_kind':'policy_check','date':local.date().isoformat(),
+            'edition':edition,'checked_at':local.isoformat(timespec='seconds'),
+            'status':'policy_skipped','policy_code':code}
+
+
 def main():
+    now=datetime.now(TAIPEI)
     edition,send=select_policy(os.getenv('EVENT',''),os.getenv('SCHEDULE',''),
         os.getenv('SELECTED',''),os.getenv('MANUAL_SEND','false'),
-        os.getenv('COMMIT_MESSAGE',''),datetime.now(TAIPEI))
+        os.getenv('COMMIT_MESSAGE',''),now)
     print('name='+edition)
     print('send='+str(send).lower())
+    receipt=skipped_receipt(os.getenv('EVENT',''),os.getenv('SCHEDULE',''),now)
+    path=os.getenv('LINE_POLICY_RECEIPT_PATH','')
+    if receipt and path:
+        Path(path).write_text(json.dumps(receipt,ensure_ascii=False)+'\n',encoding='utf-8')
+    if path:
+        print('policy_recorded='+str(bool(receipt)).lower())
 
 
 if __name__=='__main__':main()

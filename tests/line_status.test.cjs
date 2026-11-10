@@ -28,3 +28,18 @@ for(const change of [{date:'2026-11-03'},{edition:'close_unavailable'},{http_sta
  row.accepted_attempt=saved;
 }
 console.log('LINE status UI: latest failed attempt and same-day acceptance both visible; invalid acceptance excluded');
+
+const policy={record_kind:'policy_check',date:'2026-11-05',edition:'close',checked_at:'2026-11-05T02:37:55+08:00',status:'policy_skipped',policy_code:'dispatch_window_not_open',evidence_url:'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/123',api_accepted:true,reason:'SECRET'};
+doc.policy_checks={close:policy};
+text=context.lineStatusText(doc,'close','2026-11-05');
+assert.match(text,/本次未發送/);assert.match(text,/本日發送時段未開始/);assert.match(text,/不是 API 發送嘗試/);assert.ok(!text.includes('SECRET'));
+assert.match(context.lineStatusText({schema:1,policy_checks:{close:policy}},'close','2026-11-05'),/尚無可核對.*本次未發送/);
+for(const change of [{policy_code:'__proto__'},{edition:'morning'},{checked_at:'invalid'},{evidence_url:'https://evil.example/'}]){
+ doc.policy_checks.close={...policy,...change};assert.ok(!context.lineStatusText(doc,'close','2026-11-05').includes('排程檢查'));
+}
+console.log('LINE policy UI: skip reasons remain separate from API acceptance and reject untrusted fields');
+
+doc.policy_checks.close=policy;
+const olderAttempt=doc.editions.close;doc.editions.close={...olderAttempt,checked_at:'2026-11-05T19:10:00+08:00'};
+assert.ok(!context.lineStatusText(doc,'close','2026-11-05').includes('排程檢查'));
+doc.editions.close=olderAttempt;

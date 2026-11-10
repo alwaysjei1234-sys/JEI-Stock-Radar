@@ -32,7 +32,7 @@ let briefData=null,lineData=null,edition='morning';
 const $=id=>document.getElementById(id);
 function make(tag,value){const node=document.createElement(tag);node.textContent=String(value??'');return node}
 function safeUrl(raw){try{const u=new URL(raw);return u.protocol==='https:'?u.href:null}catch{return null}}
-function lineStatusText(document,selected,today){
+function lineAttemptText(document,selected,today){
  const row=document&&document.schema===1&&document.editions&&document.editions[selected];
  const labels={accepted:'API 已接受',already_accepted:'API 已接受過，這次未重複發送',blocked:'發送條件未通過',quota_blocked:'免費額度安全檢查未通過',failed:'發送失敗'};
  if(!row||!Object.hasOwn(labels,row.status)||typeof row.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(row.date)||typeof row.checked_at!=='string'||!Number.isFinite(Date.parse(row.checked_at)))return '尚無可核對的發送紀錄；不能確認已發送或手機收到。';
@@ -46,10 +46,21 @@ function lineStatusText(document,selected,today){
  const history=accepted&&!['accepted','already_accepted'].includes(row.status)?'｜同日同版先前已獲 API 接受 '+prior.checked_at:'';
  return current+'｜'+type+'｜最近嘗試：'+labels[row.status]+'｜檢查 '+row.checked_at+history+'｜手機實收尚未確認。';
 }
+function linePolicyText(document,selected){
+ const row=document?.schema===1&&document.policy_checks?.[selected];
+ const labels={non_weekday:'非平日發送時段',morning_window_expired:'早報發送時段已結束',dispatch_window_not_open:'本日發送時段未開始（可能為跨日延遲排程）'};
+ if(!row||row.edition!==selected||row.status!=='policy_skipped'||row.record_kind!=='policy_check'||!Object.hasOwn(labels,row.policy_code)||typeof row.checked_at!=='string'||!Number.isFinite(Date.parse(row.checked_at))||typeof row.evidence_url!=='string'||!/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/actions\/runs\/[1-9][0-9]*$/.test(row.evidence_url))return '';
+ const attempt=document?.editions?.[selected];
+ if(attempt&&Number.isFinite(Date.parse(attempt.checked_at))&&Date.parse(attempt.checked_at)>Date.parse(row.checked_at))return '';
+ return '｜排程檢查 '+row.checked_at+'：本次未發送，'+labels[row.policy_code]+'；這不是 API 發送嘗試。';
+}
+function lineStatusText(document,selected,today){return lineAttemptText(document,selected,today)+linePolicyText(document,selected)}
 function renderLineStatus(){
  const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
  $('line-status').textContent=lineStatusText(lineData,edition,today);
- const row=lineData&&lineData.editions&&lineData.editions[edition];
+ const attempt=lineData?.editions?.[edition],policy=lineData?.policy_checks?.[edition];
+ const row=linePolicyText(lineData,edition)&&(!attempt||Date.parse(policy.checked_at)>=Date.parse(attempt.checked_at))?policy:attempt;
+ $('line-evidence').textContent=row===policy?'查看排程檢查紀錄':'查看發送紀錄';
  const link=row&&typeof row.evidence_url==='string'&&/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/actions\/runs\/[1-9][0-9]*$/.test(row.evidence_url)?row.evidence_url:null;
  $('line-evidence').hidden=!link;
  if(link)$('line-evidence').href=link;
