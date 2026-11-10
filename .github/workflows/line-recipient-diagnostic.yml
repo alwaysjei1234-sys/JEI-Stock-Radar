@@ -1,5 +1,6 @@
 name: Read-only LINE recipient diagnostic
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -10,9 +11,6 @@ permissions:
   contents: read
 jobs:
   diagnose:
-    # One authorized dated investigation; unrelated edits cannot re-run it.
-    if: >-
-      startsWith(github.event.head_commit.message, 'diagnose(line): inspect recipient reachability 2026-11-04')
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
@@ -20,15 +18,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Validate one-day read-only diagnostic
-        run: |
-          python - <<'PY'
-          from datetime import datetime
-          from zoneinfo import ZoneInfo
-          if datetime.now(ZoneInfo('Asia/Taipei')).date().isoformat() != '2026-11-04':
-              raise SystemExit('Diagnostic expired; no API request made')
-          PY
-          python -m unittest discover -s tests -p 'test_line_recipient_diagnostic.py' -v
+      - name: Validate diagnostic tests
+        run: python -m unittest discover -s tests -p 'test_line_recipient_diagnostic.py' -v
       - name: Inspect configured recipient without sending any message
         env:
           JEI_LINE_ENABLED: ${{ vars.JEI_LINE_ENABLED }}
