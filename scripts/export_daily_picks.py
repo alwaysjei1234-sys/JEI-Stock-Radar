@@ -5,9 +5,13 @@ Use one snapshot per market date. Do not replace past snapshots with reruns.
 """
 import argparse
 import json
-from datetime import date
+import subprocess
+from datetime import date, datetime, time
 from pathlib import Path
 
+from zoneinfo import ZoneInfo
+
+TZ = ZoneInfo("Asia/Taipei")
 FEED_COHORTS = {"attack": "momentum", "monster": "monster", "future_monster": "pre_breakout"}
 
 def extract(feed, limit=10):
@@ -41,13 +45,50 @@ def extract(feed, limit=10):
             "snapshot_policy": "one immutable file per trading date",
             "picks": picks}
 
+def first_close_snapshot(day, archive, sources, now, limit):
+    """Use the earliest verified first-parent publication available as of now."""
+    from scripts.update_pick_validation import close_verified
+
+    for source in sources:
+        feed = source["feed"]
+        if not close_verified(feed, archive, day):
+            continue
+        committed = datetime.fromisoformat(source["committed_at"]).astimezone(TZ)
+        published = datetime.strptime(feed["updated_at"], "%Y-%m-%d %H:%M").replace(tzinfo=TZ)
+        if committed.date().isoformat() != day or not published <= committed <= now:
+            continue
+        return {
+            **extract(feed, limit),
+            "source_commit": source["sha"],
+            "source_blob": source["blob"],
+            "source_committed_at": source["committed_at"],
+        }
+    raise ValueError(f"No contemporaneous verified close published on main for {day}")
+
+
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--feed", type=Path, default=Path("remote/system.json"))
+    source = p.add_mutually_exclusive_group()
+    source.add_argument("--feed", type=Path)
+    source.add_argument("--mainline-day", type=date.fromisoformat)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--limit", type=int, default=10)
     args = p.parse_args()
-    snapshot = extract(json.loads(args.feed.read_text(encoding="utf-8")), args.limit)
+    if args.mainline_day:
+        from scripts.recover_pick_history import git_snapshots
+
+        day = args.mainline_day.isoformat()
+        archive = json.loads(Path("remote/daily_prices.json").read_text(encoding="utf-8"))
+        midnight = datetime.combine(args.mainline_day, time.min, TZ)
+        snapshot = first_close_snapshot(day, archive, git_snapshots("HEAD", midnight.isoformat()),
+                                        datetime.now(TZ), args.limit)
+        original = json.loads(subprocess.check_output(
+            ["git", "show", snapshot["source_commit"] + ":remote/daily_prices.json"]))
+        if original.get("days", {}).get(day) != archive["days"][day]:
+            raise ValueError(f"Official prices have changed since the first publication for {day}")
+    else:
+        feed = args.feed or Path("remote/system.json")
+        snapshot = extract(json.loads(feed.read_text(encoding="utf-8")), args.limit)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     # x = exclusive create: never silently rewrite a dated pick record.
     with args.output.open("x", encoding="utf-8") as f:

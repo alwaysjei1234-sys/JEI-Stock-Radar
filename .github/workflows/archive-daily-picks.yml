@@ -39,6 +39,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -61,7 +62,7 @@ jobs:
               echo "Snapshot already exists; preserve immutable original."
               echo "created=false" >> "$GITHUB_OUTPUT"
             else
-              python -m scripts.export_daily_picks --output "$TARGET" --limit 10
+              python -m scripts.export_daily_picks --mainline-day "$FEED_DATE" --output "$TARGET" --limit 10
               echo "created=true" >> "$GITHUB_OUTPUT"
               echo "target=$TARGET" >> "$GITHUB_OUTPUT"
             fi
