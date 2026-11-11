@@ -1,0 +1,951 @@
+{
+  "checked_at": "2026-11-11T21:07:00+08:00",
+  "starting_main": "85c5c2b7acccdd686aa43d94926dd08a81bdef8a",
+  "verified_fix_base": "638a2b6549958b0f56049de8f93fee1a91575acd",
+  "latest_verified_main": "4bd52bdbaac97685198731eee2451ae26750a8ff",
+  "open_prs_at_start": [
+    59,
+    46,
+    45,
+    44,
+    2
+  ],
+  "fix": {
+    "pr": 74,
+    "sha": "8ed52fe1aaabb8154b5cbd732ed47783ed0b2d62",
+    "head": "eb15dedc07e05c5da38930a765114716f515114d",
+    "python": 609,
+    "smoke": 72,
+    "native_jvm_cases": 18,
+    "python_regression_previous_failures": 8,
+    "pr_runs": [
+      [
+        43025618623,
+        "JEI Research Engine Tests",
+        "success"
+      ],
+      [
+        43025618507,
+        "JEI Smoke Tests",
+        "success"
+      ],
+      [
+        43025618479,
+        "JEI feed acceptance",
+        "success"
+      ],
+      [
+        43025610365,
+        "JEI Research Engine Tests",
+        "success"
+      ],
+      [
+        43025610246,
+        "JEI Smoke Tests",
+        "success"
+      ],
+      [
+        43025610330,
+        "Android Debug APK",
+        "success"
+      ]
+    ],
+    "main_runs": [
+      [
+        43025778037,
+        "Android Debug APK",
+        "success"
+      ],
+      [
+        43025778034,
+        "Update JEI Market Feed",
+        "success"
+      ],
+      [
+        43025778033,
+        "JEI Research Engine Tests",
+        "success"
+      ],
+      [
+        43025777923,
+        "Build JEI Android APK",
+        "success"
+      ],
+      [
+        43025777895,
+        "JEI Smoke Tests",
+        "success"
+      ],
+      [
+        43025777876,
+        "JEI feed acceptance",
+        "success"
+      ],
+      [
+        43025777862,
+        "JEI Daily Brief and Optional LINE",
+        "success"
+      ]
+    ],
+    "replay": [
+      "7fbc01f 2026-11-06 09:03 盤中即時 1771 1979 100 intraday_risk []",
+      "861afb6 2026-11-06 10:13 資料過期 0 1978 100 None ['行情狀態為 資料過期，不是盤中即時', '市場資料標記為過期、唯讀或未驗證', '盤中行情尚未通過有效性驗證', '行情風控明確暫停新判讀', '市場明確暫停新判讀', '有效成交 0/500 檔，覆蓋未達門檻']",
+      "HEAD 2026-11-11 19:08 今日收盤 0 1967 19 None ['目前不在台股盤中時段', '行情狀態為 今日收盤，不是盤中即時', '盤中行情尚未通過有效性驗證', '有效成交 0/500 檔，覆蓋未達門檻']"
+    ],
+    "alternatives": [
+      "699 2000 100 count_only True reported_pct True verified_counts False",
+      "700 2000 35 count_only True reported_pct True verified_counts True",
+      "2001 2000 100 count_only True reported_pct True verified_counts False",
+      "700 None 35 count_only True reported_pct True verified_counts False",
+      "500 2000 25 count_only True reported_pct False verified_counts False"
+    ]
+  },
+  "android": {
+    "version_code": 42,
+    "version_name": "3.9.19",
+    "build_run": 43025777923,
+    "asset": 735560001,
+    "asset_digest": "sha256:8c1e5e529c209f186a5b4dc53bb9269c7248367c931eb3dbbc20b776c6179d06",
+    "public_download_http": 200,
+    "public_download_bytes": 2315398,
+    "zip_crc_verified": true,
+    "device_verified": false,
+    "manifest_pr": 75,
+    "manifest_commit": "4bd52bdbaac97685198731eee2451ae26750a8ff",
+    "pr_runs": [
+      [
+        43026146099,
+        "JEI Smoke Tests",
+        "success"
+      ],
+      [
+        43026145791,
+        "JEI feed acceptance",
+        "success"
+      ],
+      [
+        43026138504,
+        "JEI Smoke Tests",
+        "success"
+      ]
+    ],
+    "main_runs": [
+      [
+        43026222423,
+        "JEI Production Reachability",
+        "success"
+      ],
+      [
+        43026222416,
+        "JEI feed acceptance",
+        "success"
+      ],
+      [
+        43026222353,
+        "JEI Smoke Tests",
+        "success"
+      ]
+    ]
+  },
+  "production": {
+    "initial_fix_deployment_state": "CANCELED",
+    "deployment_id": "dpl_BUCa9hqVca94U62EbdujWy2n88zn",
+    "state": "READY",
+    "commit": "4bd52bdbaac97685198731eee2451ae26750a8ff",
+    "readback": [
+      [
+        "remote/paper-leaderboard.json",
+        200,
+        true,
+        "f5a75cb1876487a524d3d504a45d420a5596e900ce01d6301c2c576aa2c7464f",
+        {
+          "data_date": "2026-11-11",
+          "verified": false
+        }
+      ],
+      [
+        "remote/pick_validation.json",
+        200,
+        true,
+        "9864b8c0bd0ba493eec4abf0ef38c3cb3e97fd173f83040ec17e7057c0ca49f1",
+        {
+          "latest_official_day": "2026-11-11",
+          "updated_at": "2026-11-11 19:04"
+        }
+      ],
+      [
+        "remote/strategy_performance.json",
+        200,
+        true,
+        "ed742edd8abed0afc27111c01b948810e5b5e3d9c904e921d390cf70da4ece7f",
+        {
+          "last_processed_day": "2026-11-11",
+          "updated_at": "2026-11-11 19:07"
+        }
+      ],
+      [
+        "remote/system.json",
+        200,
+        true,
+        "40eb03c4a11a481d7b8fa82bc939b8401abb1b1247cb4faf7f31b7fe919231d7",
+        {
+          "data_date": "2026-11-11",
+          "updated_at": "2026-11-11 21:05"
+        }
+      ],
+      [
+        "remote/update.json",
+        200,
+        true,
+        "e0b24d5b58153ded6baa074c7308e8832fc775637809d8bb40962a18228f30e6",
+        {
+          "versionCode": 42
+        }
+      ]
+    ]
+  },
+  "market": {
+    "day": "2026-11-11",
+    "updated_at": "2026-11-11 21:05",
+    "twse_rows": 1390,
+    "twse_archive_overlap": 1088,
+    "twse_equal": 1088,
+    "tpex_rows": 992,
+    "tpex_archive_overlap": 872,
+    "tpex_equal": 872,
+    "mis_http": 503,
+    "close_count": 1967,
+    "live_count": 0,
+    "mode": "今日收盤",
+    "verified_at": "2026-11-11T21:01:32+08:00",
+    "latest_scheduled_run": 42979575179
+  },
+  "line": {
+    "diagnostic_run": 42788382456,
+    "profile_status": "profile_accessible",
+    "profile_http": 200,
+    "actual_test_run": 42830740424,
+    "test_api_status": "accepted",
+    "phone_delivery_verified": false,
+    "latest_scheduled_run": 42982961966,
+    "latest_schedule_line_skipped": true,
+    "new_dispatch": false,
+    "push_event_run": 43025777862,
+    "push_event_send_skipped": true
+  },
+  "colab": {
+    "github_actions_equivalent_run": 42981967874,
+    "colab_executed": false
+  },
+  "validation": {
+    "date_range": [
+      "2026-10-16",
+      "2026-11-11"
+    ],
+    "policy_versions": {
+      "legacy-unversioned": 272,
+      "jei-user-radar-gates-v1": 112
+    },
+    "horizons": {
+      "3": {
+        "completed": 318,
+        "pending": 65,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 1,
+        "groups": {
+          "attack": {
+            "completed": 57,
+            "win_rate_pct": 22.81,
+            "avg_estimated_net_pct": -4.431,
+            "worst_max_close_drawdown_pct": -24.232
+          },
+          "next": {
+            "completed": 55,
+            "win_rate_pct": 25.45,
+            "avg_estimated_net_pct": -4.929,
+            "worst_max_close_drawdown_pct": -25.163
+          },
+          "monster": {
+            "completed": 69,
+            "win_rate_pct": 30.43,
+            "avg_estimated_net_pct": -4.96,
+            "worst_max_close_drawdown_pct": -26.866
+          },
+          "tomorrow_monster": {
+            "completed": 67,
+            "win_rate_pct": 28.36,
+            "avg_estimated_net_pct": -3.601,
+            "worst_max_close_drawdown_pct": -25.163
+          },
+          "future_monster": {
+            "completed": 70,
+            "win_rate_pct": 24.29,
+            "avg_estimated_net_pct": -4.017,
+            "worst_max_close_drawdown_pct": -18.421
+          }
+        }
+      },
+      "7": {
+        "completed": 249,
+        "pending": 134,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 1,
+        "groups": {
+          "attack": {
+            "completed": 50,
+            "win_rate_pct": 14,
+            "avg_estimated_net_pct": -9.535,
+            "worst_max_close_drawdown_pct": -38.889
+          },
+          "next": {
+            "completed": 50,
+            "win_rate_pct": 14,
+            "avg_estimated_net_pct": -9.863,
+            "worst_max_close_drawdown_pct": -38.005
+          },
+          "monster": {
+            "completed": 49,
+            "win_rate_pct": 20.41,
+            "avg_estimated_net_pct": -11.863,
+            "worst_max_close_drawdown_pct": -35.636
+          },
+          "tomorrow_monster": {
+            "completed": 50,
+            "win_rate_pct": 18,
+            "avg_estimated_net_pct": -7.412,
+            "worst_max_close_drawdown_pct": -38.005
+          },
+          "future_monster": {
+            "completed": 50,
+            "win_rate_pct": 10,
+            "avg_estimated_net_pct": -11.333,
+            "worst_max_close_drawdown_pct": -36.391
+          }
+        }
+      },
+      "15": {
+        "completed": 50,
+        "pending": 334,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 0,
+        "groups": {
+          "attack": {
+            "completed": 10,
+            "win_rate_pct": 20,
+            "avg_estimated_net_pct": -12.773,
+            "worst_max_close_drawdown_pct": -40.673
+          },
+          "next": {
+            "completed": 10,
+            "win_rate_pct": 0,
+            "avg_estimated_net_pct": -20.019,
+            "worst_max_close_drawdown_pct": -44.417
+          },
+          "monster": {
+            "completed": 10,
+            "win_rate_pct": 0,
+            "avg_estimated_net_pct": -25.504,
+            "worst_max_close_drawdown_pct": -42.821
+          },
+          "tomorrow_monster": {
+            "completed": 10,
+            "win_rate_pct": 10,
+            "avg_estimated_net_pct": -17.677,
+            "worst_max_close_drawdown_pct": -44.417
+          },
+          "future_monster": {
+            "completed": 10,
+            "win_rate_pct": 10,
+            "avg_estimated_net_pct": -13.944,
+            "worst_max_close_drawdown_pct": -41.696
+          }
+        }
+      },
+      "20": {
+        "completed": 0,
+        "pending": 384,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 0,
+        "groups": {
+          "attack": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "next": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "tomorrow_monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "future_monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          }
+        }
+      },
+      "30": {
+        "completed": 0,
+        "pending": 384,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 0,
+        "groups": {
+          "attack": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "next": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "tomorrow_monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "future_monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          }
+        }
+      },
+      "40": {
+        "completed": 0,
+        "pending": 384,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 0,
+        "groups": {
+          "attack": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "next": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "tomorrow_monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "future_monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          }
+        }
+      },
+      "60": {
+        "completed": 0,
+        "pending": 384,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 0,
+        "groups": {
+          "attack": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "next": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "tomorrow_monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          },
+          "future_monster": {
+            "completed": 0,
+            "win_rate_pct": null,
+            "avg_estimated_net_pct": null,
+            "worst_max_close_drawdown_pct": null
+          }
+        }
+      }
+    },
+    "paper": {
+      "day": "2026-11-11",
+      "signals": 100,
+      "costs": [
+        0.001425,
+        0.001425,
+        0.003
+      ],
+      "strategies": {
+        "fixed5": {
+          "closed": 78,
+          "wins": 20,
+          "win_rate_pct": 25.64,
+          "max_drawdown_pct": 27.566,
+          "official_close_coverage": "9/9",
+          "mean_net_return_pct": -3.373,
+          "win_rate_ci95_pct": [
+            17.26,
+            36.31
+          ],
+          "qualification": "research_only",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 78,
+              "win_rate_pct": 25.64,
+              "mean_net_return_pct": -3.566
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 78,
+              "win_rate_pct": 25.64,
+              "mean_net_return_pct": -3.758
+            }
+          ]
+        },
+        "fixed7": {
+          "closed": 77,
+          "wins": 18,
+          "win_rate_pct": 23.38,
+          "max_drawdown_pct": 28.076,
+          "official_close_coverage": "8/8",
+          "mean_net_return_pct": -3.456,
+          "win_rate_ci95_pct": [
+            15.33,
+            33.95
+          ],
+          "qualification": "research_only",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 77,
+              "win_rate_pct": 23.38,
+              "mean_net_return_pct": -3.649
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 77,
+              "win_rate_pct": 23.38,
+              "mean_net_return_pct": -3.841
+            }
+          ]
+        },
+        "fixed10": {
+          "closed": 70,
+          "wins": 11,
+          "win_rate_pct": 15.71,
+          "max_drawdown_pct": 24.744,
+          "official_close_coverage": "9/9",
+          "mean_net_return_pct": -3.959,
+          "win_rate_ci95_pct": [
+            9.01,
+            25.99
+          ],
+          "qualification": "research_only",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 70,
+              "win_rate_pct": 15.71,
+              "mean_net_return_pct": -4.151
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 70,
+              "win_rate_pct": 15.71,
+              "mean_net_return_pct": -4.343
+            }
+          ]
+        },
+        "trailing": {
+          "closed": 66,
+          "wins": 10,
+          "win_rate_pct": 15.15,
+          "max_drawdown_pct": 24.55,
+          "official_close_coverage": "9/9",
+          "mean_net_return_pct": -4.871,
+          "win_rate_ci95_pct": [
+            8.44,
+            25.69
+          ],
+          "qualification": "research_only",
+          "slippage_scenarios": [
+            {
+              "slippage_per_side_pct": 0.1,
+              "closed": 66,
+              "win_rate_pct": 15.15,
+              "mean_net_return_pct": -5.061
+            },
+            {
+              "slippage_per_side_pct": 0.2,
+              "closed": 66,
+              "win_rate_pct": 15.15,
+              "mean_net_return_pct": -5.251
+            }
+          ]
+        }
+      }
+    },
+    "qualified_oos_verified": 0,
+    "qualification": "證據不足",
+    "win_rate_definition": "扣成本獲利交易數 / 已平倉交易數",
+    "pick_costs": {
+      "buy_fee": 0.001425,
+      "sell_fee": 0.001425,
+      "sell_tax": 0.003,
+      "slippage_included": false
+    },
+    "paper_cost_base_slippage_included": false,
+    "leaderboard": {
+      "verified": false,
+      "data_date": "2026-11-11",
+      "signals": 341,
+      "unresolved": 30
+    },
+    "same_period_benchmark_available": false,
+    "distinct_market_states_verified": 0,
+    "notify_80pct": false,
+    "chronological_boundary": {
+      "date": "2026-11-04",
+      "columns": [
+        "horizon",
+        "legacy_completed",
+        "legacy_outcomes_strictly_before_boundary",
+        "legacy_outcomes_at_or_after_boundary",
+        "new_version_completed"
+      ],
+      "counts": [
+        [
+          3,
+          271,
+          199,
+          72,
+          47
+        ],
+        [
+          7,
+          249,
+          100,
+          149,
+          0
+        ],
+        [
+          15,
+          50,
+          0,
+          50,
+          0
+        ],
+        [
+          20,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          30,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          40,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          60,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  "research": [
+    {
+      "url": "https://github.com/androidx/androidx",
+      "license": "Apache-2.0",
+      "last_push_utc": "2026-11-11T12:59:40Z",
+      "docs": "https://developer.android.com/develop/background-work/background-tasks/persistent/getting-started/define-work",
+      "assessment": "週期工作最短 15 分鐘，受系統排程限制。沿用既有 WorkManager，修正 feed 驗證。"
+    }
+  ],
+  "acceptance": {
+    "denominator": 31,
+    "pass": 2,
+    "fail": 3,
+    "blocked": 26,
+    "rows": [
+      {
+        "id": 1,
+        "requirement": "手機瀏覽器逾時處理",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "手機與Android實機逾時流程尚無驗收"
+      },
+      {
+        "id": 2,
+        "requirement": "休市與假日判斷",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "完整雙市場及臨時休市日曆仍缺端到端證據"
+      },
+      {
+        "id": 3,
+        "requirement": "開盤後自動恢復更新",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺本輪開盤自動恢復證據"
+      },
+      {
+        "id": 4,
+        "requirement": "盤中每5分鐘更新及新鮮度",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "21:01 查詢最後可見市場定時工作仍為 15:26。21:05 是合併後 push 更新，五分鐘準時性未通過。"
+      },
+      {
+        "id": 5,
+        "requirement": "TWSE／TPEx／MIS交叉驗證",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "21:01 重抓 TWSE 1,390 列及 TPEx 992 列。封存交集 1,088／872 筆全數吻合，MIS 503。"
+      },
+      {
+        "id": 6,
+        "requirement": "缺漏、過期、異常資料保護",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "LINE 與 Android JVM 攔截虛報覆蓋率、缺總檔數、超出總檔數、休市、唯讀及停判。Android 實機離線恢復待驗。"
+      },
+      {
+        "id": 7,
+        "requirement": "每日選股封存與歷史紀錄",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "PR #73 驗證 14:52 第一份與 19:08 最新快照有 11/30 排名位置差異，封存首份 30 筆訊號與 1,960 筆收盤。合併後 archive CI 確認既有檔案不可變，重建排行榜無差異。"
+      },
+      {
+        "id": 8,
+        "requirement": "模擬績效及交易日計算",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "主線 e71dfa0 依同日官方收盤推進至 11/11。100 訊號、四策略共 291 筆重疊平倉，正式站讀回相等。樣本外績效另列第 19 項。"
+      },
+      {
+        "id": 9,
+        "requirement": "LINE盤前、盤中、盤後推播",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "合併後早報 43025777862 屬 push，LINE 步驟略過。最近定時仍為 15:54 的延遲早報；實際手機收件待驗。"
+      },
+      {
+        "id": 10,
+        "requirement": "GitHub、Vercel、Android串接",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "42／3.9.19 APK 的套件版本、正式下載 SHA-256 與 ZIP 均核對成功。正式清單 42，裝置安裝、背景通知及同步待驗。"
+      },
+      {
+        "id": 11,
+        "requirement": "持股成本、股數與分類",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "為保護隱私未讀私人部位；匯入持久化仍待裝置驗證"
+      },
+      {
+        "id": 12,
+        "requirement": "持股權重與集中度",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺私人裝置集中度計算端到端驗收"
+      },
+      {
+        "id": 13,
+        "requirement": "營收、毛利與獲利品質",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺逐欄公告日期與財報來源核對"
+      },
+      {
+        "id": 14,
+        "requirement": "EPS與自由現金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "EPS與自由現金流完整來源驗收不足"
+      },
+      {
+        "id": 15,
+        "requirement": "存貨、應收帳款異常",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "既有單元測試不等於全公司財報監測已實測"
+      },
+      {
+        "id": 16,
+        "requirement": "同業、產業與估值",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同業估值自動比較未驗收"
+      },
+      {
+        "id": 17,
+        "requirement": "法人與大戶資金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪未完成法人與大戶資金來源核驗"
+      },
+      {
+        "id": 18,
+        "requirement": "強勢、震盪、轉弱情境",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "情境單元測試存在；實際資料端到端未驗"
+      },
+      {
+        "id": 19,
+        "requirement": "模擬勝率、盈虧與回撤",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "四策略 100 訊號、291 筆跨策略重疊平倉，成本後期望全負。11/11 新排行榜明列未驗證，341 訊號、30 筆等待未來價格。合格 OOS 0／100。"
+      },
+      {
+        "id": 20,
+        "requirement": "每日續抱／減碼理由",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "公開信號存在；八模組與私人端決策未實機驗證"
+      },
+      {
+        "id": 21,
+        "requirement": "主流資金與族群輪動",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "主流資金與族群輪動缺完整端到端核驗"
+      },
+      {
+        "id": 22,
+        "requirement": "突破、妖股與潛力妖股",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "未放寬選股；未有完整前瞻有效性證據"
+      },
+      {
+        "id": 23,
+        "requirement": "3–5個獨立來源財經新聞",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "來源去重及逐條新聞核實未完成"
+      },
+      {
+        "id": 24,
+        "requirement": "券商報告、目標價與催化劑自動取得",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "免費券商目標價及催化劑自動取得未驗收"
+      },
+      {
+        "id": 25,
+        "requirement": "AI多模型會診及失敗復原",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "正式健康GET及錯誤token401通過；未實際呼叫多模型"
+      },
+      {
+        "id": 26,
+        "requirement": "個股決策儀表板與手機首頁",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "替代雲端Chromium實際打開首頁與績效頁、重讀表格成功；本地Playwright缺執行檔/系統socket拒絕，Android與手機尺寸實機仍未驗。"
+      },
+      {
+        "id": 27,
+        "requirement": "大盤修正與逃命警示",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/6 實際 1,771／1,979 檔、風險 100 重播產生 intraday_risk，後續過期快照擋下。LINE 與 Android JVM 在 699／2,000 擋下、700／2,000 通過。實際通知待驗。"
+      },
+      {
+        "id": 28,
+        "requirement": "現金與當沖分開模擬",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "現股及當沖分開實際驗證未完成"
+      },
+      {
+        "id": 29,
+        "requirement": "3／7／15／30／60交易日績效及策略調整",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/04 版本分界重播，3／7／15 日舊版本分別有 72／149／50 筆出場跨分界，不能供分界前模型使用。新版本已成熟 47／0／0 筆分類觀察。缺合格 walk-forward、同期基準和滑價驗證。"
+      },
+      {
+        "id": 30,
+        "requirement": "自動測試、部署與缺陷追蹤",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR #74、#75 合併前 CI 全綠。正式探測、feed acceptance、冒煙、APK 建置與發布成功，五個公開 JSON 讀回相符。定時準時性及實機待驗。"
+      },
+      {
+        "id": 31,
+        "requirement": "推薦顯示八大指標、AI與全球市場影響",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "八指標、多模型與全球影響整合未完整驗收"
+      }
+    ]
+  }
+}
