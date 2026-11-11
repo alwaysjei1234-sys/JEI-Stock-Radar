@@ -50,7 +50,7 @@ class BriefPublicationRaceTests(unittest.TestCase):
 
     def publish(self, send=False):
         workflow = WORKFLOW.read_text()
-        block = workflow.split('      - name: Publish verified report\n        run: |\n', 1)[1].split('      - name:', 1)[0]
+        block = workflow.split('      - name: Publish verified report\n', 1)[1].split('        run: |\n', 1)[1].split('      - name:', 1)[0]
         shell = textwrap.dedent(block).replace('${{ steps.edition.outputs.name }}', 'close').replace('${{ steps.edition.outputs.send }}', 'true' if send else 'false')
         # sleep is not part of the behavior under test.
         shell = shell.replace('sleep 3', ':')

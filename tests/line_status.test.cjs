@@ -43,3 +43,6 @@ doc.policy_checks.close=policy;
 const olderAttempt=doc.editions.close;doc.editions.close={...olderAttempt,checked_at:'2026-11-05T19:10:00+08:00'};
 assert.ok(!context.lineStatusText(doc,'close','2026-11-05').includes('排程檢查'));
 doc.editions.close=olderAttempt;
+
+doc.policy_checks.close={...policy,policy_code:'brief_failed_before_send'};
+assert.match(context.lineStatusText(doc,'close','2026-11-05'),/報告產生或發布未完成.*不是 API 發送嘗試/);

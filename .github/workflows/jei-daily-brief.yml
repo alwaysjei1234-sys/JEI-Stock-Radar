@@ -80,8 +80,10 @@ jobs:
         run: |
           python -m scripts.brief_dispatch_policy >> "$GITHUB_OUTPUT"
       - name: Generate public brief using verified official close
+        id: build_report
         run: python scripts/build_daily_brief.py --edition "${{ steps.edition.outputs.name }}"
       - name: Publish verified report
+        id: publish_report
         run: |
           git config user.name 'JEI Research Brief Bot'
           git config user.email 'actions@users.noreply.github.com'
@@ -118,12 +120,27 @@ jobs:
           echo "JEI LINE decision: event=$EVENT schedule=$SCHEDULE edition=$EDITION eligible=$SEND"
           if [ "$SEND" != 'true' ]; then echo 'LINE skipped by schedule policy (push and manual builds without explicit send_line do not send)'; fi
       - name: Optional LINE push (no email)
+        id: line_push
         if: steps.edition.outputs.send == 'true'
         env:
           JEI_LINE_ENABLED: ${{ vars.JEI_LINE_ENABLED }}
           JEI_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.JEI_LINE_CHANNEL_ACCESS_TOKEN }}
           JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
         run: python scripts/send_line_brief.py --edition "${{ steps.edition.outputs.name }}" --outbox remote/line_outbox.json --result-path "${{ runner.temp }}/jei-line-result.json"
+      - name: Record brief failure before LINE dispatch
+        if: >-
+          failure() && steps.edition.outputs.send == 'true' &&
+          steps.line_push.outcome == 'skipped' &&
+          (steps.build_report.outcome == 'failure' || steps.publish_report.outcome == 'failure')
+        env:
+          EDITION: ${{ steps.edition.outputs.name }}
+          LINE_RECEIPT_PATH: ${{ runner.temp }}/jei-line-result.json
+        run: |
+          python - <<'PYCODE'
+          import os
+          from scripts.brief_dispatch_policy import record_pre_send_failure
+          record_pre_send_failure(os.environ['EDITION'], os.environ['LINE_RECEIPT_PATH'])
+          PYCODE
       - name: Preserve LINE API acceptance result
         if: always() && (steps.edition.outputs.send == 'true' || steps.edition.outputs.policy_recorded == 'true')
         uses: actions/upload-artifact@v4
