@@ -311,7 +311,14 @@ public class MainActivity extends Activity {
             if (PAPER_UI.equals(sourceUrl))
                 return content.contains("<title>JEI 當沖模擬交易</title>");
             JSONObject j = new JSONObject(content);
-            if (SYSTEM_JSON.equals(sourceUrl)) return j.has("market") && j.has("data_date");
+            if (SYSTEM_JSON.equals(sourceUrl)) {
+                // Match validateSystemFeed in the WebView before selecting a source.
+                Object day = j.opt("data_date");
+                Object updatedAt = j.opt("updated_at");
+                return j.optJSONObject("market") != null
+                        && day instanceof String && ((String) day).matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")
+                        && updatedAt instanceof String && !((String) updatedAt).trim().isEmpty();
+            }
             if (UPDATE_JSON.equals(sourceUrl)) return j.has("versionCode") && j.has("url");
             if (DAILY_JSON.equals(sourceUrl))
                 return j.optInt("schema", 0) == 1
