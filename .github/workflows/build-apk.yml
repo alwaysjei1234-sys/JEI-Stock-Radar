@@ -17,13 +17,45 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: jei-android-build
   cancel-in-progress: true
 
 jobs:
+  restore-verified-v42:
+    if: "github.event_name == 'push' && startsWith(github.event.head_commit.message, 'Restore verified Android 42 download')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Restore the byte-identical previous release asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          previous='d482cf4ddad86edb6770551f1940e9a2a37ff9e43132ba089feb534c95e86cb8'
+          incompatible='0845131c2822f7fd49120e4db4ddba50ae908388350f0c0e616a784280a9c8ff'
+          asset='JEI_Stock_Radar_V3.apk'
+          mkdir -p "$RUNNER_TEMP/current" "$RUNNER_TEMP/restore"
+          gh release download jei-latest --pattern "$asset" --dir "$RUNNER_TEMP/current"
+          current="$(sha256sum "$RUNNER_TEMP/current/$asset" | cut -d ' ' -f 1)"
+          if [ "$current" = "$previous" ]; then
+            echo 'Verified version 42 is already the stable download'
+            exit 0
+          fi
+          if [ "$current" != "$incompatible" ]; then
+            echo 'Stable download changed since verification. No rollback performed.'
+            exit 1
+          fi
+          gh run download 43045089611 --name JEI-Stock-Radar-V3-APK --dir "$RUNNER_TEMP/restore"
+          printf '%s  %s\n' "$previous" "$RUNNER_TEMP/restore/$asset" | sha256sum -c -
+          gh release upload jei-latest "$RUNNER_TEMP/restore/$asset" --clobber
+
   build:
+    if: "github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'Restore verified Android 42 download')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -115,6 +147,19 @@ jobs:
           path: "JEI_Stock_Radar_V3.apk"
           if-no-files-found: error
           retention-days: 30
+
+      - name: Verify stable update signer
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Pin the certificate from the verified, publicly shipped version 42.
+          expected='807326371643b70ec340b8fd526568adb9ff86c8186e059ca6bc5d0633e4cbdd'
+          cert_report=$("$ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner" verify --print-certs "JEI_Stock_Radar_V3.apk")
+          actual=$(printf '%s\n' "$cert_report" | awk -F': ' '/^Signer #[0-9]+ certificate SHA-256 digest:/ {print tolower($2)}')
+          if [ "$actual" != "$expected" ]; then
+            echo 'APK signer differs from the stable update signer. Artifact kept; stable download unchanged.'
+            exit 1
+          fi
 
       - name: Publish stable APK download
         env:
