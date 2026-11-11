@@ -370,12 +370,18 @@ def backfill_twse_history(history, now, min_days=20, max_otc_fetches=0):
     snaps={str(x.get("date")):x for x in history if isinstance(x,dict) and x.get("date")}
     return sorted(snaps.values(),key=lambda x:str(x.get("date","")))[-90:],[]
 
+def institutional_totals_reconcile(row):
+    # Exchange totals exclude foreign dealers to avoid double-counting.
+    foreign, trust, dealer, total = (num(row.get(k)) for k in ("foreign", "trust", "dealer", "total"))
+    return (all(value is not None and value.is_integer() for value in (foreign, trust, dealer, total))
+            and foreign + trust + dealer == total)
+
+
 def institutional_market_complete(rows, errors, expected_date):
-    """Require dated finite totals from both exchanges before market-wide scoring."""
-    sources={v.get("source") for v in rows.values()
-             if v.get("data_date")==expected_date and num(v.get("total")) is not None}
-    return (not errors and sources=={"TWSE T86","TPEx OpenAPI"}
-            and all(v.get("data_date")==expected_date and num(v.get("total")) is not None for v in rows.values()))
+    """Require dated, reconciled totals from both exchanges for market scoring."""
+    return (not errors and {v.get("source") for v in rows.values()}=={"TWSE T86","TPEx OpenAPI"}
+            and all(v.get("data_date")==expected_date and institutional_totals_reconcile(v)
+                    for v in rows.values()))
 
 
 def fetch_institutional(expected_date=None):
@@ -433,15 +439,23 @@ def fetch_institutional(expected_date=None):
             m=re.search(r"([0-9A-Z]{4,8})",raw_code.upper())
             if not m: continue
             code=m.group(1)
-            foreign=num(pick(r,"ForeignInvestorsInclude MainlandAreaInvestors-Difference","Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Difference","ForeignDealers-Difference"))
+            foreign=num(pick(r,"Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Difference"))
             trust=num(pick(r,"SecuritiesInvestmentTrustCompanies-Difference","InvestmentTrustNetBuySell","InvestmentTrustBuySell"))
             dealer=num(pick(r,"Dealers-Difference","DealerNetBuySell","DealerBuySell"))
             total=num(pick(r,"TotalDifference","TotalNetBuySell","ThreeInstitutionalInvestorsNetBuySell"))
             out[code]={"foreign":foreign,"trust":trust,"dealer":dealer,"total":total,"source":"TPEx OpenAPI","data_date":expected_date}
     except Exception as e: errs.append("TPEx法人:"+str(e))
+    invalid = {}
+    for code, row in list(out.items()):
+        if not institutional_totals_reconcile(row):
+            source = row["source"]
+            invalid[source] = invalid.get(source, 0) + 1
+            del out[code]
     for source in ("TWSE T86","TPEx OpenAPI"):
-        if not any(v.get("source")==source and num(v.get("total")) is not None for v in out.values()):
-            errs.append(source+": no dated finite institutional totals")
+        if invalid.get(source):
+            errs.append(f"{source}: {invalid[source]} institutional rows do not reconcile")
+        if not any(v.get("source")==source for v in out.values()):
+            errs.append(source+": no dated reconciled institutional totals")
     if not out and not errs: errs.append("法人來源有回應，但未解析出任何股票代碼")
     return out,errs,debug
 

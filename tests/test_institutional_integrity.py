@@ -7,8 +7,13 @@ DAY = '2026-11-03'
 
 class InstitutionalIntegrityTests(unittest.TestCase):
     def setUp(self):
-        self.twse = {'stat':'OK','date':'20261103','fields':['證券代號','三大法人買賣超股數'],'data':[['2330','-1000']]}
-        self.tpex = [{'Date':'1151103','SecuritiesCompanyCode':'6488','TotalDifference':'2000'}]
+        self.twse = {'stat':'OK','date':'20261103',
+                     'fields':['證券代號','外陸資買賣超股數(不含外資自營商)','投信買賣超股數','自營商買賣超股數','三大法人買賣超股數'],
+                     'data':[['2330','-1000','0','0','-1000']]}
+        self.tpex = [{'Date':'1151103','SecuritiesCompanyCode':'6488',
+                      'Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Difference':'0',
+                      'SecuritiesInvestmentTrustCompanies-Difference':'0',
+                      'Dealers-Difference':'2000','TotalDifference':'2000'}]
 
     def fetch(self, twse=None, tpex=None):
         def get(url):
@@ -50,9 +55,39 @@ class InstitutionalIntegrityTests(unittest.TestCase):
     def test_zero_is_valid_but_missing_or_nonfinite_totals_are_not(self):
         for total,complete in [('0',True),(None,False),('NaN',False),('inf',False)]:
             with self.subTest(total=total):
-                source=copy.deepcopy(self.tpex);source[0]['TotalDifference']=total
+                source=copy.deepcopy(self.tpex);source[0]['TotalDifference']=total; source[0]['Dealers-Difference']=total
                 rows,errors,_=self.fetch(tpex=source)
                 self.assertEqual(u.institutional_market_complete(rows,errors,DAY),complete)
+
+    def test_tpex_foreign_dealers_are_not_included_in_foreign_total(self):
+        source = copy.deepcopy(self.tpex)
+        source[0]["ForeignInvestorsInclude MainlandAreaInvestors-Difference"] = "15"
+        source[0]["ForeignDealers-Difference"] = "15"
+        rows, errors, _ = self.fetch(tpex=source)
+        self.assertEqual(rows["6488"]["foreign"], 0)
+        self.assertTrue(u.institutional_market_complete(rows, errors, DAY))
+
+    def test_same_date_with_unreconciled_components_stops_market_scoring(self):
+        for field, value in [
+            ("Dealers-Difference", "0"),
+            ("SecuritiesInvestmentTrustCompanies-Difference", "0.5"),
+            ("Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Difference", None),
+        ]:
+            with self.subTest(field=field):
+                source = copy.deepcopy(self.tpex)
+                source[0][field] = value
+                rows, errors, _ = self.fetch(tpex=source)
+                self.assertNotIn("6488", rows)
+                self.assertTrue(errors)
+                self.assertFalse(u.institutional_market_complete(rows, errors, DAY))
+
+    def test_twse_wrong_sum_blocks_market_scoring_even_with_valid_tpex(self):
+        source = copy.deepcopy(self.twse)
+        source["data"][0][-1] = "1000"
+        rows, errors, _ = self.fetch(twse=source)
+        self.assertEqual(set(rows), {"6488"})
+        self.assertTrue(errors)
+        self.assertFalse(u.institutional_market_complete(rows, errors, DAY))
 
     def test_same_day_retry_preserves_verified_history(self):
         prior={'date':DAY,'institutional_market':{'verified':True,'data_date':DAY,'sell_ratio':65,'net_lots':-5}}
