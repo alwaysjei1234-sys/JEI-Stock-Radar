@@ -4,7 +4,7 @@
   "updated_at": "2026-11-10 15:57",
   "data_date": "2026-11-10",
   "source_data_date": "2026-11-10",
-  "summary": "2026-11-11 00:09 尚未開盤；保留最近有效收盤，等待今日盤中行情驗證；保留 2026-11-10 歷史名單，暫停今日新選股。",
+  "summary": "2026-11-11 09:01 今日盤中成交價覆蓋未達驗證門檻，暫停新判讀；保留 2026-11-10 歷史名單，暫停今日新選股。",
   "risk": {
     "level": "green",
     "label": "正常",
@@ -34,7 +34,7 @@
   "market": {
     "status": "震盪",
     "mode": "最近收盤",
-    "last_checked_at": "2026-11-11 00:09",
+    "last_checked_at": "2026-11-11 09:01",
     "index": {
       "change_pct": 2.52,
       "data_date": "2026-11-10",
@@ -44,41 +44,61 @@
     },
     "live_count": 0,
     "close_count": 1965,
-    "live_coverage_pct": 0.0,
+    "live_coverage_pct": 0,
     "live_valid": false,
     "stale": true,
     "historical_readonly": true,
     "post_close_refresh": true,
     "live_diagnostics": {
-      "attempted": false,
-      "market_open": false,
-      "quote_refresh_window": false,
-      "updater_time_taipei": "2026-11-11 00:09",
+      "attempted": true,
+      "market_open": true,
+      "quote_refresh_window": true,
+      "updater_time_taipei": "2026-11-11 09:01",
       "valid_trades": 0,
-      "mis_stats": {},
+      "mis_stats": {
+        "requested_channels": 1965,
+        "returned_messages": 0,
+        "matched_codes": 0,
+        "rejected_date": 0,
+        "rejected_time": 0,
+        "duplicate_messages": 0,
+        "rejected_price": 0,
+        "missing_last_trade": 0,
+        "missing_previous_close": 0,
+        "index_quote_status": "not_requested",
+        "rejected_identity": 0,
+        "malformed_messages": 0,
+        "service_probe_attempts": 3,
+        "bulk_scan_skipped": true,
+        "unavailable_http_status": 503,
+        "outage_reason": "HTTP_503",
+        "skipped_channels": 1965
+      },
       "required_trades": 500,
       "required_coverage_pct": 35,
-      "errors": [],
-      "reason": "尚未開盤；保留最近有效收盤，等待今日盤中行情驗證"
+      "errors": [
+        "MIS HTTP 503：連線探測未通過，停止本輪全市場掃描；下輪重新探測"
+      ],
+      "reason": "今日盤中成交價覆蓋未達驗證門檻，暫停新判讀"
     },
     "analysis_scope": {
       "mode": "official_close",
       "count": 1965,
       "universe_count": 1965
     },
-    "brief": "盤前準備｜尚未開盤；保留最近有效收盤，等待今日盤中行情驗證｜最近有效收盤 2026-11-10｜歷史名單僅供研究",
+    "brief": "盤中資料不足｜今日盤中成交價覆蓋未達驗證門檻，暫停新判讀｜最近有效收盤 2026-11-10｜歷史名單僅供研究",
     "market_data_as_of": "2026-11-10",
-    "session_status": "盤前準備",
+    "session_status": "盤中資料不足",
     "no_new_picks": true,
     "partial_live": {
-      "asof": "2026-11-11 00:09",
+      "asof": "2026-11-11 09:01",
       "verified_count": 0,
-      "coverage_pct": 0.0,
+      "coverage_pct": 0,
       "complete": false,
       "quotes": []
     },
-    "status_updated_at": "2026-11-11 00:09",
-    "session_reason": "尚未開盤；保留最近有效收盤，等待今日盤中行情驗證",
+    "status_updated_at": "2026-11-11 09:01",
+    "session_reason": "今日盤中成交價覆蓋未達驗證門檻，暫停新判讀",
     "next_expected_session": null
   },
   "sectors": [
