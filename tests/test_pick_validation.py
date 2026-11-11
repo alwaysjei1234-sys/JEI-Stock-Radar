@@ -1,8 +1,13 @@
 """Forward-only pick validation: never invent winners from unavailable future closes."""
 import copy
+import json
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from scripts import update_pick_validation
 from scripts.update_pick_validation import (
     GROUPS, HORIZONS, close_verified, freeze_picks, compile_report, update, net_percent
 )
@@ -62,6 +67,37 @@ class PickValidationTests(unittest.TestCase):
             private = copy.deepcopy(f)
             private["holdings"]["2330"][field] = 1
             self.assertFalse(close_verified(private, a, DATES[0]))
+
+    def test_report_only_advances_outcomes_without_capturing_feed(self):
+        a = archive(4)
+        ledger = {"schema": 1, "picks": freeze_picks(feed(), a["days"][DATES[0]], DATES[0])}
+        f = feed(DATES[3])
+        for group in GROUPS:
+            f[group] = [{"code": "2344", "score": 95, "price": 110}]
+        with TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            paths = {key: directory / f"{key}.json" for key in ("DAILY", "FEED", "PICKS", "REPORT")}
+            for key, payload in (("DAILY", a), ("FEED", f), ("PICKS", ledger)):
+                paths[key].write_text(json.dumps(payload), encoding="utf-8")
+            original = paths["PICKS"].read_bytes()
+            with patch.multiple(update_pick_validation, **paths):
+                update_pick_validation.main(report_only=True)
+            report = json.loads(paths["REPORT"].read_text(encoding="utf-8"))
+            self.assertEqual(paths["PICKS"].read_bytes(), original)
+            self.assertEqual(report["latest_official_day"], DATES[3])
+            self.assertEqual(report["total_frozen_picks"], len(ledger["picks"]))
+            self.assertEqual(report["groups"]["attack"]["3"]["completed"], 2)
+
+    def test_freeze_never_replaces_unverified_top_five_with_sixth_pick(self):
+        f = feed()
+        prices = archive(1)["days"][DATES[0]]
+        f["attack"] = [
+            {"code": str(1000+i), "price": 100, "score": 95-i}
+            for i in range(6)
+        ]
+        prices.pop("1004")
+        rows = [r for r in freeze_picks(f, prices, DATES[0]) if r["group"] == "attack"]
+        self.assertEqual([r["rank"] for r in rows], [1, 2, 3, 4])
 
     def test_freezes_original_five_groups_and_no_hindsight(self):
         a=archive()
