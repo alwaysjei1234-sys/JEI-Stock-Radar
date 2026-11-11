@@ -7,7 +7,7 @@
   "buy_fee_rate": 0.001425,
   "sell_fee_rate": 0.001425,
   "sell_tax_rate": 0.003,
-  "last_processed_day": "2026-11-10",
+  "last_processed_day": "2026-11-11",
   "signals": [
     {
       "id": "2026-10-13:3406",
@@ -1013,12 +1013,107 @@
         "reconstructed": true,
         "qualification": "provenance_only"
       }
+    },
+    {
+      "id": "2026-11-11:2368",
+      "day": "2026-11-11",
+      "code": "2368",
+      "name": "金像電",
+      "score": 99,
+      "source": "attack",
+      "signal_close": 1050.0,
+      "provenance": {
+        "schema": 1,
+        "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+        "recorded_at": "2026-11-11T19:07:05+08:00",
+        "snapshot_sha256": "7ed5350f4225f5c5cfd6000ff30f407d8386288c41a491d379418e9c69cc7711",
+        "source_commit": "9a8eb4026bd87acb1d9038e47cccda90ff14b51d",
+        "source_dirty": false,
+        "reconstructed": true,
+        "qualification": "provenance_only"
+      }
+    },
+    {
+      "id": "2026-11-11:2454",
+      "day": "2026-11-11",
+      "code": "2454",
+      "name": "聯發科",
+      "score": 99,
+      "source": "attack",
+      "signal_close": 3990.0,
+      "provenance": {
+        "schema": 1,
+        "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+        "recorded_at": "2026-11-11T19:07:05+08:00",
+        "snapshot_sha256": "7ed5350f4225f5c5cfd6000ff30f407d8386288c41a491d379418e9c69cc7711",
+        "source_commit": "9a8eb4026bd87acb1d9038e47cccda90ff14b51d",
+        "source_dirty": false,
+        "reconstructed": true,
+        "qualification": "provenance_only"
+      }
+    },
+    {
+      "id": "2026-11-11:3026",
+      "day": "2026-11-11",
+      "code": "3026",
+      "name": "禾伸堂",
+      "score": 99,
+      "source": "monster",
+      "signal_close": 561.0,
+      "provenance": {
+        "schema": 1,
+        "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+        "recorded_at": "2026-11-11T19:07:05+08:00",
+        "snapshot_sha256": "7ed5350f4225f5c5cfd6000ff30f407d8386288c41a491d379418e9c69cc7711",
+        "source_commit": "9a8eb4026bd87acb1d9038e47cccda90ff14b51d",
+        "source_dirty": false,
+        "reconstructed": true,
+        "qualification": "provenance_only"
+      }
+    },
+    {
+      "id": "2026-11-11:3105",
+      "day": "2026-11-11",
+      "code": "3105",
+      "name": "穩懋",
+      "score": 99,
+      "source": "attack",
+      "signal_close": 521.0,
+      "provenance": {
+        "schema": 1,
+        "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+        "recorded_at": "2026-11-11T19:07:05+08:00",
+        "snapshot_sha256": "7ed5350f4225f5c5cfd6000ff30f407d8386288c41a491d379418e9c69cc7711",
+        "source_commit": "9a8eb4026bd87acb1d9038e47cccda90ff14b51d",
+        "source_dirty": false,
+        "reconstructed": true,
+        "qualification": "provenance_only"
+      }
+    },
+    {
+      "id": "2026-11-11:3167",
+      "day": "2026-11-11",
+      "code": "3167",
+      "name": "大量",
+      "score": 99,
+      "source": "monster",
+      "signal_close": 881.0,
+      "provenance": {
+        "schema": 1,
+        "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+        "recorded_at": "2026-11-11T19:07:05+08:00",
+        "snapshot_sha256": "7ed5350f4225f5c5cfd6000ff30f407d8386288c41a491d379418e9c69cc7711",
+        "source_commit": "9a8eb4026bd87acb1d9038e47cccda90ff14b51d",
+        "source_dirty": false,
+        "reconstructed": true,
+        "qualification": "provenance_only"
+      }
     }
   ],
   "strategies": {
     "fixed5": {
       "name": "固定 +5%",
-      "cash": 161.16635624987248,
+      "cash": 453.3229562498527,
       "positions": [
         {
           "code": "1476",
@@ -1038,47 +1133,7 @@
           "entry_price": 27.0,
           "entry_cost": 99988.28055,
           "qty": 3698,
-          "peak": 27.0,
-          "provenance": {
-            "schema": 1,
-            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
-            "recorded_at": "2026-11-10T22:08:17+08:00",
-            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
-            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
-            "source_dirty": false,
-            "reconstructed": true,
-            "qualification": "provenance_only"
-          }
-        },
-        {
-          "code": "6152",
-          "name": "百一",
-          "signal_day": "2026-11-06",
-          "entry_day": "2026-11-09",
-          "entry_price": 16.95,
-          "entry_cost": 99994.73974125,
-          "qty": 5891,
-          "peak": 17.55,
-          "provenance": {
-            "schema": 1,
-            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
-            "recorded_at": "2026-11-10T22:08:17+08:00",
-            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
-            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
-            "source_dirty": false,
-            "reconstructed": true,
-            "qualification": "provenance_only"
-          }
-        },
-        {
-          "code": "6214",
-          "name": "精誠",
-          "signal_day": "2026-11-06",
-          "entry_day": "2026-11-09",
-          "entry_price": 179.0,
-          "entry_cost": 99845.076775,
-          "qty": 557,
-          "peak": 184.5,
+          "peak": 27.6,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -1098,7 +1153,7 @@
           "entry_price": 4365.0,
           "entry_cost": 96166.84275,
           "qty": 22,
-          "peak": 4365.0,
+          "peak": 4500.0,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -1118,7 +1173,7 @@
           "entry_price": 383.0,
           "entry_cost": 99721.9015,
           "qty": 260,
-          "peak": 383.0,
+          "peak": 394.0,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -1138,7 +1193,7 @@
           "entry_price": 2115.0,
           "entry_cost": 99546.65212500001,
           "qty": 47,
-          "peak": 2115.0,
+          "peak": 2215.0,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -1158,12 +1213,72 @@
           "entry_price": 476.5,
           "entry_cost": 39605.8580375,
           "qty": 83,
-          "peak": 476.5,
+          "peak": 481.0,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
             "recorded_at": "2026-11-10T22:08:17+08:00",
             "snapshot_sha256": "a24cab55ba2b078adaf4e426cce5887c8a00a9d102ac2d6c36e62e6fb453f6c5",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "2059",
+          "name": "川湖",
+          "signal_day": "2026-11-10",
+          "entry_day": "2026-11-11",
+          "entry_price": 8730.0,
+          "entry_cost": 96166.84275,
+          "qty": 11,
+          "peak": 8730.0,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "3c68083747e1e579ebb52431e1ac0de653593c78ac60dffb1c6adac6aa92b429",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "2345",
+          "name": "智邦",
+          "signal_day": "2026-11-10",
+          "entry_day": "2026-11-11",
+          "entry_price": 1575.0,
+          "entry_cost": 99366.395625,
+          "qty": 63,
+          "peak": 1575.0,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "3c68083747e1e579ebb52431e1ac0de653593c78ac60dffb1c6adac6aa92b429",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "2368",
+          "name": "金像電",
+          "signal_day": "2026-11-10",
+          "entry_day": "2026-11-11",
+          "entry_price": 1050.0,
+          "entry_cost": 19978.42875,
+          "qty": 19,
+          "peak": 1050.0,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "3c68083747e1e579ebb52431e1ac0de653593c78ac60dffb1c6adac6aa92b429",
             "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
             "source_dirty": false,
             "reconstructed": true,
@@ -2103,6 +2218,50 @@
             "reconstructed": true,
             "qualification": "provenance_only"
           }
+        },
+        {
+          "code": "6152",
+          "signal_day": "2026-11-06",
+          "entry_day": "2026-11-09",
+          "exit_day": "2026-11-11",
+          "entry_price": 16.95,
+          "exit_price": 18.5,
+          "qty": 5891,
+          "reason": "收盤停利",
+          "net": 8506.51,
+          "net_return_pct": 8.507,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "6214",
+          "signal_day": "2026-11-06",
+          "entry_day": "2026-11-09",
+          "exit_day": "2026-11-11",
+          "entry_price": 179.0,
+          "exit_price": 193.5,
+          "qty": 557,
+          "reason": "收盤停利",
+          "net": 7457.5,
+          "net_return_pct": 7.469,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
         }
       ],
       "equity_history": [
@@ -2181,84 +2340,88 @@
         {
           "day": "2026-11-10",
           "equity": 736710.1
+        },
+        {
+          "day": "2026-11-11",
+          "equity": 761329.28
         }
       ],
       "summary": {
-        "closed": 76,
-        "wins": 18,
-        "win_rate_pct": 23.68,
-        "realized_net_ntd": -265035.34,
-        "realized_return_pct_of_initial": -26.504,
-        "open_positions": 8,
-        "cash_ntd": 161.17,
-        "estimated_liquidation_equity_ntd": 736710.1,
-        "official_close_coverage": "8/8",
+        "closed": 78,
+        "wins": 20,
+        "win_rate_pct": 25.64,
+        "realized_net_ntd": -249071.33,
+        "realized_return_pct_of_initial": -24.907,
+        "open_positions": 9,
+        "cash_ntd": 453.32,
+        "estimated_liquidation_equity_ntd": 761329.28,
+        "official_close_coverage": "9/9",
         "evidence": {
-          "closed": 76,
+          "closed": 78,
           "win_rate_ci95_pct": [
-            15.54,
-            34.36
+            17.26,
+            36.31
           ],
-          "mean_net_return_pct": -3.672,
-          "profit_factor": 0.366,
+          "mean_net_return_pct": -3.373,
+          "profit_factor": 0.404,
           "profit_factor_note": "measured",
           "slippage_scenarios": [
             {
               "slippage_per_side_pct": 0.1,
-              "closed": 76,
-              "win_rate_pct": 23.68,
-              "mean_net_return_pct": -3.864
+              "closed": 78,
+              "win_rate_pct": 25.64,
+              "mean_net_return_pct": -3.566
             },
             {
               "slippage_per_side_pct": 0.2,
-              "closed": 76,
-              "win_rate_pct": 23.68,
-              "mean_net_return_pct": -4.056
+              "closed": 78,
+              "win_rate_pct": 25.64,
+              "mean_net_return_pct": -3.758
             }
           ],
           "minimum_fee_scenarios": [
             {
               "minimum_fee_per_side_ntd": 1.0,
               "slippage_per_side_pct": 0.0,
-              "closed": 76,
+              "closed": 78,
               "affected_trades": 0,
               "additional_commission_ntd": 0.0,
-              "win_rate_pct": 23.68,
-              "mean_net_return_pct": -3.672,
-              "mean_net_pnl_ntd": -3487.31,
+              "win_rate_pct": 25.64,
+              "mean_net_return_pct": -3.373,
+              "mean_net_pnl_ntd": -3193.22,
               "scope": "fixed_closed_trades_only"
             },
             {
               "minimum_fee_per_side_ntd": 1.0,
               "slippage_per_side_pct": 0.1,
-              "closed": 76,
+              "closed": 78,
               "affected_trades": 0,
               "additional_commission_ntd": 0.0,
-              "win_rate_pct": 23.68,
-              "mean_net_return_pct": -3.864,
-              "mean_net_pnl_ntd": -3680.21,
+              "win_rate_pct": 25.64,
+              "mean_net_return_pct": -3.566,
+              "mean_net_pnl_ntd": -3386.51,
               "scope": "fixed_closed_trades_only"
             },
             {
               "minimum_fee_per_side_ntd": 20.0,
               "slippage_per_side_pct": 0.0,
-              "closed": 76,
+              "closed": 78,
               "affected_trades": 1,
               "additional_commission_ntd": 3.23,
-              "win_rate_pct": 23.68,
-              "mean_net_return_pct": -3.672,
-              "mean_net_pnl_ntd": -3487.35,
+              "win_rate_pct": 25.64,
+              "mean_net_return_pct": -3.373,
+              "mean_net_pnl_ntd": -3193.26,
               "scope": "fixed_closed_trades_only"
             },
             {
               "minimum_fee_per_side_ntd": 20.0,
               "slippage_per_side_pct": 0.1,
-              "closed": 76,
+              "closed": 78,
               "affected_trades": 1,
               "additional_commission_ntd": 3.23,
-              "win_rate_pct": 23.68,
-              "mean_net_return_pct": -3.864,
-              "mean_net_pnl_ntd": -3680.25,
+              "win_rate_pct": 25.64,
+              "mean_net_return_pct": -3.566,
+              "mean_net_pnl_ntd": -3386.55,
               "scope": "fixed_closed_trades_only"
             }
           ],
@@ -2270,18 +2433,8 @@
     },
     "fixed7": {
       "name": "固定 +7%",
-      "cash": 0.20459624970681034,
+      "cash": 806.0657712496395,
       "positions": [
-        {
-          "code": "3019",
-          "name": "亞光",
-          "signal_day": "2026-11-05",
-          "entry_day": "2026-11-06",
-          "entry_price": 123.5,
-          "entry_cost": 99930.1979,
-          "qty": 808,
-          "peak": 132.0
-        },
         {
           "code": "1476",
           "name": "儒鴻",
@@ -2300,67 +2453,7 @@
           "entry_price": 27.0,
           "entry_cost": 99988.28055,
           "qty": 3698,
-          "peak": 27.0,
-          "provenance": {
-            "schema": 1,
-            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
-            "recorded_at": "2026-11-10T22:08:17+08:00",
-            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
-            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
-            "source_dirty": false,
-            "reconstructed": true,
-            "qualification": "provenance_only"
-          }
-        },
-        {
-          "code": "3219",
-          "name": "倚強科",
-          "signal_day": "2026-11-06",
-          "entry_day": "2026-11-09",
-          "entry_price": 103.0,
-          "entry_cost": 99949.224975,
-          "qty": 969,
-          "peak": 109.0,
-          "provenance": {
-            "schema": 1,
-            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
-            "recorded_at": "2026-11-10T22:08:17+08:00",
-            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
-            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
-            "source_dirty": false,
-            "reconstructed": true,
-            "qualification": "provenance_only"
-          }
-        },
-        {
-          "code": "6152",
-          "name": "百一",
-          "signal_day": "2026-11-06",
-          "entry_day": "2026-11-09",
-          "entry_price": 16.95,
-          "entry_cost": 99994.73974125,
-          "qty": 5891,
-          "peak": 17.55,
-          "provenance": {
-            "schema": 1,
-            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
-            "recorded_at": "2026-11-10T22:08:17+08:00",
-            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
-            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
-            "source_dirty": false,
-            "reconstructed": true,
-            "qualification": "provenance_only"
-          }
-        },
-        {
-          "code": "6214",
-          "name": "精誠",
-          "signal_day": "2026-11-06",
-          "entry_day": "2026-11-09",
-          "entry_price": 179.0,
-          "entry_cost": 26171.24095,
-          "qty": 146,
-          "peak": 184.5,
+          "peak": 27.6,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -2380,7 +2473,7 @@
           "entry_price": 4365.0,
           "entry_cost": 96166.84275,
           "qty": 22,
-          "peak": 4365.0,
+          "peak": 4500.0,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -2400,12 +2493,92 @@
           "entry_price": 383.0,
           "entry_cost": 96269.989525,
           "qty": 251,
-          "peak": 383.0,
+          "peak": 394.0,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
             "recorded_at": "2026-11-10T22:08:17+08:00",
             "snapshot_sha256": "a24cab55ba2b078adaf4e426cce5887c8a00a9d102ac2d6c36e62e6fb453f6c5",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "2059",
+          "name": "川湖",
+          "signal_day": "2026-11-10",
+          "entry_day": "2026-11-11",
+          "entry_price": 8730.0,
+          "entry_cost": 96166.84275,
+          "qty": 11,
+          "peak": 8730.0,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "3c68083747e1e579ebb52431e1ac0de653593c78ac60dffb1c6adac6aa92b429",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "2345",
+          "name": "智邦",
+          "signal_day": "2026-11-10",
+          "entry_day": "2026-11-11",
+          "entry_price": 1575.0,
+          "entry_cost": 99366.395625,
+          "qty": 63,
+          "peak": 1575.0,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "3c68083747e1e579ebb52431e1ac0de653593c78ac60dffb1c6adac6aa92b429",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "2368",
+          "name": "金像電",
+          "signal_day": "2026-11-10",
+          "entry_day": "2026-11-11",
+          "entry_price": 1050.0,
+          "entry_cost": 99892.14375,
+          "qty": 95,
+          "peak": 1050.0,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "3c68083747e1e579ebb52431e1ac0de653593c78ac60dffb1c6adac6aa92b429",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "3324",
+          "name": "雙鴻",
+          "signal_day": "2026-11-10",
+          "entry_day": "2026-11-11",
+          "entry_price": 1300.0,
+          "entry_cost": 57281.51,
+          "qty": 44,
+          "peak": 1300.0,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "3c68083747e1e579ebb52431e1ac0de653593c78ac60dffb1c6adac6aa92b429",
             "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
             "source_dirty": false,
             "reconstructed": true,
@@ -3299,6 +3472,84 @@
             "reconstructed": true,
             "qualification": "provenance_only"
           }
+        },
+        {
+          "code": "3019",
+          "signal_day": "2026-11-05",
+          "entry_day": "2026-11-06",
+          "exit_day": "2026-11-11",
+          "entry_price": 123.5,
+          "exit_price": 133.5,
+          "qty": 808,
+          "reason": "收盤停利",
+          "net": 7460.49,
+          "net_return_pct": 7.466
+        },
+        {
+          "code": "3219",
+          "signal_day": "2026-11-06",
+          "entry_day": "2026-11-09",
+          "exit_day": "2026-11-11",
+          "entry_price": 103.0,
+          "exit_price": 113.5,
+          "qty": 969,
+          "reason": "收盤停利",
+          "net": 9545.61,
+          "net_return_pct": 9.55,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "6152",
+          "signal_day": "2026-11-06",
+          "entry_day": "2026-11-09",
+          "exit_day": "2026-11-11",
+          "entry_price": 16.95,
+          "exit_price": 18.5,
+          "qty": 5891,
+          "reason": "收盤停利",
+          "net": 8506.51,
+          "net_return_pct": 8.507,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "6214",
+          "signal_day": "2026-11-06",
+          "entry_day": "2026-11-09",
+          "exit_day": "2026-11-11",
+          "entry_price": 179.0,
+          "exit_price": 193.5,
+          "qty": 146,
+          "reason": "收盤停利",
+          "net": 1954.75,
+          "net_return_pct": 7.469,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
         }
       ],
       "equity_history": [
@@ -3377,84 +3628,88 @@
         {
           "day": "2026-11-10",
           "equity": 729414.85
+        },
+        {
+          "day": "2026-11-11",
+          "equity": 751154.81
         }
       ],
       "summary": {
-        "closed": 73,
-        "wins": 14,
-        "win_rate_pct": 19.18,
-        "realized_net_ntd": -281595.13,
-        "realized_return_pct_of_initial": -28.16,
+        "closed": 77,
+        "wins": 18,
+        "win_rate_pct": 23.38,
+        "realized_net_ntd": -254127.77,
+        "realized_return_pct_of_initial": -25.413,
         "open_positions": 8,
-        "cash_ntd": 0.2,
-        "estimated_liquidation_equity_ntd": 729414.85,
+        "cash_ntd": 806.07,
+        "estimated_liquidation_equity_ntd": 751154.81,
         "official_close_coverage": "8/8",
         "evidence": {
-          "closed": 73,
+          "closed": 77,
           "win_rate_ci95_pct": [
-            11.78,
-            29.66
+            15.33,
+            33.95
           ],
-          "mean_net_return_pct": -4.097,
-          "profit_factor": 0.319,
+          "mean_net_return_pct": -3.456,
+          "profit_factor": 0.385,
           "profit_factor_note": "measured",
           "slippage_scenarios": [
             {
               "slippage_per_side_pct": 0.1,
-              "closed": 73,
-              "win_rate_pct": 19.18,
-              "mean_net_return_pct": -4.289
+              "closed": 77,
+              "win_rate_pct": 23.38,
+              "mean_net_return_pct": -3.649
             },
             {
               "slippage_per_side_pct": 0.2,
-              "closed": 73,
-              "win_rate_pct": 19.18,
-              "mean_net_return_pct": -4.48
+              "closed": 77,
+              "win_rate_pct": 23.38,
+              "mean_net_return_pct": -3.841
             }
           ],
           "minimum_fee_scenarios": [
             {
               "minimum_fee_per_side_ntd": 1.0,
               "slippage_per_side_pct": 0.0,
-              "closed": 73,
+              "closed": 77,
               "affected_trades": 0,
               "additional_commission_ntd": 0.0,
-              "win_rate_pct": 19.18,
-              "mean_net_return_pct": -4.097,
-              "mean_net_pnl_ntd": -3857.47,
+              "win_rate_pct": 23.38,
+              "mean_net_return_pct": -3.456,
+              "mean_net_pnl_ntd": -3300.36,
               "scope": "fixed_closed_trades_only"
             },
             {
               "minimum_fee_per_side_ntd": 1.0,
               "slippage_per_side_pct": 0.1,
-              "closed": 73,
+              "closed": 77,
               "affected_trades": 0,
               "additional_commission_ntd": 0.0,
-              "win_rate_pct": 19.18,
-              "mean_net_return_pct": -4.289,
-              "mean_net_pnl_ntd": -4047.68,
+              "win_rate_pct": 23.38,
+              "mean_net_return_pct": -3.649,
+              "mean_net_pnl_ntd": -3489.52,
               "scope": "fixed_closed_trades_only"
             },
             {
               "minimum_fee_per_side_ntd": 20.0,
               "slippage_per_side_pct": 0.0,
-              "closed": 73,
+              "closed": 77,
               "affected_trades": 1,
               "additional_commission_ntd": 18.77,
-              "win_rate_pct": 19.18,
-              "mean_net_return_pct": -4.1,
-              "mean_net_pnl_ntd": -3857.72,
+              "win_rate_pct": 23.38,
+              "mean_net_return_pct": -3.459,
+              "mean_net_pnl_ntd": -3300.6,
               "scope": "fixed_closed_trades_only"
             },
             {
               "minimum_fee_per_side_ntd": 20.0,
               "slippage_per_side_pct": 0.1,
-              "closed": 73,
+              "closed": 77,
               "affected_trades": 1,
               "additional_commission_ntd": 18.77,
-              "win_rate_pct": 19.18,
-              "mean_net_return_pct": -4.292,
-              "mean_net_pnl_ntd": -4047.94,
+              "win_rate_pct": 23.38,
+              "mean_net_return_pct": -3.652,
+              "mean_net_pnl_ntd": -3489.77,
               "scope": "fixed_closed_trades_only"
             }
           ],
@@ -3466,7 +3721,7 @@
     },
     "fixed10": {
       "name": "固定 +10%",
-      "cash": 0.366358750150539,
+      "cash": 710.4004712501501,
       "positions": [
         {
           "code": "3019",
@@ -3476,7 +3731,7 @@
           "entry_price": 123.5,
           "entry_cost": 99930.1979,
           "qty": 808,
-          "peak": 132.0
+          "peak": 133.5
         },
         {
           "code": "1476",
@@ -3496,27 +3751,7 @@
           "entry_price": 27.0,
           "entry_cost": 99988.28055,
           "qty": 3698,
-          "peak": 27.0,
-          "provenance": {
-            "schema": 1,
-            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
-            "recorded_at": "2026-11-10T22:08:17+08:00",
-            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
-            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
-            "source_dirty": false,
-            "reconstructed": true,
-            "qualification": "provenance_only"
-          }
-        },
-        {
-          "code": "3219",
-          "name": "倚強科",
-          "signal_day": "2026-11-06",
-          "entry_day": "2026-11-09",
-          "entry_price": 103.0,
-          "entry_cost": 99949.224975,
-          "qty": 969,
-          "peak": 109.0,
+          "peak": 27.6,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -3536,7 +3771,7 @@
           "entry_price": 16.95,
           "entry_cost": 99994.73974125,
           "qty": 5891,
-          "peak": 17.55,
+          "peak": 18.5,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -3556,7 +3791,7 @@
           "entry_price": 179.0,
           "entry_cost": 74570.1112,
           "qty": 416,
-          "peak": 184.5,
+          "peak": 193.5,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -3576,7 +3811,7 @@
           "entry_price": 4365.0,
           "entry_cost": 96166.84275,
           "qty": 22,
-          "peak": 4365.0,
+          "peak": 4500.0,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -3596,12 +3831,52 @@
           "entry_price": 383.0,
           "entry_cost": 96269.989525,
           "qty": 251,
-          "peak": 383.0,
+          "peak": 394.0,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
             "recorded_at": "2026-11-10T22:08:17+08:00",
             "snapshot_sha256": "a24cab55ba2b078adaf4e426cce5887c8a00a9d102ac2d6c36e62e6fb453f6c5",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "2059",
+          "name": "川湖",
+          "signal_day": "2026-11-10",
+          "entry_day": "2026-11-11",
+          "entry_price": 8730.0,
+          "entry_cost": 96166.84275,
+          "qty": 11,
+          "peak": 8730.0,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "3c68083747e1e579ebb52431e1ac0de653593c78ac60dffb1c6adac6aa92b429",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
+        },
+        {
+          "code": "2345",
+          "name": "智邦",
+          "signal_day": "2026-11-10",
+          "entry_day": "2026-11-11",
+          "entry_price": 1575.0,
+          "entry_cost": 12617.955,
+          "qty": 8,
+          "peak": 1575.0,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "3c68083747e1e579ebb52431e1ac0de653593c78ac60dffb1c6adac6aa92b429",
             "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
             "source_dirty": false,
             "reconstructed": true,
@@ -4447,6 +4722,28 @@
             "reconstructed": true,
             "qualification": "provenance_only"
           }
+        },
+        {
+          "code": "3219",
+          "signal_day": "2026-11-06",
+          "entry_day": "2026-11-09",
+          "exit_day": "2026-11-11",
+          "entry_price": 103.0,
+          "exit_price": 113.5,
+          "qty": 969,
+          "reason": "收盤停利",
+          "net": 9545.61,
+          "net_return_pct": 9.55,
+          "provenance": {
+            "schema": 1,
+            "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
+            "recorded_at": "2026-11-10T22:08:17+08:00",
+            "snapshot_sha256": "b4d14d931b7f10c3dd14e4a759f0ef43a03574a517fa4c7ee04bbfdb4b8ec405",
+            "source_commit": "3a75aed5a770c48a4d0cef2c18536de476b4e1d7",
+            "source_dirty": false,
+            "reconstructed": true,
+            "qualification": "provenance_only"
+          }
         }
       ],
       "equity_history": [
@@ -4525,84 +4822,88 @@
         {
           "day": "2026-11-10",
           "equity": 779009.58
+        },
+        {
+          "day": "2026-11-11",
+          "equity": 804593.71
         }
       ],
       "summary": {
-        "closed": 69,
-        "wins": 10,
-        "win_rate_pct": 14.49,
-        "realized_net_ntd": -233196.06,
-        "realized_return_pct_of_initial": -23.32,
-        "open_positions": 8,
-        "cash_ntd": 0.37,
-        "estimated_liquidation_equity_ntd": 779009.58,
-        "official_close_coverage": "8/8",
+        "closed": 70,
+        "wins": 11,
+        "win_rate_pct": 15.71,
+        "realized_net_ntd": -223650.45,
+        "realized_return_pct_of_initial": -22.365,
+        "open_positions": 9,
+        "cash_ntd": 710.4,
+        "estimated_liquidation_equity_ntd": 804593.71,
+        "official_close_coverage": "9/9",
         "evidence": {
-          "closed": 69,
+          "closed": 70,
           "win_rate_ci95_pct": [
-            8.07,
-            24.66
+            9.01,
+            25.99
           ],
-          "mean_net_return_pct": -4.155,
-          "profit_factor": 0.367,
+          "mean_net_return_pct": -3.959,
+          "profit_factor": 0.393,
           "profit_factor_note": "measured",
           "slippage_scenarios": [
             {
               "slippage_per_side_pct": 0.1,
-              "closed": 69,
-              "win_rate_pct": 14.49,
-              "mean_net_return_pct": -4.347
+              "closed": 70,
+              "win_rate_pct": 15.71,
+              "mean_net_return_pct": -4.151
             },
             {
               "slippage_per_side_pct": 0.2,
-              "closed": 69,
-              "win_rate_pct": 14.49,
-              "mean_net_return_pct": -4.538
+              "closed": 70,
+              "win_rate_pct": 15.71,
+              "mean_net_return_pct": -4.343
             }
           ],
           "minimum_fee_scenarios": [
             {
               "minimum_fee_per_side_ntd": 1.0,
               "slippage_per_side_pct": 0.0,
-              "closed": 69,
+              "closed": 70,
               "affected_trades": 3,
               "additional_commission_ntd": 5.07,
-              "win_rate_pct": 14.49,
-              "mean_net_return_pct": -4.225,
-              "mean_net_pnl_ntd": -3379.73,
+              "win_rate_pct": 15.71,
+              "mean_net_return_pct": -4.029,
+              "mean_net_pnl_ntd": -3195.08,
               "scope": "fixed_closed_trades_only"
             },
             {
               "minimum_fee_per_side_ntd": 1.0,
               "slippage_per_side_pct": 0.1,
-              "closed": 69,
+              "closed": 70,
               "affected_trades": 3,
               "additional_commission_ntd": 5.07,
-              "win_rate_pct": 14.49,
-              "mean_net_return_pct": -4.417,
-              "mean_net_pnl_ntd": -3553.09,
+              "win_rate_pct": 15.71,
+              "mean_net_return_pct": -4.22,
+              "mean_net_pnl_ntd": -3368.95,
               "scope": "fixed_closed_trades_only"
             },
             {
               "minimum_fee_per_side_ntd": 20.0,
               "slippage_per_side_pct": 0.0,
-              "closed": 69,
+              "closed": 70,
               "affected_trades": 5,
               "additional_commission_ntd": 162.37,
-              "win_rate_pct": 14.49,
-              "mean_net_return_pct": -5.57,
-              "mean_net_pnl_ntd": -3382.01,
+              "win_rate_pct": 15.71,
+              "mean_net_return_pct": -5.354,
+              "mean_net_pnl_ntd": -3197.33,
               "scope": "fixed_closed_trades_only"
             },
             {
               "minimum_fee_per_side_ntd": 20.0,
               "slippage_per_side_pct": 0.1,
-              "closed": 69,
+              "closed": 70,
               "affected_trades": 5,
               "additional_commission_ntd": 162.37,
-              "win_rate_pct": 14.49,
-              "mean_net_return_pct": -5.759,
-              "mean_net_pnl_ntd": -3555.36,
+              "win_rate_pct": 15.71,
+              "mean_net_return_pct": -5.543,
+              "mean_net_pnl_ntd": -3371.2,
               "scope": "fixed_closed_trades_only"
             }
           ],
@@ -4624,7 +4925,7 @@
           "entry_price": 59.0,
           "entry_cost": 99970.2549,
           "qty": 1692,
-          "peak": 66.0
+          "peak": 68.3
         },
         {
           "code": "3019",
@@ -4634,7 +4935,7 @@
           "entry_price": 123.5,
           "entry_cost": 99930.1979,
           "qty": 808,
-          "peak": 132.0
+          "peak": 133.5
         },
         {
           "code": "1476",
@@ -4664,7 +4965,7 @@
           "entry_price": 27.0,
           "entry_cost": 99988.28055,
           "qty": 3698,
-          "peak": 27.0,
+          "peak": 27.6,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -4684,7 +4985,7 @@
           "entry_price": 103.0,
           "entry_cost": 99949.224975,
           "qty": 969,
-          "peak": 109.0,
+          "peak": 113.5,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -4704,7 +5005,7 @@
           "entry_price": 16.95,
           "entry_cost": 52076.703705,
           "qty": 3068,
-          "peak": 17.55,
+          "peak": 18.5,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -4724,7 +5025,7 @@
           "entry_price": 4365.0,
           "entry_cost": 91795.622625,
           "qty": 21,
-          "peak": 4365.0,
+          "peak": 4500.0,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -4744,7 +5045,7 @@
           "entry_price": 383.0,
           "entry_cost": 3835.45775,
           "qty": 10,
-          "peak": 383.0,
+          "peak": 394.0,
           "provenance": {
             "schema": 1,
             "version": "c529d6abf2dcf903fe5aaddbf2ec04149846961cf5a1b9a8f8313e679111e068",
@@ -5627,6 +5928,10 @@
         {
           "day": "2026-11-10",
           "equity": 778044.44
+        },
+        {
+          "day": "2026-11-11",
+          "equity": 798190.79
         }
       ],
       "summary": {
@@ -5637,7 +5942,7 @@
         "realized_return_pct_of_initial": -25.22,
         "open_positions": 9,
         "cash_ntd": 341.07,
-        "estimated_liquidation_equity_ntd": 778044.44,
+        "estimated_liquidation_equity_ntd": 798190.79,
         "official_close_coverage": "9/9",
         "evidence": {
           "closed": 66,
@@ -5715,7 +6020,7 @@
       }
     }
   },
-  "updated_at": "2026-11-10 22:08",
+  "updated_at": "2026-11-11 19:07",
   "latest_signal_count": 5,
   "mainline_recovery": [
     {
@@ -5747,6 +6052,16 @@
       "signals_added": 5,
       "qualified_oos": false,
       "official_prices_sha256": "92b181a6332d560b684866f75173688d658931643c6037f8e8b95e99c5e8ffac"
+    },
+    {
+      "day": "2026-11-11",
+      "source_commit": "28760912743ec682608f9f70cb113044fffc1781",
+      "source_blob": "c7ad30f4d43732abb0c26e992a6aa2551994f8f4",
+      "source_committed_at": "2026-11-11T06:53:24Z",
+      "recovered_at": "2026-11-11T19:07:05+08:00",
+      "signals_added": 5,
+      "qualified_oos": false,
+      "official_prices_sha256": "cb9fb4826a28b7903e364d5f59aaf85b9a16c96619b3f70e0416e85a888b3924"
     }
   ]
 }
