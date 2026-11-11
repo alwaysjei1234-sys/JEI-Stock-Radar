@@ -14,7 +14,7 @@ def feed(**changes):
     base = {
         "data_date": "2026-10-16",
         "updated_at": "2026-10-16 10:10",
-        "market": {"mode": "盤中即時", "stale": False, "live_valid": True, "live_count": 1580},
+        "market": {"mode": "盤中即時", "stale": False, "live_valid": True, "live_count": 1580, "close_count": 2000},
         "risk": {"level": "red", "score": 91, "label": "高度警戒", "reasons": ["上漲家數縮減"]},
         "monster": [{"code": "2344", "name": "測試強勢股", "score": 97, "change_pct": 5.2, "price": 50.5}],
     }

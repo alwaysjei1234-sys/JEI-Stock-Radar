@@ -18,6 +18,12 @@ ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "remote" / "system.json"
 
 
+def is_whole_count(value):
+    # Match the dashboard's safe-integer checks for JSON numbers.
+    return (not isinstance(value, bool) and isinstance(value, (int, float))
+            and 0 <= value <= 2**53 - 1 and value == int(value))
+
+
 def live_gate_reasons(feed, now):
     """Explain every fail-closed reason that blocks intraday LINE alerts."""
     reasons = []
@@ -34,8 +40,10 @@ def live_gate_reasons(feed, now):
         reasons.append(f"行情資料日 {feed.get('data_date') or '缺漏'} 與今天不同")
     if m.get("mode") != "盤中即時":
         reasons.append(f"行情狀態為 {m.get('mode') or '缺漏'}，不是盤中即時")
-    if m.get("stale") is not False:
-        reasons.append("市場資料標記為過期或未驗證")
+    if m.get("stale") is not False or m.get("historical_readonly") is True:
+        reasons.append("市場資料標記為過期、唯讀或未驗證")
+    if m.get("session_status") == "休市":
+        reasons.append("交易所休市")
     if m.get("live_valid") is not True:
         reasons.append("盤中行情尚未通過有效性驗證")
     risk = feed.get("risk")
@@ -43,13 +51,18 @@ def live_gate_reasons(feed, now):
         reasons.append("風控資料缺漏或格式錯誤")
     elif risk.get("actionable") is False:
         reasons.append("行情風控明確暫停新判讀")
-    if m.get("no_new_picks") is True:
+    if m.get("no_new_picks") is True or m.get("actionable") is False:
         reasons.append("市場明確暫停新判讀")
     count = m.get("live_count")
-    if isinstance(count, bool) or not isinstance(count, (int, float)) or not math.isfinite(count):
+    total = m.get("close_count")
+    if not is_whole_count(count):
         reasons.append("有效成交檔數缺漏")
     elif count < 500:
         reasons.append(f"有效成交 {int(count)}/500 檔，覆蓋未達門檻")
+    elif not is_whole_count(total) or total < 500 or count > total:
+        reasons.append("行情總檔數缺漏或與有效成交檔數矛盾")
+    elif count * 100 < total * 35:
+        reasons.append(f"有效成交 {int(count)}/{int(total)} 檔，覆蓋率低於 35%")
     try:
         stamp = datetime.strptime(str(feed.get("updated_at") or ""), "%Y-%m-%d %H:%M").replace(tzinfo=TAIPEI)
     except ValueError:

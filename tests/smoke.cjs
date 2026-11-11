@@ -602,9 +602,9 @@ check('Android native background worker rejects stale feeds, quote substitutions
  const gradle=fs.readFileSync('app/build.gradle','utf8');
  assert.ok(worker.includes('trustedLiveFeed(root, now)'));
  assert.ok(worker.includes('trustedExecutedTrade(quote, now)'));
- assert.ok(worker.includes('market.optBoolean("stale", true)'));
+ assert.ok(worker.includes('Boolean.FALSE.equals(market.opt("stale"))'));
  assert.ok(worker.includes('market.opt("live_count")'),'background risk must inspect market breadth');
- assert.ok(worker.includes('((Number)liveCount).doubleValue() < 500'),'incomplete live snapshots cannot trigger Android risk events');
+ assert.ok(worker.includes('count >= 500 && count <= total')&&worker.includes('count * 100 >= total * 35'),'incomplete live snapshots cannot trigger Android risk events');
  assert.ok(activity.includes('public String testRiskNotification()'),'Android exposes a user-triggered notification diagnostic');
  assert.ok(activity.includes('nm.areNotificationsEnabled()'),'test notification respects OS notification setting');
  assert.ok(activity.includes('entry.put("type", "test")'),'test history never masquerades as a true stock alert');

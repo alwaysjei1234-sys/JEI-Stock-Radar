@@ -49,7 +49,7 @@ public class NativeRiskGateHarness {
     .set("updated_at","2026-11-10 10:00")
     .set("risk",new JSONObject().set("actionable",true))
     .set("market",new JSONObject().set("mode","盤中即時").set("stale",false)
-      .set("live_valid",true).set("live_count",1000));}
+      .set("live_valid",true).set("live_count",700).set("close_count",2000));}
   static void check(boolean ok,String why){if(!ok)throw new AssertionError(why);}
   public static void main(String[] args)throws Exception{
     long now=taipeiParser("yyyy-MM-dd HH:mm").parse("2026-11-10 10:05").getTime();
@@ -67,12 +67,26 @@ public class NativeRiskGateHarness {
     check(!trustedLiveFeed(blocked,now),"stale snapshot still alerts");
     blocked=feed();blocked.optJSONObject("market").set("live_count",499);
     check(!trustedLiveFeed(blocked,now),"sparse snapshot still alerts");
+    blocked=feed();blocked.optJSONObject("market").set("live_count",699).set("live_coverage_pct",100);
+    check(!trustedLiveFeed(blocked,now),"reported coverage must not override the trade count");
+    blocked=feed();blocked.optJSONObject("market").set("live_count",699.9);
+    check(!trustedLiveFeed(blocked,now),"fractional trade count still alerts");
+    blocked=feed();blocked.optJSONObject("market").set("live_count",2001);
+    check(!trustedLiveFeed(blocked,now),"more live trades than listed symbols still alerts");
+    blocked=feed();blocked.optJSONObject("market").remove("close_count");
+    check(!trustedLiveFeed(blocked,now),"missing denominator still alerts");
+    blocked=feed();blocked.optJSONObject("market").set("historical_readonly",true);
+    check(!trustedLiveFeed(blocked,now),"historical feed still alerts");
+    blocked=feed();blocked.optJSONObject("market").set("session_status","休市");
+    check(!trustedLiveFeed(blocked,now),"closed exchange still alerts");
+    blocked=feed();blocked.optJSONObject("market").set("actionable",false);
+    check(!trustedLiveFeed(blocked,now),"market.actionable=false still alerts");
     blocked=feed();blocked.set("updated_at","2026-11-10 09:00");
     check(!trustedLiveFeed(blocked,now),"old snapshot still alerts");
     blocked=feed();blocked.set("data_date","2026-11-09");
     check(!trustedLiveFeed(blocked,now),"yesterday still alerts");
     check(!trustedLiveFeed(feed(),taipeiParser("yyyy-MM-dd HH:mm").parse("2026-11-10 14:00").getTime()),"closed session still alerts");
-    System.out.println("PASS 11 native risk gate replays; no notification/network/device invoked");
+    System.out.println("PASS 18 native risk gate replays; no notification/network/device invoked");
   }
 }'''.replace('METHODS', bodies)
         with tempfile.TemporaryDirectory() as tmp:
