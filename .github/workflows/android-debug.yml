@@ -37,6 +37,11 @@ jobs:
           node tests/smoke.cjs
       - name: Build debug APK
         run: gradle --no-daemon :app:assembleDebug
+      - name: Verify built APK identity
+        run: |
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          "$SDK_ROOT/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk > /tmp/jei-apk-badging.txt
+          python -m scripts.verify_android_apk --badging /tmp/jei-apk-badging.txt
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
