@@ -1,0 +1,354 @@
+{
+  "checked_at": "2026-11-11T14:04:54.000+08:00",
+  "starting_main": "2cf850d09dbd2de8f5f0a26c152c832aea02c3ab",
+  "open_prs_at_start": [
+    59,
+    46,
+    45,
+    44,
+    2
+  ],
+  "dashboard": {
+    "pr": 70,
+    "head": "a0b116ce88082d19e102c775c03455eca1874190",
+    "merge": "0f65852b3982bed3c79c00a40c6537d17b14b582",
+    "tests": {
+      "python": 605,
+      "smoke": 72,
+      "node": [
+        "system_feed.cjs",
+        "partial_quotes.cjs"
+      ],
+      "main_ci": [
+        [
+          42969361541,
+          "JEI Smoke Tests",
+          "completed",
+          "success"
+        ],
+        [
+          42969361543,
+          "Build JEI Android APK",
+          "completed",
+          "success"
+        ],
+        [
+          42969361329,
+          "JEI Research Engine Tests",
+          "completed",
+          "success"
+        ],
+        [
+          42969361359,
+          "Android Debug APK",
+          "completed",
+          "success"
+        ],
+        [
+          42969361364,
+          "Validate JEI Stock Decision",
+          "completed",
+          "success"
+        ],
+        [
+          42969361281,
+          "JEI feed acceptance",
+          "completed",
+          "success"
+        ],
+        [
+          42969361352,
+          "JEI Mobile Browser Acceptance",
+          "completed",
+          "success"
+        ]
+      ]
+    },
+    "deployment": {
+      "id": "dpl_7UZfejAmtVAwKFGp7LWS74w8eqXi",
+      "state": "READY"
+    }
+  },
+  "market": {
+    "date": "2026-11-11",
+    "first_refresh": "13:57",
+    "second_refresh": "14:00",
+    "twse_dated_rows": 1390,
+    "tpex_today_rows": 0,
+    "tpex_alternate_date": "2026-11-10",
+    "mis_http": 503,
+    "finmind_http": 400,
+    "finmind_reason": "free level insufficient",
+    "public_data_date": "2026-11-10",
+    "pr": 71,
+    "head": "952fb324f8695a18b9a715ae1aec4a80a9902c9e",
+    "merge": "40443c432f7f5f986ee62851d4bcedc92415ec15",
+    "ci": [
+      [
+        42969759492,
+        "Update free official stock research data",
+        "in_progress",
+        null
+      ],
+      [
+        42969759490,
+        "JEI Smoke Tests",
+        "completed",
+        "success"
+      ],
+      [
+        42969759546,
+        "JEI feed acceptance",
+        "completed",
+        "success"
+      ]
+    ],
+    "deployment": {
+      "id": "dpl_48uQiW6LA14SVzzg1nUtT4wQdoEZ",
+      "state": "READY"
+    },
+    "readback": [
+      "remote/index.html",
+      "remote/system.json",
+      "remote/update.json",
+      "remote/strategy_performance.json"
+    ]
+  },
+  "paper": {
+    "source_day": "2026-11-10",
+    "signals": 95,
+    "closed_across_strategies": 284,
+    "mean_net_return_pct": [
+      -3.672,
+      -4.097,
+      -4.155,
+      -4.871
+    ],
+    "qualified_oos": 0
+  },
+  "acceptance": {
+    "denominator": 31,
+    "pass": 2,
+    "fail": 3,
+    "blocked": 26,
+    "rows": [
+      {
+        "id": 1,
+        "requirement": "手機瀏覽器逾時處理",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "手機與Android實機逾時流程尚無驗收"
+      },
+      {
+        "id": 2,
+        "requirement": "休市與假日判斷",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "完整雙市場及臨時休市日曆仍缺端到端證據"
+      },
+      {
+        "id": 3,
+        "requirement": "開盤後自動恢復更新",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺本輪開盤自動恢復證據"
+      },
+      {
+        "id": 4,
+        "requirement": "盤中每5分鐘更新及新鮮度",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "11/11 14:02 查詢仍無今日盤中更新的排程執行。最後可見 update-system 為 11/11 00:09。每 5 分鐘更新 FAIL。"
+      },
+      {
+        "id": 5,
+        "requirement": "TWSE／TPEx／MIS交叉驗證",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "13:57 TWSE 回傳 11/11 報表 1,390 筆。TPEx 當日空表，歷史與 OpenAPI 均為 11/10。14:00 重跑仍待齊。MIS 503。"
+      },
+      {
+        "id": 6,
+        "requirement": "缺漏、過期、異常資料保護",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR70 重現缺漏成交檔數誤放行。網頁及 Android 內建頁面回歸、手機瀏覽器 CI、正式站讀回通過。裝置離線與恢復實測尚缺。"
+      },
+      {
+        "id": 7,
+        "requirement": "每日選股封存與歷史紀錄",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "同日main最早有效發布復原56筆；360筆選股封存完整性及正式站逐位元讀回通過"
+      },
+      {
+        "id": 8,
+        "requirement": "模擬績效及交易日計算",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "#65依原始同日main逐日復原；舊80訊號/248平倉完整保留；正式597測試、雲端284平倉與四策略表格實際讀取通過。OOS另列#19，不視為有效策略證明。"
+      },
+      {
+        "id": 9,
+        "requirement": "LINE盤前、盤中、盤後推播",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/11 查到最新早報工作是 04:14 push，最新排程工作是 02:37。早報準時及 LINE 手機實收缺證據。"
+      },
+      {
+        "id": 10,
+        "requirement": "GitHub、Vercel、Android串接",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR70 合併後 Android APK 建置成功，Vercel READY。公開 APK 更新於 14:00:55。Android 安裝、離線及同步實機尚缺。"
+      },
+      {
+        "id": 11,
+        "requirement": "持股成本、股數與分類",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "為保護隱私未讀私人部位；匯入持久化仍待裝置驗證"
+      },
+      {
+        "id": 12,
+        "requirement": "持股權重與集中度",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺私人裝置集中度計算端到端驗收"
+      },
+      {
+        "id": 13,
+        "requirement": "營收、毛利與獲利品質",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺逐欄公告日期與財報來源核對"
+      },
+      {
+        "id": 14,
+        "requirement": "EPS與自由現金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "EPS與自由現金流完整來源驗收不足"
+      },
+      {
+        "id": 15,
+        "requirement": "存貨、應收帳款異常",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "既有單元測試不等於全公司財報監測已實測"
+      },
+      {
+        "id": 16,
+        "requirement": "同業、產業與估值",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同業估值自動比較未驗收"
+      },
+      {
+        "id": 17,
+        "requirement": "法人與大戶資金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪未完成法人與大戶資金來源核驗"
+      },
+      {
+        "id": 18,
+        "requirement": "強勢、震盪、轉弱情境",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "情境單元測試存在；實際資料端到端未驗"
+      },
+      {
+        "id": 19,
+        "requirement": "模擬勝率、盈虧與回撤",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "95訊號/284跨策略重疊平倉可重算；淨平均報酬全負，合格OOS0/100及市場狀態不足，80%勝率門檻未達。"
+      },
+      {
+        "id": 20,
+        "requirement": "每日續抱／減碼理由",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "公開信號存在；八模組與私人端決策未實機驗證"
+      },
+      {
+        "id": 21,
+        "requirement": "主流資金與族群輪動",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "主流資金與族群輪動缺完整端到端核驗"
+      },
+      {
+        "id": 22,
+        "requirement": "突破、妖股與潛力妖股",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "未放寬選股；未有完整前瞻有效性證據"
+      },
+      {
+        "id": 23,
+        "requirement": "3–5個獨立來源財經新聞",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "來源去重及逐條新聞核實未完成"
+      },
+      {
+        "id": 24,
+        "requirement": "券商報告、目標價與催化劑自動取得",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "免費券商目標價及催化劑自動取得未驗收"
+      },
+      {
+        "id": 25,
+        "requirement": "AI多模型會診及失敗復原",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "正式健康GET及錯誤token401通過；未實際呼叫多模型"
+      },
+      {
+        "id": 26,
+        "requirement": "個股決策儀表板與手機首頁",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "替代雲端Chromium實際打開首頁與績效頁、重讀表格成功；本地Playwright缺執行檔/系統socket拒絕，Android與手機尺寸實機仍未驗。"
+      },
+      {
+        "id": 27,
+        "requirement": "大盤修正與逃命警示",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "原生暫停旗標缺陷已修復，11案例及LINE對照通過；急跌至手機實收仍無端到端驗收。"
+      },
+      {
+        "id": 28,
+        "requirement": "現金與當沖分開模擬",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "現股及當沖分開實際驗證未完成"
+      },
+      {
+        "id": 29,
+        "requirement": "3／7／15／30／60交易日績效及策略調整",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "3/7/15日觀察已更新；30/60日樣本未成熟，非OOS成交績效"
+      },
+      {
+        "id": 30,
+        "requirement": "自動測試、部署與缺陷追蹤",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR70 9 條分支／PR CI 與 7 條合併後 CI 成功。PR71 feed acceptance 與 smoke 成功，正式站 4 檔讀回一致。定時工作完整流程尚缺。"
+      },
+      {
+        "id": 31,
+        "requirement": "推薦顯示八大指標、AI與全球市場影響",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "八指標、多模型與全球影響整合未完整驗收"
+      }
+    ]
+  }
+}
