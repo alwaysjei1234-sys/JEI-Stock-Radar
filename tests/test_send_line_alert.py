@@ -17,7 +17,8 @@ def feed():
             "mode": "盤中即時",
             "stale": False,
             "live_valid": True,
-            "live_count": 650,
+            "live_count": 700,
+            "close_count": 2000,
         },
         "risk": {"level": "red", "score": 85, "reasons": ["測試風險"]},
     }
@@ -27,6 +28,20 @@ class IntradayLineAlertTests(unittest.TestCase):
     def test_verified_live_feed_can_build_risk_alert(self):
         self.assertTrue(trusted_live(feed(), NOW))
         self.assertEqual(build_alert(feed(), NOW)["edition"], "intraday_risk")
+
+    def test_rejects_false_or_insufficient_breadth(self):
+        for fields in (
+            {"live_count": 699, "live_coverage_pct": 100},
+            {"live_count": 699.9}, {"live_count": 2001},
+            {"close_count": None}, {"close_count": "2000"},
+            {"historical_readonly": True}, {"session_status": "休市"},
+            {"actionable": False},
+        ):
+            with self.subTest(fields=fields):
+                f = feed()
+                f["market"].update(fields)
+                self.assertFalse(trusted_live(f, NOW))
+                self.assertIsNone(build_alert(f, NOW))
 
     def test_stale_or_unverified_feed_never_sends(self):
         mutations = [
