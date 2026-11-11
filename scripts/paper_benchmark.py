@@ -13,7 +13,10 @@ def compare_with_benchmark(scored_picks, benchmark_returns):
     for cohort in COHORTS:
         report[cohort] = {}
         for h in HORIZONS:
-            matched, unmatched, excess = [], 0, []
+            paired_net_returns = []
+            paired_benchmark_returns = []
+            excess = []
+            unmatched = 0
             for pick in scored_picks:
                 if pick.get("cohort") != cohort:
                     continue
@@ -28,11 +31,14 @@ def compare_with_benchmark(scored_picks, benchmark_returns):
                 if not isinstance(benchmark, (int, float)) or isinstance(benchmark, bool) or not isfinite(benchmark):
                     unmatched += 1
                     continue
-                matched.append(ret)
+                paired_net_returns.append(ret)
+                paired_benchmark_returns.append(benchmark)
                 excess.append(ret - benchmark)
             report[cohort][str(h)] = {
-                "paired_count": len(matched),
+                "paired_count": len(paired_net_returns),
                 "missing_benchmark_count": unmatched,
+                "mean_paired_net_return_pct": round(mean(paired_net_returns), 4) if paired_net_returns else None,
+                "mean_benchmark_return_pct": round(mean(paired_benchmark_returns), 4) if paired_benchmark_returns else None,
                 "mean_excess_pct": round(mean(excess), 4) if excess else None,
                 "benchmark_beat_rate_pct": round(100 * sum(x > 0 for x in excess) / len(excess), 2) if excess else None,
             }
