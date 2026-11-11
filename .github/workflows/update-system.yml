@@ -123,13 +123,14 @@ jobs:
         run: python scripts/collect_news_rss.py
       - name: Publish JEI market files
         run: |
-          if git diff --quiet -- remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json; then
+          python -m scripts.update_pick_validation --report-only
+          if git diff --quiet -- remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json remote/pick_validation.json; then
             echo "No feed change"
             exit 0
           fi
           git config user.name "JEI Market Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json
+          git add remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json remote/pick_validation.json
           git commit -m "Auto-update JEI market feed"
           for i in 1 2 3 4; do
             if git push; then exit 0; fi
@@ -143,11 +144,12 @@ jobs:
             python scripts/update_system.py
             python -m scripts.validate_market_session remote/system.json
             python scripts/collect_news_rss.py || echo "RSS refresh unavailable during retry"
-            if git diff --quiet -- remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json; then
+            python -m scripts.update_pick_validation --report-only
+            if git diff --quiet -- remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json remote/pick_validation.json; then
               echo "Latest main already contains the refreshed feed"
               exit 0
             fi
-            git add remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json
+            git add remote/system.json remote/history.json remote/daily_prices.json remote/news_intelligence.json remote/pick_validation.json
             git commit -m "Auto-update JEI market feed after push race"
             sleep 3
           done

@@ -5,6 +5,7 @@ Each vetted daily close freezes that day's top picks. Day 3/7/15/20/30/40/60
 means *future archived trading closes*, not calendar days. A missing horizon
 is pending, not a loss, win or a guessed exit. No automatic parameter tuning.
 """
+import argparse
 import json
 import math
 import re
@@ -76,7 +77,7 @@ def freeze_picks(feed, prices, date, origin="scheduled_close"):
         source = feed.get(group) or []
         if not isinstance(source, list):
             continue
-        for original_rank, row in enumerate(source, 1):
+        for original_rank, row in enumerate(source[:MAX_PICKS], 1):
             if not isinstance(row, dict):
                 continue
             code = str(row.get("code") or "").strip()
@@ -101,8 +102,6 @@ def freeze_picks(feed, prices, date, origin="scheduled_close"):
                 "signal_close": price, "origin": origin,
                 "selection_policy": str(feed.get("selection_policy") or "legacy-unversioned")[:80]
             })
-            if len(seen) >= MAX_PICKS:
-                break
     return frozen
 
 
@@ -323,11 +322,11 @@ def update(feed, archive, prior, now):
     return ledger,report,captured
 
 
-def main():
+def main(report_only=False):
     now=datetime.now(TZ)
-    feed=json.loads(FEED.read_text(encoding="utf-8"))
+    feed={} if report_only else json.loads(FEED.read_text(encoding="utf-8"))
     archive=json.loads(DAILY.read_text(encoding="utf-8"))
-    prior=json.loads(PICKS.read_text(encoding="utf-8")) if PICKS.exists() else {
+    prior=json.loads(PICKS.read_text(encoding="utf-8")) if report_only or PICKS.exists() else {
         "schema":1,"mode":"immutable_asof_pick_archive","picks":[]}
     ledger,report,captured=update(feed,archive,prior,now)
     if captured or not PICKS.exists():
@@ -351,4 +350,7 @@ def main():
 
 
 if __name__=="__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--report-only", action="store_true",
+                        help="Update outcomes using the existing frozen picks")
+    main(report_only=parser.parse_args().report_only)
