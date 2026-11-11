@@ -609,8 +609,8 @@ check('Android native background worker rejects stale feeds, quote substitutions
  const code=gradle.match(/versionCode\s+(\d+)/);
  const name=gradle.match(/versionName\s+'([^']+)'/);
  assert.ok(code&&name,'Android version must be defined');
- assert.equal(Number(manifest.versionCode),Number(code[1]),'update manifest must match APK version code');
- assert.equal(String(manifest.versionName).split(/\s+/)[0],name[1],'update manifest must match APK version name');
+ assert.ok(Number.isInteger(manifest.versionCode)&&manifest.versionCode>0&&manifest.versionCode<=Number(code[1]),'update manifest cannot advertise an APK newer than source; retain prior manifest during staged build');
+ if(manifest.versionCode===Number(code[1]))assert.equal(String(manifest.versionName).split(/\s+/)[0],name[1],'published version name must match the corresponding APK');
  assert.ok(html.includes(`const UI_VERSION='${manifest.uiVersion}';`),'remote UI version must match update manifest');
 });
 check('Native history UI escapes risk titles and syncs opt-out with Android Worker',()=>{

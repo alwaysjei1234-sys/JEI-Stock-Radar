@@ -100,6 +100,11 @@ jobs:
       - name: Build installable APK
         run: gradle :app:assembleDebug --stacktrace
 
+      - name: Verify built APK identity before publication
+        run: |
+          "$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk > /tmp/jei-apk-badging.txt
+          python -m scripts.verify_android_apk --badging /tmp/jei-apk-badging.txt
+
       - name: Package
         run: cp app/build/outputs/apk/debug/app-debug.apk "JEI_Stock_Radar_V3.apk"
 
