@@ -131,7 +131,7 @@ check('Stock screener filters score, price, sector, and stale market at runtime'
 });
 
 check('Feed freshness rejects old, stale, or mislabeled intraday quotes',()=>{
- const line=html.match(/^function isTrustedFeed\(.*$/m)?.[0];assert.ok(line);
+ const line=html.match(/^function isTrustedFeed\([\s\S]*?(?=\nfunction )/m)?.[0];assert.ok(line);
  const ctx={};vm.runInNewContext(line+';globalThis.verify=isTrustedFeed;',ctx);
  const day=new Date('2026-10-14T02:00:00Z');
  const ok={updated_at:'2026-10-14 10:00',data_date:'2026-10-14',market:{mode:'盤中即時',stale:false,live_valid:true,live_count:1900,close_count:1900}};
@@ -152,6 +152,26 @@ check('Feed freshness rejects old, stale, or mislabeled intraday quotes',()=>{
  assert.equal(ctx.verify({...ok,updated_at:'2026-10-14 09:00'},day),false,'old but same-day intraday feed must fail');
  assert.equal(ctx.verify({...ok,updated_at:'2026-10-14 10:05'},day),false,'future feed timestamp must fail');
 });
+check('Browser and Android dashboard reject contradictory or incomplete market data',()=>{
+ for(const path of ['remote/index.html','app/src/main/assets/index.html']){
+  const source=fs.readFileSync(path,'utf8').match(/^function isTrustedFeed\([\s\S]*?(?=\nfunction )/m)?.[0];
+  assert.ok(source,path);
+  const ctx={};
+  vm.runInNewContext(source+';globalThis.verify=isTrustedFeed;',ctx);
+  const now=new Date('2026-10-14T02:00:00Z');
+  const feed={updated_at:'2026-10-14 10:00',data_date:'2026-10-14',risk:{actionable:true},
+   market:{mode:'盤中即時',stale:false,live_valid:true,live_count:700,close_count:2000}};
+  assert.equal(ctx.verify(feed,now),true,path);
+  for(const patch of [
+   {live_count:undefined},{live_count:'700'},{live_count:699.9},{live_count:699},
+   {live_count:2001},{close_count:undefined},{close_count:Infinity},
+   {no_new_picks:true},{actionable:false},{historical_readonly:true},{session_status:'休市'}
+  ])assert.equal(ctx.verify({...feed,market:{...feed.market,...patch}},now),false,JSON.stringify(patch)+' '+path);
+  assert.equal(ctx.verify({...feed,risk:{actionable:false}},now),false,path);
+  const close={...feed,updated_at:'2026-10-14 14:00',market:{...feed.market,mode:'今日收盤',no_new_picks:true}};
+  assert.equal(ctx.verify(close,new Date('2026-10-14T06:00:00Z')),false,path);
+ }
+});
 check('Off-hours official close observation is readable but never trusted as live',()=>{
  const source=html.match(/function isRecentCloseObservation\(feed=system,now=new Date\(\)\)\{[\s\S]*?\n\}/)?.[0];
  assert.ok(source,'explicit dated historical-read-only boundary');
@@ -168,7 +188,7 @@ check('Off-hours official close observation is readable but never trusted as liv
  assert.ok(html.includes('const historical=!trusted&&isRecentCloseObservation(system,now)'));
 });
 check('Weekday typhoon and exchange-holiday closes stay historical, never actionable',()=>{
- const trusted=html.match(/^function isTrustedFeed\(.*$/m)?.[0];
+ const trusted=html.match(/^function isTrustedFeed\([\s\S]*?(?=\nfunction )/m)?.[0];
  const recent=html.match(/function isRecentCloseObservation\(feed=system,now=new Date\(\)\)\{[\s\S]*?\n\}/)?.[0];
  assert.ok(trusted&&recent,'feed date gates must exist');
  const ctx={};vm.runInNewContext(trusted+'\n'+recent+';globalThis.trusted=isTrustedFeed;globalThis.recent=isRecentCloseObservation;',ctx);
