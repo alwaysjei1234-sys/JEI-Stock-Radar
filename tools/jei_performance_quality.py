@@ -18,11 +18,14 @@ def inspect(report, min_completed=30, min_win_rate=50.0):
             if not isinstance(data, dict):
                 continue
             count, win = data.get("completed"), data.get("win_rate_pct")
+            net = data.get("avg_estimated_net_pct")
             if type(count) is not int or count < 0:
                 state = "INVALID"
             elif count < min_completed or type(win) not in (float, int) or not 0 <= win <= 100:
                 state = "INSUFFICIENT_EVIDENCE"
-            elif win < min_win_rate:
+            elif type(net) not in (float, int) or not -100 <= net <= 1000:
+                state = "INSUFFICIENT_EVIDENCE"
+            elif win < min_win_rate or net <= 0:
                 state = "UNDERPERFORMING"
             else:
                 state = "OBSERVED_THRESHOLD_MET"
