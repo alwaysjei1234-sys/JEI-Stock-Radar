@@ -32,7 +32,15 @@ def inspect(report, min_completed=30, min_win_rate=50.0):
             results[name][horizon] = {
                 "state": state, "completed": count, "win_rate_pct": win,
                 "avg_estimated_net_pct": data.get("avg_estimated_net_pct")}
-    evaluated = [entry for periods in results.values() for horizon, entry in periods.items()\n                 if horizon in ("3", "7") and entry["state"] in ("UNDERPERFORMING", "OBSERVED_THRESHOLD_MET")]\n    negative = sum(entry["state"] == "UNDERPERFORMING" for entry in evaluated)\n    signal = ("REVIEW_ALL_SHORT_HORIZON_SIGNALS" if evaluated and negative == len(evaluated)\n              else "REVIEW_WEAK_SIGNALS" if negative else "INSUFFICIENT_OR_NO_NEGATIVE_EVIDENCE")\n    return {"status": "REPORTED", "short_horizon_risk": {\n                "assessment": signal, "evaluated": len(evaluated), "underperforming": negative,\n                "advisory_only": True, "automatic_trade_block": False},\n            "source_updated_at": report.get("updated_at"),
+    evaluated = [entry for periods in results.values() for horizon, entry in periods.items()
+                 if horizon in ("3", "7") and entry["state"] in ("UNDERPERFORMING", "OBSERVED_THRESHOLD_MET")]
+    negative = sum(entry["state"] == "UNDERPERFORMING" for entry in evaluated)
+    signal = ("REVIEW_ALL_SHORT_HORIZON_SIGNALS" if evaluated and negative == len(evaluated)
+              else "REVIEW_WEAK_SIGNALS" if negative else "INSUFFICIENT_OR_NO_NEGATIVE_EVIDENCE")
+    return {"status": "REPORTED", "short_horizon_risk": {
+                "assessment": signal, "evaluated": len(evaluated), "underperforming": negative,
+                "advisory_only": True, "automatic_trade_block": False},
+            "source_updated_at": report.get("updated_at"),
             "source_official_day": report.get("latest_official_day"),
             "groups": results, "live_trading_verified": False,
             "independent_oos_verified": False,
