@@ -4,10 +4,13 @@ on:
     branches:
       - feature/actions-colab-audit-20261107
       - fix/hourly-colab-audit-20261113
+      - fix/pick-quality-audit-20261113
   pull_request:
     paths:
       - 'tools/jei_actions_audit.py'
       - 'tests/test_jei_actions_audit.py'
+      - 'tools/jei_performance_quality.py'
+      - 'tests/test_jei_performance_quality.py'
       - '.github/workflows/jei-colab-audit.yml'
   workflow_dispatch:
   schedule:
@@ -25,8 +28,12 @@ jobs:
           python-version: '3.11'
       - name: Verify audit logic
         run: python -m unittest discover -s tests -p 'test_jei_actions_audit.py' -v
+      - name: Verify pick quality classifications
+        run: python -m unittest discover -s tests -p 'test_jei_performance_quality.py' -v
       - name: Audit checked-out public feed
         run: python -m tools.jei_actions_audit --feed remote/system.json --out audit-output --commit "$GITHUB_SHA"
+      - name: Record observed pick quality (not independent OOS)
+        run: python -m tools.jei_performance_quality --input remote/pick_validation.json --out audit-output/pick_quality.json
       - name: Store audit evidence
         if: always()
         uses: actions/upload-artifact@v4
