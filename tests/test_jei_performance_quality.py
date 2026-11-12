@@ -3,7 +3,7 @@ from tools.jei_performance_quality import inspect
 
 class QualityTests(unittest.TestCase):
     def test_underperforming(self):
-        report = {"groups": {"attack": {"3": {"completed": 62, "win_rate_pct": 25.81}}}}
+        report = {"groups": {"attack": {"3": {"completed": 62, "win_rate_pct": 25.81, "avg_estimated_net_pct": -3.778}}}}
         self.assertEqual(inspect(report)["groups"]["attack"]["3"]["state"], "UNDERPERFORMING")
 
     def test_insufficient_sample(self):
