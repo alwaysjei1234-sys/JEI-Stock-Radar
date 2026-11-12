@@ -31,3 +31,17 @@ class QualityTests(unittest.TestCase):
     def test_missing_expectancy_blocks_positive_label(self):
         report = {"groups": {"attack": {"3": {"completed": 100, "win_rate_pct": 80.0}}}}
         self.assertEqual(inspect(report)["groups"]["attack"]["3"]["state"], "INSUFFICIENT_EVIDENCE")
+
+    def test_all_short_horizon_groups_negative(self):
+        report = {"groups": {
+            "attack": {"3": {"completed": 62, "win_rate_pct": 25.81, "avg_estimated_net_pct": -3.778}},
+            "monster": {"7": {"completed": 54, "win_rate_pct": 22.22, "avg_estimated_net_pct": -10.893}}}}
+        risk = inspect(report)["short_horizon_risk"]
+        self.assertEqual(risk["assessment"], "REVIEW_ALL_SHORT_HORIZON_SIGNALS")
+        self.assertEqual(risk["underperforming"], 2)
+        self.assertFalse(risk["automatic_trade_block"])
+
+    def test_insufficient_data_not_counted_as_negative(self):
+        report = {"groups": {"attack": {"3": {
+            "completed": 2, "win_rate_pct": 0.0, "avg_estimated_net_pct": -3.0}}}}
+        self.assertEqual(inspect(report)["short_horizon_risk"]["evaluated"], 0)
