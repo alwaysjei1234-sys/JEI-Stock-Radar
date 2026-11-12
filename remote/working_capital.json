@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-11-11T19:19:35+00:00",
+  "generated_at": "2026-11-12T19:37:59+00:00",
   "rule_version": "working-capital-yoy-v1",
   "source": "MOPS consolidated iXBRL",
   "notes": "依官方研究快照季度取報表，不保證最新申報。營收為同期間累計，金額為新台幣元；20百分點差距僅查核提醒，各產業營運差異可能造成誤警，不能直接判定滯銷、壞帳或交易方向。暫時連線失敗時最多保留同季度7天內快照，明列cached、原觀測時間及本次檢查時間，不算本次驗證、不產生新提醒。observed_at非公告時間，不供歷史回測。",
@@ -34,60 +34,60 @@
       "source_sha256": "61084ec1e53d04177709e308fa040becaa99bcc306f9e74b1e152e1056ab8af9",
       "not_for_historical_backtest": true,
       "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=1711&year=2026&season=2&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "2478": {
       "code": "2478",
-      "period": "2026-Q2",
-      "period_end": "2026-06-30",
-      "comparison_period_end": "2025-06-30",
+      "period": "2026-Q3",
+      "period_end": "2026-09-30",
+      "comparison_period_end": "2025-09-30",
       "unit": "TWD",
       "revenue_basis": "year_to_date",
       "current": {
-        "receivables": 1810189000.0,
-        "inventory": 2026130000.0,
-        "revenue_ytd": 3129590000.0
+        "receivables": 1970859000.0,
+        "inventory": 2242529000.0,
+        "revenue_ytd": 5018552000.0
       },
       "previous": {
-        "receivables": 1464262000.0,
-        "inventory": 1691299000.0,
-        "revenue_ytd": 2715098000.0
+        "receivables": 1498025000.0,
+        "inventory": 1809556000.0,
+        "revenue_ytd": 4052768000.0
       },
       "yoy_pct": {
-        "inventory": 19.797,
-        "receivables": 23.625,
-        "revenue_ytd": 15.266
+        "inventory": 23.927,
+        "receivables": 31.564,
+        "revenue_ytd": 23.83
       },
       "alerts": [],
       "status": "comparable",
       "rule_version": "working-capital-yoy-v1",
       "growth_gap_threshold_pp": 20,
-      "source_sha256": "8f06fe9b3e000b15ef274fb0c61df4ba9f8de62398fc48a3fe2d3e0ddb0d1457",
+      "source_sha256": "985b56664c51280f6da5a3d89d46ab7ef949a5d9f9ad6c1b46ca2d7318513d8e",
       "not_for_historical_backtest": true,
-      "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=2478&year=2026&season=2&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=2478&year=2026&season=3&report_id=C",
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "2609": {
       "code": "2609",
-      "period": "2026-Q2",
-      "period_end": "2026-06-30",
-      "comparison_period_end": "2025-06-30",
+      "period": "2026-Q3",
+      "period_end": "2026-09-30",
+      "comparison_period_end": "2025-09-30",
       "unit": "TWD",
       "revenue_basis": "year_to_date",
       "current": {
-        "receivables": 13123119000.0,
-        "inventory": 6690551000.0,
-        "revenue_ytd": 84583500000.0
+        "receivables": 15848447000.0,
+        "inventory": 6947100000.0,
+        "revenue_ytd": 148730584000.0
       },
       "previous": {
-        "receivables": 8687160000.0,
-        "inventory": 4801387000.0,
-        "revenue_ytd": 84173425000.0
+        "receivables": 10613883000.0,
+        "inventory": 4090366000.0,
+        "revenue_ytd": 126265473000.0
       },
       "yoy_pct": {
-        "inventory": 39.346,
-        "receivables": 51.063,
-        "revenue_ytd": 0.487
+        "inventory": 69.841,
+        "receivables": 49.318,
+        "revenue_ytd": 17.792
       },
       "alerts": [
         "inventory_growth_exceeds_revenue",
@@ -96,10 +96,10 @@
       "status": "comparable",
       "rule_version": "working-capital-yoy-v1",
       "growth_gap_threshold_pp": 20,
-      "source_sha256": "199c76e2bffe2af57e4a8395372359bfcd61157d1a997764ba9c298b5e94d748",
+      "source_sha256": "5b34e4b76f708487cbdad1ec2b81e17a4bf6590e3f875e577775b5a6ea2b5d8f",
       "not_for_historical_backtest": true,
-      "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=2609&year=2026&season=2&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=2609&year=2026&season=3&report_id=C",
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "2748": {
       "code": "2748",
@@ -132,7 +132,7 @@
       "source_sha256": "c6ee36bc5f144187f52dde4156861460739ca7348de4080ec6e856fba33b9a8a",
       "not_for_historical_backtest": true,
       "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=2748&year=2026&season=2&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "3162": {
       "code": "3162",
@@ -165,7 +165,7 @@
       "source_sha256": "37296c1cc2bb1601057b9644aa6a8d3955387b3f819b38b677ab54d53639ad0f",
       "not_for_historical_backtest": true,
       "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=3162&year=2026&season=2&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "3289": {
       "code": "3289",
@@ -196,38 +196,38 @@
       "source_sha256": "b797dd0668eb5ab10dae8b6ff5ea5d683fe448609b2eb0b3dcbcff11b280954e",
       "not_for_historical_backtest": true,
       "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=3289&year=2026&season=2&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "3707": {
       "code": "3707",
-      "period": "2026-Q2",
-      "period_end": "2026-06-30",
-      "comparison_period_end": "2025-06-30",
+      "period": "2026-Q3",
+      "period_end": "2026-09-30",
+      "comparison_period_end": "2025-09-30",
       "unit": "TWD",
       "revenue_basis": "year_to_date",
       "current": {
-        "receivables": 1098476000.0,
-        "inventory": 898807000.0,
-        "revenue_ytd": 3329828000.0
+        "receivables": 1168118000.0,
+        "inventory": 1023887000.0,
+        "revenue_ytd": 5300189000.0
       },
       "previous": {
-        "receivables": 812470000.0,
-        "inventory": 1154653000.0,
-        "revenue_ytd": 2662425000.0
+        "receivables": 871895000.0,
+        "inventory": 1097113000.0,
+        "revenue_ytd": 4200308000.0
       },
       "yoy_pct": {
-        "inventory": -22.158,
-        "receivables": 35.202,
-        "revenue_ytd": 25.067
+        "inventory": -6.674,
+        "receivables": 33.975,
+        "revenue_ytd": 26.186
       },
       "alerts": [],
       "status": "comparable",
       "rule_version": "working-capital-yoy-v1",
       "growth_gap_threshold_pp": 20,
-      "source_sha256": "745ea5cc22fd2f9e1dee23891a340ebbb0734b47099fe5fa088a5e1c3d2ae89e",
+      "source_sha256": "d8dd38bb7792d2a869855d7d0e98e5f2d4b1dccbc7fac765db118bf5d950f802",
       "not_for_historical_backtest": true,
-      "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=3707&year=2026&season=2&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=3707&year=2026&season=3&report_id=C",
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "5347": {
       "code": "5347",
@@ -258,7 +258,7 @@
       "source_sha256": "cf4828000555492d4a052d86a0ea9b5df3bf680cde7066ea0f7d10e895edd1ad",
       "not_for_historical_backtest": true,
       "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=5347&year=2026&season=3&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "5425": {
       "code": "5425",
@@ -291,7 +291,7 @@
       "source_sha256": "8f947effb6057abb01e98817158f4112b21ea28e77f09d8373f09bf8ed5e48a6",
       "not_for_historical_backtest": true,
       "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=5425&year=2026&season=2&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "6150": {
       "code": "6150",
@@ -324,7 +324,7 @@
       "source_sha256": "862e68cb8c9c4c604acdce8a01ce8753968f9b1ae7b196d65c4440639ef49a0f",
       "not_for_historical_backtest": true,
       "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=6150&year=2026&season=2&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "7711": {
       "code": "7711",
@@ -358,7 +358,7 @@
       "source_sha256": "cc921c2f62699f0d5ed386d67e686f9ca4399adf0ed84be6761db02d77d1de08",
       "not_for_historical_backtest": true,
       "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=7711&year=2026&season=3&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "observed_at": "2026-11-12T19:37:59+00:00"
     },
     "8070": {
       "code": "8070",
@@ -391,7 +391,7 @@
       "source_sha256": "998216c4c2ed4e80702f4b485225025cf607b46b99ad860db61d2ae583289646",
       "not_for_historical_backtest": true,
       "source_url": "https://mopsov.twse.com.tw/server-java/FileDownLoad?functionName=t164sb01&step=9&co_id=8070&year=2026&season=3&report_id=C",
-      "observed_at": "2026-11-11T19:19:35+00:00"
+      "observed_at": "2026-11-12T19:37:59+00:00"
     }
   }
 }
