@@ -88,10 +88,23 @@ jobs:
           else
             echo "Drive heartbeat unavailable: monitoring status remains UNKNOWN"
           fi
+      - name: Restore checkpoint from prior workflow runs
+        uses: actions/cache/restore@v4
+        with:
+          path: audit-output/observed_checkpoint.json
+          key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json') }}-${{ github.run_id }}
+          restore-keys: |
+            jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json') }}-
       - name: Test interrupted and resumed computations
         run: python -m unittest discover -s tests -p 'test_jei_resumable_observed.py' -v
       - name: Run checkpointed observed batches
         run: python -m tools.jei_resumable_observed --input remote/pick_validation.json --checkpoint audit-output/observed_checkpoint.json --output audit-output/resumable_observed.json
+      - name: Persist checkpoint for future runs
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: audit-output/observed_checkpoint.json
+          key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json') }}-${{ github.run_id }}
       - name: Store audit evidence
         if: always()
         uses: actions/upload-artifact@v4
