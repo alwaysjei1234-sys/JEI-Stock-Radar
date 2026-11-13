@@ -54,6 +54,16 @@ class AuditTests(unittest.TestCase):
                                 'live_count': 0}})
         self.assertEqual(inspect_feed(feed)['status'], 'ok')
 
+    def test_unverified_institutional_is_reported_not_falsely_verified(self):
+        from tools.jei_actions_audit import REQUIRED
+        feed = {key: {} for key in REQUIRED}
+        feed.update({'data_date': '2026-11-13', 'risk': {}, 'market': {},
+                     'institutional_status': {'ok': False, 'count': 0}})
+        result = inspect_feed(feed)
+        self.assertIs(result['institutional_verified'], False)
+        self.assertTrue(any('institutional_unverified' in issue for issue in result['issues']))
+        self.assertEqual(result['status'], 'ok')  # degraded source, not a false full outage
+
     def test_working_31_labels(self):
         self.assertEqual(len(AREAS), 31)
 
