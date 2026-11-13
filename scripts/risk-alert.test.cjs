@@ -1,0 +1,13 @@
+'use strict';
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {evaluateRiskAlert}=require('./risk-alert.cjs');
+const now=Date.parse('2026-11-06T02:00:00Z');
+const obs=(indexChangePct,advancersPct,offset=0)=>({indexChangePct,advancersPct,timestampMs:now-offset});
+test('sharp selloff warns',()=>assert.deepEqual(evaluateRiskAlert(obs(-4.51,11),now),{level:'red',notify:true,reason:'broad_market_selloff'}));
+test('broad weakness warns before 3% decline',()=>assert.equal(evaluateRiskAlert(obs(-2.1,19),now).level,'red'));
+test('moderate selloff orange',()=>assert.equal(evaluateRiskAlert(obs(-1.6,45),now).level,'orange'));
+test('normal market does not notify',()=>assert.equal(evaluateRiskAlert(obs(.4,55),now).notify,false));
+test('stale data never alerts',()=>assert.deepEqual(evaluateRiskAlert(obs(-5,8,11*60000),now),{level:'unknown',notify:false,reason:'stale_or_future_data'}));
+test('invalid breadth never alerts',()=>assert.equal(evaluateRiskAlert(obs(-5,NaN),now).notify,false));
+test('future timestamp never alerts',()=>assert.equal(evaluateRiskAlert(obs(-5,8,-120000),now).notify,false));
