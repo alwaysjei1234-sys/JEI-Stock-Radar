@@ -37,12 +37,16 @@ def inspect_feed(feed):
         issues.append('stale_official_close')
     if market.get('post_close_refresh') is True and market.get('session_status') != '已驗證':
         issues.append('unverified_official_close')
+    if market.get("post_close_refresh") is True and market.get("session_status") == "已驗證":
+        declared_dates = (feed.get("source_data_date"), market.get("market_data_as_of"))
+        if any(value is not None and value != date for value in declared_dates):
+            issues.append("official_close_date_mismatch")
     if market.get('live_valid') is False and market.get('live_count', 0) == 0:
         issues.append('live_not_verified (may be expected outside session)')
     institutional_status = feed.get('institutional_status')
     if isinstance(institutional_status, dict) and institutional_status.get('ok') is False:
         issues.append('institutional_unverified (institutional scoring must remain disabled)')
-    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score', 'invalid_public_holdings', 'stale_official_close', 'unverified_official_close')]
+    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score', 'invalid_public_holdings', 'official_close_date_mismatch', 'stale_official_close', 'unverified_official_close')]
     return {'status': 'failed' if critical else 'ok', 'critical_issues': critical,
             'feed_date': date, 'updated_at': feed.get('updated_at'),
             'risk_level': risk.get('level'), 'risk_score': risk.get('score'),
