@@ -32,11 +32,15 @@ def inspect_feed(feed):
         issues.append('unverified_official_close')
     if market.get('live_valid') is False and market.get('live_count', 0) == 0:
         issues.append('live_not_verified (may be expected outside session)')
+    institutional_status = feed.get('institutional_status')
+    if isinstance(institutional_status, dict) and institutional_status.get('ok') is False:
+        issues.append('institutional_unverified (institutional scoring must remain disabled)')
     critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score', 'stale_official_close', 'unverified_official_close')]
     return {'status': 'failed' if critical else 'ok', 'critical_issues': critical,
             'feed_date': date, 'updated_at': feed.get('updated_at'),
             'risk_level': risk.get('level'), 'risk_score': risk.get('score'),
             'live_valid': market.get('live_valid'), 'live_count': market.get('live_count'),
+            'institutional_verified': (institutional_status.get('ok') is True if isinstance(institutional_status, dict) else None),
             'issues': issues, 'line_delivery': 'NOT_TESTED', 'android_device': 'NOT_TESTED'}
 
 def build_report(feed, commit):
