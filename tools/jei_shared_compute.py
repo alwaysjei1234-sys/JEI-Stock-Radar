@@ -10,11 +10,14 @@ import json
 import os
 from pathlib import Path
 
+# Trading-day windows produced by the public pick validation report.
+OBSERVATION_HORIZONS = ("3", "7", "15", "20", "30", "40", "60")
+
 
 def observed_rows(name, horizons):
     if not isinstance(horizons, dict):
         return
-    for horizon in ("3", "7", "15", "30"):
+    for horizon in OBSERVATION_HORIZONS:
         entry = horizons.get(horizon, {})
         if not isinstance(entry, dict):
             continue

@@ -4,6 +4,8 @@ import datetime as dt
 import json
 from pathlib import Path
 
+from tools.jei_shared_compute import OBSERVATION_HORIZONS
+
 def inspect(report, min_completed=30, min_win_rate=50.0):
     groups = report.get("groups")
     if not isinstance(groups, dict) or not groups:
@@ -13,7 +15,7 @@ def inspect(report, min_completed=30, min_win_rate=50.0):
         if not isinstance(periods, dict):
             continue
         results[name] = {}
-        for horizon in ("3", "7", "15", "30"):
+        for horizon in OBSERVATION_HORIZONS:
             data = periods.get(horizon)
             if not isinstance(data, dict):
                 continue
