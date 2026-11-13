@@ -16,6 +16,8 @@ on:
   pull_request:
     paths:
       - 'tools/jei_actions_audit.py'
+      - 'tools/jei_audit_manifest.py'
+      - 'tests/test_jei_audit_manifest.py'
       - 'tests/test_jei_actions_audit.py'
       - 'tools/jei_performance_quality.py'
       - 'tests/test_jei_performance_quality.py'
@@ -122,6 +124,11 @@ jobs:
         with:
           path: audit-output/observed_checkpoint.json
           key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json', 'tools/jei_shared_compute.py', 'tools/jei_resumable_observed.py', 'tools/jei_batch_checkpoint.py') }}-${{ github.run_id }}
+      - name: Verify artifact manifest
+        run: python -m unittest discover -s tests -p 'test_jei_audit_manifest.py' -v
+      - name: Index audit evidence
+        if: always()
+        run: python -m tools.jei_audit_manifest
       - name: Store audit evidence
         if: always()
         uses: actions/upload-artifact@v4
