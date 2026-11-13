@@ -49,9 +49,26 @@ def skipped_receipt(event, schedule, now):
     code = ('non_weekday' if local.weekday() >= 5 else
             'morning_window_expired' if schedule in MORNING and local.hour*60+local.minute >= 810
             else 'dispatch_window_not_open')
+    return policy_receipt(edition, local, code)
+
+
+def policy_receipt(edition, local, code):
     return {'record_kind':'policy_check','date':local.date().isoformat(),
             'edition':edition,'checked_at':local.isoformat(timespec='seconds'),
             'status':'policy_skipped','policy_code':code}
+
+
+def record_pre_send_failure(edition, path, now=None):
+    if edition not in {'morning', 'close'}:
+        raise ValueError('Invalid brief edition')
+    local = (now or datetime.now(TAIPEI)).astimezone(TAIPEI)
+    receipt = policy_receipt(edition, local, 'brief_failed_before_send')
+    # Never overwrite evidence from another stage.
+    try:
+        with Path(path).open('x', encoding='utf-8') as stream:
+            stream.write(json.dumps(receipt, ensure_ascii=False)+'\n')
+    except FileExistsError:
+        pass
 
 
 def main():

@@ -7,7 +7,7 @@ import sys
 import tempfile
 import unittest
 from datetime import datetime
-from scripts.brief_dispatch_policy import skipped_receipt, TAIPEI
+from scripts.brief_dispatch_policy import record_pre_send_failure, skipped_receipt, TAIPEI
 from scripts.publish_line_status import merge_status, merge_policy_status, RUN_BASE
 
 
@@ -36,6 +36,20 @@ class LinePolicyReceiptTests(unittest.TestCase):
                 ('schedule','30 7 * * 1-5',self.now),('schedule','unknown',self.now),
                 ('schedule','10 11 * * 1-5',self.now.replace(hour=20))]:
             self.assertIsNone(skipped_receipt(event,cron,now))
+
+    def test_upstream_failure_is_preserved_as_no_send_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "receipt.json"
+            record_pre_send_failure("close", path, self.now)
+            policy = json.loads(path.read_text())
+            record_pre_send_failure("morning", path, self.now)
+            self.assertEqual(json.loads(path.read_text()), policy)
+        result = merge_policy_status({}, policy, "123", self.now)
+        check = result["policy_checks"]["close"]
+        self.assertEqual(check["policy_code"], "brief_failed_before_send")
+        self.assertFalse(check["api_accepted"])
+        self.assertNotIn("http_status", check)
+        self.assertEqual(result["editions"], {})
 
     def test_private_fields_and_forged_acceptance_are_never_published(self):
         receipt=self.policy()|{'token':'SECRET','to':'PRIVATE','api_accepted':True,
