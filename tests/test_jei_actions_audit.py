@@ -62,6 +62,29 @@ class AuditTests(unittest.TestCase):
                                 'session_status': '待驗證'}})
         self.assertIn('unverified_official_close', inspect_feed(feed)['critical_issues'])
 
+    def test_verified_official_close_rejects_mixed_dates(self):
+        from tools.jei_actions_audit import REQUIRED
+
+        feed = {key: {} for key in REQUIRED}
+        feed.update(data_date="2026-11-13", source_data_date="2026-11-13",
+                    market={"post_close_refresh": True, "session_status": "已驗證",
+                            "market_data_as_of": "2026-11-13"})
+        self.assertEqual(inspect_feed(feed)["status"], "ok")
+        for candidate in (
+            {**feed, "source_data_date": "TWSE:2026-11-13 / TPEx:2026-11-12"},
+            {**feed, "market": {**feed["market"], "market_data_as_of": "2026-11-12"}},
+        ):
+            self.assertIn("official_close_date_mismatch", inspect_feed(candidate)["critical_issues"])
+
+    def test_archive_can_report_lagging_source_date(self):
+        from tools.jei_actions_audit import REQUIRED
+
+        feed = {key: {} for key in REQUIRED}
+        feed.update(data_date="2026-11-13", source_data_date="2026-11-12",
+                    market={"post_close_refresh": False, "historical_readonly": True,
+                            "market_data_as_of": "2026-11-13"})
+        self.assertEqual(inspect_feed(feed)["status"], "ok")
+
     def test_off_session_no_live_quotes_is_not_critical(self):
         from tools.jei_actions_audit import REQUIRED
         feed = {key: {} for key in REQUIRED}
