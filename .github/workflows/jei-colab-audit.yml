@@ -97,9 +97,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: audit-output/observed_checkpoint.json
-          key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json') }}-${{ github.run_id }}
+          key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json', 'tools/jei_shared_compute.py', 'tools/jei_resumable_observed.py', 'tools/jei_batch_checkpoint.py') }}-${{ github.run_id }}
           restore-keys: |
-            jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json') }}-
+            jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json', 'tools/jei_shared_compute.py', 'tools/jei_resumable_observed.py', 'tools/jei_batch_checkpoint.py') }}-
       - name: Report actual cross-run checkpoint restore
         shell: bash
         env:
@@ -121,7 +121,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: audit-output/observed_checkpoint.json
-          key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json') }}-${{ github.run_id }}
+          key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json', 'tools/jei_shared_compute.py', 'tools/jei_resumable_observed.py', 'tools/jei_batch_checkpoint.py') }}-${{ github.run_id }}
       - name: Store audit evidence
         if: always()
         uses: actions/upload-artifact@v4
