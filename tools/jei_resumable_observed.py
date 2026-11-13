@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from tools.jei_batch_checkpoint import load_checkpoint, save_checkpoint
 from tools import jei_shared_compute
-from tools.jei_shared_compute import compute
+from tools.jei_shared_compute import observed_rows
 
 
 def run_batches(source, checkpoint_path, output_path, max_batches=None):
@@ -28,15 +28,15 @@ def run_batches(source, checkpoint_path, output_path, max_batches=None):
     for name in names:
         if name in done:
             continue
-        fragment = {"groups": {name: groups[name]}}
-        result = compute(fragment)
-        done[name] = result["observed_rows"]
+        done[name] = list(observed_rows(name, groups[name]))
         save_checkpoint(checkpoint_path, source_hash, "observed_performance", params, done)
         processed += 1
         if max_batches is not None and processed >= max_batches:
             break
     complete = len(done) == len(names)
     rows = [row for name in names if name in done for row in done[name]]
+    if complete and not rows:
+        raise ValueError("no valid completed observations")
     output = {"schema": 1, "source_sha256": source_hash, "completed_groups": len(done),
               "total_groups": len(names), "complete": complete,
               "observed_rows": rows, "independent_oos_verified": False,
