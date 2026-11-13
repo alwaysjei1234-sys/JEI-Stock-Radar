@@ -24,9 +24,15 @@ def inspect_feed(feed):
         issues.append('invalid_data_date')
     if risk.get('level') in ('red', 'orange') and not isinstance(risk.get('score'), (int, float)):
         issues.append('invalid_risk_score')
+    # An explicit failed official-close refresh is a genuine data integrity failure,
+    # unlike zero live quotes outside the trading session.
+    if market.get('post_close_refresh') is True and market.get('stale') is True:
+        issues.append('stale_official_close')
+    if market.get('post_close_refresh') is True and market.get('session_status') != '已驗證':
+        issues.append('unverified_official_close')
     if market.get('live_valid') is False and market.get('live_count', 0) == 0:
         issues.append('live_not_verified (may be expected outside session)')
-    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score')]
+    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score', 'stale_official_close', 'unverified_official_close')]
     return {'status': 'failed' if critical else 'ok', 'critical_issues': critical,
             'feed_date': date, 'updated_at': feed.get('updated_at'),
             'risk_level': risk.get('level'), 'risk_score': risk.get('score'),

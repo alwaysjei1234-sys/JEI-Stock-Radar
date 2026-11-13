@@ -27,6 +27,33 @@ class AuditTests(unittest.TestCase):
         self.assertEqual(result['status'], 'ok')
         self.assertEqual(result['line_delivery'], 'NOT_TESTED')
 
+    def test_explicit_stale_official_close_fails_audit(self):
+        from tools.jei_actions_audit import REQUIRED
+        feed = {key: {} for key in REQUIRED}
+        feed.update({'data_date': '2026-11-13', 'risk': {},
+                     'market': {'post_close_refresh': True, 'stale': True,
+                                'session_status': '已驗證'}})
+        result = inspect_feed(feed)
+        self.assertEqual(result['status'], 'failed')
+        self.assertIn('stale_official_close', result['critical_issues'])
+
+    def test_unverified_official_close_fails_audit(self):
+        from tools.jei_actions_audit import REQUIRED
+        feed = {key: {} for key in REQUIRED}
+        feed.update({'data_date': '2026-11-13', 'risk': {},
+                     'market': {'post_close_refresh': True, 'stale': False,
+                                'session_status': '待驗證'}})
+        self.assertIn('unverified_official_close', inspect_feed(feed)['critical_issues'])
+
+    def test_off_session_no_live_quotes_is_not_critical(self):
+        from tools.jei_actions_audit import REQUIRED
+        feed = {key: {} for key in REQUIRED}
+        feed.update({'data_date': '2026-11-13', 'risk': {},
+                     'market': {'post_close_refresh': True, 'stale': False,
+                                'session_status': '已驗證', 'live_valid': False,
+                                'live_count': 0}})
+        self.assertEqual(inspect_feed(feed)['status'], 'ok')
+
     def test_working_31_labels(self):
         self.assertEqual(len(AREAS), 31)
 
