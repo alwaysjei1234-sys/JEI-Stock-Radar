@@ -24,6 +24,8 @@ def run_batches(source, checkpoint_path, output_path, max_batches=None):
     }
     done = load_checkpoint(checkpoint_path, source_hash, "observed_performance", params)
     names = sorted(groups)
+    if not done.keys() <= groups.keys():
+        raise ValueError("invalid_observed_checkpoint_groups")
     processed = 0
     for name in names:
         if name in done:
@@ -33,7 +35,7 @@ def run_batches(source, checkpoint_path, output_path, max_batches=None):
         processed += 1
         if max_batches is not None and processed >= max_batches:
             break
-    complete = len(done) == len(names)
+    complete = done.keys() == groups.keys()
     rows = [row for name in names if name in done for row in done[name]]
     if complete and not rows:
         raise ValueError("no valid completed observations")

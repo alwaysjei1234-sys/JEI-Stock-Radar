@@ -55,6 +55,20 @@ class ResumeTests(unittest.TestCase):
                 run_batches(src, root / "cp.json", output)
             self.assertFalse(output.exists())
 
+    def test_rejects_unexpected_cached_groups_before_reporting_completion(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            src, checkpoint, output = (root / name for name in ("source", "checkpoint", "output"))
+            entry = {"completed": 31, "win_rate_pct": 55, "avg_estimated_net_pct": 1.2}
+            src.write_text(json.dumps({"groups": {"a": {"3": entry}, "b": {"3": entry}}}))
+            run_batches(src, checkpoint, output, max_batches=1)
+            saved = json.loads(checkpoint.read_text())
+            saved["completed_batches"]["unexpected"] = []
+            checkpoint.write_text(json.dumps(saved))
+            with self.assertRaisesRegex(ValueError, "invalid_observed_checkpoint_groups"):
+                run_batches(src, checkpoint, output, max_batches=1)
+            self.assertFalse(json.loads(output.read_text())["complete"])
+
     def test_engine_change_invalidates_checkpoint_for_same_source(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
