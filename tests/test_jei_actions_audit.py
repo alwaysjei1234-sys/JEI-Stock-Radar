@@ -31,6 +31,19 @@ class AuditTests(unittest.TestCase):
         self.assertEqual(result['status'], 'ok')
         self.assertEqual(result['line_delivery'], 'NOT_TESTED')
 
+    def test_public_holdings_must_be_present_and_safe(self):
+        from tools.jei_actions_audit import REQUIRED
+
+        feed = {key: {} for key in REQUIRED}
+        feed.update(data_date="2026-11-13", holdings={"2330": {"score": 70}})
+        self.assertEqual(inspect_feed(feed)["status"], "ok")
+        for invalid in (None, [], {"2330": {"cost": 1}}):
+            with self.subTest(invalid=invalid):
+                self.assertIn("invalid_public_holdings", inspect_feed(
+                    {**feed, "holdings": invalid})["critical_issues"])
+        del feed["holdings"]
+        self.assertIn("missing:holdings", inspect_feed(feed)["critical_issues"])
+
     def test_explicit_stale_official_close_fails_audit(self):
         from tools.jei_actions_audit import REQUIRED
         feed = {key: {} for key in REQUIRED}
