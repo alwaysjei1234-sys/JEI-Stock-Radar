@@ -8,6 +8,7 @@ on:
       - fix/compute-provenance-20261113
       - feat/colab-verifiable-bridge-20261113
       - fix/colab-output-integrity-20261113
+      - fix/colab-audit-schedule-reliability-20261113
       - feat/shared-colab-actions-compute-20261113
       - feat/colab-stall-watchdog-20261113
       - feat/colab-heartbeat-emitter-20261113
@@ -36,7 +37,7 @@ on:
       - '.github/workflows/jei-colab-audit.yml'
   workflow_dispatch:
   schedule:
-    - cron: '20 * * * *'
+    - cron: '37 * * * *'
 permissions:
   contents: read
 jobs:
