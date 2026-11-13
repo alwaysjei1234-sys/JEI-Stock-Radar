@@ -1,0 +1,960 @@
+{
+  "checked_at": "2026-11-13T23:09:32.519Z",
+  "timezone": "Asia/Taipei",
+  "starting_main": "cf040c924f21f559e16c0271825621af06397ec6",
+  "latest_verified_main": "0740ab0945ad99f9d80119b03e05f7d8ddb4cc92",
+  "open_prs_at_start": [
+    59,
+    46,
+    45,
+    44,
+    2
+  ],
+  "pull_request": 121,
+  "pull_request_head": "16978d28deac68f0c52cb600acc5379757da6dd3",
+  "change": "共享運算原先只檢查型別，五種無效勝率或報酬均被計為可比較。改在 observed_rows 驗證勝率 0–100、報酬有限且至少 −100%。比較只在 CI 報告層攔截及共用輸入列攔截兩方案，採共用層以同時涵蓋直接運算、Colab 與續算。現有正式輸入 15 列、10 列可比較、獨立 OOS 0。",
+  "publication_paths": [
+    "CLI git push 缺 GitHub 認證。",
+    "GitHub connector 建樹、核對本地與遠端 tree SHA 完全一致，再開 PR、核對 CI 與 head 後合併。"
+  ],
+  "local_tests": {
+    "count": 89,
+    "failed_before": 5,
+    "pass": true,
+    "resume": "正式輸入從 2/5 續算為 5/5，輸出列與直接運算相同"
+  },
+  "pull_request_ci": [
+    {
+      "id": 43524385077,
+      "name": "JEI Smoke Tests",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 1161,
+      "jobs_url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/43524385077/jobs",
+      "logs_url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/43524385077/logs",
+      "workflow_id": 382294252
+    },
+    {
+      "id": 43524385054,
+      "name": "JEI Research Engine Tests",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 796,
+      "jobs_url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/43524385054/jobs",
+      "logs_url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/43524385054/logs",
+      "workflow_id": 391849443
+    },
+    {
+      "id": 43524384900,
+      "name": "JEI Compute Provenance Audit (GitHub Actions)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 82,
+      "jobs_url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/43524384900/jobs",
+      "logs_url": "https://api.github.com/repos/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/43524384900/logs",
+      "workflow_id": 410393565
+    }
+  ],
+  "main_ci": [
+    {
+      "id": 43524647213,
+      "head_sha": "0740ab0945ad99f9d80119b03e05f7d8ddb4cc92",
+      "name": "JEI Research Engine Tests",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "run_started_at": "2026-11-13T23:07:03Z"
+    },
+    {
+      "id": 43524647459,
+      "head_sha": "0740ab0945ad99f9d80119b03e05f7d8ddb4cc92",
+      "name": "JEI Compute Provenance Audit (GitHub Actions)",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "run_started_at": "2026-11-13T23:07:03Z"
+    },
+    {
+      "id": 43524647475,
+      "head_sha": "0740ab0945ad99f9d80119b03e05f7d8ddb4cc92",
+      "name": "JEI Smoke Tests",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "run_started_at": "2026-11-13T23:07:03Z"
+    }
+  ],
+  "main_code_changed": true,
+  "production": {
+    "commit_check": "success",
+    "exact_deployment": "CANCELED",
+    "exact_deployment_reason": "Ignored Build Step",
+    "active": {
+      "id": "dpl_G2ykFJRjcPZSWHFqrTXySrDyXquX",
+      "state": "READY",
+      "sha": "405f75d69f0f3ddeff68a33f8de9dc3c59dfd198"
+    },
+    "public_readback": [
+      "system.json True 4fd8c84584296649e36aa0dcb39d2e7b5bfcc6769d9bd49a1485d0bbfc426059",
+      "pick_validation.json True 460fe5cb46812cd18e7ea14240b364b42d6f8116f03a5cb8a057c04adad85704",
+      "strategy_performance.json True 02eaf557a5f7533185d9685b0ce02bdce3a1a9fd78069248cad6c887a873b455",
+      "update.json <urlopen error timed out>"
+    ],
+    "manual_deploy": false
+  },
+  "colab": {
+    "status": "COLAB_UNVERIFIED",
+    "heartbeat": "UNKNOWN",
+    "drive_search_found": false,
+    "required_settings": [
+      "JEI_DRIVE_SERVICE_ACCOUNT_JSON",
+      "JEI_COLAB_HEARTBEAT_FILE_ID"
+    ],
+    "bridge_source": "PR #87 5d5952b7",
+    "scheduled_at_taipei": "2026-11-14T06:49:38+08:00",
+    "next_actions_run_confirmed": false,
+    "chatgpt_automation_visible": false,
+    "scheduled": {
+      "id": 14083236951,
+      "digest": "sha256:556bc9458bf611d9b4af75137058dd640ce83cb7285df582b75fa320fc1e5317",
+      "run": 43522411179,
+      "head": "cf040c924f21f559e16c0271825621af06397ec6",
+      "manifest_files": 8
+    },
+    "pr": {
+      "id": 14084103898,
+      "digest": "sha256:48312a142e2db26689e85b95671fdaae91eb529fa59eea7583acbf5d578cb5c4",
+      "run": 43524384900,
+      "head": "16978d28deac68f0c52cb600acc5379757da6dd3",
+      "manifest_files": 8
+    },
+    "main": {
+      "id": 14084941326,
+      "digest": "sha256:7589f730735819f8ddf64da29eee8ded30f8da00a97282ad94a1cf16eb2f5b45",
+      "run": 43524647459,
+      "head": "0740ab0945ad99f9d80119b03e05f7d8ddb4cc92",
+      "manifest_files": 8
+    },
+    "manifest_verified": true,
+    "independent_oos_trades": 0,
+    "checkpoint_scope": "觀察分組，5/5，不是回測續算"
+  },
+  "market": {
+    "twse_raw": 1389,
+    "tpex_raw": 996,
+    "twse_matched": 1089,
+    "tpex_matched": 876,
+    "mismatches": 0,
+    "mis_http": 503,
+    "market_schedule": 43386514324,
+    "mis_error": "HTTP 503",
+    "public_file_changed": false,
+    "current_market_date": "2026-11-13",
+    "current_market_updated_at": "2026-11-13 15:33",
+    "twse_fmtqik_close": 43675.12,
+    "twse_five_second_close": 43675.12,
+    "tpex_live_endpoint_rows": 1020,
+    "tpex_live_endpoint_same_date_verified": false,
+    "mis_recheck_http": 502,
+    "consensus_updated_at": "2026-11-13 21:27",
+    "source_verification_reused_from": "docs/verification-20261114-0000.json",
+    "official_institutional_rows_verified": 1865,
+    "official_institutional_rows_matched_by_market": {
+      "TWSE": 1089,
+      "TPEx": 776
+    },
+    "official_institutional_mismatch": 0,
+    "official_source_counts": {
+      "TWSE": 1349,
+      "TPEx": 896
+    },
+    "market_source_date": "2026-11-13",
+    "source_evidence_round": "docs/verification-20261114-0600.json",
+    "market_closed_weekend": true
+  },
+  "paper": {
+    "sources": [
+      {
+        "url": "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?date=20261001&response=json",
+        "normalized_json_sha256": "6d7c01becaaaf68953b01a6df66fb2236069d4377b08da00b9e90355cae0eead"
+      },
+      {
+        "url": "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?date=20261101&response=json",
+        "normalized_json_sha256": "6d6f074735e26ad6f3a03ae273a63c8345310cf1c2c5c9a6a62f5369740bb242"
+      }
+    ],
+    "benchmark": "TAIEX cash price index close-to-close; paired entry and exit dates; zero index execution costs",
+    "index_closes": {
+      "2026-10-01": 48353.49,
+      "2026-10-02": 48475.74,
+      "2026-10-05": 49712.04,
+      "2026-10-06": 49822.55,
+      "2026-10-07": 49806.37,
+      "2026-10-08": 49313.44,
+      "2026-10-12": 49301.96,
+      "2026-10-13": 48341.31,
+      "2026-10-14": 48625.83,
+      "2026-10-15": 46969.87,
+      "2026-10-16": 47111.26,
+      "2026-10-19": 46822.08,
+      "2026-10-20": 46292.93,
+      "2026-10-21": 46887.77,
+      "2026-10-22": 46041.43,
+      "2026-10-27": 46096.23,
+      "2026-10-28": 47035.58,
+      "2026-10-29": 46368.33,
+      "2026-10-30": 45211.83,
+      "2026-11-02": 44920.14,
+      "2026-11-03": 43307.54,
+      "2026-11-04": 42948.91,
+      "2026-11-05": 41574.72,
+      "2026-11-06": 39701.64,
+      "2026-11-09": 41661.7,
+      "2026-11-10": 42711.92,
+      "2026-11-11": 44257.15,
+      "2026-11-12": 43091.87,
+      "2026-11-13": 43675.12
+    },
+    "index_latest": 43675.12,
+    "costs": {
+      "buy_fee_rate": 0.001425,
+      "sell_fee_rate": 0.001425,
+      "sell_tax_rate": 0.003
+    },
+    "strategy_version": "3ea70509d82683e9c8c7f51aaa54d096e8a9bb9ad74bc1369c8a0b95d06890f5",
+    "signals": 110,
+    "signal_range": [
+      "2026-10-13",
+      "2026-11-13"
+    ],
+    "oos_qualified": 0,
+    "strategies": {
+      "fixed5": {
+        "closed": 88,
+        "wins": 25,
+        "win_pct": 28.41,
+        "win_ci95_descriptive": [
+          20.04,
+          38.58
+        ],
+        "mean_gross_pct": -2.4157,
+        "mean_net_pct": -2.986,
+        "max_drawdown_pct": 27.566,
+        "paired": 88,
+        "benchmark_mean_pct": -0.947,
+        "excess_mean_pct": -2.0387,
+        "coverage": "8/8",
+        "slippage_scenarios": [
+          {
+            "slippage_per_side_pct": 0.1,
+            "closed": 88,
+            "win_rate_pct": 28.41,
+            "mean_net_return_pct": -3.18
+          },
+          {
+            "slippage_per_side_pct": 0.2,
+            "closed": 88,
+            "win_rate_pct": 28.41,
+            "mean_net_return_pct": -3.373
+          }
+        ]
+      },
+      "fixed7": {
+        "closed": 86,
+        "wins": 21,
+        "win_pct": 24.42,
+        "win_ci95_descriptive": [
+          16.56,
+          34.46
+        ],
+        "mean_gross_pct": -2.7092,
+        "mean_net_pct": -3.278,
+        "max_drawdown_pct": 28.076,
+        "paired": 86,
+        "benchmark_mean_pct": -0.9511,
+        "excess_mean_pct": -2.3264,
+        "coverage": "8/8",
+        "slippage_scenarios": [
+          {
+            "slippage_per_side_pct": 0.1,
+            "closed": 86,
+            "win_rate_pct": 24.42,
+            "mean_net_return_pct": -3.471
+          },
+          {
+            "slippage_per_side_pct": 0.2,
+            "closed": 86,
+            "win_rate_pct": 24.42,
+            "mean_net_return_pct": -3.664
+          }
+        ]
+      },
+      "fixed10": {
+        "closed": 76,
+        "wins": 14,
+        "win_pct": 18.42,
+        "win_ci95_descriptive": [
+          11.3,
+          28.58
+        ],
+        "mean_gross_pct": -2.7619,
+        "mean_net_pct": -3.33,
+        "max_drawdown_pct": 24.744,
+        "paired": 76,
+        "benchmark_mean_pct": -1.3895,
+        "excess_mean_pct": -1.9404,
+        "coverage": "10/10",
+        "slippage_scenarios": [
+          {
+            "slippage_per_side_pct": 0.1,
+            "closed": 76,
+            "win_rate_pct": 18.42,
+            "mean_net_return_pct": -3.523
+          },
+          {
+            "slippage_per_side_pct": 0.2,
+            "closed": 76,
+            "win_rate_pct": 18.42,
+            "mean_net_return_pct": -3.716
+          }
+        ]
+      },
+      "trailing": {
+        "closed": 68,
+        "wins": 11,
+        "win_pct": 16.18,
+        "win_ci95_descriptive": [
+          9.28,
+          26.69
+        ],
+        "mean_gross_pct": -4.2583,
+        "mean_net_pct": -4.818,
+        "max_drawdown_pct": 24.55,
+        "paired": 68,
+        "benchmark_mean_pct": -1.9319,
+        "excess_mean_pct": -2.8857,
+        "coverage": "10/10",
+        "slippage_scenarios": [
+          {
+            "slippage_per_side_pct": 0.1,
+            "closed": 68,
+            "win_rate_pct": 16.18,
+            "mean_net_return_pct": -5.008
+          },
+          {
+            "slippage_per_side_pct": 0.2,
+            "closed": 68,
+            "win_rate_pct": 14.71,
+            "mean_net_return_pct": -5.198
+          }
+        ]
+      }
+    },
+    "pick_signals": 415,
+    "observations": {
+      "3": {
+        "completed": 359,
+        "pending": 55,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 1
+      },
+      "7": {
+        "completed": 288,
+        "pending": 126,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 1
+      },
+      "15": {
+        "completed": 100,
+        "pending": 315,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 0
+      },
+      "30": {
+        "completed": 0,
+        "pending": 415,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 0
+      },
+      "60": {
+        "completed": 0,
+        "pending": 415,
+        "missing_price": 0,
+        "corporate_action_unadjusted": 0
+      }
+    },
+    "fixed_horizon_timing_replay": {
+      "earliest_signal": "2026-10-16",
+      "fee_per_side": 0.001425,
+      "frozen_signals": 415,
+      "index_end": "2026-11-13",
+      "index_sessions": 29,
+      "index_start": "2026-10-01",
+      "inputs_sha256": {
+        "daily_prices.json": "dd6c83aba29ed221d429dfd60e16f92ce121802092d57e54b2350b1f1d810a0b",
+        "pick_validation.json": "460fe5cb46812cd18e7ea14240b364b42d6f8116f03a5cb8a057c04adad85704",
+        "strategy_performance.json": "02eaf557a5f7533185d9685b0ce02bdce3a1a9fd78069248cad6c887a873b455"
+      },
+      "latest_signal": "2026-11-13",
+      "ledger_closed_provenance": {
+        "fixed10": {
+          "missing_provenance": 70,
+          "reconstructed": 6
+        },
+        "fixed5": {
+          "missing_provenance": 75,
+          "reconstructed": 13
+        },
+        "fixed7": {
+          "missing_provenance": 74,
+          "reconstructed": 12
+        },
+        "trailing": {
+          "missing_provenance": 66,
+          "reconstructed": 2
+        }
+      },
+      "ledger_signal_provenance": {
+        "missing_provenance": 80,
+        "reconstructed": 30
+      },
+      "method": "descriptive replay, same close and next close, equal holding periods; TAIEX zero-cost price index",
+      "qualified_oos": 0,
+      "registered_strategy": false,
+      "results": {
+        "3": {
+          "coverage": {
+            "0": {
+              "complete": 283,
+              "corporate_action_unadjusted": 1,
+              "pending": 46
+            },
+            "1": {
+              "complete": 265,
+              "pending": 65
+            }
+          },
+          "matched_next_session": {
+            "closed": 264,
+            "mean_excess_pp": -2.441,
+            "mean_gross_pct": -3.346,
+            "mean_net_pct": -4.103,
+            "mean_taiex_pct": -1.661,
+            "net_win_rate_pct": 30.303,
+            "wilson_95_pct_descriptive": [
+              25.07,
+              36.1
+            ],
+            "wins": 80,
+            "worst_single_trade_path_drawdown_pct": 22.79
+          },
+          "matched_same_session": {
+            "closed": 264,
+            "mean_excess_pp": -2.457,
+            "mean_gross_pct": -3.396,
+            "mean_net_pct": -4.152,
+            "mean_taiex_pct": -1.695,
+            "net_win_rate_pct": 27.273,
+            "wilson_95_pct_descriptive": [
+              22.26,
+              32.94
+            ],
+            "wins": 72,
+            "worst_single_trade_path_drawdown_pct": 27.438
+          },
+          "next_session_close": {
+            "closed": 265,
+            "mean_excess_pp": -2.36,
+            "mean_gross_pct": -3.265,
+            "mean_net_pct": -4.023,
+            "mean_taiex_pct": -1.662,
+            "net_win_rate_pct": 30.566,
+            "wilson_95_pct_descriptive": [
+              25.33,
+              36.36
+            ],
+            "wins": 81,
+            "worst_single_trade_path_drawdown_pct": 22.79
+          },
+          "same_session_signal_close": {
+            "closed": 283,
+            "mean_excess_pp": -2.386,
+            "mean_gross_pct": -3.057,
+            "mean_net_pct": -3.816,
+            "mean_taiex_pct": -1.43,
+            "net_win_rate_pct": 28.975,
+            "wilson_95_pct_descriptive": [
+              24,
+              34.51
+            ],
+            "wins": 82,
+            "worst_single_trade_path_drawdown_pct": 27.438
+          }
+        },
+        "7": {
+          "coverage": {
+            "0": {
+              "complete": 221,
+              "corporate_action_unadjusted": 1,
+              "pending": 108
+            },
+            "1": {
+              "complete": 206,
+              "pending": 124
+            }
+          },
+          "matched_next_session": {
+            "closed": 205,
+            "mean_excess_pp": -2.907,
+            "mean_gross_pct": -7.985,
+            "mean_net_pct": -8.705,
+            "mean_taiex_pct": -5.798,
+            "net_win_rate_pct": 20,
+            "wilson_95_pct_descriptive": [
+              15.1,
+              26
+            ],
+            "wins": 41,
+            "worst_single_trade_path_drawdown_pct": 38.455
+          },
+          "matched_same_session": {
+            "closed": 205,
+            "mean_excess_pp": -3.262,
+            "mean_gross_pct": -8.711,
+            "mean_net_pct": -9.425,
+            "mean_taiex_pct": -6.164,
+            "net_win_rate_pct": 19.024,
+            "wilson_95_pct_descriptive": [
+              14.24,
+              24.95
+            ],
+            "wins": 39,
+            "worst_single_trade_path_drawdown_pct": 39.367
+          },
+          "next_session_close": {
+            "closed": 206,
+            "mean_excess_pp": -2.771,
+            "mean_gross_pct": -7.867,
+            "mean_net_pct": -8.588,
+            "mean_taiex_pct": -5.817,
+            "net_win_rate_pct": 20.388,
+            "wilson_95_pct_descriptive": [
+              15.45,
+              26.41
+            ],
+            "wins": 42,
+            "worst_single_trade_path_drawdown_pct": 38.455
+          },
+          "same_session_signal_close": {
+            "closed": 221,
+            "mean_excess_pp": -2.958,
+            "mean_gross_pct": -7.831,
+            "mean_net_pct": -8.553,
+            "mean_taiex_pct": -5.595,
+            "net_win_rate_pct": 22.624,
+            "wilson_95_pct_descriptive": [
+              17.6,
+              28.58
+            ],
+            "wins": 50,
+            "worst_single_trade_path_drawdown_pct": 39.367
+          }
+        },
+        "15": {
+          "coverage": {
+            "0": {
+              "complete": 77,
+              "pending": 253
+            },
+            "1": {
+              "complete": 57,
+              "pending": 273
+            }
+          },
+          "matched_next_session": {
+            "closed": 57,
+            "mean_excess_pp": -8.532,
+            "mean_gross_pct": -14.229,
+            "mean_net_pct": -14.9,
+            "mean_taiex_pct": -6.368,
+            "net_win_rate_pct": 8.772,
+            "wilson_95_pct_descriptive": [
+              3.81,
+              18.94
+            ],
+            "wins": 5,
+            "worst_single_trade_path_drawdown_pct": 43.268
+          },
+          "matched_same_session": {
+            "closed": 57,
+            "mean_excess_pp": -9.491,
+            "mean_gross_pct": -16.138,
+            "mean_net_pct": -16.795,
+            "mean_taiex_pct": -7.303,
+            "net_win_rate_pct": 8.772,
+            "wilson_95_pct_descriptive": [
+              3.81,
+              18.94
+            ],
+            "wins": 5,
+            "worst_single_trade_path_drawdown_pct": 46.319
+          },
+          "next_session_close": {
+            "closed": 57,
+            "mean_excess_pp": -8.532,
+            "mean_gross_pct": -14.229,
+            "mean_net_pct": -14.9,
+            "mean_taiex_pct": -6.368,
+            "net_win_rate_pct": 8.772,
+            "wilson_95_pct_descriptive": [
+              3.81,
+              18.94
+            ],
+            "wins": 5,
+            "worst_single_trade_path_drawdown_pct": 43.268
+          },
+          "same_session_signal_close": {
+            "closed": 77,
+            "mean_excess_pp": -8.623,
+            "mean_gross_pct": -15.144,
+            "mean_net_pct": -15.809,
+            "mean_taiex_pct": -7.186,
+            "net_win_rate_pct": 10.39,
+            "wilson_95_pct_descriptive": [
+              5.36,
+              19.18
+            ],
+            "wins": 8,
+            "worst_single_trade_path_drawdown_pct": 46.319
+          }
+        },
+        "30": {
+          "coverage": {
+            "0": {
+              "pending": 330
+            },
+            "1": {
+              "pending": 330
+            }
+          },
+          "matched_next_session": {
+            "closed": 0,
+            "metrics": null
+          },
+          "matched_same_session": {
+            "closed": 0,
+            "metrics": null
+          },
+          "next_session_close": {
+            "closed": 0,
+            "metrics": null
+          },
+          "same_session_signal_close": {
+            "closed": 0,
+            "metrics": null
+          }
+        },
+        "60": {
+          "coverage": {
+            "0": {
+              "pending": 330
+            },
+            "1": {
+              "pending": 330
+            }
+          },
+          "matched_next_session": {
+            "closed": 0,
+            "metrics": null
+          },
+          "matched_same_session": {
+            "closed": 0,
+            "metrics": null
+          },
+          "next_session_close": {
+            "closed": 0,
+            "metrics": null
+          },
+          "same_session_signal_close": {
+            "closed": 0,
+            "metrics": null
+          }
+        }
+      },
+      "sell_tax": 0.003,
+      "slippage_per_side": 0.001,
+      "sources": [
+        {
+          "rows": 19,
+          "sha256": "23c2920bfdb3f891c6d5aed655262b5ea6d9c289752a7b0e2a434ac8d272bab9",
+          "url": "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?date=20261001&response=json"
+        },
+        {
+          "rows": 10,
+          "sha256": "41a9601f4b379f0263410fd8987aa76b0dcbc71a6bf460561295ccdf23c557b3",
+          "url": "https://www.twse.com.tw/rwd/zh/afterTrading/FMTQIK?date=20261101&response=json"
+        }
+      ],
+      "unique_code_day_signals": 330
+    },
+    "latest_scheduled_run": {
+      "id": 43512819442,
+      "started_at_taipei": "2026-11-14T05:40:44+08:00",
+      "conclusion": "success",
+      "artifact_count": 0,
+      "last_processed_day": "2026-11-13"
+    },
+    "notification_threshold_met": false,
+    "source_evidence_round": "docs/verification-20261114-0600.json"
+  },
+  "line": {
+    "run": 43483007463,
+    "started_at": "2026-11-14T02:28:43+08:00",
+    "scheduled_slot": null,
+    "reason": "non_weekday",
+    "device_delivery_verified": false,
+    "receipt_artifact": 14066156350
+  },
+  "android": {
+    "stable_version": 42,
+    "build": 43414148374,
+    "status": [
+      [
+        "completed",
+        "failure"
+      ],
+      [
+        "completed",
+        "skipped"
+      ]
+    ],
+    "prior_signer_failure": 43406053772,
+    "device_verified": false,
+    "signer_failure": true
+  },
+  "acceptance": {
+    "denominator": 31,
+    "pass": 2,
+    "fail": 3,
+    "blocked": 26,
+    "rows": [
+      {
+        "id": 1,
+        "requirement": "手機瀏覽器逾時處理",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "Android 原生主備切換在 JVM 重播已驗證，裝置 WebView 逾時與網路恢復仍待驗。"
+      },
+      {
+        "id": 2,
+        "requirement": "休市與假日判斷",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "完整雙市場及臨時休市日曆仍缺端到端證據"
+      },
+      {
+        "id": 3,
+        "requirement": "開盤後自動恢復更新",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺本輪開盤自動恢復證據"
+      },
+      {
+        "id": 4,
+        "requirement": "盤中每5分鐘更新及新鮮度",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "15:00、15:32 兩次定時市場工作成功，間隔約 33 分鐘，盤中五分鐘更新未通過。"
+      },
+      {
+        "id": 5,
+        "requirement": "TWSE／TPEx／MIS交叉驗證",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "收盤稽核可偵測已驗證標記與來源日期矛盾，11/13 歸檔日期已核對。MIS 盤中實際三方核對仍待驗。"
+      },
+      {
+        "id": 6,
+        "requirement": "缺漏、過期、異常資料保護",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "主線稽核可攔截缺少或不合約的公開持股，正式資料已讀回。Android 正式版 42 的實機恢復仍待驗。"
+      },
+      {
+        "id": 7,
+        "requirement": "每日選股封存與歷史紀錄",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "原 399 筆封存順序與內容維持，追加 11/13 16 筆；11/12、11/13 快照與官方收盤檔已補齊。"
+      },
+      {
+        "id": 8,
+        "requirement": "模擬績效及交易日計算",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "03:52 紙上排程完成，帳本仍為已核對的 11/13 110 筆訊號、318 筆模擬平倉。該次無 artifact。"
+      },
+      {
+        "id": 9,
+        "requirement": "LINE盤前、盤中、盤後推播",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/14 02:28 盤後排程跨入週末，政策回執確認未發送。仍待手機實收。"
+      },
+      {
+        "id": 10,
+        "requirement": "GitHub、Vercel、Android串接",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "正式 Vercel 部署 7769893089 成功，四份 JSON 與主線相符，Android 簽章與裝置同步仍待驗。"
+      },
+      {
+        "id": 11,
+        "requirement": "持股成本、股數與分類",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "為保護隱私未讀私人部位；匯入持久化仍待裝置驗證"
+      },
+      {
+        "id": 12,
+        "requirement": "持股權重與集中度",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺私人裝置集中度計算端到端驗收"
+      },
+      {
+        "id": 13,
+        "requirement": "營收、毛利與獲利品質",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺逐欄公告日期與財報來源核對"
+      },
+      {
+        "id": 14,
+        "requirement": "EPS與自由現金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "EPS與自由現金流完整來源驗收不足"
+      },
+      {
+        "id": 15,
+        "requirement": "存貨、應收帳款異常",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "既有單元測試不等於全公司財報監測已實測"
+      },
+      {
+        "id": 16,
+        "requirement": "同業、產業與估值",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同業估值自動比較未驗收"
+      },
+      {
+        "id": 17,
+        "requirement": "法人與大戶資金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/13 正式法人 1,865 筆與雙交易所官方資料逐筆相符，大戶持股集中度與跨日趨勢待驗。"
+      },
+      {
+        "id": 18,
+        "requirement": "強勢、震盪、轉弱情境",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "情境單元測試存在；實際資料端到端未驗"
+      },
+      {
+        "id": 19,
+        "requirement": "模擬勝率、盈虧與回撤",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "帳本 318 筆中 285 缺來源證明、33 為重建。下一交易日收盤重播 3/7/15 日配對淨期望 −4.103%／−8.705%／−14.900%，合格 OOS 0。"
+      },
+      {
+        "id": 20,
+        "requirement": "每日續抱／減碼理由",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "公開信號存在；八模組與私人端決策未實機驗證"
+      },
+      {
+        "id": 21,
+        "requirement": "主流資金與族群輪動",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同日雙市場法人欄位已對帳，跨日族群輪動與實機操作待驗。"
+      },
+      {
+        "id": 22,
+        "requirement": "突破、妖股與潛力妖股",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "未放寬選股；未有完整前瞻有效性證據"
+      },
+      {
+        "id": 23,
+        "requirement": "3–5個獨立來源財經新聞",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "來源去重及逐條新聞核實未完成"
+      },
+      {
+        "id": 24,
+        "requirement": "券商報告、目標價與催化劑自動取得",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "免費券商目標價及催化劑自動取得未驗收"
+      },
+      {
+        "id": 25,
+        "requirement": "AI多模型會診及失敗復原",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "正式健康GET及錯誤token401通過；未實際呼叫多模型"
+      },
+      {
+        "id": 26,
+        "requirement": "個股決策儀表板與手機首頁",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "替代雲端Chromium實際打開首頁與績效頁、重讀表格成功；本地Playwright缺執行檔/系統socket拒絕，Android與手機尺寸實機仍未驗。"
+      },
+      {
+        "id": 27,
+        "requirement": "大盤修正與逃命警示",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "官方 11/12 指數首觸 −2% 12:57:25，−2.5% 13:10:25；現有 LINE 仍須 500 檔及 35% 覆蓋，實際通知未驗收。"
+      },
+      {
+        "id": 28,
+        "requirement": "現金與當沖分開模擬",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "現股及當沖分開實際驗證未完成"
+      },
+      {
+        "id": 29,
+        "requirement": "3／7／15／30／60交易日績效及策略調整",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "定時稽核已涵蓋 3／7／15／20／30／40／60 日，20／30／40／60 日均未有成熟樣本。獨立 OOS 0。"
+      },
+      {
+        "id": 30,
+        "requirement": "自動測試、部署與缺陷追蹤",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR #121 與合併後 main 各三組 CI 通過，artifact 14084941326 已驗雜湊。Vercel 精確提交為 CANCELED（Ignored Build Step），目前正式部署仍 READY 於前版，完整驗收仍待可部署變更。"
+      },
+      {
+        "id": 31,
+        "requirement": "推薦顯示八大指標、AI與全球市場影響",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "八指標、多模型與全球影響整合未完整驗收"
+      }
+    ]
+  }
+}
