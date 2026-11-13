@@ -5,6 +5,8 @@ import json
 import pathlib
 import sys
 
+from tools.jei_colab_watchdog import assess
+
 REQUIRED = ('updated_at', 'summary', 'risk', 'market', 'priority', 'attack',
             'next', 'monster', 'rotate', 'flow', 'backtest')
 AREAS = ['LINE 實際送達','盤中行情刷新','TWSE/TPEx/MIS 交叉驗證','休市與資料新鮮度','市場紅燈預警',
@@ -43,24 +45,14 @@ def inspect_feed(feed):
             'institutional_verified': (institutional_status.get('ok') is True if isinstance(institutional_status, dict) else None),
             'issues': issues, 'line_delivery': 'NOT_TESTED', 'android_device': 'NOT_TESTED'}
 
-def heartbeat_status(path=None, now=None, stale_after_minutes=30):
-    """No mounted Drive heartbeat is UNKNOWN, never proof of a stopped Colab."""
-    if not path:
-        return {'status': 'UNKNOWN', 'reason': 'heartbeat_not_available'}
-    try:
-        payload = json.loads(pathlib.Path(path).read_text(encoding='utf-8'))
-        raw = payload.get('checked_at') or payload.get('timestamp')
-        stamp = dt.datetime.fromisoformat(raw.replace('Z', '+00:00'))
-        if stamp.tzinfo is None:
-            return {'status': 'UNKNOWN', 'reason': 'heartbeat_timezone_missing'}
-        now = now or dt.datetime.now(dt.timezone.utc)
-        age = (now - stamp).total_seconds() / 60
-        if age < -2:
-            return {'status': 'UNKNOWN', 'reason': 'heartbeat_future_timestamp'}
-        return {'status': 'STALE' if age > stale_after_minutes else 'FRESH',
-                'age_minutes': round(max(0, age), 1)}
-    except (OSError, ValueError, TypeError, AttributeError):
-        return {'status': 'UNKNOWN', 'reason': 'heartbeat_unreadable'}
+def heartbeat_status(path=None, now=None):
+    payload = None
+    if path:
+        try:
+            payload = json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            pass
+    return assess(payload, now=now)
 
 
 def build_report(feed, commit, heartbeat_path=None):

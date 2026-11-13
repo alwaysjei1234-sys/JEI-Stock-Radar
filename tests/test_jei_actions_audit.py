@@ -77,12 +77,24 @@ class AuditTests(unittest.TestCase):
         now = dt.datetime(2026, 11, 13, 16, 0, tzinfo=dt.timezone.utc)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'heartbeat.json'
-            path.write_text(json.dumps({'checked_at': '2026-11-13T15:55:00Z'}))
-            self.assertEqual(heartbeat_status(path, now)['status'], 'FRESH')
-            path.write_text(json.dumps({'checked_at': '2026-11-13T15:00:00Z'}))
+            path.write_text(json.dumps({'provider': 'google_colab', 'heartbeat_at_utc': '2026-11-13T15:55:00Z'}))
+            self.assertEqual(heartbeat_status(path, now)['status'], 'RECENT_HEARTBEAT')
+            path.write_text(json.dumps({'provider': 'google_colab', 'heartbeat_at_utc': '2026-11-13T15:00:00Z'}))
             self.assertEqual(heartbeat_status(path, now)['status'], 'STALE')
-            path.write_text(json.dumps({'checked_at': '2026-11-13T15:55:00'}))
+            path.write_text(json.dumps({'provider': 'google_colab', 'heartbeat_at_utc': '2026-11-13T15:55:00'}))
             self.assertEqual(heartbeat_status(path, now)['status'], 'UNKNOWN')
+
+    def test_heartbeat_file_matches_emitter_contract(self):
+        from tools.jei_colab_heartbeat import heartbeat_payload, write_heartbeat
+
+        now = dt.datetime(2026, 11, 14, 1, tzinfo=dt.timezone.utc)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "heartbeat.json"
+            payload = heartbeat_payload("test", "a" * 40, now=now)
+            write_heartbeat(path, payload)
+            self.assertEqual(heartbeat_status(path, now)["status"], "RECENT_HEARTBEAT")
+            write_heartbeat(path, {**payload, "provider": "github_actions"})
+            self.assertEqual(heartbeat_status(path, now)["status"], "UNKNOWN")
 
     def test_working_31_labels(self):
         self.assertEqual(len(AREAS), 31)
