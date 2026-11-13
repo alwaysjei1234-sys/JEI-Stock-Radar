@@ -23,6 +23,47 @@ class InstitutionalIntegrityTests(unittest.TestCase):
         with patch.object(u,'fetch_json',side_effect=get):
             return u.fetch_institutional(DAY)
 
+    def test_twse_requests_explicit_session_date(self):
+        seen=[]
+        def get(url):
+            seen.append(url)
+            return copy.deepcopy(self.tpex if url == u.TPEX_INST else self.twse)
+        with patch.object(u,'fetch_json',side_effect=get):
+            rows,errors,_=u.fetch_institutional(DAY)
+        self.assertEqual(errors,[])
+        self.assertIn('date=20261103',seen[0])
+        self.assertEqual(rows['2330']['data_date'],DAY)
+
+    def test_twse_retries_second_dated_endpoint_on_stale_response(self):
+        seen=[]
+        def get(url):
+            seen.append(url)
+            if url == u.TPEX_INST:return copy.deepcopy(self.tpex)
+            if url.startswith(u.TWSE_INST):
+                stale=copy.deepcopy(self.twse);stale['date']='20261102'
+                return stale
+            return copy.deepcopy(self.twse)
+        with patch.object(u,'fetch_json',side_effect=get):
+            rows,errors,_=u.fetch_institutional(DAY)
+        self.assertEqual(errors,[])
+        self.assertEqual(len([url for url in seen if 'T86' in url]),2)
+        self.assertIn('2330',rows)
+
+    def test_twse_retries_when_dated_endpoint_has_no_rows(self):
+        seen = []
+        def get(url):
+            seen.append(url)
+            if url == u.TPEX_INST:
+                return copy.deepcopy(self.tpex)
+            if url.startswith(u.TWSE_INST):
+                return {**self.twse, "data": []}
+            return copy.deepcopy(self.twse)
+        with patch.object(u, "fetch_json", side_effect=get):
+            rows, errors, _ = u.fetch_institutional(DAY)
+        self.assertEqual(errors, [])
+        self.assertEqual(sum("T86" in url for url in seen), 2)
+        self.assertTrue(u.institutional_market_complete(rows, errors, DAY))
+
     def test_both_same_day_sources_have_dated_totals(self):
         rows, errors, _ = self.fetch()
         self.assertEqual(errors,[])

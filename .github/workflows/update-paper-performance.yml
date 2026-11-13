@@ -115,6 +115,9 @@ jobs:
           else
             echo "active=false" >> "$GITHUB_OUTPUT"
             echo "No completed same-day feed: $FEED vs $TODAY; skip paper update."
+            echo "::warning title=Paper benchmark skipped::No same-day completed official feed; benchmark and validation were NOT updated (feed=$FEED, today=$TODAY)."
+            echo "### Paper benchmark: SKIPPED" >> "$GITHUB_STEP_SUMMARY"
+            echo "No completed same-day official feed (feed=$FEED, today=$TODAY). Tests passed but **no strategy evaluation was run or published**." >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Generate daily public paper-only benchmark
         if: steps.session.outputs.active == 'true'

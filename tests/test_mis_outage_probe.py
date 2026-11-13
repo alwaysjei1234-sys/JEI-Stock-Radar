@@ -67,10 +67,15 @@ class MisOutageProbeTests(unittest.TestCase):
         self.assertEqual(count,0,'probe response cannot inflate verified live coverage')
         self.assertEqual(result[0]['close'],100)
 
-    def test_ambiguous_probe_errors_preserve_existing_batch_recovery(self):
-        for result in ([],ValueError('unparseable'),HTTPError(u.TWSE_MIS,404,'unknown',{},None)):
+    def test_empty_probe_and_unrecognized_http_preserve_batch_recovery(self):
+        for result in ([],HTTPError(u.TWSE_MIS,404,'unknown',{},None)):
             with self.subTest(result=type(result).__name__),patch.object(u,'fetch_mis_channels',side_effect=[result] if isinstance(result,Exception) else None,return_value=result):
                 self.assertTrue(u.mis_service_probe(['tse_2330.tw'])[0])
+
+    def test_invalid_envelope_is_bounded_before_bulk_scan(self):
+        with patch.object(u,'fetch_mis_channels',side_effect=ValueError('unparseable')) as fetch,patch.object(u.time,'sleep'):
+            self.assertEqual(u.mis_service_probe(['tse_2330.tw']),(False,3,'invalid_response'))
+        self.assertEqual(fetch.call_count,3)
 
     def test_mixed_server_and_transport_outage_stops_after_three_attempts(self):
         errors=[HTTPError(u.TWSE_MIS,503,'unavailable',{},None),

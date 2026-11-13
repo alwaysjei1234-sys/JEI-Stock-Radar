@@ -1,16 +1,47 @@
-name: JEI Colab Audit (GitHub Actions)
+name: JEI Compute Provenance Audit (GitHub Actions)
 on:
   push:
     branches:
+      - main
       - feature/actions-colab-audit-20261107
+      - fix/hourly-colab-audit-20261113
+      - fix/pick-quality-audit-20261113
+      - fix/compute-provenance-20261113
+      - feat/colab-verifiable-bridge-20261113
+      - fix/colab-output-integrity-20261113
+      - fix/colab-audit-schedule-reliability-20261113
+      - feat/shared-colab-actions-compute-20261113
+      - feat/colab-stall-watchdog-20261113
+      - feat/colab-heartbeat-emitter-20261113
   pull_request:
     paths:
       - 'tools/jei_actions_audit.py'
+      - 'tools/jei_audit_manifest.py'
+      - 'tests/test_jei_audit_manifest.py'
       - 'tests/test_jei_actions_audit.py'
+      - 'tools/jei_performance_quality.py'
+      - 'tests/test_jei_performance_quality.py'
+      - 'tools/jei_compute_provenance.py'
+      - 'tests/test_jei_compute_provenance.py'
+      - 'tools/jei_colab_report_validator.py'
+      - 'tests/test_jei_colab_report_validator.py'
+      - 'colab/JEI_Colab_Audit.ipynb'
+      - 'tests/test_jei_colab_notebook.py'
+      - 'tools/jei_shared_compute.py'
+      - 'tests/test_jei_shared_compute.py'
+      - 'tools/jei_colab_watchdog.py'
+      - 'tests/test_jei_colab_watchdog.py'
+      - 'tools/jei_colab_heartbeat.py'
+      - 'tests/test_jei_colab_heartbeat.py'
+      - 'tools/jei_drive_heartbeat_ingest.py'
+      - 'tools/jei_batch_checkpoint.py'
+      - 'tests/test_jei_batch_checkpoint.py'
+      - 'tools/jei_resumable_observed.py'
+      - 'tests/test_jei_resumable_observed.py'
       - '.github/workflows/jei-colab-audit.yml'
   workflow_dispatch:
   schedule:
-    - cron: '20 1,5,9 * * 1-5'
+    - cron: '37 * * * *'
 permissions:
   contents: read
 jobs:
@@ -24,8 +55,82 @@ jobs:
           python-version: '3.11'
       - name: Verify audit logic
         run: python -m unittest discover -s tests -p 'test_jei_actions_audit.py' -v
+      - name: Verify pick quality classifications
+        run: python -m unittest discover -s tests -p 'test_jei_performance_quality.py' -v
       - name: Audit checked-out public feed
         run: python -m tools.jei_actions_audit --feed remote/system.json --out audit-output --commit "$GITHUB_SHA"
+      - name: Record observed pick quality (not independent OOS)
+        run: python -m tools.jei_performance_quality --input remote/pick_validation.json --out audit-output/pick_quality.json
+      - name: Verify compute provenance tests
+        run: python -m unittest discover -s tests -p 'test_jei_compute_provenance.py' -v
+      - name: Record GitHub compute provenance (Colab unverified)
+        run: python -m tools.jei_compute_provenance --quality audit-output/pick_quality.json --out audit-output/compute_provenance.json
+      - name: Verify Colab report validation logic
+        run: python -m unittest discover -s tests -p 'test_jei_colab_report_validator.py' -v
+      - name: Validate notebook structure
+        run: python -m json.tool colab/JEI_Colab_Audit.ipynb > /dev/null
+      - name: Verify notebook source and report round trip
+        run: python -m unittest discover -s tests -p 'test_jei_colab_notebook.py' -v
+      - name: Verify portable computation
+        run: python -m unittest discover -s tests -p 'test_jei_shared_compute.py' -v
+      - name: Execute portable observed-performance computation
+        run: python -m tools.jei_shared_compute --provider github_actions --source-commit "$GITHUB_SHA" --output-dir audit-output
+      - name: Verify Colab stall watchdog
+        run: python -m unittest discover -s tests -p 'test_jei_colab_watchdog.py' -v
+      - name: Assess accessible Colab heartbeat (UNKNOWN when unavailable)
+        run: python -m tools.jei_colab_watchdog --output audit-output/colab_watchdog.json
+      - name: Verify live Colab heartbeat producer
+        run: python -m unittest discover -s tests -p 'test_jei_colab_heartbeat.py' -v
+      - name: Verify resumable checkpoints
+        run: python -m unittest discover -s tests -p 'test_jei_batch_checkpoint.py' -v
+      - name: Read Colab heartbeat from authorized Drive (if configured)
+        # Optional Drive access must not block the GitHub Actions compute fallback.
+        continue-on-error: true
+        env:
+          JEI_DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.JEI_DRIVE_SERVICE_ACCOUNT_JSON }}
+          JEI_COLAB_HEARTBEAT_FILE_ID: ${{ vars.JEI_COLAB_HEARTBEAT_FILE_ID }}
+        run: |
+          if [ -n "$JEI_DRIVE_SERVICE_ACCOUNT_JSON" ] && [ -n "$JEI_COLAB_HEARTBEAT_FILE_ID" ]; then
+            python -m pip install google-auth requests
+            python -m tools.jei_drive_heartbeat_ingest --output audit-output/colab_watchdog.json
+          else
+            echo "Drive heartbeat unavailable: monitoring status remains UNKNOWN"
+          fi
+      - name: Restore checkpoint from prior workflow runs
+        id: checkpoint_restore
+        uses: actions/cache/restore@v4
+        with:
+          path: audit-output/observed_checkpoint.json
+          key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json', 'tools/jei_shared_compute.py', 'tools/jei_resumable_observed.py', 'tools/jei_batch_checkpoint.py') }}-${{ github.run_id }}
+          restore-keys: |
+            jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json', 'tools/jei_shared_compute.py', 'tools/jei_resumable_observed.py', 'tools/jei_batch_checkpoint.py') }}-
+      - name: Report actual cross-run checkpoint restore
+        shell: bash
+        env:
+          RESTORED_CACHE_KEY: ${{ steps.checkpoint_restore.outputs.cache-matched-key }}
+        run: |
+          if [ -n "$RESTORED_CACHE_KEY" ] && [ -s audit-output/observed_checkpoint.json ]; then
+            echo "CHECKPOINT_RESTORED_FROM_PREVIOUS_RUN=$RESTORED_CACHE_KEY"
+            echo "Checkpoint restored from prior run: $RESTORED_CACHE_KEY" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::CHECKPOINT_COLD_START: no prior checkpoint restored"
+            echo "Checkpoint cold start: no prior checkpoint restored" >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Test interrupted and resumed computations
+        run: python -m unittest discover -s tests -p 'test_jei_resumable_observed.py' -v
+      - name: Run checkpointed observed batches
+        run: python -m tools.jei_resumable_observed --input remote/pick_validation.json --checkpoint audit-output/observed_checkpoint.json --output audit-output/resumable_observed.json
+      - name: Persist checkpoint for future runs
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: audit-output/observed_checkpoint.json
+          key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json', 'tools/jei_shared_compute.py', 'tools/jei_resumable_observed.py', 'tools/jei_batch_checkpoint.py') }}-${{ github.run_id }}
+      - name: Verify artifact manifest
+        run: python -m unittest discover -s tests -p 'test_jei_audit_manifest.py' -v
+      - name: Index audit evidence
+        if: always()
+        run: python -m tools.jei_audit_manifest
       - name: Store audit evidence
         if: always()
         uses: actions/upload-artifact@v4

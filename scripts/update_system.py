@@ -388,17 +388,27 @@ def fetch_institutional(expected_date=None):
     expected_date=expected_date or datetime.now(TZ).strftime("%Y-%m-%d")
     out={}; errs=[]; debug={}
     try:
-        try:
-            j=fetch_json(TWSE_INST)
-        except Exception:
-            j=fetch_json("https://www.twse.com.tw/fund/T86?response=json&selectType=ALLBUT0999")
-        if (not isinstance(j,dict) or j.get("stat")!="OK" or
-                verified_archive_date(normalize_exchange_date(j.get("date")))!=expected_date):
-            raise ValueError("T86 response status/date not verified for "+expected_date)
-        fields=j.get("fields",[]) if isinstance(j,dict) else []
-        data=j.get("data",[]) if isinstance(j,dict) else []
-        if not data:
-            raise RuntimeError("T86 returned no rows")
+        # Request the exact session rather than relying on the endpoint's
+        # latest-date default, which can lag or return a previous trading day.
+        ymd=expected_date.replace("-", "")
+        twse_urls=(TWSE_INST, "https://www.twse.com.tw/fund/T86?response=json&selectType=ALLBUT0999")
+        j=None; last_error=None
+        for endpoint in twse_urls:
+            try:
+                candidate=fetch_json(endpoint+"&date="+ymd)
+                if (not isinstance(candidate,dict) or candidate.get("stat")!="OK" or
+                        verified_archive_date(normalize_exchange_date(candidate.get("date")))!=expected_date):
+                    raise ValueError("T86 response status/date not verified for "+expected_date)
+                if not isinstance(candidate.get("data"),list) or not candidate["data"]:
+                    raise ValueError("T86 returned no rows for "+expected_date)
+                j=candidate
+                break
+            except Exception as exc:
+                last_error=exc
+        if j is None:
+            raise ValueError("T86 dated endpoints unavailable or unverified for "+expected_date) from last_error
+        fields=j.get("fields",[])
+        data=j["data"]
         debug["twse_fields"]=fields
         debug["twse_first"]=data[0] if data else None
         idx={re.sub(r"<[^>]+>","",str(name)).replace("\
@@ -537,6 +547,10 @@ def mis_service_probe(channels):
                 return False,attempt,error.code
         except (urllib.error.URLError,TimeoutError,ConnectionError):
             if attempt==3:return False,attempt,"network"
+        except (ValueError, json.JSONDecodeError):
+            # A malformed or rejected MIS envelope is not service availability.
+            # Retry the bounded probe; never fan out thousands of requests on it.
+            if attempt==3:return False,attempt,"invalid_response"
         except Exception:
             return True,attempt,None
         time.sleep(2**(attempt-1))
@@ -636,10 +650,10 @@ def enrich_live(rows, asof=None, priority_codes=()):
     available,attempts,status=mis_service_probe(channels)
     stats.update(service_probe_attempts=attempts,bulk_scan_skipped=not available,
                  unavailable_http_status=status if isinstance(status,int) else None,
-                 outage_reason="network" if status=="network" else f"HTTP_{status}" if status else None,
+                 outage_reason=(f"HTTP_{status}" if isinstance(status,int) else status),
                  skipped_channels=len(channels) if not available else 0)
     if not available:
-        reason=f"HTTP {status}" if isinstance(status,int) else "network"
+        reason=f"HTTP {status}" if isinstance(status,int) else ("回應格式或狀態無效" if status=="invalid_response" else "network")
         errors.append(f"MIS {reason}：連線探測未通過，停止本輪全市場掃描；下輪重新探測")
         return rows,0,None,errors,stats
     # MIS is sensitive to oversized ex_ch queries/rate bursts. Use conservative
