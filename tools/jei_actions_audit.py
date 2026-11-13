@@ -5,6 +5,8 @@ import json
 import pathlib
 import sys
 
+from tools.jei_colab_watchdog import assess
+
 REQUIRED = ('updated_at', 'summary', 'risk', 'market', 'priority', 'attack',
             'next', 'monster', 'rotate', 'flow', 'backtest')
 AREAS = ['LINE 實際送達','盤中行情刷新','TWSE/TPEx/MIS 交叉驗證','休市與資料新鮮度','市場紅燈預警',
@@ -43,11 +45,22 @@ def inspect_feed(feed):
             'institutional_verified': (institutional_status.get('ok') is True if isinstance(institutional_status, dict) else None),
             'issues': issues, 'line_delivery': 'NOT_TESTED', 'android_device': 'NOT_TESTED'}
 
-def build_report(feed, commit):
+def heartbeat_status(path=None, now=None):
+    payload = None
+    if path:
+        try:
+            payload = json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            pass
+    return assess(payload, now=now)
+
+
+def build_report(feed, commit, heartbeat_path=None):
     return {'checked_at_taipei': dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).isoformat(),
             'repo': 'alwaysjei1234-sys/JEI-Stock-Radar', 'source_commit': commit,
             'baseline_completed': 15.5, 'baseline_total': 31,
             'completion_percent': None, 'completion_note': '31-item revalidation not performed',
+            'colab_heartbeat': heartbeat_status(heartbeat_path),
             'results': inspect_feed(feed)}
 
 def main():
@@ -55,12 +68,13 @@ def main():
     parser.add_argument('--feed', default='remote/system.json')
     parser.add_argument('--out', default='audit-output')
     parser.add_argument('--commit', default='unknown')
+    parser.add_argument('--heartbeat', help='Optional readable heartbeat JSON; absent means UNKNOWN')
     args = parser.parse_args()
     output = pathlib.Path(args.out)
     output.mkdir(parents=True, exist_ok=True)
     try:
         feed = json.loads(pathlib.Path(args.feed).read_text(encoding='utf-8'))
-        report = build_report(feed, args.commit)
+        report = build_report(feed, args.commit, args.heartbeat)
         status = 1 if report['results']['critical_issues'] else 0
     except (OSError, ValueError, TypeError) as exc:
         report = {'error': str(exc), 'completion_percent': None,
