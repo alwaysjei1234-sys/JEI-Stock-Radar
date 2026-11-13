@@ -547,6 +547,10 @@ def mis_service_probe(channels):
                 return False,attempt,error.code
         except (urllib.error.URLError,TimeoutError,ConnectionError):
             if attempt==3:return False,attempt,"network"
+        except (ValueError, json.JSONDecodeError):
+            # A malformed or rejected MIS envelope is not service availability.
+            # Retry the bounded probe; never fan out thousands of requests on it.
+            if attempt==3:return False,attempt,"invalid_response"
         except Exception:
             return True,attempt,None
         time.sleep(2**(attempt-1))
