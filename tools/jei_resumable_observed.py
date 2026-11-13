@@ -7,6 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 from tools.jei_batch_checkpoint import load_checkpoint, save_checkpoint
+from tools import jei_shared_compute
 from tools.jei_shared_compute import compute
 
 
@@ -17,7 +18,10 @@ def run_batches(source, checkpoint_path, output_path, max_batches=None):
     groups = data.get("groups")
     if not isinstance(groups, dict) or not groups:
         raise ValueError("missing_groups")
-    params = {"schema": 1, "horizons": ["3", "7", "15", "30"]}
+    params = {
+        "schema": 1,
+        "engine_sha256": hashlib.sha256(Path(jei_shared_compute.__file__).read_bytes()).hexdigest(),
+    }
     done = load_checkpoint(checkpoint_path, source_hash, "observed_performance", params)
     names = sorted(groups)
     processed = 0

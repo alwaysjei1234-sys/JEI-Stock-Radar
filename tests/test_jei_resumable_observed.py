@@ -2,6 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 from tools.jei_resumable_observed import run_batches
 
 
@@ -23,6 +24,20 @@ class ResumeTests(unittest.TestCase):
             self.assertEqual(len(second["observed_rows"]), 2)
             self.assertEqual(run_batches(src, checkpoint, output)["observed_rows"], second["observed_rows"])
             self.assertFalse(second["independent_oos_verified"])
+
+    def test_engine_change_invalidates_checkpoint_for_same_source(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            src = root / "source.json"
+            entry = {"completed": 31, "win_rate_pct": 55, "avg_estimated_net_pct": 1.2}
+            src.write_text(json.dumps({"groups": {"a": {"3": entry}}}))
+            checkpoint, output = root / "cp.json", root / "out.json"
+            run_batches(src, checkpoint, output)
+            engine = root / "engine.py"
+            engine.write_text("# changed engine")
+            with patch("tools.jei_resumable_observed.jei_shared_compute.__file__", str(engine)):
+                with self.assertRaisesRegex(ValueError, "checkpoint_source_or_strategy_mismatch"):
+                    run_batches(src, checkpoint, output)
 
     def test_source_change_invalidates_old_checkpoint(self):
         with tempfile.TemporaryDirectory() as tmp:
