@@ -24,6 +24,7 @@ on:
       - 'tools/jei_colab_report_validator.py'
       - 'tests/test_jei_colab_report_validator.py'
       - 'colab/JEI_Colab_Audit.ipynb'
+      - 'tests/test_jei_colab_notebook.py'
       - 'tools/jei_shared_compute.py'
       - 'tests/test_jei_shared_compute.py'
       - 'tools/jei_colab_watchdog.py'
@@ -66,6 +67,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_jei_colab_report_validator.py' -v
       - name: Validate notebook structure
         run: python -m json.tool colab/JEI_Colab_Audit.ipynb > /dev/null
+      - name: Verify notebook source and report round trip
+        run: python -m unittest discover -s tests -p 'test_jei_colab_notebook.py' -v
       - name: Verify portable computation
         run: python -m unittest discover -s tests -p 'test_jei_shared_compute.py' -v
       - name: Execute portable observed-performance computation
