@@ -1,4 +1,4 @@
-"""Validate signed-by-evidence (not cryptographically signed) Colab run reports."""
+"""Validate Colab report metadata and verify the referenced output bytes."""
 import argparse
 import datetime as dt
 import json
@@ -21,8 +21,15 @@ def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit
         issues.append("not_completed")
     if not isinstance(report.get("outputs"), dict) or not report.get("outputs"):
         issues.append("missing_outputs")
-    if expected_commit and report.get("source_commit") != expected_commit:
+    commit = report.get("source_commit")
+    if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+        issues.append("invalid_source_commit")
+    if expected_commit is None:
+        issues.append("missing_expected_commit")
+    elif commit != expected_commit:
         issues.append("source_commit_mismatch")
+    if output_dir is None:
+        issues.append("missing_output_directory")
     hashes = report.get("output_sha256")
     if not isinstance(hashes, dict):
         issues.append("missing_output_hashes")
@@ -38,8 +45,14 @@ def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit
                 path = Path(output_dir) / filename
                 if not path.is_file() or path.is_symlink():
                     issues.append("missing_output_file_" + str(key))
-                elif isinstance(digest, str) and hashlib.sha256(path.read_bytes()).hexdigest() != digest:
-                    issues.append("output_hash_mismatch_" + str(key))
+                elif isinstance(digest, str):
+                    try:
+                        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+                    except OSError:
+                        issues.append("unreadable_output_file_" + str(key))
+                    else:
+                        if actual != digest:
+                            issues.append("output_hash_mismatch_" + str(key))
     now = now or dt.datetime.now(dt.timezone.utc)
     try:
         start = dt.datetime.fromisoformat(report["started_at_utc"].replace("Z", "+00:00"))
@@ -52,7 +65,7 @@ def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit
         issues.append("invalid_run_times")
     return {"verified": not issues, "issues": issues,
             "run_id": report.get("run_id"), "source_commit": report.get("source_commit"),
-            "note": "Report-format verification only; not proof of authentic Colab runtime or improved strategy."}
+            "note": "Metadata and output integrity checks do not attest to the Colab runtime or strategy performance."}
 
 
 def main():
