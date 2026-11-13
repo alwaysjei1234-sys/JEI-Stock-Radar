@@ -6,6 +6,7 @@ on:
       - fix/hourly-colab-audit-20261113
       - fix/pick-quality-audit-20261113
       - fix/compute-provenance-20261113
+      - feat/colab-verifiable-bridge-20261113
   pull_request:
     paths:
       - 'tools/jei_actions_audit.py'
@@ -14,6 +15,9 @@ on:
       - 'tests/test_jei_performance_quality.py'
       - 'tools/jei_compute_provenance.py'
       - 'tests/test_jei_compute_provenance.py'
+      - 'tools/jei_colab_report_validator.py'
+      - 'tests/test_jei_colab_report_validator.py'
+      - 'colab/JEI_Colab_Audit.ipynb'
       - '.github/workflows/jei-colab-audit.yml'
   workflow_dispatch:
   schedule:
@@ -41,6 +45,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_jei_compute_provenance.py' -v
       - name: Record GitHub compute provenance (Colab unverified)
         run: python -m tools.jei_compute_provenance --quality audit-output/pick_quality.json --out audit-output/compute_provenance.json
+      - name: Verify Colab report validation logic
+        run: python -m unittest discover -s tests -p 'test_jei_colab_report_validator.py' -v
+      - name: Validate notebook structure
+        run: python -m json.tool colab/JEI_Colab_Audit.ipynb > /dev/null
       - name: Store audit evidence
         if: always()
         uses: actions/upload-artifact@v4
