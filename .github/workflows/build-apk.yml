@@ -9,7 +9,12 @@ on:
       - 'build.gradle'
       - 'settings.gradle'
       - 'gradle.properties'
-      - 'tests/**'
+      # Package the offline dashboard and rerun only APK-specific checks.
+      - 'remote/index.html'
+      - 'remote/update.json'
+      - 'scripts/verify_android_apk.py'
+      - 'tests/smoke.cjs'
+      - 'tests/test_android_*.py'
       - '.github/workflows/build-apk.yml'
   workflow_dispatch:
   schedule:
