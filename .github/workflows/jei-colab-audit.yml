@@ -28,6 +28,9 @@ on:
       - 'tests/test_jei_colab_watchdog.py'
       - 'tools/jei_colab_heartbeat.py'
       - 'tests/test_jei_colab_heartbeat.py'
+      - 'tools/jei_drive_heartbeat_ingest.py'
+      - 'tools/jei_batch_checkpoint.py'
+      - 'tests/test_jei_batch_checkpoint.py'
       - '.github/workflows/jei-colab-audit.yml'
   workflow_dispatch:
   schedule:
@@ -69,6 +72,19 @@ jobs:
         run: python -m tools.jei_colab_watchdog --output audit-output/colab_watchdog.json
       - name: Verify live Colab heartbeat producer
         run: python -m unittest discover -s tests -p 'test_jei_colab_heartbeat.py' -v
+      - name: Verify resumable checkpoints
+        run: python -m unittest discover -s tests -p 'test_jei_batch_checkpoint.py' -v
+      - name: Read Colab heartbeat from authorized Drive (if configured)
+        env:
+          JEI_DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.JEI_DRIVE_SERVICE_ACCOUNT_JSON }}
+          JEI_COLAB_HEARTBEAT_FILE_ID: ${{ vars.JEI_COLAB_HEARTBEAT_FILE_ID }}
+        run: |
+          if [ -n "$JEI_DRIVE_SERVICE_ACCOUNT_JSON" ] && [ -n "$JEI_COLAB_HEARTBEAT_FILE_ID" ]; then
+            python -m pip install google-auth requests
+            python -m tools.jei_drive_heartbeat_ingest --output audit-output/colab_watchdog.json
+          else
+            echo "Drive heartbeat unavailable: monitoring status remains UNKNOWN"
+          fi
       - name: Store audit evidence
         if: always()
         uses: actions/upload-artifact@v4
