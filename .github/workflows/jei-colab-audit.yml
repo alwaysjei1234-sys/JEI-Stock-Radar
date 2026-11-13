@@ -84,6 +84,8 @@ jobs:
       - name: Verify resumable checkpoints
         run: python -m unittest discover -s tests -p 'test_jei_batch_checkpoint.py' -v
       - name: Read Colab heartbeat from authorized Drive (if configured)
+        # Optional Drive access must not block the GitHub Actions compute fallback.
+        continue-on-error: true
         env:
           JEI_DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.JEI_DRIVE_SERVICE_ACCOUNT_JSON }}
           JEI_COLAB_HEARTBEAT_FILE_ID: ${{ vars.JEI_COLAB_HEARTBEAT_FILE_ID }}
