@@ -2,6 +2,7 @@ name: JEI Compute Provenance Audit (GitHub Actions)
 on:
   push:
     branches:
+      - main
       - feature/actions-colab-audit-20261107
       - fix/hourly-colab-audit-20261113
       - fix/pick-quality-audit-20261113
