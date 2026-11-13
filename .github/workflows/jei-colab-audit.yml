@@ -31,6 +31,8 @@ on:
       - 'tools/jei_drive_heartbeat_ingest.py'
       - 'tools/jei_batch_checkpoint.py'
       - 'tests/test_jei_batch_checkpoint.py'
+      - 'tools/jei_resumable_observed.py'
+      - 'tests/test_jei_resumable_observed.py'
       - '.github/workflows/jei-colab-audit.yml'
   workflow_dispatch:
   schedule:
@@ -85,6 +87,10 @@ jobs:
           else
             echo "Drive heartbeat unavailable: monitoring status remains UNKNOWN"
           fi
+      - name: Test interrupted and resumed computations
+        run: python -m unittest discover -s tests -p 'test_jei_resumable_observed.py' -v
+      - name: Run checkpointed observed batches
+        run: python -m tools.jei_resumable_observed --input remote/pick_validation.json --checkpoint audit-output/observed_checkpoint.json --output audit-output/resumable_observed.json
       - name: Store audit evidence
         if: always()
         uses: actions/upload-artifact@v4
