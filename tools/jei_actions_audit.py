@@ -5,9 +5,10 @@ import json
 import pathlib
 import sys
 
+from scripts.public_holding_signals import is_safe_public_holdings
 from tools.jei_colab_watchdog import assess
 
-REQUIRED = ('updated_at', 'summary', 'risk', 'market', 'priority', 'attack',
+REQUIRED = ('updated_at', 'summary', 'risk', 'market', 'holdings', 'priority', 'attack',
             'next', 'monster', 'rotate', 'flow', 'backtest')
 AREAS = ['LINE 實際送達','盤中行情刷新','TWSE/TPEx/MIS 交叉驗證','休市與資料新鮮度','市場紅燈預警',
 'Android 實機顯示','遠端 UI 更新','主流資金','強勢族群','量價突破','妖股偵測',
@@ -18,6 +19,10 @@ AREAS = ['LINE 實際送達','盤中行情刷新','TWSE/TPEx/MIS 交叉驗證','
 
 def inspect_feed(feed):
     issues = ['missing:' + key for key in REQUIRED if key not in feed]
+    if "holdings" in feed:
+        holdings = feed["holdings"]
+        if not isinstance(holdings, dict) or not is_safe_public_holdings(holdings):
+            issues.append("invalid_public_holdings")
     risk, market = feed.get('risk') or {}, feed.get('market') or {}
     date = feed.get('data_date') or feed.get('source_data_date')
     try:
@@ -37,7 +42,7 @@ def inspect_feed(feed):
     institutional_status = feed.get('institutional_status')
     if isinstance(institutional_status, dict) and institutional_status.get('ok') is False:
         issues.append('institutional_unverified (institutional scoring must remain disabled)')
-    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score', 'stale_official_close', 'unverified_official_close')]
+    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score', 'invalid_public_holdings', 'stale_official_close', 'unverified_official_close')]
     return {'status': 'failed' if critical else 'ok', 'critical_issues': critical,
             'feed_date': date, 'updated_at': feed.get('updated_at'),
             'risk_level': risk.get('level'), 'risk_score': risk.get('score'),
