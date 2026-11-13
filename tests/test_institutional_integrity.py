@@ -49,6 +49,21 @@ class InstitutionalIntegrityTests(unittest.TestCase):
         self.assertEqual(len([url for url in seen if 'T86' in url]),2)
         self.assertIn('2330',rows)
 
+    def test_twse_retries_when_dated_endpoint_has_no_rows(self):
+        seen = []
+        def get(url):
+            seen.append(url)
+            if url == u.TPEX_INST:
+                return copy.deepcopy(self.tpex)
+            if url.startswith(u.TWSE_INST):
+                return {**self.twse, "data": []}
+            return copy.deepcopy(self.twse)
+        with patch.object(u, "fetch_json", side_effect=get):
+            rows, errors, _ = u.fetch_institutional(DAY)
+        self.assertEqual(errors, [])
+        self.assertEqual(sum("T86" in url for url in seen), 2)
+        self.assertTrue(u.institutional_market_complete(rows, errors, DAY))
+
     def test_both_same_day_sources_have_dated_totals(self):
         rows, errors, _ = self.fetch()
         self.assertEqual(errors,[])

@@ -399,16 +399,16 @@ def fetch_institutional(expected_date=None):
                 if (not isinstance(candidate,dict) or candidate.get("stat")!="OK" or
                         verified_archive_date(normalize_exchange_date(candidate.get("date")))!=expected_date):
                     raise ValueError("T86 response status/date not verified for "+expected_date)
+                if not isinstance(candidate.get("data"),list) or not candidate["data"]:
+                    raise ValueError("T86 returned no rows for "+expected_date)
                 j=candidate
                 break
             except Exception as exc:
                 last_error=exc
         if j is None:
             raise ValueError("T86 dated endpoints unavailable or unverified for "+expected_date) from last_error
-        fields=j.get("fields",[]) if isinstance(j,dict) else []
-        data=j.get("data",[]) if isinstance(j,dict) else []
-        if not data:
-            raise RuntimeError("T86 returned no rows")
+        fields=j.get("fields",[])
+        data=j["data"]
         debug["twse_fields"]=fields
         debug["twse_first"]=data[0] if data else None
         idx={re.sub(r"<[^>]+>","",str(name)).replace("\
