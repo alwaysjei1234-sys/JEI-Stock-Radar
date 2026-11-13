@@ -388,13 +388,23 @@ def fetch_institutional(expected_date=None):
     expected_date=expected_date or datetime.now(TZ).strftime("%Y-%m-%d")
     out={}; errs=[]; debug={}
     try:
-        try:
-            j=fetch_json(TWSE_INST)
-        except Exception:
-            j=fetch_json("https://www.twse.com.tw/fund/T86?response=json&selectType=ALLBUT0999")
-        if (not isinstance(j,dict) or j.get("stat")!="OK" or
-                verified_archive_date(normalize_exchange_date(j.get("date")))!=expected_date):
-            raise ValueError("T86 response status/date not verified for "+expected_date)
+        # Request the exact session rather than relying on the endpoint's
+        # latest-date default, which can lag or return a previous trading day.
+        ymd=expected_date.replace("-", "")
+        twse_urls=(TWSE_INST, "https://www.twse.com.tw/fund/T86?response=json&selectType=ALLBUT0999")
+        j=None; last_error=None
+        for endpoint in twse_urls:
+            try:
+                candidate=fetch_json(endpoint+"&date="+ymd)
+                if (not isinstance(candidate,dict) or candidate.get("stat")!="OK" or
+                        verified_archive_date(normalize_exchange_date(candidate.get("date")))!=expected_date):
+                    raise ValueError("T86 response status/date not verified for "+expected_date)
+                j=candidate
+                break
+            except Exception as exc:
+                last_error=exc
+        if j is None:
+            raise ValueError("T86 dated endpoints unavailable or unverified for "+expected_date) from last_error
         fields=j.get("fields",[]) if isinstance(j,dict) else []
         data=j.get("data",[]) if isinstance(j,dict) else []
         if not data:
