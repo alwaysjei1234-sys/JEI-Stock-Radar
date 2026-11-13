@@ -32,6 +32,17 @@ class SharedComputeTests(unittest.TestCase):
             "30": {"completed": 0}}}})["observed_rows"]
         self.assertEqual([row["horizon_days"] for row in rows], [20, 40, 60])
 
+    def test_invalid_observations_cannot_count_as_eligible(self):
+        valid = {"completed": 31, "win_rate_pct": 55, "avg_estimated_net_pct": 2}
+        for field, value in (
+            ("win_rate_pct", 101), ("win_rate_pct", -1), ("win_rate_pct", float("nan")),
+            ("avg_estimated_net_pct", float("inf")), ("avg_estimated_net_pct", -100.1),
+        ):
+            with self.subTest(field=field, value=value):
+                report = compute({"groups": {"attack": {"3": valid, "7": {**valid, field: value}}}})
+                self.assertEqual(report["eligible_rows"], 1)
+                self.assertEqual([row["horizon_days"] for row in report["observed_rows"]], [3])
+
     def test_missing_data_blocks(self):
         with self.assertRaises(ValueError):
             compute({"groups": {}})

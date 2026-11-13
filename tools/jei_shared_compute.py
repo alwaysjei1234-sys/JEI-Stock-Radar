@@ -7,6 +7,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 
@@ -24,7 +25,11 @@ def observed_rows(name, horizons):
         n = entry.get("completed")
         win = entry.get("win_rate_pct")
         net = entry.get("avg_estimated_net_pct")
-        if type(n) is not int or n <= 0 or type(win) not in (float, int) or type(net) not in (float, int):
+        if type(n) is not int or n <= 0:
+            continue
+        if type(win) not in (float, int) or not 0 <= win <= 100:
+            continue
+        if type(net) not in (float, int) or net < -100 or (type(net) is float and not math.isfinite(net)):
             continue
         yield {"strategy": name, "horizon_days": int(horizon),
                "observed_count": n, "win_rate_pct": win,
