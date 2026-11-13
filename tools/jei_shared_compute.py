@@ -11,26 +11,31 @@ import os
 from pathlib import Path
 
 
+def observed_rows(name, horizons):
+    if not isinstance(horizons, dict):
+        return
+    for horizon in ("3", "7", "15", "30"):
+        entry = horizons.get(horizon, {})
+        if not isinstance(entry, dict):
+            continue
+        n = entry.get("completed")
+        win = entry.get("win_rate_pct")
+        net = entry.get("avg_estimated_net_pct")
+        if type(n) is not int or n <= 0 or type(win) not in (float, int) or type(net) not in (float, int):
+            continue
+        yield {"strategy": name, "horizon_days": int(horizon),
+               "observed_count": n, "win_rate_pct": win,
+               "avg_estimated_net_pct": net,
+               "eligible_for_comparison": n >= 30,
+               "underperforming": n >= 30 and (net <= 0 or win < 50)}
+
+
 def compute(source):
     groups = source.get("groups", {})
     if not isinstance(groups, dict) or not groups:
         raise ValueError("missing observed pick groups")
-    rows = []
-    for name, horizons in sorted(groups.items()):
-        if not isinstance(horizons, dict):
-            continue
-        for horizon in ("3", "7", "15", "30"):
-            entry = horizons.get(horizon, {})
-            n = entry.get("completed")
-            win = entry.get("win_rate_pct")
-            net = entry.get("avg_estimated_net_pct")
-            if type(n) is not int or n < 0 or type(win) not in (float, int) or type(net) not in (float, int):
-                continue
-            rows.append({"strategy": name, "horizon_days": int(horizon),
-                         "observed_count": n, "win_rate_pct": win,
-                         "avg_estimated_net_pct": net,
-                         "eligible_for_comparison": n >= 30,
-                         "underperforming": n >= 30 and (net <= 0 or win < 50)})
+    rows = [row for name, horizons in sorted(groups.items())
+            for row in observed_rows(name, horizons)]
     if not rows:
         raise ValueError("no valid completed observations")
     return {"schema": 1, "source_official_day": source.get("latest_official_day"),
