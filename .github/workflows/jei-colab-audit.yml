@@ -9,6 +9,7 @@ on:
       - feat/colab-verifiable-bridge-20261113
       - fix/colab-output-integrity-20261113
       - feat/shared-colab-actions-compute-20261113
+      - feat/colab-stall-watchdog-20261113
   pull_request:
     paths:
       - 'tools/jei_actions_audit.py'
@@ -22,6 +23,8 @@ on:
       - 'colab/JEI_Colab_Audit.ipynb'
       - 'tools/jei_shared_compute.py'
       - 'tests/test_jei_shared_compute.py'
+      - 'tools/jei_colab_watchdog.py'
+      - 'tests/test_jei_colab_watchdog.py'
       - '.github/workflows/jei-colab-audit.yml'
   workflow_dispatch:
   schedule:
@@ -57,6 +60,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_jei_shared_compute.py' -v
       - name: Execute portable observed-performance computation
         run: python -m tools.jei_shared_compute --provider github_actions --source-commit "$GITHUB_SHA" --output-dir audit-output
+      - name: Verify Colab stall watchdog
+        run: python -m unittest discover -s tests -p 'test_jei_colab_watchdog.py' -v
+      - name: Assess accessible Colab heartbeat (UNKNOWN when unavailable)
+        run: python -m tools.jei_colab_watchdog --output audit-output/colab_watchdog.json
       - name: Store audit evidence
         if: always()
         uses: actions/upload-artifact@v4
