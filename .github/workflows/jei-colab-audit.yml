@@ -90,12 +90,25 @@ jobs:
             echo "Drive heartbeat unavailable: monitoring status remains UNKNOWN"
           fi
       - name: Restore checkpoint from prior workflow runs
+        id: checkpoint_restore
         uses: actions/cache/restore@v4
         with:
           path: audit-output/observed_checkpoint.json
           key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json') }}-${{ github.run_id }}
           restore-keys: |
             jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json') }}-
+      - name: Report actual cross-run checkpoint restore
+        shell: bash
+        env:
+          RESTORED_CACHE_KEY: ${{ steps.checkpoint_restore.outputs.cache-matched-key }}
+        run: |
+          if [ -n "$RESTORED_CACHE_KEY" ] && [ -s audit-output/observed_checkpoint.json ]; then
+            echo "CHECKPOINT_RESTORED_FROM_PREVIOUS_RUN=$RESTORED_CACHE_KEY"
+            echo "Checkpoint restored from prior run: $RESTORED_CACHE_KEY" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::CHECKPOINT_COLD_START: no prior checkpoint restored"
+            echo "Checkpoint cold start: no prior checkpoint restored" >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Test interrupted and resumed computations
         run: python -m unittest discover -s tests -p 'test_jei_resumable_observed.py' -v
       - name: Run checkpointed observed batches
