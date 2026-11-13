@@ -650,10 +650,10 @@ def enrich_live(rows, asof=None, priority_codes=()):
     available,attempts,status=mis_service_probe(channels)
     stats.update(service_probe_attempts=attempts,bulk_scan_skipped=not available,
                  unavailable_http_status=status if isinstance(status,int) else None,
-                 outage_reason="network" if status=="network" else f"HTTP_{status}" if status else None,
+                 outage_reason=(f"HTTP_{status}" if isinstance(status,int) else status),
                  skipped_channels=len(channels) if not available else 0)
     if not available:
-        reason=f"HTTP {status}" if isinstance(status,int) else "network"
+        reason=f"HTTP {status}" if isinstance(status,int) else ("回應格式或狀態無效" if status=="invalid_response" else "network")
         errors.append(f"MIS {reason}：連線探測未通過，停止本輪全市場掃描；下輪重新探測")
         return rows,0,None,errors,stats
     # MIS is sensitive to oversized ex_ch queries/rate bursts. Use conservative
