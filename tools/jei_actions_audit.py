@@ -43,11 +43,32 @@ def inspect_feed(feed):
             'institutional_verified': (institutional_status.get('ok') is True if isinstance(institutional_status, dict) else None),
             'issues': issues, 'line_delivery': 'NOT_TESTED', 'android_device': 'NOT_TESTED'}
 
-def build_report(feed, commit):
+def heartbeat_status(path=None, now=None, stale_after_minutes=30):
+    """No mounted Drive heartbeat is UNKNOWN, never proof of a stopped Colab."""
+    if not path:
+        return {'status': 'UNKNOWN', 'reason': 'heartbeat_not_available'}
+    try:
+        payload = json.loads(pathlib.Path(path).read_text(encoding='utf-8'))
+        raw = payload.get('checked_at') or payload.get('timestamp')
+        stamp = dt.datetime.fromisoformat(raw.replace('Z', '+00:00'))
+        if stamp.tzinfo is None:
+            return {'status': 'UNKNOWN', 'reason': 'heartbeat_timezone_missing'}
+        now = now or dt.datetime.now(dt.timezone.utc)
+        age = (now - stamp).total_seconds() / 60
+        if age < -2:
+            return {'status': 'UNKNOWN', 'reason': 'heartbeat_future_timestamp'}
+        return {'status': 'STALE' if age > stale_after_minutes else 'FRESH',
+                'age_minutes': round(max(0, age), 1)}
+    except (OSError, ValueError, TypeError, AttributeError):
+        return {'status': 'UNKNOWN', 'reason': 'heartbeat_unreadable'}
+
+
+def build_report(feed, commit, heartbeat_path=None):
     return {'checked_at_taipei': dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).isoformat(),
             'repo': 'alwaysjei1234-sys/JEI-Stock-Radar', 'source_commit': commit,
             'baseline_completed': 15.5, 'baseline_total': 31,
             'completion_percent': None, 'completion_note': '31-item revalidation not performed',
+            'colab_heartbeat': heartbeat_status(heartbeat_path),
             'results': inspect_feed(feed)}
 
 def main():
@@ -55,12 +76,13 @@ def main():
     parser.add_argument('--feed', default='remote/system.json')
     parser.add_argument('--out', default='audit-output')
     parser.add_argument('--commit', default='unknown')
+    parser.add_argument('--heartbeat', help='Optional readable heartbeat JSON; absent means UNKNOWN')
     args = parser.parse_args()
     output = pathlib.Path(args.out)
     output.mkdir(parents=True, exist_ok=True)
     try:
         feed = json.loads(pathlib.Path(args.feed).read_text(encoding='utf-8'))
-        report = build_report(feed, args.commit)
+        report = build_report(feed, args.commit, args.heartbeat)
         status = 1 if report['results']['critical_issues'] else 0
     except (OSError, ValueError, TypeError) as exc:
         report = {'error': str(exc), 'completion_percent': None,
