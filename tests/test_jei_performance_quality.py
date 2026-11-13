@@ -45,3 +45,15 @@ class QualityTests(unittest.TestCase):
         report = {"groups": {"attack": {"3": {
             "completed": 2, "win_rate_pct": 0.0, "avg_estimated_net_pct": -3.0}}}}
         self.assertEqual(inspect(report)["short_horizon_risk"]["evaluated"], 0)
+
+    def test_longer_windows_report_pending_without_performance_claim(self):
+        report = {"groups": {"attack": {
+            "20": {"completed": 32, "win_rate_pct": 60, "avg_estimated_net_pct": 1},
+            "40": {"completed": 0, "pending": 32},
+            "60": {"completed": 0, "pending": 32}}}}
+        result = inspect(report)
+        self.assertEqual(result["groups"]["attack"]["20"]["state"], "OBSERVED_THRESHOLD_MET")
+        self.assertEqual(result["groups"]["attack"]["60"]["state"], "INSUFFICIENT_EVIDENCE")
+        self.assertEqual(result["groups"]["attack"]["60"]["completed"], 0)
+        self.assertEqual(result["short_horizon_risk"]["evaluated"], 0)
+        self.assertFalse(result["independent_oos_verified"])

@@ -25,6 +25,13 @@ class SharedComputeTests(unittest.TestCase):
             self.assertEqual(a["observed_rows"], b["observed_rows"])
             self.assertEqual(a["source_sha256"], hashlib.sha256(src.read_bytes()).hexdigest())
 
+    def test_completed_longer_windows_are_included(self):
+        observation = {"completed": 32, "win_rate_pct": 60, "avg_estimated_net_pct": 1}
+        rows = compute({"groups": {"attack": {
+            "20": observation, "40": observation, "60": observation,
+            "30": {"completed": 0}}}})["observed_rows"]
+        self.assertEqual([row["horizon_days"] for row in rows], [20, 40, 60])
+
     def test_missing_data_blocks(self):
         with self.assertRaises(ValueError):
             compute({"groups": {}})
