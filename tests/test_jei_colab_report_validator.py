@@ -1,6 +1,7 @@
 import datetime as dt
 import unittest
 import hashlib
+import json
 import tempfile
 from pathlib import Path
 from tools.jei_colab_report_validator import validate
@@ -29,7 +30,35 @@ class ColabReportTests(unittest.TestCase):
         options.update(kwargs)
         return validate(self.report, **options)
 
+    def attach_compute(self, **override):
+        observed = {
+            "compute_provider": "google_colab",
+            "source_commit": self.report["source_commit"],
+            "source_sha256": "a" * 64,
+            "observed_rows": [{"observed_count": 3}],
+            **override,
+        }
+        raw = json.dumps(observed).encode()
+        (self.output_dir / "observed.json").write_bytes(raw)
+        self.report["outputs"]["observed_compute"] = "observed.json"
+        self.report["output_sha256"]["observed_compute"] = hashlib.sha256(raw).hexdigest()
+
+    def test_observed_compute_must_match_colab_metadata(self):
+        for override in (
+            {"compute_provider": "github_actions"}, {"source_commit": "b" * 40},
+            {"source_sha256": "invalid"}, {"observed_rows": []},
+        ):
+            with self.subTest(override=override):
+                self.attach_compute(**override)
+                self.assertFalse(self.validate()["verified"])
+        self.attach_compute()
+        self.assertTrue(self.validate()["verified"])
+
+    def test_diagnostics_only_cannot_verify_completed_compute(self):
+        self.assertFalse(self.validate()["verified"])
+
     def test_recent_completed_report(self):
+        self.attach_compute()
         self.assertTrue(self.validate()["verified"])
 
     def test_report_without_reference_or_bytes_is_unverified(self):
@@ -53,6 +82,7 @@ class ColabReportTests(unittest.TestCase):
         self.assertIn("invalid_source_commit", self.validate()["issues"])
 
     def test_path_traversal_rejected(self):
+        self.attach_compute()
         self.report["outputs"]["diagnostics"] = "../secret.txt"
         self.assertFalse(self.validate()["verified"])
 
