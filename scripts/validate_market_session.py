@@ -34,6 +34,8 @@ def validate_session(feed, today):
         raise ValueError("Invalid price date") from exc
     if price_day.isoformat() != data_date or price_day > today:
         raise ValueError("Invalid or future price date")
+    if "market_data_as_of" in market and market["market_data_as_of"] != data_date:
+        raise ValueError("Market source date disagrees with the feed price date")
     closure = closure_reason(today)
     if closure:
         if market.get("session_status") != "休市":
@@ -45,7 +47,13 @@ def validate_session(feed, today):
             raise ValueError("Stale holiday label carried into an open trading date")
         if market.get("next_expected_session") == today.isoformat():
             raise ValueError("Today's session cannot still be labeled as the next session")
+    if price_day == today and market.get("mode") == "今日收盤":
+        if (market.get("stale") is not False or market.get("historical_readonly") is not False
+                or market.get("live_valid") is True):
+            raise ValueError("Current close must be fresh and cannot be historical or live")
     if price_day < today:
+        if market.get("live_valid") is True:
+            raise ValueError("Historical prices cannot claim verified live quotes")
         if market.get("stale") is not True or market.get("historical_readonly") is not True:
             raise ValueError("Historical prices must be marked stale and read-only")
         if market.get("mode") == "今日收盤":

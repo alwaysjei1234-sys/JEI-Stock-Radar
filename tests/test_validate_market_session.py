@@ -65,6 +65,26 @@ class MarketSessionValidationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_session({**feed, "data_date": today.isoformat()}, today)
 
+    def test_market_source_date_cannot_contradict_feed_price_date(self):
+        feed = self.feed("2026-10-27")
+        feed["market"].update(mode="今日收盤", stale=False, historical_readonly=False,
+                              market_data_as_of="2026-10-22")
+        with self.assertRaisesRegex(ValueError, "Market source date"):
+            validate_session(feed, date(2026, 10, 27))
+
+    def test_current_close_cannot_be_stale_readonly_or_live(self):
+        for stale, readonly, live in ((True, False, False), (False, True, False), (False, False, True)):
+            feed = self.feed("2026-10-27")
+            feed["market"].update(mode="今日收盤", stale=stale, historical_readonly=readonly, live_valid=live)
+            with self.subTest(stale=stale, readonly=readonly, live=live), self.assertRaisesRegex(ValueError, "Current close"):
+                validate_session(feed, date(2026, 10, 27))
+
+    def test_historical_snapshot_cannot_claim_verified_live_prices(self):
+        feed = self.feed()
+        feed["market"]["live_valid"] = True
+        with self.assertRaisesRegex(ValueError, "Historical prices"):
+            validate_session(feed, date(2026, 10, 27))
+
     def test_current_verified_close(self):
         feed = self.feed("2026-10-27")
         feed["market"].update({"mode": "今日收盤", "stale": False, "historical_readonly": False})
