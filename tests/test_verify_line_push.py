@@ -1,6 +1,7 @@
 import json
 import unittest
 from datetime import datetime
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError
 from scripts import verify_line_push as test_push
@@ -14,6 +15,15 @@ class VerifyLinePushTests(unittest.TestCase):
     def verify(self, **kwargs):
         return test_push.verify(kwargs.get('day','2026-11-10'), self.now,
                                 kwargs.get('enabled','true'), self.token, self.recipient)
+
+    def test_automated_push_trigger_requires_the_exact_dated_commit(self):
+        workflow = (Path(__file__).resolve().parents[1] / ".github/workflows/jei-line-test.yml").read_text()
+        self.assertNotIn("startsWith", workflow)
+        self.assertIn(
+            "github.event.head_commit.message == 'test(line): verify live delivery 2026-11-14'",
+            workflow,
+        )
+        self.assertIn("inputs.expected_day || '2026-11-14'", workflow)
 
     def test_expired_or_missing_date_and_disabled_configuration_never_send(self):
         with patch.object(test_push.line, 'push') as send:
