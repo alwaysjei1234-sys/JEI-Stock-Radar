@@ -12,6 +12,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+from scripts.market_sessions import closure_reason
 from scripts.send_line_brief import TAIPEI, can_send, push
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,7 +43,7 @@ def live_gate_reasons(feed, now):
         reasons.append(f"行情狀態為 {m.get('mode') or '缺漏'}，不是盤中即時")
     if m.get("stale") is not False or m.get("historical_readonly") is True:
         reasons.append("市場資料標記為過期、唯讀或未驗證")
-    if m.get("session_status") == "休市":
+    if m.get("session_status") == "休市" or closure_reason(local.date()) is not None:
         reasons.append("交易所休市")
     if m.get("live_valid") is not True:
         reasons.append("盤中行情尚未通過有效性驗證")
