@@ -49,6 +49,22 @@ class MarketSessionValidationTests(unittest.TestCase):
         feed["summary"] = "今日休市：光復節補假"
         self.assertTrue(validate_session(feed, date(2026, 10, 26)))
 
+    def test_future_or_malformed_price_dates_are_rejected(self):
+        today = date(2026, 10, 27)
+        for value in ("2026-10-28", "20261022", "2026-10-99"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                validate_session(self.feed(value), today)
+
+    def test_closure_cannot_claim_same_day_execution_data(self):
+        today = date(2026, 10, 26)
+        feed = self.feed()
+        feed["market"]["session_status"] = "休市"
+        for market in ({"live_valid": True}, {"post_close_refresh": True}):
+            with self.subTest(market=market), self.assertRaises(ValueError):
+                validate_session({**feed, "market": {**feed["market"], **market}}, today)
+        with self.assertRaises(ValueError):
+            validate_session({**feed, "data_date": today.isoformat()}, today)
+
     def test_current_verified_close(self):
         feed = self.feed("2026-10-27")
         feed["market"].update({"mode": "今日收盤", "stale": False, "historical_readonly": False})
