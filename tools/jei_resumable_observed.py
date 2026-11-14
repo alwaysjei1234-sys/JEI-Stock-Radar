@@ -8,8 +8,25 @@ import json
 from pathlib import Path
 from tools.jei_batch_checkpoint import load_checkpoint, save_checkpoint
 from tools import jei_shared_compute
-from tools.jei_shared_compute import observed_rows
+from tools.jei_shared_compute import OBSERVATION_HORIZONS, observed_rows
 
+
+def _valid_cached_group(name, rows):
+    if not isinstance(rows, list):
+        return False
+    seen = set()
+    for row in rows:
+        if not isinstance(row, dict) or row.get("strategy") != name:
+            return False
+        horizon = row.get("horizon_days")
+        if type(horizon) is not int or str(horizon) not in OBSERVATION_HORIZONS or horizon in seen:
+            return False
+        entry = {"completed": row.get("observed_count"), "win_rate_pct": row.get("win_rate_pct"),
+                 "avg_estimated_net_pct": row.get("avg_estimated_net_pct")}
+        if list(observed_rows(name, {str(horizon): entry})) != [row]:
+            return False
+        seen.add(horizon)
+    return True
 
 def run_batches(source, checkpoint_path, output_path, max_batches=None, *, recover_invalid_checkpoint=False):
     raw = Path(source).read_bytes()
@@ -27,6 +44,8 @@ def run_batches(source, checkpoint_path, output_path, max_batches=None, *, recov
         done = load_checkpoint(checkpoint_path, source_hash, "observed_performance", params)
         if not done.keys() <= groups.keys():
             raise ValueError("invalid_observed_checkpoint_groups")
+        if not all(_valid_cached_group(name, rows) for name, rows in done.items()):
+            raise ValueError("invalid_observed_checkpoint_rows")
     except ValueError:
         if not recover_invalid_checkpoint:
             raise
