@@ -62,6 +62,18 @@ class IntradayLineAlertTests(unittest.TestCase):
                 f["market"][key] = value
                 self.assertIsNone(build_alert(f, NOW))
 
+    def test_rejects_older_risk_and_preopen_snapshot(self):
+        dated = feed()
+        dated["risk"]["as_of"] = dated["data_date"]
+        self.assertIsNotNone(build_alert(dated, NOW))
+        dated["risk"]["as_of"] = "2026-10-19"
+        self.assertIsNone(build_alert(dated, NOW))
+
+        preopen = feed()
+        preopen["updated_at"] = "2026-10-20 08:59"
+        opened = datetime(2026, 10, 20, 9, 5, tzinfo=TZ)
+        self.assertIsNone(build_alert(preopen, opened))
+
     def test_after_close_does_not_send_intraday_alert(self):
         self.assertIsNone(build_alert(feed(), datetime(2026, 10, 20, 14, 0, tzinfo=TZ)))
 
