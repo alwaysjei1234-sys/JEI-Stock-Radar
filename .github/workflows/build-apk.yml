@@ -95,7 +95,7 @@ jobs:
 
       - name: Restore stable Android debug signing key
         id: jei-debug-key
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ~/.android/debug.keystore
           key: jei-android-debug-signing-v2
@@ -159,12 +159,9 @@ jobs:
           set -euo pipefail
           # Pin the certificate from the verified, publicly shipped version 42.
           expected='807326371643b70ec340b8fd526568adb9ff86c8186e059ca6bc5d0633e4cbdd'
-          cert_report=$("$ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner" verify --print-certs "JEI_Stock_Radar_V3.apk")
-          actual=$(printf '%s\n' "$cert_report" | awk -F': ' '/^Signer #[0-9]+ certificate SHA-256 digest:/ {print tolower($2)}')
-          if [ "$actual" != "$expected" ]; then
-            echo 'APK signer differs from the stable update signer. Artifact kept; stable download unchanged.'
-            exit 1
-          fi
+          cert_report="$RUNNER_TEMP/jei-signing-cert.txt"
+          "$ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner" verify --print-certs "JEI_Stock_Radar_V3.apk" > "$cert_report"
+          python -m scripts.verify_android_apk --cert-report "$cert_report" --expected-cert "$expected"
 
       - name: Publish stable APK download
         env:
