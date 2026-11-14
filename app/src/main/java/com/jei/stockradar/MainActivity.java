@@ -319,6 +319,7 @@ public class MainActivity extends Activity {
                 Object mode = market == null ? null : market.opt("mode");
                 return mode instanceof String && !((String) mode).trim().isEmpty()
                         && day instanceof String && ((String) day).matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")
+                        && (!market.has("market_data_as_of") || day.equals(market.opt("market_data_as_of")))
                         && updatedAt instanceof String && !((String) updatedAt).trim().isEmpty();
             }
             if (UPDATE_JSON.equals(sourceUrl)) return j.has("versionCode") && j.has("url");

@@ -32,6 +32,9 @@ const flush=async()=>{for(let i=0;i<12;i++)await Promise.resolve()};
  ctx.fetch=async url=>{calls.push(url);return {ok:true,json:async()=>url.startsWith('/')?{...fixture,market:{}}:structuredClone(fixture)}};
  await ctx.api.refresh();assert.equal(calls.length,2,'empty market must trigger repository fallback');
  assert.equal(ctx.api.current().market.mode,fixture.market.mode);
+ calls=[];
+ ctx.fetch=async url=>{calls.push(url);return {ok:true,json:async()=>url.startsWith('/')?{...fixture,market:{...fixture.market,market_data_as_of:'2026-11-02'}}:structuredClone(fixture)}};
+ await ctx.api.refresh();assert.equal(calls.length,2,'contradictory primary dates must select the repository fallback');
  // A stalled primary must start backup before its 12-second timeout.
  calls=[];let slowPrimary;
  ctx.fetch=url=>{calls.push(url);return url.startsWith('/')?new Promise(resolve=>{slowPrimary=resolve}):Promise.resolve({ok:true,json:async()=>structuredClone(fixture)})};
