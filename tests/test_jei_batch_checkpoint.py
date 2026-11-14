@@ -67,8 +67,8 @@ class CheckpointTests(unittest.TestCase):
     def test_valid_drive_heartbeat(self):
         with tempfile.TemporaryDirectory() as tmp:
             from datetime import datetime, timezone
-            heartbeat = {"provider": "google_colab",
-                         "heartbeat_at_utc": datetime.now(timezone.utc).isoformat()}
+            from tools.jei_colab_heartbeat import heartbeat_payload
+            heartbeat = heartbeat_payload("session", "a" * 40, datetime.now(timezone.utc))
             with patch("tools.jei_drive_heartbeat_ingest.download_heartbeat", return_value=heartbeat):
                 result = ingest("file", "credentials", Path(tmp) / "status.json")
             self.assertEqual(result["status"], "RECENT_HEARTBEAT")
