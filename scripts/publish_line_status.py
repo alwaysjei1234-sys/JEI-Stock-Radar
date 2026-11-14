@@ -11,7 +11,7 @@ TAIPEI = ZoneInfo('Asia/Taipei')
 RUN_BASE = 'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/'
 STATUSES = {'accepted', 'already_accepted', 'blocked', 'quota_blocked', 'failed'}
 EDITIONS = {'morning', 'close', 'morning_unavailable', 'close_unavailable'}
-POLICY_CODES = {'non_weekday', 'morning_window_expired', 'dispatch_window_not_open', 'brief_failed_before_send'}
+POLICY_CODES = {'non_weekday', 'market_closed', 'morning_window_expired', 'dispatch_window_not_open', 'brief_failed_before_send'}
 
 
 def public_record(receipt, run_id, now):

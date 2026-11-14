@@ -37,6 +37,19 @@ class LinePolicyReceiptTests(unittest.TestCase):
                 ('schedule','10 11 * * 1-5',self.now.replace(hour=20))]:
             self.assertIsNone(skipped_receipt(event,cron,now))
 
+    def test_confirmed_weekday_closure_records_no_send_for_both_editions(self):
+        closed = datetime(2026, 10, 26, 9, 0, tzinfo=TAIPEI)
+        for cron, edition, observed in (
+            ("55 0 * * 1-5", "morning", closed),
+            ("10 11 * * 1-5", "close", closed.replace(hour=20)),
+        ):
+            with self.subTest(edition=edition):
+                receipt = skipped_receipt("schedule", cron, observed)
+                published = merge_policy_status({}, receipt, "123", observed)
+                check = published["policy_checks"][edition]
+                self.assertEqual(check["policy_code"], "market_closed")
+                self.assertFalse(check["api_accepted"])
+
     def test_upstream_failure_is_preserved_as_no_send_evidence(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "receipt.json"
