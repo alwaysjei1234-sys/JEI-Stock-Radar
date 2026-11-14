@@ -34,7 +34,7 @@ async function verifyOfflineRecovery(browser,base){
  await p.clock.setFixedTime(new Date('2026-11-04T05:00:00+08:00'));
  const feed=JSON.parse(await fs.readFile(path.join(ROOT,'remote/system.json'),'utf8'));
  Object.assign(feed,{data_date:'2026-11-03',updated_at:'2026-11-03 23:55'});
- Object.assign(feed.market,{mode:'最近收盤',close_count:1967,stale:true,historical_readonly:true});
+ Object.assign(feed.market,{market_data_as_of:feed.data_date,mode:'最近收盤',close_count:1967,stale:true,historical_readonly:true});
  feed.holdings={secret:{cost:123,shares:999}};
  feed.private_token='must never persist';
  let offline=false;
@@ -68,7 +68,7 @@ async function verifyOfflineRecovery(browser,base){
  await p.evaluate(()=>localStorage.setItem(CLOSE_CACHE_KEY,'{broken'));
  await p.reload({waitUntil:'domcontentloaded'});
  assert.equal(await p.evaluate(()=>isRecentCloseObservation()),false);
- await p.evaluate(raw=>localStorage.setItem(CLOSE_CACHE_KEY,raw),JSON.stringify({...stored,data_date:'2026-10-01',updated_at:'2026-10-01 16:00'}));
+ await p.evaluate(raw=>localStorage.setItem(CLOSE_CACHE_KEY,raw),JSON.stringify({...stored,data_date:'2026-10-01',updated_at:'2026-10-01 16:00',market:{...stored.market,market_data_as_of:'2026-10-01'}}));
  await p.reload({waitUntil:'domcontentloaded'});
  assert.equal(await p.evaluate(()=>isRecentCloseObservation()),false,'expired cache must not restore');
  assert.deepEqual(errors,[]);
