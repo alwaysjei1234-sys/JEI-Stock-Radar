@@ -96,8 +96,9 @@ def build_alert(feed, now):
         return None
     day = now.astimezone(TAIPEI).date().isoformat()
     note = "交易所盤中行情已驗證；提醒非即時下單指示，勿憑此訊息追價。"
-    reasons = [str(v)[:125] for v in (risk.get("reasons") or [])[:3] if isinstance(v, str)]
     if risk.get("level") == "red" and score >= 75:
+        raw_reasons = risk.get("reasons")
+        reasons = [v[:125] for v in raw_reasons[:3] if isinstance(v, str)] if isinstance(raw_reasons, list) else []
         return {
             "date": day, "edition": "intraday_risk", "status": "ready",
             "title": "🔴 JEI 台股盤中高風險警報",
@@ -111,8 +112,11 @@ def build_alert(feed, now):
     # The momentum watch is informational, not proof of an imminent limit-up.
     if score >= 60:
         return None
+    candidates = feed.get("monster")
+    if not isinstance(candidates, list):
+        return None
     picks = []
-    for x in feed.get("monster") or []:
+    for x in candidates:
         if not isinstance(x, dict):
             continue
         code, name = str(x.get("code") or ""), str(x.get("name") or "")

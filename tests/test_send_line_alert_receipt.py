@@ -90,6 +90,28 @@ class IntradayReceiptTests(unittest.TestCase):
         r,c,e=self.run_main(document=doc)
         self.assertEqual((r['status'],r['reason_code'],c,e),('blocked','live_gate',0,None))
 
+    def test_malformed_optional_risk_reasons_do_not_suppress_high_risk_alert(self):
+        for reasons in ({"unexpected": "shape"}, 5, "text"):
+            doc = feed()
+            doc["risk"]["reasons"] = reasons
+
+            def push(report, edition, *args, receipt):
+                self.assertEqual(edition, "intraday_risk")
+                self.assertEqual(len(report["blocks"][0]["items"]), 1)
+                receipt.update(status="accepted", stage="push")
+                return "accepted"
+
+            with self.subTest(reasons=reasons):
+                result, calls, error = self.run_main(document=doc, push=push)
+                self.assertEqual((result["status"], calls, error), ("accepted", 1, None))
+
+    def test_malformed_optional_momentum_list_does_not_abort_dispatch(self):
+        doc = feed()
+        doc["risk"].update(score=40, level="green")
+        doc["monster"] = 12
+        result, calls, error = self.run_main(document=doc)
+        self.assertEqual((result["status"], calls, error), ("no_alert", 0, None))
+
     def test_nonfinite_live_count_never_qualifies(self):
         for count in (float('nan'),float('inf'),float('-inf')):
             doc=feed();doc['market']['live_count']=count
