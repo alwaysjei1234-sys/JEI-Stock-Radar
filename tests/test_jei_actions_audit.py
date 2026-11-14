@@ -131,11 +131,11 @@ class AuditTests(unittest.TestCase):
         now = dt.datetime(2026, 11, 13, 16, 0, tzinfo=dt.timezone.utc)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'heartbeat.json'
-            path.write_text(json.dumps({'provider': 'google_colab', 'heartbeat_at_utc': '2026-11-13T15:55:00Z'}))
+            path.write_text(json.dumps({'schema': 1, 'provider': 'google_colab', 'session_id': 'test', 'source_commit': 'a' * 40, 'heartbeat_at_utc': '2026-11-13T15:55:00Z'}))
             self.assertEqual(heartbeat_status(path, now)['status'], 'RECENT_HEARTBEAT')
-            path.write_text(json.dumps({'provider': 'google_colab', 'heartbeat_at_utc': '2026-11-13T15:00:00Z'}))
+            path.write_text(json.dumps({'schema': 1, 'provider': 'google_colab', 'session_id': 'test', 'source_commit': 'a' * 40, 'heartbeat_at_utc': '2026-11-13T15:00:00Z'}))
             self.assertEqual(heartbeat_status(path, now)['status'], 'STALE')
-            path.write_text(json.dumps({'provider': 'google_colab', 'heartbeat_at_utc': '2026-11-13T15:55:00'}))
+            path.write_text(json.dumps({'schema': 1, 'provider': 'google_colab', 'session_id': 'test', 'source_commit': 'a' * 40, 'heartbeat_at_utc': '2026-11-13T15:55:00'}))
             self.assertEqual(heartbeat_status(path, now)['status'], 'UNKNOWN')
 
     def test_heartbeat_file_matches_emitter_contract(self):

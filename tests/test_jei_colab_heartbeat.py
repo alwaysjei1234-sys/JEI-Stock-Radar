@@ -12,14 +12,14 @@ class HeartbeatTests(unittest.TestCase):
         now = dt.datetime(2026, 11, 13, 1, 0, tzinfo=dt.timezone.utc)
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "heartbeat.json"
-            write_heartbeat(path, heartbeat_payload("session", "sha", now))
+            write_heartbeat(path, heartbeat_payload("session", "a" * 40, now))
             result = assess(json.loads(path.read_text()), now=now)
             self.assertEqual(result["status"], "RECENT_HEARTBEAT")
 
     def test_stale_heartbeat_is_detected(self):
         old = dt.datetime(2026, 11, 13, 0, 0, tzinfo=dt.timezone.utc)
         now = old + dt.timedelta(minutes=60)
-        self.assertEqual(assess(heartbeat_payload("session", "sha", old), now=now)["status"], "STALE")
+        self.assertEqual(assess(heartbeat_payload("session", "a" * 40, old), now=now)["status"], "STALE")
 
     def test_thread_can_stop(self):
         with tempfile.TemporaryDirectory() as tmp:

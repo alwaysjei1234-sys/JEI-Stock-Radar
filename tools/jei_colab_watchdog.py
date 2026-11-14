@@ -2,6 +2,7 @@
 import argparse
 import datetime as dt
 import json
+import re
 from pathlib import Path
 
 
@@ -12,6 +13,15 @@ def assess(report, now=None, max_age_minutes=30):
                 "restart_possible": False, "fallback": "github_actions"}
     if report.get("provider") != "google_colab":
         return {"status": "UNKNOWN", "reason": "provider_not_colab",
+                "restart_possible": False, "fallback": "github_actions"}
+    schema = report.get("schema")
+    session_id = report.get("session_id")
+    source_commit = report.get("source_commit")
+    if (type(schema) is not int or schema != 1
+            or not isinstance(session_id, str) or not session_id.strip()
+            or not isinstance(source_commit, str)
+            or not re.fullmatch(r"[0-9a-f]{40}", source_commit)):
+        return {"status": "UNKNOWN", "reason": "invalid_heartbeat_identity",
                 "restart_possible": False, "fallback": "github_actions"}
     stamp = report.get("heartbeat_at_utc")
     try:
