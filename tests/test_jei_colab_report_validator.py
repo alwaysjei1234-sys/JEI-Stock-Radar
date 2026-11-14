@@ -23,7 +23,9 @@ class ColabReportTests(unittest.TestCase):
         self.addCleanup(directory.cleanup)
         self.output_dir = Path(directory.name)
         self.output_file = self.output_dir / "jei_diagnostics.json"
-        self.output_file.write_bytes(b"test")
+        diagnostic = json.dumps({k: self.report[k] for k in ("source_commit", "started_at_utc")}).encode()
+        self.output_file.write_bytes(diagnostic)
+        self.report["output_sha256"]["diagnostics"] = hashlib.sha256(diagnostic).hexdigest()
         self.source = self.output_dir / "pick_validation.json"
         self.source.write_text(json.dumps({"groups": {"attack": {"3": {
             "completed": 31, "win_rate_pct": 55, "avg_estimated_net_pct": 1.2
@@ -85,6 +87,21 @@ class ColabReportTests(unittest.TestCase):
         self.assertIn("output_hash_mismatch_diagnostics", self.validate()["issues"])
         self.output_file.unlink()
         self.assertIn("missing_output_file_diagnostics", self.validate()["issues"])
+
+    def test_diagnostics_must_belong_to_the_same_run(self):
+        self.attach_compute()
+        for content, issue in (
+            (b"not JSON", "invalid_diagnostics"),
+            (b"[]", "invalid_diagnostics"),
+            (json.dumps({"source_commit": "b" * 40, "started_at_utc": self.report["started_at_utc"]}).encode(),
+             "diagnostics_commit_mismatch"),
+            (json.dumps({"source_commit": self.report["source_commit"], "started_at_utc": "2026-11-13T00:10:00Z"}).encode(),
+             "diagnostics_start_mismatch"),
+        ):
+            with self.subTest(issue=issue):
+                self.output_file.write_bytes(content)
+                self.report["output_sha256"]["diagnostics"] = hashlib.sha256(content).hexdigest()
+                self.assertIn(issue, self.validate()["issues"])
 
     def test_commit_mismatch_rejected(self):
         result = self.validate(expected_commit="0" * 40)
