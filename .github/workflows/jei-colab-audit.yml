@@ -105,14 +105,14 @@ jobs:
           key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json', 'tools/jei_shared_compute.py', 'tools/jei_resumable_observed.py', 'tools/jei_batch_checkpoint.py') }}-${{ github.run_id }}
           restore-keys: |
             jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json', 'tools/jei_shared_compute.py', 'tools/jei_resumable_observed.py', 'tools/jei_batch_checkpoint.py') }}-
-      - name: Report actual cross-run checkpoint restore
+      - name: Report cached checkpoint candidate
         shell: bash
         env:
           RESTORED_CACHE_KEY: ${{ steps.checkpoint_restore.outputs.cache-matched-key }}
         run: |
           if [ -n "$RESTORED_CACHE_KEY" ] && [ -s audit-output/observed_checkpoint.json ]; then
             echo "CHECKPOINT_RESTORED_FROM_PREVIOUS_RUN=$RESTORED_CACHE_KEY"
-            echo "Checkpoint restored from prior run: $RESTORED_CACHE_KEY" >> "$GITHUB_STEP_SUMMARY"
+            echo "Checkpoint candidate restored from prior run: $RESTORED_CACHE_KEY" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "::warning::CHECKPOINT_COLD_START: no prior checkpoint restored"
             echo "Checkpoint cold start: no prior checkpoint restored" >> "$GITHUB_STEP_SUMMARY"
@@ -120,7 +120,7 @@ jobs:
       - name: Test interrupted and resumed computations
         run: python -m unittest discover -s tests -p 'test_jei_resumable_observed.py' -v
       - name: Run checkpointed observed batches
-        run: python -m tools.jei_resumable_observed --input remote/pick_validation.json --checkpoint audit-output/observed_checkpoint.json --output audit-output/resumable_observed.json
+        run: python -m tools.jei_resumable_observed --input remote/pick_validation.json --checkpoint audit-output/observed_checkpoint.json --output audit-output/resumable_observed.json --recover-invalid-checkpoint
       - name: Persist checkpoint for future runs
         if: always()
         uses: actions/cache/save@v4
