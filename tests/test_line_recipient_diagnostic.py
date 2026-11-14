@@ -1,5 +1,6 @@
 import json
 import unittest
+from tempfile import TemporaryDirectory
 from pathlib import Path
 from unittest.mock import Mock,patch
 from urllib.error import HTTPError,URLError
@@ -24,6 +25,20 @@ class LineRecipientDiagnosticTests(unittest.TestCase):
         self.assertNotIn("head_commit.message",workflow)
         self.assertNotIn("send_line",workflow)
         self.assertNotIn("contents: write",workflow)
+
+    def test_diagnostic_persists_a_sanitized_receipt_with_missing_settings(self):
+        with TemporaryDirectory() as tmp:
+            receipt = Path(tmp) / "diagnostic.json"
+            with patch.dict(d.os.environ, {"JEI_LINE_ENABLED": "true",
+                                           "JEI_LINE_CHANNEL_ACCESS_TOKEN": self.token,
+                                           "JEI_LINE_USER_ID": ""}), patch("builtins.print"):
+                d.main(["--result-path", str(receipt)])
+            result = json.loads(receipt.read_text())
+            self.assertEqual(result["status"], "configuration_missing_or_invalid")
+            self.assertEqual(result["configuration_issues"], ["recipient_missing"])
+            self.assertFalse(result["message_sent"])
+            self.assertFalse(result["delivery_confirmed"])
+            self.assertNotIn(self.token, receipt.read_text())
 
     def test_accessible_is_read_only_and_never_returns_profile_information(self):
         opener=Mock();opener.open.return_value=self.response(json.dumps({'userId':self.uid,'displayName':'PRIVATE_NAME','pictureUrl':'PRIVATE_URL'}).encode())
