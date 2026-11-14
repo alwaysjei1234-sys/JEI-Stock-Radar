@@ -1,3 +1,4 @@
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -16,6 +17,21 @@ class CheckpointTests(unittest.TestCase):
                 load_checkpoint(path, "different", "attack", {"period": 3})
             with self.assertRaises(ValueError):
                 load_checkpoint(path, "hash", "attack", {"period": 7})
+
+    def test_rejects_changed_payload_or_metadata_with_unchanged_key(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "checkpoint.json"
+            original = save_checkpoint(path, "hash", "attack", {"period": 3}, {"batch": {"count": 5}})
+            for changes in (
+                {"completed_batches": {"batch": {"count": 99}}},
+                {"strategy": "monster"},
+                {"parameters": {"period": 7}},
+                {"schema": 99},
+            ):
+                with self.subTest(changes=changes):
+                    path.write_text(json.dumps({**original, **changes}))
+                    with self.assertRaises(ValueError):
+                        load_checkpoint(path, "hash", "attack", {"period": 3})
 
     def test_missing_drive_credentials_never_fakes_colab(self):
         with tempfile.TemporaryDirectory() as tmp:

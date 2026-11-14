@@ -3,6 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+from tools.jei_batch_checkpoint import save_checkpoint
 from tools.jei_resumable_observed import run_batches
 
 
@@ -64,7 +65,8 @@ class ResumeTests(unittest.TestCase):
             run_batches(src, checkpoint, output, max_batches=1)
             saved = json.loads(checkpoint.read_text())
             saved["completed_batches"]["unexpected"] = []
-            checkpoint.write_text(json.dumps(saved))
+            save_checkpoint(checkpoint, saved["source_sha256"], saved["strategy"],
+                            saved["parameters"], saved["completed_batches"])
             with self.assertRaisesRegex(ValueError, "invalid_observed_checkpoint_groups"):
                 run_batches(src, checkpoint, output, max_batches=1)
             self.assertFalse(json.loads(output.read_text())["complete"])
