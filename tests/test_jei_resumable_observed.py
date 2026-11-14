@@ -85,6 +85,24 @@ class ResumeTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "checkpoint_source_or_strategy_mismatch"):
                     run_batches(src, checkpoint, output)
 
+    def test_fallback_recovers_from_corrupt_cache_and_matches_cold_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source.json"
+            checkpoint, output = root / "checkpoint.json", root / "output.json"
+            entry = {"completed": 31, "win_rate_pct": 55, "avg_estimated_net_pct": 1.2}
+            source.write_text(json.dumps({"groups": {"a": {"3": entry}, "b": {"3": entry}}}))
+            cold = run_batches(source, checkpoint, output)
+            checkpoint.write_text("{broken checkpoint")
+            recovered = run_batches(source, checkpoint, output, recover_invalid_checkpoint=True)
+            self.assertTrue(recovered["complete"])
+            self.assertEqual(recovered["observed_rows"], cold["observed_rows"])
+            self.assertEqual(recovered["checkpoint_recovery"], "invalid_checkpoint_recomputed")
+            self.assertEqual(recovered["reused_groups"], 0)
+            resumed = run_batches(source, checkpoint, output)
+            self.assertEqual(resumed["reused_groups"], 2)
+            self.assertIsNone(resumed["checkpoint_recovery"])
+
     def test_source_change_invalidates_old_checkpoint(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

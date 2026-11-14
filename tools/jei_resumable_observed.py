@@ -11,7 +11,7 @@ from tools import jei_shared_compute
 from tools.jei_shared_compute import observed_rows
 
 
-def run_batches(source, checkpoint_path, output_path, max_batches=None):
+def run_batches(source, checkpoint_path, output_path, max_batches=None, *, recover_invalid_checkpoint=False):
     raw = Path(source).read_bytes()
     source_hash = hashlib.sha256(raw).hexdigest()
     data = json.loads(raw)
@@ -22,10 +22,18 @@ def run_batches(source, checkpoint_path, output_path, max_batches=None):
         "schema": 1,
         "engine_sha256": hashlib.sha256(Path(jei_shared_compute.__file__).read_bytes()).hexdigest(),
     }
-    done = load_checkpoint(checkpoint_path, source_hash, "observed_performance", params)
+    recovery = None
+    try:
+        done = load_checkpoint(checkpoint_path, source_hash, "observed_performance", params)
+        if not done.keys() <= groups.keys():
+            raise ValueError("invalid_observed_checkpoint_groups")
+    except ValueError:
+        if not recover_invalid_checkpoint:
+            raise
+        done = {}
+        recovery = "invalid_checkpoint_recomputed"
+    reused = len(done)
     names = sorted(groups)
-    if not done.keys() <= groups.keys():
-        raise ValueError("invalid_observed_checkpoint_groups")
     processed = 0
     for name in names:
         if name in done:
@@ -40,7 +48,8 @@ def run_batches(source, checkpoint_path, output_path, max_batches=None):
     if complete and not rows:
         raise ValueError("no valid completed observations")
     output = {"schema": 1, "source_sha256": source_hash, "completed_groups": len(done),
-              "total_groups": len(names), "complete": complete,
+              "total_groups": len(names), "complete": complete, "reused_groups": reused,
+              "checkpoint_recovery": recovery,
               "observed_rows": rows, "independent_oos_verified": False,
               "note": "Resumable observed aggregate computation, not independent OOS backtest."}
     path = Path(output_path)
@@ -55,8 +64,10 @@ def main():
     parser.add_argument("--checkpoint", default="audit-output/observed_checkpoint.json")
     parser.add_argument("--output", default="audit-output/resumable_observed.json")
     parser.add_argument("--max-batches", type=int)
+    parser.add_argument("--recover-invalid-checkpoint", action="store_true")
     args = parser.parse_args()
-    result = run_batches(args.input, args.checkpoint, args.output, args.max_batches)
+    result = run_batches(args.input, args.checkpoint, args.output, args.max_batches,
+                         recover_invalid_checkpoint=args.recover_invalid_checkpoint)
     print(json.dumps({"complete": result["complete"], "completed_groups": result["completed_groups"],
                       "total_groups": result["total_groups"]}))
     return 0 if result["complete"] else 2
