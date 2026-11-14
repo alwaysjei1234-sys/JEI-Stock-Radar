@@ -48,7 +48,7 @@ function lineAttemptText(document,selected,today){
 }
 function linePolicyText(document,selected){
  const row=document?.schema===1&&document.policy_checks?.[selected];
- const labels={non_weekday:'非平日發送時段',morning_window_expired:'早報發送時段已結束',dispatch_window_not_open:'本日發送時段未開始（可能為跨日延遲排程）',brief_failed_before_send:'報告產生或發布未完成'};
+ const labels={non_weekday:'非平日發送時段',market_closed:'台股休市',morning_window_expired:'早報發送時段已結束',dispatch_window_not_open:'本日發送時段未開始（可能為跨日延遲排程）',brief_failed_before_send:'報告產生或發布未完成'};
  if(!row||row.edition!==selected||row.status!=='policy_skipped'||row.record_kind!=='policy_check'||!Object.hasOwn(labels,row.policy_code)||typeof row.checked_at!=='string'||!Number.isFinite(Date.parse(row.checked_at))||typeof row.evidence_url!=='string'||!/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/actions\/runs\/[1-9][0-9]*$/.test(row.evidence_url))return '';
  const attempt=document?.editions?.[selected];
  if(attempt&&Number.isFinite(Date.parse(attempt.checked_at))&&Date.parse(attempt.checked_at)>Date.parse(row.checked_at))return '';

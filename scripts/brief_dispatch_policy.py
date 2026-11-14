@@ -5,6 +5,8 @@ from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+from scripts.market_sessions import closure_reason
+
 TAIPEI=ZoneInfo('Asia/Taipei')
 VERIFY_MESSAGE='verify(line): dispatch 2026-11-05 close with immutable outbox'
 VERIFY_DAY='2026-11-05'
@@ -26,11 +28,11 @@ def select_policy(event,schedule,selected,manual_send,head_message,now):
     local=now.astimezone(TAIPEI)
     if event=='schedule':
         minute=local.hour*60+local.minute
-        weekday=local.weekday()<5
+        trade_day=closure_reason(local.date()) is None
         if schedule in MORNING:
-            return 'morning',weekday and MORNING[schedule]<=minute<13*60+30
+            return 'morning',trade_day and MORNING[schedule]<=minute<13*60+30
         if schedule in CLOSE:
-            return 'close',weekday and minute>=CLOSE[schedule]
+            return 'close',trade_day and minute>=CLOSE[schedule]
         return 'close',False
     if (event=='push' and head_message==VERIFY_MESSAGE and local.date().isoformat()==VERIFY_DAY
             and local.hour*60+local.minute>=810):
@@ -47,6 +49,7 @@ def skipped_receipt(event, schedule, now):
         return None
     local = now.astimezone(TAIPEI)
     code = ('non_weekday' if local.weekday() >= 5 else
+            'market_closed' if closure_reason(local.date()) else
             'morning_window_expired' if schedule in MORNING and local.hour*60+local.minute >= 810
             else 'dispatch_window_not_open')
     return policy_receipt(edition, local, code)
