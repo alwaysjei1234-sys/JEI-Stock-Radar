@@ -20,7 +20,7 @@ class LineRecipientDiagnosticTests(unittest.TestCase):
         workflow=(Path(__file__).resolve().parents[1]/".github/workflows/line-recipient-diagnostic.yml").read_text()
         self.assertIn("  workflow_dispatch:",workflow)
         self.assertIn("  contents: read",workflow)
-        self.assertIn("python scripts/diagnose_line_recipient.py",workflow)
+        self.assertIn("python -m scripts.diagnose_line_recipient",workflow)
         self.assertNotIn("Diagnostic expired",workflow)
         self.assertNotIn("head_commit.message",workflow)
         self.assertNotIn("send_line",workflow)
@@ -50,6 +50,27 @@ class LineRecipientDiagnosticTests(unittest.TestCase):
         self.assertEqual(opener.open.call_count,1)
         for secret in (self.uid,self.token,'PRIVATE_NAME','PRIVATE_URL'):
             self.assertNotIn(secret,json.dumps(r))
+
+    def test_optional_quota_probe_distinguishes_policy_and_read_failure(self):
+        opener = Mock()
+        opener.open.return_value = self.response(json.dumps({"userId": self.uid}).encode())
+        for outcome, expected in [(True, "eligible"), (False, "blocked"), (RuntimeError("PRIVATE"), "unavailable")]:
+            with self.subTest(expected=expected), patch(
+                    "scripts.diagnose_line_recipient.quota_ok", side_effect=[outcome]) as quota:
+                result = d.diagnose("true", self.token, self.uid, opener, check_quota=True)
+                quota.assert_called_once_with(self.token)
+                self.assertEqual(result["quota_policy"], expected)
+                self.assertFalse(result["message_sent"])
+                self.assertNotIn("PRIVATE", json.dumps(result))
+
+    def test_quota_probe_skips_disabled_or_unverified_recipient(self):
+        opener = Mock()
+        opener.open.return_value = self.response(b'{}')
+        with patch("scripts.diagnose_line_recipient.quota_ok") as quota:
+            for enabled in ("false", "true"):
+                result = d.diagnose(enabled, self.token, self.uid, opener, check_quota=True)
+                self.assertEqual(result["quota_policy"], "not_checked")
+            quota.assert_not_called()
 
     def test_profile_404_is_ambiguous_and_not_retried(self):
         opener=Mock();opener.open.side_effect=HTTPError('PRIVATE_URL',404,'PRIVATE',{},None)

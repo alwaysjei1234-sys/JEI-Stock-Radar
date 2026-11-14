@@ -196,6 +196,19 @@ class BriefTests(unittest.TestCase):
             self.assertEqual(saved["checks"]["close"]["date"],"2026-10-17")
             self.assertEqual(saved["checks"]["close"]["status"],"pending")
 
+    def test_quota_authorization_does_not_follow_redirect(self):
+        response = mock.MagicMock()
+        response.__enter__.return_value = response
+        response.status = 200
+        response.read.return_value = b'{"type":"limited","value":200}'
+        with mock.patch.object(line.urllib.request, "urlopen", return_value=response) as open_url:
+            line.api_get("/v2/bot/message/quota", "private-token")
+        request = open_url.call_args.args[0]
+        self.assertEqual(request.get_header("Authorization"), "Bearer private-token")
+        redirect = line.urllib.request.HTTPRedirectHandler().redirect_request(
+            request, None, 302, "Found", {}, "https://example.net/quota")
+        self.assertIsNone(redirect.get_header("Authorization"))
+
     def test_quota_only_free_plan(self):
         real=line.api_get
         try:
