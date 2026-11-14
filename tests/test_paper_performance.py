@@ -102,6 +102,25 @@ class TestDailyStrategyEngine(unittest.TestCase):
         state = initial_state()
         self.assertTrue(advance(ready, a, state, DAY1))
 
+    def test_conflicting_close_metadata_never_advances_ledger(self):
+        close_archive = archive((DAY1, 100.0))
+        for top, market in (
+            ({"source_data_date": "2026-10-12"}, {}),
+            ({}, {"market_data_as_of": "2026-10-12"}),
+            ({}, {"session_status": "休市"}),
+            ({}, {"historical_readonly": True}),
+            ({}, {"no_new_picks": True}),
+            ({}, {"live_valid": True}),
+        ):
+            with self.subTest(top=top, market=market):
+                snapshot = feed(DAY1)
+                snapshot.update(top)
+                snapshot["market"].update(market)
+                state = initial_state()
+                with self.assertRaises(ValueError):
+                    advance(snapshot, close_archive, state, DAY1)
+                self.assertEqual(state, initial_state())
+
     def test_500_valid_quotes_not_merely_500_json_keys(self):
         a = archive((DAY1, 100.0))
         a["days"][DAY1] = {str(1000+i): "not-a-price" for i in range(600)}

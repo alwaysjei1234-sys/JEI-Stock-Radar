@@ -79,6 +79,13 @@ def validate(feed, archive, day):
     market = feed.get("market") if isinstance(feed, dict) else None
     if not isinstance(market, dict):
         raise ValueError("尚未取得市場收盤資料")
+    for label, document in (("source_data_date", feed), ("market_data_as_of", market)):
+        if label in document and document[label] != day:
+            raise ValueError("官方收盤來源日期不符：" + label)
+    if ("session_status" in market and market["session_status"] != "已驗證"
+            or any(market.get(flag) is True for flag in
+                   ("historical_readonly", "no_new_picks", "live_valid"))):
+        raise ValueError("官方收盤驗證狀態矛盾；拒絕更新模擬")
     count = market.get("close_count")
     if (feed.get("data_date") != day or
         market.get("mode") != "今日收盤" or
