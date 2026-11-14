@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Read-only LINE recipient diagnostic. Never sends a message or logs profiles."""
+import argparse
 import json
 import os
 import re
@@ -7,6 +8,7 @@ import time
 import urllib.error
 import urllib.request
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 
@@ -18,10 +20,19 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 def diagnose(enabled,token,recipient,opener=None):
     result={'status':'not_checked','profile_http_status':None,'attempts':0,
             'message_sent':False,'delivery_confirmed':False}
-    if str(enabled).lower()!='true':
-        result['status']='disabled';return result
-    if not token or not isinstance(recipient,str) or not re.fullmatch(r'U[0-9a-f]{32}',recipient):
-        result['status']='configuration_missing_or_invalid';return result
+    if str(enabled).lower() != 'true':
+        result['status'] = 'disabled'
+        return result
+    issues = []
+    if not token:
+        issues.append('token_missing')
+    if not recipient:
+        issues.append('recipient_missing')
+    elif not isinstance(recipient, str) or not re.fullmatch(r'U[0-9a-f]{32}', recipient):
+        issues.append('recipient_format_invalid')
+    if issues:
+        result.update(status='configuration_missing_or_invalid', configuration_issues=issues)
+        return result
     opener=opener or urllib.request.build_opener(NoRedirect())
     for attempt in range(1,3):
         result['attempts']=attempt
@@ -61,12 +72,19 @@ def diagnose(enabled,token,recipient,opener=None):
     return result
 
 
-def main():
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--result-path', type=Path)
+    args = parser.parse_args(argv)
     now=datetime.now(ZoneInfo('Asia/Taipei'))
     result=diagnose(os.getenv('JEI_LINE_ENABLED',''),
         os.getenv('JEI_LINE_CHANNEL_ACCESS_TOKEN',''),os.getenv('JEI_LINE_USER_ID',''))
     result['checked_at']=now.isoformat(timespec='seconds')
-    print(json.dumps(result,ensure_ascii=False))
+    payload = json.dumps(result, ensure_ascii=False)
+    if args.result_path:
+        args.result_path.parent.mkdir(parents=True, exist_ok=True)
+        args.result_path.write_text(payload + '\n', encoding='utf-8')
+    print(payload)
 
 
 if __name__=='__main__':main()
