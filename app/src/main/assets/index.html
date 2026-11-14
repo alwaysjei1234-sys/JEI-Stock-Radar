@@ -1298,6 +1298,7 @@ function restoreCloseSnapshot(){
 }
 function validateSystemFeed(j){
  if(!j||typeof j!=='object'||Array.isArray(j)||typeof j.updated_at!=='string'||!j.updated_at.trim()||typeof j.data_date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(j.data_date)||!j.market||typeof j.market!=='object'||Array.isArray(j.market)||typeof j.market.mode!=='string'||!j.market.mode.trim())throw new Error('資料格式、行情狀態或更新時間缺失');
+ if(Object.hasOwn(j.market,'market_data_as_of')&&j.market.market_data_as_of!==j.data_date)throw new Error('行情來源日期與資料日不符');
  return j
 }
 async function fetchSystemSource(url,request={}){
