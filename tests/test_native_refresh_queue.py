@@ -115,7 +115,7 @@ public class NativeFeedFallbackHarness {
       REMOTE_UI="ui", CASH_UI="cash", PAPER_UI="paper", UPDATE_JSON="update",
       DAILY_JSON="daily", PERFORMANCE_JSON="performance";
   static final String GOOD="valid market feed", MISSING="missing update timestamp",
-      WRONG_MARKET="non-object market", WRONG_DATE="invalid date", WRONG_STAMP="non-string timestamp";
+      WRONG_MARKET="non-object market", WRONG_DATE="invalid date", WRONG_STAMP="non-string timestamp", EMPTY_MARKET="empty market object";
   String primary, backup;
   int calls;
 
@@ -124,6 +124,7 @@ public class NativeFeedFallbackHarness {
     JSONObject(){}
     JSONObject(String content){
       put("market", content.equals(WRONG_MARKET) ? new ArrayList<>() : new JSONObject());
+      if (!content.equals(EMPTY_MARKET) && optJSONObject("market") != null) optJSONObject("market").put("mode", "最近收盤");
       put("data_date", content.equals(WRONG_DATE) ? "20261111" : "2026-11-11");
       if (!content.equals(MISSING)) put("updated_at", content.equals(WRONG_STAMP) ? 1 : "2026-11-11 23:31");
     }
@@ -145,7 +146,7 @@ public class NativeFeedFallbackHarness {
 
   public static void main(String[] args) throws Exception {
     NativeFeedFallbackHarness h = new NativeFeedFallbackHarness();
-    for (String invalid : new String[]{MISSING, WRONG_MARKET, WRONG_DATE, WRONG_STAMP}) {
+    for (String invalid : new String[]{MISSING, WRONG_MARKET, WRONG_DATE, WRONG_STAMP, EMPTY_MARKET}) {
       h.primary=invalid; h.backup=GOOD; h.calls=0;
       if (!GOOD.equals(h.getRemoteStatic(SYSTEM_JSON)) || h.calls!=2)
         throw new AssertionError("Incomplete primary must use the repository backup: "+invalid);
