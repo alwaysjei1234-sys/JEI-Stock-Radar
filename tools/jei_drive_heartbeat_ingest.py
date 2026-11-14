@@ -27,15 +27,21 @@ def download_heartbeat(file_id, service_account_json):
 
 
 def ingest(file_id, credential_json, out):
-    try:
-        report = download_heartbeat(file_id, credential_json)
-        result = assess(report)
-        result["drive_access"] = "authenticated"
-    except Exception as exc:
+    missing = [name for name, value in (("file_id", file_id), ("service_account", credential_json))
+               if not value]
+    if missing:
         result = assess(None)
-        result["drive_access"] = "unavailable"
-        result["reason"] = "drive_read_failed"
-        result["error_type"] = type(exc).__name__
+        result.update(drive_access="unconfigured", reason="drive_configuration_missing",
+                      missing_configuration=missing)
+    else:
+        try:
+            report = download_heartbeat(file_id, credential_json)
+            result = assess(report)
+            result["drive_access"] = "authenticated"
+        except Exception as exc:
+            result = assess(None)
+            result.update(drive_access="unavailable", reason="drive_read_failed",
+                          error_type=type(exc).__name__)
     target = Path(out)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")

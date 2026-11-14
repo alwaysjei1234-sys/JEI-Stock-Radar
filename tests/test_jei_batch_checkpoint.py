@@ -35,9 +35,34 @@ class CheckpointTests(unittest.TestCase):
 
     def test_missing_drive_credentials_never_fakes_colab(self):
         with tempfile.TemporaryDirectory() as tmp:
-            result = ingest(None, None, Path(tmp) / "status.json")
+            path = Path(tmp) / "status.json"
+            for file_id, credentials, missing in (
+                (None, None, ["file_id", "service_account"]),
+                ("file", None, ["service_account"]),
+                (None, "credentials", ["file_id"]),
+            ):
+                with self.subTest(missing=missing), patch(
+                        "tools.jei_drive_heartbeat_ingest.download_heartbeat") as download:
+                    result = ingest(file_id, credentials, path)
+                    download.assert_not_called()
+                    self.assertEqual(result["status"], "UNKNOWN")
+                    self.assertEqual(result["drive_access"], "unconfigured")
+                    self.assertEqual(result["reason"], "drive_configuration_missing")
+                    self.assertEqual(result["missing_configuration"], missing)
+                    self.assertEqual(result["fallback"], "github_actions")
+                    self.assertEqual(json.loads(path.read_bytes()), result)
+
+    def test_drive_read_failure_excludes_exception_message(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "status.json"
+            with patch("tools.jei_drive_heartbeat_ingest.download_heartbeat",
+                       side_effect=ValueError("private configuration")):
+                result = ingest("file", "credentials", path)
             self.assertEqual(result["status"], "UNKNOWN")
-            self.assertEqual(result["fallback"], "github_actions")
+            self.assertEqual(result["drive_access"], "unavailable")
+            self.assertEqual(result["reason"], "drive_read_failed")
+            self.assertEqual(result["error_type"], "ValueError")
+            self.assertNotIn("private configuration", path.read_text())
 
     def test_valid_drive_heartbeat(self):
         with tempfile.TemporaryDirectory() as tmp:

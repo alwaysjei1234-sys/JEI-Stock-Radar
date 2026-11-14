@@ -95,10 +95,8 @@ jobs:
         run: |
           if [ -n "$JEI_DRIVE_SERVICE_ACCOUNT_JSON" ] && [ -n "$JEI_COLAB_HEARTBEAT_FILE_ID" ]; then
             python -m pip install google-auth requests
-            python -m tools.jei_drive_heartbeat_ingest --output audit-output/colab_watchdog.json
-          else
-            echo "Drive heartbeat unavailable: monitoring status remains UNKNOWN"
           fi
+          python -m tools.jei_drive_heartbeat_ingest --output audit-output/colab_watchdog.json
       - name: Restore checkpoint from prior workflow runs
         id: checkpoint_restore
         uses: actions/cache/restore@v4
