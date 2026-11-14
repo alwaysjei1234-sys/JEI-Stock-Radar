@@ -5,7 +5,7 @@ const html=fs.readFileSync('remote/index.html','utf8');
 const code=html.slice(html.indexOf('let systemFetchPending=false;'),html.indexOf('function checkUpdate(){'));
 const offline=fs.readFileSync('app/src/main/assets/index.html','utf8');
 assert.equal(offline.slice(offline.indexOf('let systemFetchPending=false;'),offline.indexOf('function checkUpdate(){')),code,'packaged Android fallback must use the same recovery logic');
-const fixture={updated_at:'2026-11-03 16:31',data_date:'2026-11-03',market:{actionable:false},holdings:{private:'must be stripped'}};
+const fixture={updated_at:'2026-11-03 16:31',data_date:'2026-11-03',market:{mode:'最近收盤',actionable:false},holdings:{private:'must be stripped'}};
 const elements={};let calls=[],timers=new Map(),timerId=0,renderCount=0;
 const ctx={AbortController,Date,Promise,JEI_PRIVATE_APP:false,nativeOk:()=>false,
  $:id=>elements[id]??=( {textContent:'',classList:{add(){}}} ),
@@ -28,6 +28,10 @@ const flush=async()=>{for(let i=0;i<12;i++)await Promise.resolve()};
  calls=[];
  ctx.fetch=async url=>{calls.push(url);return {ok:true,json:async()=>url.startsWith('/')?{updated_at:'today'}:structuredClone(fixture)}};
  await ctx.api.refresh();assert.equal(calls.length,2,'invalid primary schema falls back before changing displayed data');
+ calls=[];
+ ctx.fetch=async url=>{calls.push(url);return {ok:true,json:async()=>url.startsWith('/')?{...fixture,market:{}}:structuredClone(fixture)}};
+ await ctx.api.refresh();assert.equal(calls.length,2,'empty market must trigger repository fallback');
+ assert.equal(ctx.api.current().market.mode,fixture.market.mode);
  // A stalled primary must start backup before its 12-second timeout.
  calls=[];let slowPrimary;
  ctx.fetch=url=>{calls.push(url);return url.startsWith('/')?new Promise(resolve=>{slowPrimary=resolve}):Promise.resolve({ok:true,json:async()=>structuredClone(fixture)})};

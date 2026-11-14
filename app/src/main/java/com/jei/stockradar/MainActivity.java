@@ -315,7 +315,9 @@ public class MainActivity extends Activity {
                 // Match validateSystemFeed in the WebView before selecting a source.
                 Object day = j.opt("data_date");
                 Object updatedAt = j.opt("updated_at");
-                return j.optJSONObject("market") != null
+                JSONObject market = j.optJSONObject("market");
+                Object mode = market == null ? null : market.opt("mode");
+                return mode instanceof String && !((String) mode).trim().isEmpty()
                         && day instanceof String && ((String) day).matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")
                         && updatedAt instanceof String && !((String) updatedAt).trim().isEmpty();
             }
