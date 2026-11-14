@@ -58,7 +58,8 @@ class ColabNotebookTests(unittest.TestCase):
                 report = json.loads((dest / "jei_colab_run_latest.json").read_bytes())
                 self.assertEqual(report["source_commit"], SHA)
                 self.assertEqual(set(report["outputs"]), {"diagnostics", "observed_compute"})
-                self.assertTrue(validate(report, output_dir=dest, expected_commit=SHA)["verified"])
+                self.assertTrue(validate(report, output_dir=dest, expected_commit=SHA,
+                                         source_path=ROOT / "remote/pick_validation.json")["verified"])
                 observed = json.loads((dest / report["outputs"]["observed_compute"]).read_bytes())
                 self.assertEqual(observed["source_commit"], SHA)
                 self.assertFalse(observed["independent_oos_verified"])

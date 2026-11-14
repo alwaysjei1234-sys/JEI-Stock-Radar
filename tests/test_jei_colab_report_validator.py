@@ -5,6 +5,7 @@ import json
 import tempfile
 from pathlib import Path
 from tools.jei_colab_report_validator import validate
+from tools.jei_shared_compute import compute
 
 
 class ColabReportTests(unittest.TestCase):
@@ -23,10 +24,14 @@ class ColabReportTests(unittest.TestCase):
         self.output_dir = Path(directory.name)
         self.output_file = self.output_dir / "jei_diagnostics.json"
         self.output_file.write_bytes(b"test")
+        self.source = self.output_dir / "pick_validation.json"
+        self.source.write_text(json.dumps({"groups": {"attack": {"3": {
+            "completed": 31, "win_rate_pct": 55, "avg_estimated_net_pct": 1.2
+        }}}}))
 
     def validate(self, **kwargs):
         options = {"now": self.now, "expected_commit": self.report["source_commit"],
-                   "output_dir": self.output_dir}
+                   "output_dir": self.output_dir, "source_path": self.source}
         options.update(kwargs)
         return validate(self.report, **options)
 
@@ -34,8 +39,8 @@ class ColabReportTests(unittest.TestCase):
         observed = {
             "compute_provider": "google_colab",
             "source_commit": self.report["source_commit"],
-            "source_sha256": "a" * 64,
-            "observed_rows": [{"observed_count": 3}],
+            "source_sha256": hashlib.sha256(self.source.read_bytes()).hexdigest(),
+            **compute(json.loads(self.source.read_bytes())),
             **override,
         }
         raw = json.dumps(observed).encode()
@@ -53,6 +58,14 @@ class ColabReportTests(unittest.TestCase):
                 self.assertFalse(self.validate()["verified"])
         self.attach_compute()
         self.assertTrue(self.validate()["verified"])
+
+    def test_source_and_recomputed_result_must_match(self):
+        self.attach_compute(source_sha256="b" * 64)
+        self.assertIn("observed_source_hash_mismatch", self.validate()["issues"])
+        self.attach_compute(eligible_rows=99, independent_oos_verified=True)
+        self.assertIn("observed_replay_mismatch", self.validate()["issues"])
+        self.attach_compute()
+        self.assertFalse(self.validate(source_path=None)["verified"])
 
     def test_diagnostics_only_cannot_verify_completed_compute(self):
         self.assertFalse(self.validate()["verified"])

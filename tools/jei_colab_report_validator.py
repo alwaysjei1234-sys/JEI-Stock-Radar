@@ -6,9 +6,16 @@ import hashlib
 import re
 from pathlib import Path
 
+try:
+    from tools.jei_shared_compute import compute
+except ModuleNotFoundError as exc:
+    if exc.name != "tools":
+        raise
+    from jei_shared_compute import compute
+
 REQUIRED = ("run_id", "started_at_utc", "finished_at_utc", "source_commit", "status", "outputs")
 
-def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit=None):
+def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit=None, source_path=None):
     issues = []
     if not isinstance(report, dict):
         return {"verified": False, "issues": ["invalid_report"]}
@@ -33,6 +40,15 @@ def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit
         issues.append("source_commit_mismatch")
     if output_dir is None:
         issues.append("missing_output_directory")
+    expected_observed = None
+    if source_path is None:
+        issues.append("missing_pinned_source")
+    else:
+        try:
+            source_bytes = Path(source_path).read_bytes()
+            expected_observed = compute(json.loads(source_bytes))
+        except (OSError, ValueError, TypeError, AttributeError, OverflowError):
+            issues.append("invalid_pinned_source")
     hashes = report.get("output_sha256")
     if not isinstance(hashes, dict):
         issues.append("missing_output_hashes")
@@ -72,6 +88,12 @@ def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit
                             input_digest = observed.get("source_sha256")
                             if not isinstance(input_digest, str) or not re.fullmatch(r"[0-9a-f]{64}", input_digest):
                                 issues.append("invalid_observed_source_hash")
+                            if expected_observed is not None:
+                                if input_digest != hashlib.sha256(source_bytes).hexdigest():
+                                    issues.append("observed_source_hash_mismatch")
+                                if any(observed.get(field) != value for field, value in expected_observed.items()
+                                       if field != "note"):
+                                    issues.append("observed_replay_mismatch")
                             rows = observed.get("observed_rows")
                             if not isinstance(rows, list) or not rows or not all(isinstance(row, dict) for row in rows):
                                 issues.append("missing_or_invalid_observed_rows")
@@ -96,13 +118,15 @@ def main():
     parser.add_argument("--max-age-hours", type=float, default=3)
     parser.add_argument("--output-dir")
     parser.add_argument("--expected-commit")
+    parser.add_argument("--source", help="Pinned remote/pick_validation.json from the expected commit")
     args = parser.parse_args()
     try:
         report = json.loads(Path(args.report).read_text(encoding="utf-8"))
     except (OSError, ValueError) as exc:
         print(json.dumps({"verified": False, "issues": [str(exc)]}))
         return 2
-    result = validate(report, max_age_hours=args.max_age_hours, output_dir=args.output_dir, expected_commit=args.expected_commit)
+    result = validate(report, max_age_hours=args.max_age_hours, output_dir=args.output_dir, expected_commit=args.expected_commit,
+                      source_path=args.source)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["verified"] else 1
 
