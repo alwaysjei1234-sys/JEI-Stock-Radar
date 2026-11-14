@@ -49,8 +49,11 @@ def live_gate_reasons(feed, now):
     risk = feed.get("risk")
     if not isinstance(risk, dict):
         reasons.append("風控資料缺漏或格式錯誤")
-    elif risk.get("actionable") is False:
-        reasons.append("行情風控明確暫停新判讀")
+    else:
+        if risk.get("actionable") is False:
+            reasons.append("行情風控明確暫停新判讀")
+        if "as_of" in risk and risk["as_of"] != local.date().isoformat():
+            reasons.append("風控資料日期與今天不同")
     if m.get("no_new_picks") is True or m.get("actionable") is False:
         reasons.append("市場明確暫停新判讀")
     count = m.get("live_count")
@@ -68,6 +71,8 @@ def live_gate_reasons(feed, now):
     except ValueError:
         reasons.append("行情更新時間缺漏或格式錯誤")
     else:
+        if not 540 <= stamp.hour * 60 + stamp.minute < 810:
+            reasons.append("行情快照時間不在台股盤中時段")
         lag = (local - stamp).total_seconds()
         if lag < -120:
             reasons.append("行情更新時間晚於系統時間")
