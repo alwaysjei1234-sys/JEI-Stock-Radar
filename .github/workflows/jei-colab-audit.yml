@@ -59,6 +59,8 @@ jobs:
       - name: Verify pick quality classifications
         run: python -m unittest discover -s tests -p 'test_jei_performance_quality.py' -v
       - name: Audit checked-out public feed
+        id: feed_audit
+        continue-on-error: true
         run: python -m tools.jei_actions_audit --feed remote/system.json --out audit-output --commit "$GITHUB_SHA"
       - name: Record observed pick quality (not independent OOS)
         run: python -m tools.jei_performance_quality --input remote/pick_validation.json --out audit-output/pick_quality.json
@@ -140,3 +142,6 @@ jobs:
           path: audit-output/
           if-no-files-found: warn
           retention-days: 30
+      - name: Enforce feed audit after publishing compute evidence
+        if: always() && steps.feed_audit.outcome == 'failure'
+        run: exit 1
