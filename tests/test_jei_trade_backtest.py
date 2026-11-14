@@ -70,5 +70,29 @@ class BacktestEvidenceTests(unittest.TestCase):
                     else:
                         self.assertEqual(report["metrics"]["candidate"]["oos_trades"], 1)
 
+    def test_cli_rejects_malformed_csv_with_a_json_receipt(self):
+        header = "strategy_id,ticker,entry_date,exit_date,regime,split,gross_return"
+        row = "candidate,2330,2026-01-01,2026-01-03,bull,oos,0.04"
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "trades.csv"
+            output = Path(tmp) / "metrics.json"
+            for fields, values, reason in (
+                (header, row.rsplit(",", 1)[0], "invalid_csv_row_2"),
+                (header, row + ",extra", "invalid_csv_row_2"),
+                (header + ",gross_return", row + ",0.99", "duplicate_csv_columns"),
+            ):
+                with self.subTest(reason=reason, values=values):
+                    output.unlink(missing_ok=True)
+                    source.write_text(fields + "\n" + values + "\n", encoding="utf-8")
+                    run = subprocess.run(
+                        [sys.executable, "-m", "tools.jei_trade_backtest",
+                         "--trades", str(source), "--cost", ".01", "--out", str(output)],
+                        capture_output=True, text=True, check=False,
+                    )
+                    self.assertEqual(run.returncode, 1)
+                    self.assertTrue(output.exists(), run.stderr)
+                    report = json.loads(output.read_text(encoding="utf-8"))
+                    self.assertEqual(report, {"status": "REJECT", "reason": reason, "metrics": {}})
+
 if __name__ == "__main__":
     unittest.main()

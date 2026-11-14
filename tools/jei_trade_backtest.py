@@ -66,7 +66,15 @@ def main():
     args = parser.parse_args()
     try:
         with open(args.trades, encoding="utf-8-sig", newline="") as f:
-            rows = list(csv.DictReader(f))
+            reader = csv.DictReader(f, strict=True)
+            columns = reader.fieldnames or []
+            if len(set(columns)) != len(columns):
+                raise ValueError("duplicate_csv_columns")
+            rows = []
+            for row in reader:
+                if None in row or None in row.values():
+                    raise ValueError(f"invalid_csv_row_{reader.line_num}")
+                rows.append(row)
         if not rows:
             raise ValueError("empty_trade_data")
         metrics = evaluate(rows, args.cost)
@@ -76,7 +84,7 @@ def main():
                   "walk_forward_verified": False}
         if not metrics:
             result["reason"] = "no_oos_trades"
-    except (OSError, ValueError, KeyError, ZeroDivisionError) as exc:
+    except (OSError, csv.Error, ValueError, KeyError, ZeroDivisionError) as exc:
         result = {"status": "REJECT", "reason": str(exc), "metrics": {}}
     path = pathlib.Path(args.out)
     path.parent.mkdir(parents=True, exist_ok=True)
