@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import re
+import sys
 import time
 import urllib.error
 import urllib.request
@@ -11,15 +12,22 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from scripts.send_line_brief import quota_ok
+
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self,request,fp,code,msg,headers,newurl):
         return None  # Never forward a credential to another URL.
 
 
-def diagnose(enabled,token,recipient,opener=None):
+def diagnose(enabled,token,recipient,opener=None,*,check_quota=False):
     result={'status':'not_checked','profile_http_status':None,'attempts':0,
             'message_sent':False,'delivery_confirmed':False}
+    if check_quota:
+        result['quota_policy'] = 'not_checked'
     if str(enabled).lower() != 'true':
         result['status'] = 'disabled'
         return result
@@ -53,6 +61,11 @@ def diagnose(enabled,token,recipient,opener=None):
                 # No name, picture, user ID, URL, request ID or body is retained.
                 result['status']=('profile_accessible' if isinstance(profile,dict)
                     and profile.get('userId')==recipient else 'profile_mismatch')
+                if check_quota and result['status'] == 'profile_accessible':
+                    try:
+                        result['quota_policy'] = 'eligible' if quota_ok(token) else 'blocked'
+                    except (OSError, ValueError, RuntimeError):
+                        result['quota_policy'] = 'unavailable'
                 return result
         except urllib.error.HTTPError as error:
             status=error.code
@@ -75,10 +88,11 @@ def diagnose(enabled,token,recipient,opener=None):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--result-path', type=Path)
+    parser.add_argument('--check-quota', action='store_true')
     args = parser.parse_args(argv)
     now=datetime.now(ZoneInfo('Asia/Taipei'))
     result=diagnose(os.getenv('JEI_LINE_ENABLED',''),
-        os.getenv('JEI_LINE_CHANNEL_ACCESS_TOKEN',''),os.getenv('JEI_LINE_USER_ID',''))
+        os.getenv('JEI_LINE_CHANNEL_ACCESS_TOKEN',''),os.getenv('JEI_LINE_USER_ID',''), check_quota=args.check_quota)
     result['checked_at']=now.isoformat(timespec='seconds')
     payload = json.dumps(result, ensure_ascii=False)
     if args.result_path:

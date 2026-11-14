@@ -78,7 +78,8 @@ def payload(report,recipient):
 
 def api_get(path,token):
     """Retry only transient read failures; never bypass a missing quota check."""
-    req=urllib.request.Request(BASE+path,headers={"Authorization":"Bearer "+token})
+    req=urllib.request.Request(BASE+path)
+    req.add_unredirected_header("Authorization","Bearer "+token)
     for attempt in range(1,4):
         try:
             with urllib.request.urlopen(req,timeout=12) as r:
