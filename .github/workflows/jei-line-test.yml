@@ -16,7 +16,7 @@ jobs:
   send-test:
     # The guarded push trigger allows a one-time live delivery check without
     # needing a separate workflow-dispatch API; ordinary workflow edits skip it.
-    if: "github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, 'test(line): verify live delivery')"
+    if: "github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'test(line): verify live delivery 2026-11-14'"
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -33,7 +33,7 @@ jobs:
           JEI_LINE_ENABLED: ${{ vars.JEI_LINE_ENABLED }}
           JEI_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.JEI_LINE_CHANNEL_ACCESS_TOKEN }}
           JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
-          EXPECTED_DAY: ${{ inputs.expected_day || '2026-11-10' }}
+          EXPECTED_DAY: ${{ inputs.expected_day || '2026-11-14' }}
         run: python -m scripts.verify_line_push --expected-day "$EXPECTED_DAY" --result-path "${{ runner.temp }}/jei-line-test.json"
       - name: Preserve credential-free API result (phone delivery unconfirmed)
         if: always()
