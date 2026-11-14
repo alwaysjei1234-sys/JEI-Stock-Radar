@@ -73,6 +73,18 @@ def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit
                     else:
                         if actual != digest:
                             issues.append("output_hash_mismatch_" + str(key))
+                        elif key == "diagnostics":
+                            try:
+                                diagnostics = json.loads(raw)
+                            except ValueError:
+                                diagnostics = None
+                            if not isinstance(diagnostics, dict):
+                                issues.append("invalid_diagnostics")
+                                continue
+                            if diagnostics.get("source_commit") != commit:
+                                issues.append("diagnostics_commit_mismatch")
+                            if diagnostics.get("started_at_utc") != report.get("started_at_utc"):
+                                issues.append("diagnostics_start_mismatch")
                         elif key == "observed_compute":
                             try:
                                 observed = json.loads(raw)
