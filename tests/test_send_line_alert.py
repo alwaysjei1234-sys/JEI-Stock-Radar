@@ -29,6 +29,16 @@ class IntradayLineAlertTests(unittest.TestCase):
         self.assertTrue(trusted_live(feed(), NOW))
         self.assertEqual(build_alert(feed(), NOW)["edition"], "intraday_risk")
 
+    def test_confirmed_weekday_closure_blocks_even_a_fresh_red_alert(self):
+        for day in (23, 26):
+            now = NOW.replace(day=day)
+            document = feed()
+            document["data_date"] = now.date().isoformat()
+            document["updated_at"] = now.strftime("%Y-%m-%d 10:00")
+            with self.subTest(day=day):
+                self.assertIn("交易所休市", live_gate_reasons(document, now))
+                self.assertIsNone(build_alert(document, now))
+
     def test_rejects_false_or_insufficient_breadth(self):
         for fields in (
             {"live_count": 699, "live_coverage_pct": 100},
