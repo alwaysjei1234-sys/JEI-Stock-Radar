@@ -94,6 +94,24 @@ class AuditTests(unittest.TestCase):
                                 'live_count': 0}})
         self.assertEqual(inspect_feed(feed)['status'], 'ok')
 
+    def test_intraday_unverified_quotes_fail_audit(self):
+        from tools.jei_actions_audit import REQUIRED
+
+        feed = dict.fromkeys(REQUIRED, {})
+        feed["data_date"] = "2026-11-13"
+        for count in (0, 120):
+            with self.subTest(count=count):
+                feed["market"] = {
+                    "live_count": count, "live_valid": False,
+                    "live_diagnostics": {"market_open": True, "quote_refresh_window": True},
+                }
+                self.assertIn("unverified_intraday_quotes", inspect_feed(feed)["critical_issues"])
+                feed["market"]["live_diagnostics"]["quote_refresh_window"] = False
+                self.assertEqual(inspect_feed(feed)["status"], "ok")
+        feed["market"].update(live_count=600, live_valid=True)
+        feed["market"]["live_diagnostics"]["quote_refresh_window"] = True
+        self.assertEqual(inspect_feed(feed)["status"], "ok")
+
     def test_unverified_institutional_is_reported_not_falsely_verified(self):
         from tools.jei_actions_audit import REQUIRED
         feed = {key: {} for key in REQUIRED}
