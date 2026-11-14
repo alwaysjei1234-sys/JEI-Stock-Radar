@@ -19,8 +19,11 @@ def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit
         issues.append("provider_mismatch")
     if report.get("status") != "completed":
         issues.append("not_completed")
-    if not isinstance(report.get("outputs"), dict) or not report.get("outputs"):
+    outputs = report.get("outputs")
+    if not isinstance(outputs, dict) or not outputs:
         issues.append("missing_outputs")
+    elif not {"diagnostics", "observed_compute"} <= outputs.keys():
+        issues.append("missing_required_outputs")
     commit = report.get("source_commit")
     if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
         issues.append("invalid_source_commit")
@@ -33,8 +36,8 @@ def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit
     hashes = report.get("output_sha256")
     if not isinstance(hashes, dict):
         issues.append("missing_output_hashes")
-    if isinstance(report.get("outputs"), dict):
-        for key, filename in report["outputs"].items():
+    if isinstance(outputs, dict):
+        for key, filename in outputs.items():
             digest = hashes.get(key) if isinstance(hashes, dict) else None
             if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
                 issues.append("invalid_output_hash_" + str(key))
@@ -47,12 +50,31 @@ def validate(report, now=None, max_age_hours=3, output_dir=None, expected_commit
                     issues.append("missing_output_file_" + str(key))
                 elif isinstance(digest, str):
                     try:
-                        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+                        raw = path.read_bytes()
+                        actual = hashlib.sha256(raw).hexdigest()
                     except OSError:
                         issues.append("unreadable_output_file_" + str(key))
                     else:
                         if actual != digest:
                             issues.append("output_hash_mismatch_" + str(key))
+                        elif key == "observed_compute":
+                            try:
+                                observed = json.loads(raw)
+                            except ValueError:
+                                observed = None
+                            if not isinstance(observed, dict):
+                                issues.append("invalid_observed_compute")
+                                continue
+                            if observed.get("compute_provider") != "google_colab":
+                                issues.append("observed_provider_mismatch")
+                            if observed.get("source_commit") != commit:
+                                issues.append("observed_commit_mismatch")
+                            input_digest = observed.get("source_sha256")
+                            if not isinstance(input_digest, str) or not re.fullmatch(r"[0-9a-f]{64}", input_digest):
+                                issues.append("invalid_observed_source_hash")
+                            rows = observed.get("observed_rows")
+                            if not isinstance(rows, list) or not rows or not all(isinstance(row, dict) for row in rows):
+                                issues.append("missing_or_invalid_observed_rows")
     now = now or dt.datetime.now(dt.timezone.utc)
     try:
         start = dt.datetime.fromisoformat(report["started_at_utc"].replace("Z", "+00:00"))
