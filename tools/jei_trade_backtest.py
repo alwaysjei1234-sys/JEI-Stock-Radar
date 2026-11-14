@@ -69,9 +69,13 @@ def main():
             rows = list(csv.DictReader(f))
         if not rows:
             raise ValueError("empty_trade_data")
-        result = {"status": "CALCULATED", "metrics": evaluate(rows, args.cost),
+        metrics = evaluate(rows, args.cost)
+        result = {"status": "CALCULATED" if metrics else "INSUFFICIENT_EVIDENCE",
+                  "metrics": metrics,
                   "source": args.trades, "lookahead_verified": False,
                   "walk_forward_verified": False}
+        if not metrics:
+            result["reason"] = "no_oos_trades"
     except (OSError, ValueError, KeyError, ZeroDivisionError) as exc:
         result = {"status": "REJECT", "reason": str(exc), "metrics": {}}
     path = pathlib.Path(args.out)

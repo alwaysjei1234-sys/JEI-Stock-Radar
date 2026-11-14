@@ -1,3 +1,9 @@
+import csv
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
 import unittest
 from tools.jei_trade_backtest import evaluate
 
@@ -33,6 +39,36 @@ class BacktestEvidenceTests(unittest.TestCase):
     def test_no_oos_evidence(self):
         rows = [trade("2330", "2026-01-01", "2026-01-03", .5, split="train")]
         self.assertEqual(evaluate(rows, .01), {})
+
+    def test_cli_reports_train_only_as_insufficient_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "trades.csv"
+            output = Path(tmp) / "metrics.json"
+            row = trade("2330", "2026-01-01", "2026-01-03", .5, split="train")
+            for split, status, returncode in (
+                ("train", "INSUFFICIENT_EVIDENCE", 1),
+                ("oos", "CALCULATED", 0),
+            ):
+                with self.subTest(split=split):
+                    with source.open("w", encoding="utf-8", newline="") as handle:
+                        writer = csv.DictWriter(handle, fieldnames=list(row))
+                        writer.writeheader()
+                        writer.writerow({**row, "split": split})
+                    run = subprocess.run(
+                        [sys.executable, "-m", "tools.jei_trade_backtest",
+                         "--trades", str(source), "--cost", ".01", "--out", str(output)],
+                        capture_output=True, text=True, check=False,
+                    )
+                    report = json.loads(output.read_text(encoding="utf-8"))
+                    self.assertEqual(run.returncode, returncode)
+                    self.assertEqual(report["status"], status)
+                    self.assertFalse(report["walk_forward_verified"])
+                    self.assertFalse(report["lookahead_verified"])
+                    if split == "train":
+                        self.assertEqual(report["reason"], "no_oos_trades")
+                        self.assertEqual(report["metrics"], {})
+                    else:
+                        self.assertEqual(report["metrics"]["candidate"]["oos_trades"], 1)
 
 if __name__ == "__main__":
     unittest.main()
