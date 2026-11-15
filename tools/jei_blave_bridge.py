@@ -47,7 +47,7 @@ def load_archive(archive):
     return days, calendar
 
 
-def validate_signal(row, calendar, days):
+def validate_signal(row, calendar, days, allowed_sources=SOURCE_LABELS):
     if not isinstance(row, dict) or not SIGNAL_REQUIRED.issubset(row):
         raise ValueError("missing required Blave signal fields")
     signal_id, strategy_id = row["signal_id"], row["strategy_id"]
@@ -55,7 +55,7 @@ def validate_signal(row, calendar, days):
         raise ValueError("invalid signal_id")
     if not isinstance(strategy_id, str) or not re.fullmatch(r"[A-Za-z0-9_.:-]{1,96}", strategy_id):
         raise ValueError("invalid strategy_id")
-    if row["source"] not in SOURCE_LABELS or row["market"] != "TW":
+    if row["source"] not in allowed_sources or row["market"] != "TW":
         raise ValueError("unexpected signal origin or non-TW market")
     action = row["signal"]
     if action not in ("BUY", "SELL", "HOLD"):
@@ -95,7 +95,7 @@ def validate_signal(row, calendar, days):
     }
 
 
-def evaluate_blave_export(rows, archive):
+def evaluate_blave_export(rows, archive, allowed_sources=SOURCE_LABELS,\n                          source_system='Blave Agent external user-exported JSONL (unverified provenance)'):
     days, calendar = load_archive(archive)
     if not isinstance(rows, list) or not rows or len(rows) > MAX_RECORDS:
         raise ValueError("empty or oversized external signal export")
@@ -103,7 +103,7 @@ def evaluate_blave_export(rows, archive):
     observations = []
     unsupported = []
     for index, row in enumerate(rows, 1):
-        signal = validate_signal(row, calendar, days)
+        signal = validate_signal(row, calendar, days, allowed_sources=allowed_sources)
         signal_id = signal["signal_id"]
         slot = (signal["data_asof"], signal["strategy_id"], signal["ticker"])
         if signal_id in seen_ids or slot in seen_slots:
@@ -142,7 +142,7 @@ def evaluate_blave_export(rows, archive):
         summaries[strategy] = summary
     return {
         "schema": 1, "status": "OBSERVED_PROXY_ONLY",
-        "source_system": "Blave Agent external user-exported JSONL (unverified provenance)",
+        "source_system": source_system,
         "external_connection_active": False, "live_orders_enabled": False,
         "independent_oos_verified": False, "walk_forward_verified": False,
         "price_source": "JEI dated archive; official provenance requires separate independent verification",
