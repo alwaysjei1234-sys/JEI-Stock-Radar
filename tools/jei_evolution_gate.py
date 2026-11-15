@@ -16,9 +16,17 @@ MIN_WIN_RATE = 0.80
 def evaluate(bundle):
     reasons = []
     proposals = bundle.get("proposals", [])
-    roles = {p.get("role") for p in proposals if isinstance(p, dict)}
-    models = {p.get("model_id") for p in proposals if isinstance(p, dict) and p.get("model_id")}
-    if not {"researcher", "critic"}.issubset(roles) or len(models) < 2:
+    role_models = {"researcher": set(), "critic": set()}
+    if isinstance(proposals, list):
+        for proposal in proposals:
+            if not isinstance(proposal, dict):
+                continue
+            role = proposal.get("role")
+            model = proposal.get("model_id")
+            if role in ("researcher", "critic") and isinstance(model, str) and model.strip():
+                role_models[role].add(model.strip())
+    researchers, critics = role_models["researcher"], role_models["critic"]
+    if not researchers or not critics or len(researchers | critics) < 2:
         reasons.append("need_independent_researcher_and_critic_models")
     candidate = bundle.get("candidate", {})
     baseline = bundle.get("baseline", {})
