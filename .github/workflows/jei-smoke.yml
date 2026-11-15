@@ -21,6 +21,8 @@ jobs:
         run: node tests/smoke.cjs
       - name: Private local holding health checks
         run: node tests/holding_health.cjs
+      - name: Private data migration backup acceptance
+        run: node tests/private_migration_backup.test.cjs
       - name: Dashboard and Android bridge smoke checks
         run: node scripts/jei-smoke.mjs
       - name: System feed failover and timeout recovery
