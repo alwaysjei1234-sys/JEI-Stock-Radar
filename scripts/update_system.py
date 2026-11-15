@@ -1338,6 +1338,20 @@ def load_previous_risk(path=OUT):
             return {}, "前一版行情摘要與 Git 備份都無法解析（" + detail + "）；本次風險僅依新行情重算"
 
 
+def retain_same_session_composite_risk(score, previous_risk, session_day):
+    """Preserve a higher composite warning only for the same session."""
+    fields = ("foreign_cash_billion", "foreign_futures_net", "margin_balance", "external_risk")
+    if (previous_risk.get("as_of") != session_day
+            or previous_risk.get("actionable") is False
+            or str(previous_risk.get("level") or "").lower() not in ("orange", "red")
+            or not any(previous_risk.get(key) is not None for key in fields)):
+        return score
+    previous_score = num(previous_risk.get("score"))
+    if previous_score is None or not 0 <= previous_score <= 100:
+        return score
+    return max(score, int(previous_score))
+
+
 def fetch_initial_market_sources(errors):
     """Overlap independent hosts; retain deterministic source order and failures."""
     sources=((TWSE_STOCK,"TWSE股票"),(TWSE_INDEX,"TWSE指數"),(TPEX_STOCK,"TPEX"))
@@ -1500,12 +1514,7 @@ def main():
     previous_risk, previous_risk_warning = load_previous_risk()
     if previous_risk_warning:
         errors.append(previous_risk_warning)
-    previous_score = int(previous_risk.get("score") or 0)
-    previous_level = str(previous_risk.get("level") or "").lower()
-    composite_fields = ("foreign_cash_billion","foreign_futures_net","margin_balance","external_risk")
-    previous_is_composite = previous_level in ("orange","red") and any(k in previous_risk for k in composite_fields)
-    if previous_is_composite and risk < previous_score:
-        risk = previous_score
+    risk = retain_same_session_composite_risk(risk, previous_risk, today_iso)
 
     if risk>=80:level,label,cash="red","高風險防守","70%↑"
     elif risk>=65:level,label,cash="orange",("內部轉弱警戒" if divergence else "風險升高"),"50%–70%"
