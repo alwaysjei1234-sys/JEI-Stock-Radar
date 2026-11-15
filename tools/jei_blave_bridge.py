@@ -95,7 +95,8 @@ def validate_signal(row, calendar, days, allowed_sources=SOURCE_LABELS):
     }
 
 
-def evaluate_blave_export(rows, archive, allowed_sources=SOURCE_LABELS,\n                          source_system='Blave Agent external user-exported JSONL (unverified provenance)'):
+def evaluate_blave_export(rows, archive, allowed_sources=SOURCE_LABELS,
+                          source_system='Blave Agent external user-exported JSONL (unverified provenance'):
     days, calendar = load_archive(archive)
     if not isinstance(rows, list) or not rows or len(rows) > MAX_RECORDS:
         raise ValueError("empty or oversized external signal export")
