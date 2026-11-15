@@ -47,7 +47,7 @@ public class NativeRiskGateHarness {
   METHODS
   static JSONObject feed(){return new JSONObject().set("data_date","2026-11-10")
     .set("updated_at","2026-11-10 10:00")
-    .set("risk",new JSONObject().set("actionable",true))
+    .set("risk",new JSONObject().set("actionable",true).set("as_of","2026-11-10"))
     .set("market",new JSONObject().set("mode","盤中即時").set("stale",false)
       .set("live_valid",true).set("live_count",700).set("close_count",2000));}
   static void check(boolean ok,String why){if(!ok)throw new AssertionError(why);}
@@ -81,12 +81,20 @@ public class NativeRiskGateHarness {
     check(!trustedLiveFeed(blocked,now),"closed exchange still alerts");
     blocked=feed();blocked.optJSONObject("market").set("actionable",false);
     check(!trustedLiveFeed(blocked,now),"market.actionable=false still alerts");
+    valid=feed();valid.set("updated_at","2026-11-10 09:55");
+    check(trustedLiveFeed(valid,now),"exact 10-minute snapshot rejected");
+    blocked=feed();blocked.set("updated_at","2026-11-10 09:54");
+    check(!trustedLiveFeed(blocked,now),"11-minute snapshot still alerts");
+    blocked=feed();blocked.optJSONObject("risk").set("as_of","2026-11-09");
+    check(!trustedLiveFeed(blocked,now),"yesterday risk in today's feed still alerts");
+    blocked=feed();blocked.optJSONObject("risk").remove("as_of");
+    check(!trustedLiveFeed(blocked,now),"undated risk still alerts");
     blocked=feed();blocked.set("updated_at","2026-11-10 09:00");
     check(!trustedLiveFeed(blocked,now),"old snapshot still alerts");
     blocked=feed();blocked.set("data_date","2026-11-09");
     check(!trustedLiveFeed(blocked,now),"yesterday still alerts");
     check(!trustedLiveFeed(feed(),taipeiParser("yyyy-MM-dd HH:mm").parse("2026-11-10 14:00").getTime()),"closed session still alerts");
-    System.out.println("PASS 18 native risk gate replays; no notification/network/device invoked");
+    System.out.println("PASS native risk gate replays; no notification/network/device invoked");
   }
 }'''.replace('METHODS', bodies)
         with tempfile.TemporaryDirectory() as tmp:
