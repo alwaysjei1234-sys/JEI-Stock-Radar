@@ -118,6 +118,20 @@ class BriefTests(unittest.TestCase):
         report=b.generate("morning",now.replace(day=3),feed,PAPER,archive=archive)
         self.assertEqual(report["status"],"pending")
 
+    def test_malformed_close_coverage_keeps_brief_pending(self):
+        for count in (float("nan"), float("inf"), "1700", 500.5, {}, True):
+            with self.subTest(count=count):
+                feed = copy.deepcopy(FEED)
+                feed["market"]["close_count"] = count
+                self.assertEqual(b.generate("close", CLOSE, feed, PAPER)["status"], "pending")
+
+    def test_retained_baseline_does_not_trust_coercible_coverage(self):
+        now, feed, archive = self.retained_case()
+        for count in ("1700", 500.5):
+            with self.subTest(count=count):
+                feed["market"]["close_count"] = count
+                self.assertFalse(b.quality(feed, "morning", now, archive)[0])
+
     def test_ready_close_has_no_private_data(self):
         report=b.generate("close",CLOSE,FEED,PAPER)
         self.assertEqual(report["status"],"ready")

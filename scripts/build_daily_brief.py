@@ -73,6 +73,11 @@ def previous_archived_close(archive,now):
         return None
     return previous.isoformat(),prices
 
+def has_close_coverage(market):
+    count = market.get("close_count")
+    return type(count) is int and 500 <= count <= 2**53 - 1
+
+
 def retained_close_verified(feed,archive,now):
     """Corroborate the retained morning baseline; never enable today's picks."""
     market=feed.get("market") or {}
@@ -82,8 +87,7 @@ def retained_close_verified(feed,archive,now):
     archived=previous_archived_close(archive,now)
     if archived is None or feed.get("data_date")!=archived[0]: return False
     _,prices=archived
-    count=market.get("close_count")
-    if isinstance(count,bool) or num(count) is None or num(count)<500:
+    if not has_close_coverage(market):
         return False
     # Check every publicly displayed candidate against the dated close archive.
     for row in feed.get("attack") or []:
@@ -101,7 +105,7 @@ def quality(feed,edition,now,archive=None):
     if edition=="morning" and retained_close_verified(feed,archive,now):
         return True,"已核對封存收盤基準日 "+raw+"；歷史唯讀，非今日即時行情或新選股"
     if lag<0 or lag>5: return False,"市場資料日太舊或超前："+raw
-    if market.get("mode")!="今日收盤" or market.get("stale") is not False or int(market.get("close_count") or 0)<500:
+    if market.get("mode")!="今日收盤" or market.get("stale") is not False or not has_close_coverage(market):
         return False,"官方收盤行情尚未驗證："+raw
     if edition=="close" and lag!=0: return False,"今日官方收盤尚未就緒；最新 "+raw
     if edition=="morning" and lag==0 and now.hour<9:
