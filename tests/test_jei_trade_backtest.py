@@ -31,6 +31,18 @@ class BacktestEvidenceTests(unittest.TestCase):
                 self.assertAlmostEqual(result["max_drawdown"], .05)
                 self.assertAlmostEqual(result["net_compounded_return"], 1.20 * .90 * .95 - 1)
 
+    def test_total_loss_does_not_create_negative_equity_or_recover(self):
+        first = trade("2330", "2026-01-01", "2026-01-03", -1)
+        same_exit = trade("2317", "2026-01-02", "2026-01-03", -1)
+        later = trade("2308", "2026-01-03", "2026-01-06", .5)
+        for rows in ([first, later], [first, same_exit, later]):
+            with self.subTest(rows=rows):
+                result = evaluate(rows, .01)["candidate"]
+                self.assertAlmostEqual(result["max_drawdown"], 1)
+                self.assertAlmostEqual(result["net_compounded_return"], -1)
+                self.assertAlmostEqual(result["net_expectancy"],
+                                       (-(len(rows) - 1) + .49) / len(rows))
+
     def test_overlap_rejected(self):
         rows = [trade("2330", "2026-01-01", "2026-01-05", .03),
                 trade("2330", "2026-01-04", "2026-01-07", .02)]

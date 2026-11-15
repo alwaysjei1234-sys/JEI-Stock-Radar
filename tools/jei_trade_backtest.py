@@ -3,6 +3,7 @@
 CSV columns: strategy_id,ticker,entry_date,exit_date,gross_return,regime,split.
 gross_return is decimal fraction (e.g. 0.03 means +3%), not percent.
 Only rows marked split=oos count toward promotion evidence.
+The unleveraged simulation caps net losses at the allocated trade capital.
 """
 import argparse
 import csv
@@ -38,8 +39,9 @@ def evaluate(rows, round_trip_cost):
             raise ValueError("overlapping_trades_row_" + str(i))
         intervals.append((start, end))
         if row["split"] == "oos":
+            net = max(-1.0, gross - round_trip_cost)
             evaluated.setdefault(row["strategy_id"], []).append(
-                (end, gross - round_trip_cost, row["regime"]))
+                (end, net, row["regime"]))
     output = {}
     for name, trades in evaluated.items():
         trades.sort(key=lambda x: x[0])
