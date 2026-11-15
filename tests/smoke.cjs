@@ -612,7 +612,9 @@ check('Android native background worker rejects stale feeds, quote substitutions
  assert.ok(html.includes('id="nativeTestStatus"'),'manual notification feedback is visible');
 
  assert.ok(worker.includes('"盤中即時".equals(market.optString("mode", ""))'));
- assert.ok(worker.includes('lag <= 35L * 60L * 1000L'));
+ assert.ok(worker.includes('MAX_LIVE_LAG_MILLIS = 10L * 60L * 1000L'), 'Android feed age is bounded to ten minutes');
+ assert.ok(worker.includes('lag <= MAX_LIVE_LAG_MILLIS'), 'Android freshness uses the bounded constant');
+ assert.ok(worker.includes('today.equals(risk.optString("as_of", ""))'), 'Android must reject outdated risk dates');
  assert.ok(worker.includes('lag <= 8L * 60L * 1000L'));
  assert.ok(worker.includes('Calendar.SATURDAY')&&worker.includes('Calendar.SUNDAY'));
  assert.ok(worker.includes('TimeZone.getTimeZone("Asia/Taipei")'));
