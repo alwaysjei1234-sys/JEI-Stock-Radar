@@ -35,6 +35,9 @@ public class RiskWorker extends Worker {
             "https://jei-stock-radar.vercel.app/remote/system.json";
     private static final String UPDATE_JSON =
             "https://jei-stock-radar.vercel.app/remote/update.json";
+    // Same source freshness limit as LINE; five-minute market refreshes
+    // get one cycle of jitter, not a 35-minute alert window.
+    private static final long MAX_LIVE_LAG_MILLIS = 10L * 60L * 1000L;
 
     public RiskWorker(Context context, WorkerParameters params) {
         super(context, params);
@@ -104,13 +107,14 @@ public class RiskWorker extends Worker {
                 && count == Math.floor(count) && total == Math.floor(total)
                 && count * 100 >= total * 35)) return false;
         String today = taipeiFormat("yyyy-MM-dd", now);
-        if (!today.equals(root.optString("data_date", ""))) return false;
+        if (!today.equals(root.optString("data_date", ""))
+                || !today.equals(risk.optString("as_of", ""))) return false;
         String updated = root.optString("updated_at", "");
         try {
             Date stamp = taipeiParser("yyyy-MM-dd HH:mm").parse(updated);
             if (stamp == null) return false;
             long lag = now - stamp.getTime();
-            return lag >= -120000L && lag <= 35L * 60L * 1000L;
+            return lag >= -120000L && lag <= MAX_LIVE_LAG_MILLIS;
         } catch (Exception e) {
             return false;
         }
