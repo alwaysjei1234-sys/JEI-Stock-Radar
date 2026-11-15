@@ -59,7 +59,7 @@ class BlaveOfflineBridgeTests(unittest.TestCase):
     def test_post_close_time_timezone_and_lookahead_guard(self):
         for changes in (
             {"generated_at": "2026-10-13T13:29:00+08:00"},
-            {"generated_at": "2026-10-13T06:00:00Z"},
+            {"generated_at": "2026-10-13T05:00:00Z"},
             {"generated_at": "2026-10-13T14:05:00"},
             {"generated_at": "2026-10-14T14:01:00+08:00"},
             {"data_asof": "2026-10-14"},
