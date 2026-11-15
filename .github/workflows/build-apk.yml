@@ -62,10 +62,6 @@ jobs:
   build:
     if: "github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'Restore verified Android 42 download')"
     runs-on: ubuntu-latest
-    env:
-      JEI_STORE_PASSWORD: ${{ secrets.JEI_STORE_PASSWORD }}
-      JEI_KEY_ALIAS: ${{ secrets.JEI_KEY_ALIAS }}
-      JEI_KEY_PASSWORD: ${{ secrets.JEI_KEY_PASSWORD }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -101,6 +97,9 @@ jobs:
       - name: Restore original V42 signer from protected secret
         env:
           JEI_STABLE_KEYSTORE_B64: ${{ secrets.JEI_STABLE_KEYSTORE_B64 }}
+          JEI_STORE_PASSWORD: ${{ secrets.JEI_STORE_PASSWORD }}
+          JEI_KEY_ALIAS: ${{ secrets.JEI_KEY_ALIAS }}
+          JEI_KEY_PASSWORD: ${{ secrets.JEI_KEY_PASSWORD }}
         shell: bash
         run: |
           set -euo pipefail
@@ -146,6 +145,10 @@ jobs:
           node tests/smoke.cjs
 
       - name: Build installable APK with original certificate
+        env:
+          JEI_STORE_PASSWORD: ${{ secrets.JEI_STORE_PASSWORD }}
+          JEI_KEY_ALIAS: ${{ secrets.JEI_KEY_ALIAS }}
+          JEI_KEY_PASSWORD: ${{ secrets.JEI_KEY_PASSWORD }}
         run: gradle :app:assembleRelease --stacktrace
 
       - name: Verify built APK identity before publication
