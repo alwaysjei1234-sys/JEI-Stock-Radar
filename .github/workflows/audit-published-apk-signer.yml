@@ -1,0 +1,44 @@
+name: JEI Read-only Published APK Signer Audit
+on:
+  push:
+    branches: [fix/android-release-fingerprint-audit-20261116]
+    paths: ['.github/workflows/audit-published-apk-signer.yml']
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Download currently published V42 APK (read-only)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          gh release download jei-latest --pattern JEI_Stock_Radar_V3.apk --dir "$RUNNER_TEMP"
+          test -s "$RUNNER_TEMP/JEI_Stock_Radar_V3.apk"
+          echo "Published APK SHA-256: $(sha256sum "$RUNNER_TEMP/JEI_Stock_Radar_V3.apk" | awk '{print $1}')"
+      - name: Verify actual published APK certificate and version
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          APK_SIGNER="$SDK_ROOT/build-tools/35.0.0/apksigner"
+          AAPT="$SDK_ROOT/build-tools/35.0.0/aapt"
+          if [ ! -x "$APK_SIGNER" ]; then
+            echo 'Android SDK tool missing; cannot make a certificate claim'
+            exit 1
+          fi
+          report="$("$APK_SIGNER" verify --print-certs "$RUNNER_TEMP/JEI_Stock_Radar_V3.apk")"
+          echo "$report" | sed -n '/^Signer #1 certificate SHA-256 digest:/p'
+          actual="$(printf '%s\n' "$report" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | tr 'A-F' 'a-f')"
+          test "${#actual}" -eq 64
+          "$AAPT" dump badging "$RUNNER_TEMP/JEI_Stock_Radar_V3.apk" | grep '^package:'
+          if [ "$actual" = '807326371643b70ec340b8fd526568adb9ff86c8186e059ca6bc5d0633e4cbdd' ]; then
+            echo 'RESULT: published APK matches currently pinned V42 certificate'
+          elif [ "$actual" = 'a6221800794b3a5560cbcf09ffcf3bb1ed6bfd2ae2828042081a852b2d4256a0' ]; then
+            echo 'RESULT: published APK matches v2 cache signer, but pinned certificate is WRONG'
+          else
+            echo 'RESULT: published APK has a third signer; inspect before release'
+          fi
