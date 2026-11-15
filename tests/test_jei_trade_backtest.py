@@ -21,27 +21,50 @@ class BacktestEvidenceTests(unittest.TestCase):
         self.assertAlmostEqual(m["net_expectancy"], .005)
         self.assertEqual(m["market_regimes"], 2)
 
-    def test_drawdown_replays_at_exit_date_without_guessing_trade_order(self):
+    def test_parallel_trades_do_not_invent_portfolio_equity(self):
         first = trade("2330", "2026-01-01", "2026-01-03", .20)
         second = trade("2317", "2026-01-02", "2026-01-03", -.10)
         third = trade("2308", "2026-01-03", "2026-01-06", -.05)
         for rows in ([first, second, third], [second, third, first]):
             with self.subTest(rows=rows):
                 result = evaluate(rows, 0)["candidate"]
-                self.assertAlmostEqual(result["max_drawdown"], .05)
-                self.assertAlmostEqual(result["net_compounded_return"], 1.20 * .90 * .95 - 1)
+                self.assertIsNone(result["max_drawdown"])
+                self.assertIsNone(result["net_compounded_return"])
+                self.assertEqual(result["drawdown_basis"],
+                                 "unavailable_overlapping_positions_without_capital_weights")
+                self.assertEqual(result["oos_trades"], 3)
+
+    def test_nonoverlapping_trades_compound_in_exit_order(self):
+        first = trade("2330", "2026-01-01", "2026-01-03", .20)
+        second = trade("2317", "2026-01-03", "2026-01-05", -.10)
+        third = trade("2308", "2026-01-05", "2026-01-06", -.05)
+        for rows in ([first, second, third], [second, third, first]):
+            with self.subTest(rows=rows):
+                result = evaluate(rows, 0)["candidate"]
+                self.assertAlmostEqual(result["max_drawdown"], 1 - .90 * .95)
+                self.assertAlmostEqual(result["net_compounded_return"],
+                                       1.20 * .90 * .95 - 1)
 
     def test_total_loss_does_not_create_negative_equity_or_recover(self):
         first = trade("2330", "2026-01-01", "2026-01-03", -1)
         same_exit = trade("2317", "2026-01-02", "2026-01-03", -1)
         later = trade("2308", "2026-01-03", "2026-01-06", .5)
-        for rows in ([first, later], [first, same_exit, later]):
-            with self.subTest(rows=rows):
-                result = evaluate(rows, .01)["candidate"]
-                self.assertAlmostEqual(result["max_drawdown"], 1)
-                self.assertAlmostEqual(result["net_compounded_return"], -1)
-                self.assertAlmostEqual(result["net_expectancy"],
-                                       (-(len(rows) - 1) + .49) / len(rows))
+        sequential = evaluate([first, later], .01)["candidate"]
+        self.assertAlmostEqual(sequential["max_drawdown"], 1)
+        self.assertAlmostEqual(sequential["net_compounded_return"], -1)
+        parallel = evaluate([first, same_exit, later], .01)["candidate"]
+        self.assertIsNone(parallel["max_drawdown"])
+        self.assertIsNone(parallel["net_compounded_return"])
+        self.assertAlmostEqual(parallel["net_expectancy"], (-2 + .49) / 3)
+
+    def test_parallel_winner_and_loser_do_not_imply_full_capital_loss(self):
+        rows = [trade("2330", "2026-01-01", "2026-01-03", 1),
+                trade("2317", "2026-01-02", "2026-01-03", -1)]
+        result = evaluate(rows, 0)["candidate"]
+        self.assertAlmostEqual(result["win_rate"], .5)
+        self.assertAlmostEqual(result["net_expectancy"], 0)
+        self.assertIsNone(result["max_drawdown"])
+        self.assertIsNone(result["net_compounded_return"])
 
     def test_overlap_rejected(self):
         rows = [trade("2330", "2026-01-01", "2026-01-05", .03),
