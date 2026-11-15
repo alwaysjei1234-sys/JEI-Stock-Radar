@@ -5,10 +5,23 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.update_system import load_previous_risk
+from scripts.update_system import load_previous_risk, retain_same_session_composite_risk
 
 
 class PreviousRiskRecoveryTests(unittest.TestCase):
+    def test_only_same_session_valid_composite_can_raise_score(self):
+        today = "2026-11-16"
+        valid = {"score": 91, "level": "red", "as_of": today, "external_risk": 1}
+        self.assertEqual(retain_same_session_composite_risk(30, valid, today), 91)
+        self.assertEqual(retain_same_session_composite_risk(97, valid, today), 97)
+        for changes in (
+            {"as_of": "2026-11-13"}, {"as_of": "2026-11-17"}, {"as_of": None},
+            {"actionable": False}, {"external_risk": None}, {"score": float("nan")},
+            {"score": float("inf")}, {"score": 101}, {"score": "unknown"},
+        ):
+            with self.subTest(changes=changes):
+                self.assertEqual(retain_same_session_composite_risk(30, {**valid, **changes}, today), 30)
+
     def test_valid_current_feed_is_used_without_git(self):
         with tempfile.TemporaryDirectory() as root:
             path = Path(root) / "system.json"
