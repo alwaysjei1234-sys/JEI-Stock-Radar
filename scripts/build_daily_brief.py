@@ -57,21 +57,27 @@ def load(path):
     try: return json.loads(path.read_text(encoding="utf-8"))
     except (OSError,ValueError): return {}
 
+def previous_session_day(day):
+    for offset in range(1, 21):
+        previous = day - timedelta(days=offset)
+        if closure_reason(previous) is None:
+            return previous.isoformat()
+    return None
+
+
 def previous_archived_close(archive,now):
     """Return only the expected previous session's full dated archive."""
-    previous=now.date()-timedelta(days=1)
-    for _ in range(20):
-        if closure_reason(previous) is None:
-            break
-        previous-=timedelta(days=1)
+    previous = previous_session_day(now.date())
+    if previous is None:
+        return None
     if not isinstance(archive,dict) or archive.get("schema")!=1 or archive.get("kind")!="official_daily_close":
         return None
     days=archive.get("days")
     if not isinstance(days,dict): return None
-    prices=days.get(previous.isoformat())
+    prices=days.get(previous)
     if not isinstance(prices,dict) or sum((num(p) or 0)>0 for p in prices.values())<500:
         return None
-    return previous.isoformat(),prices
+    return previous,prices
 
 def has_close_coverage(market):
     count = market.get("close_count")
@@ -104,7 +110,11 @@ def quality(feed,edition,now,archive=None):
     except ValueError: return False,"市場資料日缺失"
     if edition=="morning" and retained_close_verified(feed,archive,now):
         return True,"已核對封存收盤基準日 "+raw+"；歷史唯讀，非今日即時行情或新選股"
-    if lag<0 or lag>5: return False,"市場資料日太舊或超前："+raw
+    if edition=="morning" and lag>0:
+        expected = previous_session_day(now.date())
+        if raw != expected:
+            return False,"最近交易日收盤尚未就緒；資料日 "+raw
+    elif lag<0 or lag>5: return False,"市場資料日太舊或超前："+raw
     if market.get("mode")!="今日收盤" or market.get("stale") is not False or not has_close_coverage(market):
         return False,"官方收盤行情尚未驗證："+raw
     if edition=="close" and lag!=0: return False,"今日官方收盤尚未就緒；最新 "+raw

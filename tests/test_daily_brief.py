@@ -156,6 +156,16 @@ class BriefTests(unittest.TestCase):
         self.assertIn("暫無可信來源",str(report))
         self.assertNotIn("NEVER_PUBLIC",str(report))
 
+    def test_morning_rejects_an_older_close_when_a_session_is_missing(self):
+        now = datetime(2026, 11, 16, 8, 30, tzinfo=ZoneInfo("Asia/Taipei"))
+        older = dict(FEED, data_date="2026-11-12")
+        latest = dict(FEED, data_date="2026-11-13")
+        weekend = dict(FEED, data_date="2026-11-14")
+        for snapshot in (older, weekend):
+            with self.subTest(data_date=snapshot["data_date"]):
+                self.assertFalse(b.quality(snapshot, "morning", now)[0])
+        self.assertTrue(b.quality(latest, "morning", now)[0])
+
     def test_cross_market_quotes_use_exchange_timezone_and_keep_dates(self):
         now=datetime(2026,10,25,10,0,tzinfo=ZoneInfo("Asia/Taipei"))
         responses={}
@@ -175,7 +185,7 @@ class BriefTests(unittest.TestCase):
 
     def test_morning_separates_core_us_and_cross_market_quotes(self):
         at=datetime(2026,10,24,9,0,tzinfo=ZoneInfo("Asia/Taipei"))
-        feed=dict(FEED,data_date="2026-10-23")
+        feed=dict(FEED,data_date="2026-10-22")
         global_quotes=[{"name":"費城半導體","date":"2026-10-23","close":10779.46,"change_pct":0.44,"source":"Yahoo Finance"}]
         report=b.generate("morning",at,feed,PAPER,us_fn=lambda n: [],global_fn=lambda n: global_quotes,news_fn=lambda n: [])
         self.assertEqual(report["global_market"],global_quotes)
