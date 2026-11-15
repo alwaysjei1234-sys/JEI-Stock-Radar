@@ -7,7 +7,9 @@ Only rows marked split=oos count toward promotion evidence.
 import argparse
 import csv
 import datetime as dt
+from itertools import groupby
 import json
+import math
 import pathlib
 import statistics
 import sys
@@ -43,8 +45,8 @@ def evaluate(rows, round_trip_cost):
         trades.sort(key=lambda x: x[0])
         returns = [r for _, r, _ in trades]
         equity, peak, max_dd = 1.0, 1.0, 0.0
-        for ret in returns:
-            equity *= (1 + ret)
+        for _, closed in groupby(trades, key=lambda trade: trade[0]):
+            equity *= math.prod(sorted(1 + ret for _, ret, _ in closed))
             peak = max(peak, equity)
             max_dd = max(max_dd, (peak - equity) / peak)
         output[name] = {
@@ -53,6 +55,7 @@ def evaluate(rows, round_trip_cost):
             "net_expectancy": statistics.mean(returns),
             "win_rate": sum(ret > 0 for ret in returns) / len(returns),
             "max_drawdown": max_dd,
+            "drawdown_basis": "compounded_closed_trades_by_exit_date",
             "net_compounded_return": equity - 1,
             "cost_per_round_trip": round_trip_cost,
             "note": "Trade-level OOS metrics only; does not prove walk-forward, data integrity or no lookahead"}

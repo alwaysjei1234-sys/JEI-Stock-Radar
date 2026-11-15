@@ -21,6 +21,16 @@ class BacktestEvidenceTests(unittest.TestCase):
         self.assertAlmostEqual(m["net_expectancy"], .005)
         self.assertEqual(m["market_regimes"], 2)
 
+    def test_drawdown_replays_at_exit_date_without_guessing_trade_order(self):
+        first = trade("2330", "2026-01-01", "2026-01-03", .20)
+        second = trade("2317", "2026-01-02", "2026-01-03", -.10)
+        third = trade("2308", "2026-01-03", "2026-01-06", -.05)
+        for rows in ([first, second, third], [second, third, first]):
+            with self.subTest(rows=rows):
+                result = evaluate(rows, 0)["candidate"]
+                self.assertAlmostEqual(result["max_drawdown"], .05)
+                self.assertAlmostEqual(result["net_compounded_return"], 1.20 * .90 * .95 - 1)
+
     def test_overlap_rejected(self):
         rows = [trade("2330", "2026-01-01", "2026-01-05", .03),
                 trade("2330", "2026-01-04", "2026-01-07", .02)]
