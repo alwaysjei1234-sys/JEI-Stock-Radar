@@ -14,6 +14,10 @@ This checklist is a **manual verification protocol**, not a claim that tests pas
 - [ ] Enter/edit a holding; force-stop and relaunch; confirm quantity and cost persist locally.
 - [ ] Verify holding quotes refresh after resume and do not get starved by full-market scanning.
 - [ ] Verify remote update metadata, version comparison and safe handling of broken URLs.
+- [ ] Verify the installed app and proposed update APK have the **same Android signing certificate SHA-256**; never resolve mismatch by uninstalling.
+- [ ] Publish a higher signed version to `jei-latest`, then confirm `remote/update.json` matches only the successfully uploaded APK and its signing certificate.
+- [ ] Update from an **already-installed** device without uninstalling and without losing locally saved holdings, costs, alert settings or other private preferences.
+- [ ] Confirm Android's user-approved package installation screen works; no promise of silent installs.
 - [ ] Test an ETF code containing letters and a delisted/unknown symbol.
 
 ## 3. Forward-only paper trading

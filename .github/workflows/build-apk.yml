@@ -93,27 +93,37 @@ jobs:
       - name: Install Android SDK 35
         run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
-      - name: Restore stable Android debug signing key
-        id: jei-debug-key
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.android/debug.keystore
-          key: jei-android-debug-signing-v2
-
-      - name: Ensure stable Android debug signing key
+      # Never generate another debug signer: Android updates require the original V42 certificate.
+      - name: Restore original V42 signer from protected secret
+        env:
+          JEI_STABLE_KEYSTORE_B64: ${{ secrets.JEI_STABLE_KEYSTORE_B64 }}
+          JEI_STORE_PASSWORD: ${{ secrets.JEI_STORE_PASSWORD }}
+          JEI_KEY_ALIAS: ${{ secrets.JEI_KEY_ALIAS }}
+          JEI_KEY_PASSWORD: ${{ secrets.JEI_KEY_PASSWORD }}
+        shell: bash
         run: |
-          mkdir -p "$HOME/.android"
-          if [ ! -s "$HOME/.android/debug.keystore" ]; then
-            keytool -genkeypair -v \
-              -keystore "$HOME/.android/debug.keystore" \
-              -storepass android \
-              -alias androiddebugkey \
-              -keypass android \
-              -keyalg RSA -keysize 2048 -validity 10000 \
-              -dname "CN=Android Debug,O=Android,C=US"
+          set -euo pipefail
+          if [ -z "${JEI_STABLE_KEYSTORE_B64:-}" ] || [ -z "${JEI_STORE_PASSWORD:-}" ] || [ -z "${JEI_KEY_ALIAS:-}" ] || [ -z "${JEI_KEY_PASSWORD:-}" ]; then
+            echo 'Original V42 keystore credentials missing; refusing incompatible update. Never generate another signer.'
+            exit 1
           fi
-          test -s "$HOME/.android/debug.keystore"
-          keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey
+          python - <<'PY'
+          import base64, os
+          from pathlib import Path
+          target=Path(os.environ['RUNNER_TEMP'])/'jei-original-signing-key.jks'
+          raw=base64.b64decode(os.environ['JEI_STABLE_KEYSTORE_B64'],validate=True)
+          if len(raw)<100:raise ValueError('Invalid original signer keystore')
+          target.write_bytes(raw)
+          target.chmod(0o600)
+          PY
+          echo "JEI_KEYSTORE=$RUNNER_TEMP/jei-original-signing-key.jks" >> "$GITHUB_ENV"
+          actual="$(keytool -exportcert -keystore "$RUNNER_TEMP/jei-original-signing-key.jks" -storepass "$JEI_STORE_PASSWORD" -alias "$JEI_KEY_ALIAS" | openssl dgst -sha256 | awk '{print $NF}')"
+          expected='807326371643b70ec340b8fd526568adb9ff86c8186e059ca6bc5d0633e4cbdd'
+          if [ "$actual" != "$expected" ]; then
+            echo 'Provided key does not match original V42 signing certificate; refusing installation-incompatible APK.'
+            exit 1
+          fi
+          echo 'Original V42 signing certificate verified'
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -134,24 +144,20 @@ jobs:
           NODE
           node tests/smoke.cjs
 
-      - name: Build installable APK
-        run: gradle :app:assembleDebug --stacktrace
+      - name: Build installable APK with original certificate
+        env:
+          JEI_STORE_PASSWORD: ${{ secrets.JEI_STORE_PASSWORD }}
+          JEI_KEY_ALIAS: ${{ secrets.JEI_KEY_ALIAS }}
+          JEI_KEY_PASSWORD: ${{ secrets.JEI_KEY_PASSWORD }}
+        run: gradle :app:assembleRelease --stacktrace
 
       - name: Verify built APK identity before publication
         run: |
-          "$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk > /tmp/jei-apk-badging.txt
+          "$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/release/app-release.apk > /tmp/jei-apk-badging.txt
           python -m scripts.verify_android_apk --badging /tmp/jei-apk-badging.txt
 
       - name: Package
-        run: cp app/build/outputs/apk/debug/app-debug.apk "JEI_Stock_Radar_V3.apk"
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: JEI-Stock-Radar-V3-APK
-          path: "JEI_Stock_Radar_V3.apk"
-          if-no-files-found: error
-          retention-days: 30
+        run: cp app/build/outputs/apk/release/app-release.apk "JEI_Stock_Radar_V3.apk"
 
       - name: Verify stable update signer
         shell: bash
@@ -163,7 +169,35 @@ jobs:
           "$ANDROID_SDK_ROOT/build-tools/35.0.0/apksigner" verify --print-certs "JEI_Stock_Radar_V3.apk" > "$cert_report"
           python -m scripts.verify_android_apk --cert-report "$cert_report" --expected-cert "$expected"
 
+      - name: Check Android upgrade version is newer
+        id: upgrade
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          from scripts.verify_android_apk import verify
+          old=json.loads(Path('remote/update.json').read_text(encoding='utf-8'))
+          current=verify(Path('/tmp/jei-apk-badging.txt').read_text(encoding='utf-8'),Path('app/build.gradle').read_text(encoding='utf-8'))
+          if type(old.get('versionCode')) is not int or current['versionCode'] < old['versionCode']:
+              raise SystemExit('Published version is invalid or APK is a downgrade')
+          if current['versionCode'] == old['versionCode'] and current['versionName'] != old.get('versionName'):
+              raise SystemExit('A versionCode cannot be reused for a different versionName')
+          print('publish='+('true' if current['versionCode'] > old['versionCode'] else 'false'))
+          PY
+
+      - name: Upload verified signed APK artifact
+        if: steps.upgrade.outputs.publish == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: JEI-Stock-Radar-V3-APK
+          path: "JEI_Stock_Radar_V3.apk"
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Publish stable APK download
+        if: steps.upgrade.outputs.publish == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -174,3 +208,30 @@ jobs:
               --title "JEI Stock Radar latest" \
               --notes "Latest installable JEI Android build. The app checks remote/update.json and downloads this APK when an update is available."
           fi
+
+      - name: Advertise version only after signed APK release asset exists
+        if: steps.upgrade.outputs.publish == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='807326371643b70ec340b8fd526568adb9ff86c8186e059ca6bc5d0633e4cbdd'
+          git config user.name "JEI Android Release Bot"
+          git config user.email "actions@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            python -m scripts.publish_android_update_manifest \
+              --badging /tmp/jei-apk-badging.txt \
+              --cert-report "$RUNNER_TEMP/jei-signing-cert.txt" \
+              --expected-cert "$expected"
+            if git diff --quiet -- remote/update.json; then
+              echo 'Verified Android update metadata already current'
+              exit 0
+            fi
+            git add remote/update.json
+            git commit -m "data: advertise verified Android release version"
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            git reset --hard origin/main
+            python -m scripts.verify_android_apk --badging /tmp/jei-apk-badging.txt
+          done
+          echo 'APK released but update metadata still unavailable; leave old advertised version'
+          exit 1
