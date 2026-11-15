@@ -17,6 +17,9 @@ from scripts.send_line_brief import TAIPEI, can_send, push
 
 ROOT = Path(__file__).resolve().parents[1]
 FEED = ROOT / "remote" / "system.json"
+# Market feed targets five-minute updates; allow one extra update cycle
+# for scheduler/network jitter, never 35-minute-old trading alerts.
+MAX_LIVE_LAG_SECONDS = 10 * 60
 
 
 def is_whole_count(value):
@@ -77,7 +80,7 @@ def live_gate_reasons(feed, now):
         lag = (local - stamp).total_seconds()
         if lag < -120:
             reasons.append("行情更新時間晚於系統時間")
-        elif lag > 35 * 60:
+        elif lag > MAX_LIVE_LAG_SECONDS:
             reasons.append(f"行情更新已延遲 {int(lag // 60)} 分鐘")
     return reasons
 
