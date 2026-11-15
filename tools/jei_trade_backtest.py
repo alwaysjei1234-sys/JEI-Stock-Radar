@@ -4,6 +4,8 @@ CSV columns: strategy_id,ticker,entry_date,exit_date,gross_return,regime,split.
 gross_return is decimal fraction (e.g. 0.03 means +3%), not percent.
 Only rows marked split=oos count toward promotion evidence.
 The unleveraged simulation caps net losses at the allocated trade capital.
+Portfolio compounding and drawdown are unavailable if trade holding periods overlap
+without capital allocation weights; trade-level metrics remain available.
 """
 import argparse
 import csv
@@ -41,26 +43,42 @@ def evaluate(rows, round_trip_cost):
         if row["split"] == "oos":
             net = max(-1.0, gross - round_trip_cost)
             evaluated.setdefault(row["strategy_id"], []).append(
-                (end, net, row["regime"]))
+                (start, end, net, row["regime"]))
     output = {}
     for name, trades in evaluated.items():
-        trades.sort(key=lambda x: x[0])
-        returns = [r for _, r, _ in trades]
-        equity, peak, max_dd = 1.0, 1.0, 0.0
-        for _, closed in groupby(trades, key=lambda trade: trade[0]):
-            equity *= math.prod(sorted(1 + ret for _, ret, _ in closed))
-            peak = max(peak, equity)
-            max_dd = max(max_dd, (peak - equity) / peak)
+        trades.sort(key=lambda x: x[1])
+        returns = [ret for _, _, ret, _ in trades]
+        # A strategy holding multiple positions requires capital allocation data
+        # to derive portfolio equity. Never multiply each overlapping trade as
+        # if it had the full account balance invested.
+        latest_end = dt.date.min
+        has_overlapping_positions = False
+        for start, end, _, _ in sorted(trades, key=lambda row: (row[0], row[1])):
+            if start < latest_end:
+                has_overlapping_positions = True
+            latest_end = max(latest_end, end)
+        if has_overlapping_positions:
+            max_dd = None
+            compounded_return = None
+            drawdown_basis = "unavailable_overlapping_positions_without_capital_weights"
+        else:
+            equity, peak, max_dd = 1.0, 1.0, 0.0
+            for _, closed in groupby(trades, key=lambda trade: trade[1]):
+                equity *= math.prod(1 + ret for _, _, ret, _ in closed)
+                peak = max(peak, equity)
+                max_dd = max(max_dd, (peak - equity) / peak)
+            compounded_return = equity - 1
+            drawdown_basis = "full_capital_reinvested_nonoverlapping_trades_by_exit_date"
         output[name] = {
             "oos_trades": len(returns),
-            "market_regimes": len({regime for _, _, regime in trades if regime}),
+            "market_regimes": len({regime for _, _, _, regime in trades if regime}),
             "net_expectancy": statistics.mean(returns),
             "win_rate": sum(ret > 0 for ret in returns) / len(returns),
             "max_drawdown": max_dd,
-            "drawdown_basis": "compounded_closed_trades_by_exit_date",
-            "net_compounded_return": equity - 1,
+            "drawdown_basis": drawdown_basis,
+            "net_compounded_return": compounded_return,
             "cost_per_round_trip": round_trip_cost,
-            "note": "Trade-level OOS metrics only; does not prove walk-forward, data integrity or no lookahead"}
+            "note": "Trade-level OOS metrics only; overlapping positions need capital weights for portfolio performance; no proof of walk-forward, data integrity or no lookahead"}
     return output
 
 def main():
