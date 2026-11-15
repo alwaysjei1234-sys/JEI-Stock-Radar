@@ -1,0 +1,58 @@
+name: JEI Read-only Legacy Android Signer Fingerprint Probe
+on:
+  push:
+    branches: [fix/android-signer-probe-20261116]
+    paths: ['.github/workflows/diagnose-android-legacy-signer.yml']
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Restore historical v1 signing cache read-only
+        id: v1
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: jei-android-debug-signing-v1
+          lookup-only: false
+      - name: Verify v1 against original Android certificate, without exposing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          path="$HOME/.android/debug.keystore"
+          if [ ! -s "$path" ]; then
+            echo "Legacy v1 signer cache: MISSING (no private key recovered)"
+          else
+            fingerprint="$(keytool -exportcert -keystore "$path" -storepass android -alias androiddebugkey 2>/dev/null | openssl dgst -sha256 | awk '{print $NF}')"
+            if [ "$fingerprint" = '807326371643b70ec340b8fd526568adb9ff86c8186e059ca6bc5d0633e4cbdd' ]; then
+              echo 'Legacy v1 signer cache: MATCH - original signer remains available in runner cache'
+            else
+              echo 'Legacy v1 signer cache: MISMATCH - not usable for in-place upgrade'
+            fi
+          fi
+          rm -f "$path"
+      - name: Restore historical v2 signing cache read-only
+        id: v2
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: jei-android-debug-signing-v2
+          lookup-only: false
+      - name: Verify v2 against original Android certificate, without exposing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          path="$HOME/.android/debug.keystore"
+          if [ ! -s "$path" ]; then
+            echo "Legacy v2 signer cache: MISSING (no private key recovered)"
+          else
+            fingerprint="$(keytool -exportcert -keystore "$path" -storepass android -alias androiddebugkey 2>/dev/null | openssl dgst -sha256 | awk '{print $NF}')"
+            if [ "$fingerprint" = '807326371643b70ec340b8fd526568adb9ff86c8186e059ca6bc5d0633e4cbdd' ]; then
+              echo 'Legacy v2 signer cache: MATCH - original signer remains available in runner cache'
+            else
+              echo 'Legacy v2 signer cache: MISMATCH - not usable for in-place upgrade'
+            fi
+          fi
+          rm -f "$path"
