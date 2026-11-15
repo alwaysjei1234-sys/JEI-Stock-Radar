@@ -96,6 +96,38 @@ class EmptyPickSessionTests(unittest.TestCase):
         incomplete=archive(2);incomplete['days'][DAYS[0]]={'1000':100.}
         with self.assertRaises(ValueError):u.update(feed(DAYS[1]),incomplete,old,now(DAYS[1]))
 
+    def test_missing_entire_official_archive_day_cannot_skip_signal_cohort(self):
+        old, _, _ = u.update(feed(DAYS[0], False), archive(1), prior(), now(DAYS[0]))
+        missing = archive(3)
+        missing['days'].pop(DAYS[1])
+        self.assertNotIn(DAYS[1], missing['days'])
+        with self.assertRaisesRegex(ValueError, "尚未記錄或缺少官方收盤行情"):
+            u.update(feed(DAYS[2], False), missing, old, now(DAYS[2]))
+        self.assertEqual([p["day"] for p in old["picks"]], [DAYS[0]] * 5)
+
+    def test_confirmed_market_closure_does_not_create_fictitious_gap(self):
+        # 2026-10-23 was a confirmed unscheduled closure and 10-26 a holiday.
+        before, after = "2026-10-22", "2026-10-27"
+        prices = {'schema': 1, 'kind': 'official_daily_close',
+                  'days': {day: {str(1000+i): 100.0 for i in range(600)}
+                           for day in (before, after)}}
+        old, _, captured = u.update(feed(before, False), prices, prior(), now(before))
+        self.assertTrue(captured)
+        new, _, captured = u.update(feed(after, False), prices, old, now(after))
+        self.assertTrue(captured)
+        self.assertEqual(len(new['picks']), 10)
+
+    def test_nonfinite_or_fractional_close_count_is_not_verified(self):
+        prices = archive(1)
+        for count in (float('nan'), float('inf'), 500.5, True):
+            with self.subTest(count=count):
+                f = feed(DAYS[0], False)
+                f['market']['close_count'] = count
+                self.assertFalse(u.close_verified(f, prices, DAYS[0]))
+                state, _, captured = u.update(f, prices, prior(), now(DAYS[0]))
+                self.assertFalse(captured)
+                self.assertEqual(state['picks'], [])
+
     def test_first_weekend_bootstrap_and_consecutive_empty_sessions(self):
         a=archive(5);f=feed(DAYS[4]);saturday=now('2026-11-07')
         ledger,_,captured=u.update(f,a,prior(),saturday)
