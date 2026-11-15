@@ -12,7 +12,7 @@ NOW = datetime(2026, 10, 20, 10, 15, tzinfo=TZ)
 def feed():
     return {
         "data_date": "2026-10-20",
-        "updated_at": "2026-10-20 10:00",
+        "updated_at": "2026-10-20 10:10",
         "market": {
             "mode": "盤中即時",
             "stale": False,
@@ -39,6 +39,15 @@ class IntradayLineAlertTests(unittest.TestCase):
             with self.subTest(day=day):
                 self.assertIn("交易所休市", live_gate_reasons(document, now))
                 self.assertIsNone(build_alert(document, now))
+
+    def test_ten_minute_boundary_and_old_red_risk_are_suppressed(self):
+        f = feed()
+        f["updated_at"] = "2026-10-20 10:05"
+        self.assertTrue(trusted_live(f, NOW), "exactly ten minutes is eligible")
+        f["updated_at"] = "2026-10-20 10:04"
+        self.assertIn("行情更新已延遲 11 分鐘", live_gate_reasons(f, NOW))
+        self.assertFalse(trusted_live(f, NOW))
+        self.assertIsNone(build_alert(f, NOW))
 
     def test_rejects_false_or_insufficient_breadth(self):
         for fields in (
