@@ -156,6 +156,16 @@ class BriefTests(unittest.TestCase):
         self.assertIn("暫無可信來源",str(report))
         self.assertNotIn("NEVER_PUBLIC",str(report))
 
+    def test_brief_never_verifies_a_close_dated_on_a_confirmed_closure(self):
+        for day in ("2026-10-23", "2026-10-26", "2026-11-15"):
+            now = datetime.fromisoformat(day + "T18:00:00+08:00")
+            forged_close = dict(FEED, data_date=day)
+            for edition in ("close", "morning"):
+                with self.subTest(day=day, edition=edition):
+                    ok, note = b.quality(forged_close, edition, now)
+                    self.assertFalse(ok)
+                    self.assertIn("休市", note)
+
     def test_morning_rejects_an_older_close_when_a_session_is_missing(self):
         now = datetime(2026, 11, 16, 8, 30, tzinfo=ZoneInfo("Asia/Taipei"))
         older = dict(FEED, data_date="2026-11-12")
