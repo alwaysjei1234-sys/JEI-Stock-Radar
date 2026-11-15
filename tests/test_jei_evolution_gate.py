@@ -30,6 +30,23 @@ class EvolutionTests(unittest.TestCase):
         x["proposals"] = x["proposals"][:1]
         self.assertEqual(evaluate(x)["decision"], "REJECT")
 
+    def test_required_roles_must_have_distinct_model_ids(self):
+        for proposals in (
+            [{"role": "researcher", "model_id": "model-a"},
+             {"role": "critic", "model_id": "model-a"},
+             {"role": "observer", "model_id": "model-b"}],
+            [{"role": "researcher", "model_id": "model-a"},
+             {"role": "critic"},
+             {"role": "researcher", "model_id": "model-b"}],
+            [{"role": "researcher", "model_id": "model-a"},
+             {"role": "critic", "model_id": " model-a "}],
+        ):
+            with self.subTest(proposals=proposals):
+                bundle = {**example(), "proposals": proposals}
+                result = evaluate(bundle)
+                self.assertEqual(result["decision"], "REJECT")
+                self.assertIn("need_independent_researcher_and_critic_models", result["reasons"])
+
     def test_leakage_rejected(self):
         x = example()
         x["lookahead_detected"] = True
