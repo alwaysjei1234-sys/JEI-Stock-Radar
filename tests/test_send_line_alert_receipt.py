@@ -56,6 +56,13 @@ class IntradayReceiptTests(unittest.TestCase):
         r,c,e=self.run_main(document=doc)
         self.assertEqual((r['status'],r['reason_code'],c),('blocked','live_gate',0))
 
+    def test_undated_risk_blocks_even_a_fresh_red_alert(self):
+        doc = feed()
+        del doc["risk"]["as_of"]
+        receipt, calls, error = self.run_main(document=doc)
+        self.assertEqual((receipt["status"], receipt["reason_code"], calls, error),
+                         ("blocked", "live_gate", 0, None))
+
     def test_valid_feed_without_alert_does_not_call_push(self):
         doc=feed();doc['risk'].update(score=65,level='yellow')
         r,c,e=self.run_main(document=doc)

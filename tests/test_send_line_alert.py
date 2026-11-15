@@ -20,7 +20,7 @@ def feed():
             "live_count": 700,
             "close_count": 2000,
         },
-        "risk": {"level": "red", "score": 85, "reasons": ["測試風險"]},
+        "risk": {"as_of": "2026-10-20", "level": "red", "score": 85, "reasons": ["測試風險"]},
     }
 
 
@@ -35,6 +35,7 @@ class IntradayLineAlertTests(unittest.TestCase):
             document = feed()
             document["data_date"] = now.date().isoformat()
             document["updated_at"] = now.strftime("%Y-%m-%d 10:00")
+            document["risk"]["as_of"] = document["data_date"]
             with self.subTest(day=day):
                 self.assertIn("交易所休市", live_gate_reasons(document, now))
                 self.assertIsNone(build_alert(document, now))
