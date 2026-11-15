@@ -159,10 +159,11 @@ def parse_jsonl(text):
         raise ValueError("oversized external signal export")
     result = []
     for line_no, raw in enumerate(text.splitlines(), 1):
-        if not raw.strip():
-            continue
+        # Bound *all* input lines, including whitespace-only ones, before skip.
         if len(raw) > MAX_LINE_CHARS:
             raise ValueError("oversized signal at line " + str(line_no))
+        if not raw.strip():
+            continue
         try:
             row = json.loads(raw)
         except ValueError as exc:
