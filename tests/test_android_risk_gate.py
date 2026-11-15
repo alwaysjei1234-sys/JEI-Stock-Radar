@@ -32,6 +32,12 @@ class AndroidRiskGateTests(unittest.TestCase):
                       'static boolean taipeiMarketOpen(',
                       'static boolean trustedLiveFeed(')
         bodies = '\n'.join(method(source, s) for s in signatures)
+        # Compile the actual production freshness constant into the extracted
+        # JVM harness rather than silently testing a separate threshold.
+        constants = [line.strip() for line in source.splitlines()
+                     if 'MAX_LIVE_LAG_MILLIS =' in line]
+        self.assertEqual(len(constants), 1)
+        bodies = constants[0] + '\n' + bodies
         harness = '''import java.text.*;
 import java.util.*;
 public class NativeRiskGateHarness {
