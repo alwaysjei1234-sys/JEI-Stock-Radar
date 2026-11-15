@@ -106,8 +106,11 @@ def retained_close_verified(feed,archive,now):
 def quality(feed,edition,now,archive=None):
     market=feed.get("market") or {}
     raw=str(feed.get("data_date") or "")
-    try: lag=(now.date()-date.fromisoformat(raw)).days
+    try: source_day=date.fromisoformat(raw)
     except ValueError: return False,"市場資料日缺失"
+    if closure_reason(source_day) is not None:
+        return False,"資料日為交易所休市日："+raw
+    lag=(now.date()-source_day).days
     if edition=="morning" and retained_close_verified(feed,archive,now):
         return True,"已核對封存收盤基準日 "+raw+"；歷史唯讀，非今日即時行情或新選股"
     if edition=="morning" and lag>0:
