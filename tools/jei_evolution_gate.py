@@ -5,6 +5,7 @@ This tool does not call any model, place orders, or deploy a strategy.
 """
 import argparse
 import json
+import math
 import pathlib
 import sys
 
@@ -32,9 +33,23 @@ def evaluate(bundle):
     if bundle.get("costs_included") is not True:
         reasons.append("transaction_costs_not_verified")
     for label, metrics in (("candidate", candidate), ("baseline", baseline)):
-        for key in ("oos_trades", "market_regimes", "net_expectancy", "win_rate", "max_drawdown"):
-            if type(metrics.get(key)) not in (int, float):
+        trades = metrics.get("oos_trades")
+        regimes = metrics.get("market_regimes")
+        checks = {
+            "oos_trades": type(trades) is int and trades >= 0,
+            "market_regimes": type(regimes) is int and regimes >= 0
+            and (type(trades) is not int or regimes <= trades),
+        }
+        for key in ("net_expectancy", "win_rate", "max_drawdown"):
+            value = metrics.get(key)
+            checks[key] = type(value) is int or (type(value) is float and math.isfinite(value))
+            if checks[key] and key != "net_expectancy":
+                checks[key] = 0 <= value <= 1
+        for key, valid in checks.items():
+            if metrics.get(key) is None:
                 reasons.append(label + "_missing_" + key)
+            elif not valid:
+                reasons.append(label + "_invalid_" + key)
     if reasons:
         return {"decision": "REJECT", "reasons": reasons, "auto_deploy": False}
     if candidate["oos_trades"] < MIN_TRADES:
