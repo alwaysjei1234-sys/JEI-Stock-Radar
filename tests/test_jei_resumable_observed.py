@@ -120,6 +120,25 @@ class ResumeTests(unittest.TestCase):
                     self.assertEqual(recovered["checkpoint_recovery"], "invalid_checkpoint_recomputed")
                     self.assertEqual(recovered["observed_rows"], cold["observed_rows"])
 
+    def test_recomputes_valid_shaped_cache_with_wrong_or_missing_results(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source, checkpoint, output = (root / name for name in ("source", "checkpoint", "output"))
+            entry = {"completed": 31, "win_rate_pct": 55, "avg_estimated_net_pct": 1.2}
+            source.write_text(json.dumps({"groups": {"a": {"3": entry}, "b": {}}}))
+            cold = run_batches(source, checkpoint, output)
+            saved = json.loads(checkpoint.read_text())
+            row = saved["completed_batches"]["a"][0]
+            for rows in ([], [{**row, "win_rate_pct": 95}]):
+                with self.subTest(rows=rows):
+                    save_checkpoint(checkpoint, saved["source_sha256"], saved["strategy"],
+                                    saved["parameters"], {**saved["completed_batches"], "a": rows})
+                    with self.assertRaisesRegex(ValueError, "invalid_observed_checkpoint_rows"):
+                        run_batches(source, checkpoint, output)
+                    result = run_batches(source, checkpoint, output, recover_invalid_checkpoint=True)
+                    self.assertEqual(result["checkpoint_recovery"], "invalid_checkpoint_recomputed")
+                    self.assertEqual(result["observed_rows"], cold["observed_rows"])
+
     def test_source_change_invalidates_old_checkpoint(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
