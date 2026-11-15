@@ -50,5 +50,22 @@ class EvolutionTests(unittest.TestCase):
         del x["candidate"]["net_expectancy"]
         self.assertEqual(evaluate(x)["decision"], "REJECT")
 
+    def test_invalid_metric_values_cannot_reach_review(self):
+        for label, key, value in (
+            ("candidate", "net_expectancy", float("nan")),
+            ("baseline", "net_expectancy", float("-inf")),
+            ("candidate", "win_rate", 1.1),
+            ("candidate", "max_drawdown", -0.1),
+            ("candidate", "oos_trades", 100.5),
+            ("candidate", "market_regimes", 4.5),
+            ("baseline", "market_regimes", 121),
+        ):
+            with self.subTest(label=label, key=key, value=value):
+                bundle = example()
+                bundle[label][key] = value
+                result = evaluate(bundle)
+                self.assertEqual(result["decision"], "REJECT")
+                self.assertIn(f"{label}_invalid_{key}", result["reasons"])
+
 if __name__ == "__main__":
     unittest.main()
