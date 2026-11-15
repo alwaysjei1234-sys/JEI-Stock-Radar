@@ -52,7 +52,8 @@ def close_verified(feed, archive, date):
     count = market.get("close_count")
     if (feed.get("data_date") != date or market.get("mode") != "今日收盤"
             or market.get("stale") is not False or isinstance(count, bool)
-            or not isinstance(count, (int, float)) or count < 500):
+            or not isinstance(count, (int, float)) or not math.isfinite(count)
+            or count < 500 or not float(count).is_integer()):
         return False
     if not is_safe_public_holdings(feed.get("holdings")):
         return False
@@ -277,11 +278,17 @@ def update(feed, archive, prior, now):
     bootstrap=(not sealed_days and asof in days and asof==max(days)
                and 0 <= (local.date()-datetime.strptime(asof,"%Y-%m-%d").date()).days <= 7
                if re.fullmatch(r"\d{4}-\d{2}-\d{2}",asof) else False)
-    # Do not append a later session when the official price archive has gaps.
-    if sealed_days and asof==today and asof in days and close_verified(feed,archive,asof) and asof>max(sealed_days):
-        earlier=[d for d in days if max(sealed_days)<d<asof]
-        if earlier:
-            raise ValueError("封存日之間存在尚未記錄的交易日，停止新增以避免績效樣本偏差")
+    # Require every expected exchange session to have an immutable observation.
+    # Checking only dates that are present in the archive misses an entire
+    # absent official-close file and silently biases the selected cohorts.
+    # Confirm unexpected exchange closures in market_sessions before resuming.
+    if (sealed_days and asof==today and asof in days
+            and close_verified(feed, archive, asof) and asof > max(sealed_days)):
+        expected = next_expected_session(max(sealed_days))
+        if expected != asof:
+            raise ValueError(
+                "封存日之間存在尚未記錄或缺少官方收盤行情的交易日，"
+                "須補回當日來源或核實休市日期，停止新增以避免績效樣本偏差")
     if asof==today or bootstrap:
         stamp = None
         try:
