@@ -15,7 +15,7 @@ def feed(**changes):
         "data_date": "2026-10-16",
         "updated_at": "2026-10-16 10:10",
         "market": {"mode": "盤中即時", "stale": False, "live_valid": True, "live_count": 1580, "close_count": 2000},
-        "risk": {"level": "red", "score": 91, "label": "高度警戒", "reasons": ["上漲家數縮減"]},
+        "risk": {"as_of": "2026-10-16", "level": "red", "score": 91, "label": "高度警戒", "reasons": ["上漲家數縮減"]},
         "monster": [{"code": "2344", "name": "測試強勢股", "score": 97, "change_pct": 5.2, "price": 50.5}],
     }
     return {**base, **changes}
@@ -51,7 +51,7 @@ class LineAlertTests(unittest.TestCase):
         self.assertIsNone(alert.build_alert(base, NOW + timedelta(days=1)))
 
     def test_normal_market_only_high_threshold_momentum(self):
-        normal = feed(risk={"level": "green", "score": 26, "reasons": []})
+        normal = feed(risk={"as_of": "2026-10-16", "level": "green", "score": 26, "reasons": []})
         result = alert.build_alert(normal, NOW)
         self.assertIn("強勢股", result["title"])
         self.assertEqual(result["edition"], "intraday_momentum")
@@ -59,7 +59,7 @@ class LineAlertTests(unittest.TestCase):
         self.assertNotIn("漲停預測", str(result).replace("非漲停預測", ""))
         slow = dict(normal, monster=[{"code": "2344", "name": "慢股", "score": 92, "change_pct": 3, "price": 50}])
         self.assertIsNone(alert.build_alert(slow, NOW))
-        risky = dict(normal, risk={"level": "yellow", "score": 60})
+        risky = dict(normal, risk={"as_of": "2026-10-16", "level": "yellow", "score": 60})
         self.assertIsNone(alert.build_alert(risky, NOW))
 
     def test_push_disabled_by_default_even_when_eligible(self):
@@ -86,7 +86,7 @@ class LineAlertTests(unittest.TestCase):
         from scripts import send_line_brief
         self.assertTrue(send_line_brief.can_send(result, "intraday_risk", NOW, "true", "example-token", "U" + "a" * 32)[0])
         self.assertFalse(send_line_brief.can_send(result, "close", NOW, "true", "example-token", "U" + "a" * 32)[0])
-        momentum = alert.build_alert(feed(risk={"level":"green", "score":26}), NOW)
+        momentum = alert.build_alert(feed(risk={"as_of":"2026-10-16", "level":"green", "score":26}), NOW)
         self.assertEqual(momentum["edition"], "intraday_momentum")
         self.assertNotEqual(result["edition"], momentum["edition"], "early momentum cannot suppress later crash warning")
         self.assertIn('report["date"]+"/"+edition', __import__("inspect").getsource(send_line_brief.push))

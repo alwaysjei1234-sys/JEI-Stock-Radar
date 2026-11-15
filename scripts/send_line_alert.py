@@ -53,8 +53,8 @@ def live_gate_reasons(feed, now):
     else:
         if risk.get("actionable") is False:
             reasons.append("行情風控明確暫停新判讀")
-        if "as_of" in risk and risk["as_of"] != local.date().isoformat():
-            reasons.append("風控資料日期與今天不同")
+        if risk.get("as_of") != local.date().isoformat():
+            reasons.append("風控資料日期缺漏或與今天不同")
     if m.get("no_new_picks") is True or m.get("actionable") is False:
         reasons.append("市場明確暫停新判讀")
     count = m.get("live_count")
