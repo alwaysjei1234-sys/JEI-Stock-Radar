@@ -655,6 +655,35 @@ check('Network recommendation success requires candidates',()=>assert.ok(py.incl
 check('Intraday quotes cannot masquerade as official post-close',()=>{assert.ok(py.includes('if live_valid and market_open:'));assert.ok(py.includes('source_is_today=(latest_close_date is not None and not known_closure')&&py.includes('final_twse_dates=={latest_close_date}')&&py.includes('final_tpex_dates=={latest_close_date}'));assert.ok(py.includes('if official_close_verified:')&&py.includes('and not market_open and now.hour*60+now.minute>=810'));assert.ok(py.includes('fetch_latest_offhours_close'))});
 
 check('TPEx close feed rejects partial responses',()=>{assert.ok(py.includes('len(unique)<500'));assert.ok(py.includes('coverage too low'));assert.ok(py.includes('return list(unique.values())'))});
+check('Android and remote dashboard show actual MIS quote check rather than a missing timestamp',()=>{
+ for(const path of ['remote/index.html','app/src/main/assets/index.html']){
+  const page=fs.readFileSync(path,'utf8');
+  const code=page.match(/^function renderSystem\(\)\{[\s\S]*?(?=\nfunction freshPartialQuotes\()/m)?.[0];
+  assert.ok(code,path+' renderSystem source missing');
+  const elements={};
+  const funcs={};
+  for(const name of ['renderPartialQuotes','renderUpdateStamp','updateFeedGate','updateFeedFreshness',
+                     'renderAttackScreener','renderPatternRadar','renderRank','renderAvoidChase',
+                     'renderFlow','renderCloseArchive','renderSectors','renderSectorHeatmap',
+                     'renderBacktest','renderPriority','renderWebReco','renderHoldings','renderHomeQuick']){
+   funcs[name]=()=>{};
+  }
+  const feed={updated_at:'2026-11-16 09:34',data_date:'2026-11-16',risk:{level:'green',score:20,label:'正常',actionable:true},
+   market:{mode:'盤中即時',status:'交易中',close_count:1900,live_count:962,live_valid:true,
+    live_diagnostics:{mis_stats:{quotes_checked_at:'2026-11-16T09:37:15.105982+08:00'},required_trades:500}}};
+  const ctx={...funcs,system:feed,isTrustedFeed:()=>true,isRecentCloseObservation:()=>false,
+    riskEmoji:()=> '🟢',$:id=>elements[id]??=( {className:'',textContent:'',style:{}} )};
+  vm.runInNewContext(code+';globalThis.show=renderSystem;',ctx);
+  ctx.show();
+  assert.match(elements.riskTime.textContent,/最近檢查 2026-11-16 09:37/,path+' needs real MIS quote check');
+  assert.doesNotMatch(elements.riskTime.textContent,/未提供/);
+  delete feed.market.live_diagnostics.mis_stats.quotes_checked_at;
+  feed.market.live_diagnostics.updater_time_taipei='2026-11-16 09:38';
+  ctx.show();
+  assert.match(elements.riskTime.textContent,/最近檢查 2026-11-16 09:38/,path+' falls back to updater timestamp');
+ }
+});
+
 if(passed+failed<30){console.error('FAIL expected at least 30 independent checks');process.exitCode=1;}
 console.log(`JEI smoke summary: ${passed}/${passed+failed} passed (${Math.round(100*passed/(passed+failed))}%)`);
 
