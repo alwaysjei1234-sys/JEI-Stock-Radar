@@ -150,6 +150,8 @@ check('Feed freshness rejects old, stale, or mislabeled intraday quotes',()=>{
  assert.equal(ctx.verify({...ok,market:{...ok.market,live_count:499}},day),false,'thin live coverage is untrusted');
  assert.equal(ctx.verify(ok,after),false,'old intraday feed cannot count as live after close');
  assert.equal(ctx.verify({...ok,updated_at:'2026-10-14 09:00'},day),false,'old but same-day intraday feed must fail');
+ assert.equal(ctx.verify(ok,new Date('2026-10-14T02:10:00Z')),true,'10-minute-old verified execution is the inclusive maximum');
+ assert.equal(ctx.verify(ok,new Date('2026-10-14T02:11:00Z')),false,'UI must not keep trading on a 11-minute-old feed while LINE and Android have stopped');
  assert.equal(ctx.verify({...ok,updated_at:'2026-10-14 10:05'},day),false,'future feed timestamp must fail');
 });
 check('Browser and Android dashboard reject contradictory or incomplete market data',()=>{
@@ -162,6 +164,7 @@ check('Browser and Android dashboard reject contradictory or incomplete market d
   const feed={updated_at:'2026-10-14 10:00',data_date:'2026-10-14',risk:{actionable:true},
    market:{mode:'盤中即時',stale:false,live_valid:true,live_count:700,close_count:2000}};
   assert.equal(ctx.verify(feed,now),true,path);
+  assert.equal(ctx.verify(feed,new Date('2026-10-14T02:11:00Z')),false,'expired 11-minute live snapshot must fail in both browser and Android: '+path);
   for(const patch of [
    {live_count:undefined},{live_count:'700'},{live_count:699.9},{live_count:699},
    {live_count:2001},{close_count:undefined},{close_count:Infinity},
