@@ -159,8 +159,10 @@ jobs:
           done
           echo "Feed publish failed after rebuilding on latest main"
           exit 1
-      - name: Optional verified intraday LINE risk or momentum alert
-        if: github.event_name == 'schedule'
+      - name: Dispatch verified high-risk LINE alert after every successful feed publish
+        # A push-triggered update is just as dangerous as a scheduled update;
+        # previous schedule-only gating silently skipped verified red risk alerts.
+        if: success() && (github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         env:
           JEI_LINE_ENABLED: ${{ vars.JEI_LINE_ENABLED }}
           # The owner requested activation after the real LINE push test.
@@ -171,7 +173,7 @@ jobs:
           JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
         run: python -m scripts.send_line_alert --result-path "${{ runner.temp }}/jei-line-intraday-result.json"
       - name: Preserve intraday LINE decision and API acceptance
-        if: always() && github.event_name == 'schedule'
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/upload-artifact@v4
         with:
           name: jei-line-intraday-result-${{ github.run_id }}-${{ github.run_attempt }}

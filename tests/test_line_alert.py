@@ -68,16 +68,21 @@ class LineAlertTests(unittest.TestCase):
             push.assert_not_called()
             build.assert_not_called()
 
-    def test_scheduled_line_alert_activation_requires_existing_global_opt_in(self):
+    def test_all_successful_feed_update_events_require_original_line_opt_in(self):
         from pathlib import Path
         workflow = (Path(__file__).resolve().parents[1] / ".github/workflows/update-system.yml").read_text(encoding="utf-8")
         self.assertIn("vars.JEI_LINE_ENABLED == 'true'", workflow,
-                      "a successful LINE test does not override the owner's master opt-in")
+                      "a code push still cannot bypass the owner's LINE master opt-in")
         self.assertIn("vars.JEI_LINE_ALERTS_ENABLED != 'false'", workflow,
-                      "intraday alerts must have a separate explicit off switch")
-        self.assertIn("if: github.event_name == 'schedule'", workflow,
-                      "a code push must not send a real market warning")
-        self.assertIn("python -m scripts.send_line_alert", workflow)
+                      "intraday alerts must retain their explicit off switch")
+        alert_step = workflow.split("Dispatch verified high-risk LINE alert after every successful feed publish", 1)[1]
+        self.assertIn("if: success()", alert_step.split("\\n      - name:", 1)[0],
+                      "an unpublished or failed feed must never notify")
+        self.assertIn("github.event_name == 'schedule'", alert_step)
+        self.assertIn("github.event_name == 'push'", alert_step,
+                      "after an authenticated verified market update, push also must check red risk")
+        self.assertIn("github.event_name == 'workflow_dispatch'", alert_step)
+        self.assertIn("python -m scripts.send_line_alert", alert_step)
 
     def test_alert_can_reuse_daily_line_quota_gate(self):
         self.assertEqual(alert.push.__module__, "scripts.send_line_brief")
