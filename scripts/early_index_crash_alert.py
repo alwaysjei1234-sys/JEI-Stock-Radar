@@ -18,6 +18,10 @@ from scripts.update_system import fetch_mis_channels, mis_index_change
 # One independently verified TAIEX value is enough for an EARLY INDEX warning;
 # the broad-market red score still requires >=500 current stock trades and 35%.
 INDEX_CRASH_THRESHOLD_PCT = -2.0
+# Separate LINE retry-key buckets allow one additional notification at each
+# *worsening* crash threshold. No more than three tiers per trading date.
+INDEX_ESCALATION_THRESHOLD_PCT = -4.0
+INDEX_EXTREME_THRESHOLD_PCT = -6.0
 INDEX_CHANNEL = "tse_t00.tw"
 
 
@@ -34,14 +38,24 @@ def report_for_index(messages, now):
     if pct > INDEX_CRASH_THRESHOLD_PCT:
         return None, "decline_below_threshold"
     day = local.date().isoformat()
+    # The LINE sender deduplicates by date and edition. With a single fixed
+    # edition, an accepted -2% notice silently suppresses a later -4%/-6%
+    # escalation. The threshold tier is therefore part of the edition.
+    # Never invent broader market confirmation from this single-index signal.
+    if pct <= INDEX_EXTREME_THRESHOLD_PCT:
+        edition, threshold = "intraday_index_crash_6pct", 6
+    elif pct <= INDEX_ESCALATION_THRESHOLD_PCT:
+        edition, threshold = "intraday_index_crash_4pct", 4
+    else:
+        edition, threshold = "intraday_index_crash", 2
     return {
-        "date": day, "edition": "intraday_index_crash", "status": "ready",
+        "date": day, "edition": edition, "status": "ready",
         "title": "🚨 JEI 台股加權指數快速急跌預警",
         "note": "獨立 TWSE MIS 加權指數即時報價已驗證；全市場廣度和個股尚未獨立驗證，不代表實際下單指令。",
         "blocks": [
             {"title": "加權指數快速警示", "items": [
                 f"已驗證加權指數相對昨收 {pct:.2f}%",
-                "盤中已達 -2% 急跌門檻；留意槓桿、持股風險與快速擴大的賣壓。"]},
+                f"盤中已達 -{threshold}% 急跌門檻；留意槓桿、持股風險與快速擴大的賣壓。"]},
             {"title": "驗證邊界", "items": [
                 "僅加權指數單一獨立來源，尚非全市場股票廣度紅燈。",
                 "請查看 JEI 系統更新後的廣度、流動性與持股防守分級。"]},
