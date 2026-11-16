@@ -9,8 +9,8 @@ on:
       - 'scripts/market_feed_watchdog.py'
       - 'scripts/update_system.py'
   schedule:
-    - cron: '32,47 0 * * 1-5'
-    - cron: '2,17,32,47 1-11 * * 1-5'
+    - cron: '33,48 0 * * 1-5'
+    - cron: '4,19,34,49 1-11 * * 1-5'
   workflow_run:
     workflows: ["JEI Research Engine Tests"]
     types: [completed]
