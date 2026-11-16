@@ -30,7 +30,7 @@ class RecipientProfileSafetyTests(unittest.TestCase):
             return response
         self.assertEqual(diag.check_reachability(TOKEN,UID,opener),"profile_accessible")
         self.assertEqual(response.read_count,0)
-        self.assertEqual(calls[0][1:],[ "GET", 10])
+        self.assertEqual(calls[0][1:],("GET",10))
         self.assertEqual(len(calls),1)
 
     def test_missing_token_or_invalid_id_refuse_network(self):
