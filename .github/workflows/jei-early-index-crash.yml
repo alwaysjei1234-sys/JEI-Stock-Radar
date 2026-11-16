@@ -1,0 +1,65 @@
+name: JEI Verified TAIEX Early Crash Siren
+
+# Independent single-index check can warn sooner than a 1,973-stock scan.
+# GitHub schedule is best-effort; the main market update runs this too.
+on:
+  schedule:
+    - cron: '2-57/5 1-5 * * 1-5'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/early_index_crash_alert.py'
+      - '.github/workflows/jei-early-index-crash.yml'
+  pull_request:
+    paths:
+      - 'scripts/early_index_crash_alert.py'
+      - 'tests/test_early_index_crash_alert.py'
+      - '.github/workflows/jei-early-index-crash.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reject fake stale or wrong-identity index alerts
+        run: python -m unittest discover -s tests -p 'test_early_index_crash_alert.py' -v
+
+  notify:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify TAIEX execution-price and anti-lookahead guard
+        run: |
+          python -m unittest discover -s tests -p 'test_mis_index_identity.py' -v
+          python -m unittest discover -s tests -p 'test_early_index_crash_alert.py' -v
+      - name: Independent verified index-only red/crash signal
+        env:
+          JEI_LINE_ENABLED: ${{ vars.JEI_LINE_ENABLED }}
+          JEI_LINE_ALERTS_ENABLED: ${{ vars.JEI_LINE_ENABLED == 'true' && vars.JEI_LINE_ALERTS_ENABLED != 'false' }}
+          JEI_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.JEI_LINE_CHANNEL_ACCESS_TOKEN }}
+          JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
+        run: python -m scripts.early_index_crash_alert --result-path "${{ runner.temp }}/jei-early-index-alert-result.json"
+      - name: Preserve allowlisted index siren/LINE receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jei-early-index-result-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/jei-early-index-alert-result.json
+          if-no-files-found: warn
+          retention-days: 14
