@@ -1,0 +1,101 @@
+name: JEI Stalled Market Feed Recovery
+# Independent backup if the primary 5-minute schedule is missed.
+on:
+  schedule:
+    - cron: '32,47 0 * * 1-5'
+    - cron: '2,17,32,47 1-11 * * 1-5'
+  workflow_run:
+    workflows: ["JEI Research Engine Tests"]
+    types: [completed]
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/market_feed_watchdog.py'
+      - 'tests/test_market_feed_watchdog.py'
+      - '.github/workflows/recover-stale-market-feed.yml'
+permissions:
+  contents: write
+concurrency:
+  # Coordinate with the primary five-minute market-feed writer.
+  group: jei-market-feed
+  cancel-in-progress: false
+jobs:
+  tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify watchdog clock and fail-closed recovery rules
+        run: python -m unittest discover -s tests -p 'test_market_feed_watchdog.py' -v
+  recover:
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.event_name != 'workflow_run' ||
+       (github.event.workflow_run.event == 'schedule' &&
+        github.event.workflow_run.head_branch == 'main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify recovery watchdog and primary builder syntax
+        run: |
+          python -m py_compile scripts/market_feed_watchdog.py scripts/update_system.py
+          python -m unittest discover -s tests -p 'test_market_feed_watchdog.py' -v
+      - name: Check if primary market feed is actually stalled
+        id: freshness
+        run: python -m scripts.market_feed_watchdog --input remote/system.json --output "$GITHUB_OUTPUT"
+      - name: Test market feed recovery before accessing official market APIs
+        if: steps.freshness.outputs.recover == 'true'
+        run: |
+          python -m unittest discover -s tests -p 'test_update_system_recovery.py' -v
+          python -m unittest discover -s tests -p 'test_validate_market_session.py' -v
+          python -m unittest discover -s tests -p 'test_mis_outage_probe.py' -v
+      - name: Rebuild only if the primary writer really stopped
+        if: steps.freshness.outputs.recover == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'JEI Market Recovery Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          for attempt in 1 2 3 4; do
+            if [ "$attempt" -gt 1 ]; then
+              git fetch origin main
+              git reset --hard origin/main
+              python -m scripts.market_feed_watchdog \
+                --input remote/system.json --output "$RUNNER_TEMP/recovery_check"
+              if grep -q '^recover=false$' "$RUNNER_TEMP/recovery_check"; then
+                echo 'Another worker recovered feed already; no write needed'
+                exit 0
+              fi
+              rm -f "$RUNNER_TEMP/recovery_check"
+            fi
+            python scripts/update_system.py
+            python -m scripts.validate_market_session remote/system.json
+            python -m scripts.market_feed_watchdog --input remote/system.json --expect-fresh
+            python -m scripts.update_pick_validation --report-only
+            if git diff --quiet -- remote/system.json remote/history.json remote/daily_prices.json remote/pick_validation.json; then
+              echo 'Feed unchanged: recovery produced a fresh verified check without changes'
+              exit 0
+            fi
+            git add remote/system.json remote/history.json remote/daily_prices.json remote/pick_validation.json
+            git commit -m 'data: recover stalled market feed check'
+            if git push origin HEAD:main; then
+              echo "Recovered market feed on attempt $attempt"
+              exit 0
+            fi
+            echo "Main changed during fallback update; rebuilding from newest data"
+          done
+          echo 'Failed to publish verified recovered feed after four attempts'
+          exit 1
