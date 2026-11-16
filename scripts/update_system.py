@@ -384,6 +384,18 @@ def institutional_market_complete(rows, errors, expected_date):
                     for v in rows.values()))
 
 
+def same_day_institutional_report_available(now):
+    """A current-day TWSE T86 / TPEx three-institution close report cannot
+    exist before the market close. Never delay today's MIS refresh by
+    retrying both unpublished dated endpoints during live trading.
+    """
+    if now.tzinfo is None or now.utcoffset() is None:
+        raise ValueError("timezone-aware Taipei clock required")
+    local=now.astimezone(TZ)
+    return (local.weekday()<5 and closure_reason(local.date()) is None
+            and local.hour*60+local.minute>=810)
+
+
 def fetch_institutional(expected_date=None):
     expected_date=expected_date or datetime.now(TZ).strftime("%Y-%m-%d")
     out={}; errs=[]; debug={}
@@ -1443,12 +1455,22 @@ def main():
     analysis_stocks=[x for x in stocks if x.get("live") is True] if market_open else stocks
     analysis_by_code={x["code"]:x for x in analysis_stocks}
     holdings_by_code={x["code"]:x for x in rows if x.get("code")}
-    institutional,inst_errors,inst_debug=fetch_institutional(today_iso)
+    # Today's T86 / TPEx daily institutional data are post-close reports;
+    # requesting them during the 09:00–13:30 session wastes network retries
+    # and can stall the five-minute live-price pipeline. Leave unavailable,
+    # never substitute yesterday's flows as today's market-wide consensus.
+    current_inst_report_due=same_day_institutional_report_available(now)
+    if current_inst_report_due:
+        institutional,inst_errors,inst_debug=fetch_institutional(today_iso)
+    else:
+        institutional,inst_errors,inst_debug={},[],{"status":"same_day_report_not_yet_released"}
     institutional={k:v for k,v in institutional.items() if k in by_code}
     inst_complete=institutional_market_complete(institutional,inst_errors,today_iso)
-    if not inst_complete: errors.append("法人籌碼:雙市場同日資料不完整，停用全市場法人評分與趨勢")
+    if not inst_complete and current_inst_report_due:
+        errors.append("法人籌碼:雙市場同日資料不完整，停用全市場法人評分與趨勢")
     if inst_errors: errors.extend(inst_errors)
-    if not institutional: errors.append("法人籌碼:官方資料暫無有效逐檔資料，已停用法人判讀")
+    if not institutional and current_inst_report_due:
+        errors.append("法人籌碼:官方資料暫無有效逐檔資料，已停用法人判讀")
 
     taiex_pct=None;taiex_source=None
     # Prefer the same-day official MI_INDEX summary when the daily OpenAPI index feed lags.
