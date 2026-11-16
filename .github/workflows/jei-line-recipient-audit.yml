@@ -1,0 +1,56 @@
+name: JEI LINE Recipient Read-only Reachability Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/line_recipient_reachability.py'
+      - '.github/workflows/jei-line-recipient-audit.yml'
+  pull_request:
+    paths:
+      - 'scripts/line_recipient_reachability.py'
+      - 'tests/test_line_recipient_reachability.py'
+      - '.github/workflows/jei-line-recipient-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Ensure no LINE profile name, ID, or secret is ever persisted
+        run: python -m unittest discover -s tests -p 'test_line_recipient_reachability.py' -v
+
+  read-only-profile-check:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run recipient privacy and status tests
+        run: python -m unittest discover -s tests -p 'test_line_recipient_reachability.py' -v
+      - name: Verify account recipient relationship with read-only LINE profile status
+        env:
+          JEI_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.JEI_LINE_CHANNEL_ACCESS_TOKEN }}
+          JEI_LINE_USER_ID: ${{ secrets.JEI_LINE_USER_ID }}
+        run: python -m scripts.line_recipient_reachability --out "${{ runner.temp }}/jei-line-recipient-status.json"
+      - name: Preserve only allowlisted profile-status verdict
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jei-line-recipient-verdict-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/jei-line-recipient-status.json
+          if-no-files-found: warn
+          retention-days: 7
