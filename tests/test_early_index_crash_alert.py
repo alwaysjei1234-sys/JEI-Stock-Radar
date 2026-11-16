@@ -40,6 +40,54 @@ class EarlyIndexCrashTests(unittest.TestCase):
         self.assertEqual(siren.report_for_index([quote(z="980.1")],NOW)[1],
                          "decline_below_threshold")
 
+    def test_worsening_crash_gets_new_deduplicated_line_edition(self):
+        # Initial -2% notice must not silence subsequent verified -4% and
+        # -6% moves on the same day. Each tier is bounded to one LINE key.
+        cases = (
+            ("980", "intraday_index_crash", "-2%"),
+            ("970", "intraday_index_crash", "-2%"),
+            ("960", "intraday_index_crash_4pct", "-4%"),
+            ("950", "intraday_index_crash_4pct", "-4%"),
+            ("940", "intraday_index_crash_6pct", "-6%"),
+            ("920", "intraday_index_crash_6pct", "-6%"),
+        )
+        editions = []
+        for price, expected_edition, threshold in cases:
+            with self.subTest(price=price):
+                report, reason = siren.report_for_index([quote(z=price)], NOW)
+                self.assertEqual(reason, "verified_index_decline")
+                self.assertEqual(report["edition"], expected_edition)
+                self.assertIn(threshold, report["blocks"][0]["items"][1])
+                editions.append(report["edition"])
+        self.assertEqual(len(set(editions)), 3)
+
+    def test_extreme_escalation_uses_matching_edition_for_line_retry_key(self):
+        receipt = {"status": "failed", "delivery_confirmed": False}
+        env = {"JEI_LINE_ENABLED": "true", "JEI_LINE_ALERTS_ENABLED": "true",
+               "JEI_LINE_CHANNEL_ACCESS_TOKEN": SECRET, "JEI_LINE_USER_ID": RECIPIENT}
+
+        def fake_push(report, edition, token, recipient, receipt):
+            self.assertEqual(edition, "intraday_index_crash_6pct")
+            self.assertEqual(report["edition"], edition)
+            receipt.update(status="accepted", stage="push", http_status=200, attempts=1)
+            return "LINE accepted"
+
+        with patch.dict(os.environ, env, clear=True), patch.object(
+                siren, "fetch_mis_channels", return_value=[quote(z="930")]), patch.object(
+                siren, "push", side_effect=fake_push) as push, contextlib.redirect_stdout(io.StringIO()):
+            siren.dispatch(NOW, receipt)
+        self.assertEqual(push.call_count, 1)
+        self.assertEqual(receipt["edition"], "intraday_index_crash_6pct")
+        self.assertFalse(receipt["delivery_confirmed"])
+
+    def test_unverified_index_never_escalates(self):
+        for changes in ({"d": "20261113", "z": "920"},
+                        {"t": "09:16:00", "z": "920"},
+                        {"ex": "otc", "z": "920"}):
+            with self.subTest(changes=changes):
+                report, _ = siren.report_for_index([quote(**changes)], NOW)
+                self.assertIsNone(report)
+
     def test_rejects_old_day_stale_time_wrong_exchange_and_wrong_index(self):
         bad=(
             {"d":"20261113"}, {"t":"09:16:00"},
