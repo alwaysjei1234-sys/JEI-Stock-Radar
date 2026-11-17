@@ -5,6 +5,11 @@ on:
   schedule:
     - cron: '23 * * * *'
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/jei-hourly-code-agent.yml'
+      - '.github/jei/hourly-coding-task.md'
+      - 'tests/test_hourly_code_agent_workflow.py'
 permissions:
   contents: read
   pull-requests: read
@@ -13,7 +18,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  policy-tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate opt-in, secret isolation and PR-only auto-coding
+        run: python -m unittest discover -s tests -p 'test_hourly_code_agent_workflow.py' -v
   guard:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
