@@ -9,6 +9,13 @@ on:
     - cron: '10 10 * * 1-5'
     - cron: '40 10 * * 1-5' # 18:40 Taipei backup; same date/edition retry key
     - cron: '10 11 * * 1-5' # 19:10 second backup; accepted reports are deduplicated
+  # Independently scheduled workers can still finish when GitHub delays the
+  # morning/close LINE crons. They provide a second verified dispatch clock.
+  workflow_run:
+    workflows:
+      - JEI Research Engine Tests
+      - JEI Stalled Market Feed Recovery
+    types: [completed]
   workflow_dispatch:
     inputs:
       edition:
@@ -47,6 +54,13 @@ concurrency:
   cancel-in-progress: false
 jobs:
   generate:
+    # Ignore PR/push/failed/upstream-chained runs; neither untrusted code nor
+    # an unrelated workflow completion may initiate an actual LINE push.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.event == 'schedule' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -77,6 +91,10 @@ jobs:
           SCHEDULE: ${{ github.event.schedule }}
           SELECTED: ${{ inputs.edition }}
           MANUAL_SEND: ${{ github.event_name == 'workflow_dispatch' && inputs.send_line }}
+          UPSTREAM_WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          UPSTREAM_WORKFLOW_EVENT: ${{ github.event.workflow_run.event }}
+          UPSTREAM_WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          UPSTREAM_WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
           python -m scripts.brief_dispatch_policy >> "$GITHUB_OUTPUT"
       - name: Generate public brief using verified official close
