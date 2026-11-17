@@ -23,6 +23,18 @@ class MarketRecoveryConcurrencyTests(unittest.TestCase):
         self.assertIn("github.event.workflow_run.event == 'schedule'",gate)
         self.assertIn("github.event.workflow_run.head_branch == 'main'",gate)
 
+    def test_independent_hourly_audit_can_trigger_stale_feed_fallback(self):
+        # On 2026-11-17 the main 5-min feed stopped, while the audit ran.
+        # Scheduled audit completion must be allowed to wake this watchdog.
+        self.assertIn('"JEI Compute Provenance Audit (GitHub Actions)"', self.head)
+        self.assertIn('"JEI Research Engine Tests"', self.head)
+        audit = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
+        self.assertIn("name: JEI Compute Provenance Audit (GitHub Actions)", audit)
+        self.assertIn("cron: '37 * * * *'", audit)
+        # Audit push/PR runs must NOT launch a feed rebuild.
+        self.assertIn("github.event.workflow_run.event == 'schedule'", self.recovery)
+        self.assertIn("github.event.workflow_run.head_branch == 'main'", self.recovery)
+
     def test_healthy_no_op_still_does_not_rebuild(self):
         self.assertIn("if: steps.freshness.outputs.recover == 'true'",self.recovery)
         self.assertIn("python -m scripts.market_feed_watchdog",self.recovery)
