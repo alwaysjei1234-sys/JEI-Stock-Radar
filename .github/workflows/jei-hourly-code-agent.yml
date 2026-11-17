@@ -19,13 +19,13 @@ jobs:
       contents: read
       pull-requests: read
     outputs:
-      eligible: \${{ steps.gate.outputs.eligible }}
+      eligible: ${{ steps.gate.outputs.eligible }}
     steps:
       - name: Check explicit opt-in and outstanding agent PR
         id: gate
         env:
-          AUTOCODE_ENABLED: \${{ vars.JEI_CODING_AGENT_ENABLED }}
-          GH_TOKEN: \${{ github.token }}
+          AUTOCODE_ENABLED: ${{ vars.JEI_CODING_AGENT_ENABLED }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -51,7 +51,7 @@ jobs:
     permissions:
       contents: read
     outputs:
-      patch_ready: \${{ steps.patch.outputs.ready }}
+      patch_ready: ${{ steps.patch.outputs.ready }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -61,7 +61,7 @@ jobs:
       - name: Propose one minimal tested repair using Codex
         uses: openai/codex-action@v1
         with:
-          openai-api-key: \${{ secrets.OPENAI_API_KEY }}
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           prompt-file: .github/jei/hourly-coding-task.md
           permission-profile: ':workspace'
       - name: Capture source-only patch without credentials
@@ -80,8 +80,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: steps.patch.outputs.ready == 'true'
         with:
-          name: jei-autocode-patch-\${{ github.run_id }}
-          path: \${{ runner.temp }}/jei-proposal.patch
+          name: jei-autocode-patch-${{ github.run_id }}
+          path: ${{ runner.temp }}/jei-proposal.patch
           retention-days: 7
           if-no-files-found: error
 
@@ -99,8 +99,8 @@ jobs:
           persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
-          name: jei-autocode-patch-\${{ github.run_id }}
-          path: \${{ runner.temp }}
+          name: jei-autocode-patch-${{ github.run_id }}
+          path: ${{ runner.temp }}
       - name: Reject unsafe paths, binary patches, deletion and invalid diffs
         shell: bash
         run: |
@@ -153,11 +153,11 @@ jobs:
           fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
-          name: jei-autocode-patch-\${{ github.run_id }}
-          path: \${{ runner.temp }}
+          name: jei-autocode-patch-${{ github.run_id }}
+          path: ${{ runner.temp }}
       - name: Propose validated change without unattended merge
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
