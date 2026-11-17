@@ -17,9 +17,18 @@ MORNING={'55 0 * * 1-5':8*60+55,'10 1 * * 1-5':9*60+10,
          '25 1 * * 1-5':9*60+25}
 CLOSE={'10 10 * * 1-5':18*60+10,'40 10 * * 1-5':18*60+40,
        '10 11 * * 1-5':19*60+10}
+# A second independently scheduled workflow may complete even when all
+# explicit LINE schedules are delayed. Only successful *scheduled* main
+# workflows are trusted as fallback triggers; push/PR chains never send.
+FALLBACK_WORKFLOWS={
+    'JEI Research Engine Tests',
+    'JEI Stalled Market Feed Recovery',
+}
 
 
-def select_policy(event,schedule,selected,manual_send,head_message,now):
+def select_policy(event,schedule,selected,manual_send,head_message,now,
+                  *,workflow_name='',workflow_event='',workflow_conclusion='',
+                  workflow_branch=''):
     if now.tzinfo is None:
         raise ValueError('Dispatch policy needs a timezone')
     selected=selected or 'close'
@@ -34,6 +43,19 @@ def select_policy(event,schedule,selected,manual_send,head_message,now):
         if schedule in CLOSE:
             return 'close',trade_day and minute>=CLOSE[schedule]
         return 'close',False
+    if event=='workflow_run':
+        # GitHub only calls this path on completion of independent workflows.
+        # Check the provenance again in Python, not just in the workflow YAML.
+        if (workflow_name not in FALLBACK_WORKFLOWS or workflow_event!='schedule'
+                or workflow_conclusion!='success' or workflow_branch!='main'
+                or closure_reason(local.date()) is not None):
+            return selected,False
+        minute=local.hour*60+local.minute
+        if 8*60+55<=minute<13*60+30:
+            return 'morning',True
+        if 18*60+10<=minute<24*60:
+            return 'close',True
+        return selected,False
     if (event=='push' and head_message==VERIFY_MESSAGE and local.date().isoformat()==VERIFY_DAY
             and local.hour*60+local.minute>=810):
         return 'close',True
@@ -78,7 +100,11 @@ def main():
     now=datetime.now(TAIPEI)
     edition,send=select_policy(os.getenv('EVENT',''),os.getenv('SCHEDULE',''),
         os.getenv('SELECTED',''),os.getenv('MANUAL_SEND','false'),
-        os.getenv('COMMIT_MESSAGE',''),now)
+        os.getenv('COMMIT_MESSAGE',''),now,
+        workflow_name=os.getenv('UPSTREAM_WORKFLOW_NAME',''),
+        workflow_event=os.getenv('UPSTREAM_WORKFLOW_EVENT',''),
+        workflow_conclusion=os.getenv('UPSTREAM_WORKFLOW_CONCLUSION',''),
+        workflow_branch=os.getenv('UPSTREAM_WORKFLOW_BRANCH',''))
     print('name='+edition)
     print('send='+str(send).lower())
     receipt=skipped_receipt(os.getenv('EVENT',''),os.getenv('SCHEDULE',''),now)

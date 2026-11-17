@@ -85,6 +85,71 @@ class BriefDispatchPolicyTests(unittest.TestCase):
         morning=datetime(2026,11,6,0,55,tzinfo=timezone.utc)
         self.assertEqual(self.select(event='schedule',schedule='55 0 * * 1-5',now=morning),('morning',True))
 
+    def test_independent_scheduled_workflow_can_recover_missed_morning_line(self):
+        for source in ('JEI Research Engine Tests', 'JEI Stalled Market Feed Recovery'):
+            with self.subTest(source=source):
+                extra=dict(event='workflow_run',workflow_name=source,
+                           workflow_event='schedule',workflow_conclusion='success',
+                           workflow_branch='main')
+                self.assertEqual(self.select(now=NOW.replace(hour=9,minute=25),**extra),
+                                 ('morning',True))
+                self.assertEqual(self.select(now=NOW.replace(hour=13,minute=29),**extra),
+                                 ('morning',True))
+                self.assertEqual(self.select(now=NOW.replace(hour=13,minute=30),**extra),
+                                 ('close',False))
+                self.assertEqual(self.select(now=NOW.replace(hour=18,minute=9),**extra),
+                                 ('close',False))
+                self.assertEqual(self.select(now=NOW.replace(hour=18,minute=10),**extra),
+                                 ('close',True))
+                self.assertEqual(self.select(now=NOW.replace(hour=23,minute=59),**extra),
+                                 ('close',True))
+
+    def test_fallback_rejects_untrusted_or_failed_workflow_origin(self):
+        allowed=dict(event='workflow_run',workflow_name='JEI Research Engine Tests',
+                     workflow_event='schedule',workflow_conclusion='success',
+                     workflow_branch='main',now=NOW.replace(hour=9,minute=30))
+        for override in (
+            {'workflow_name':'JEI Smoke Tests'},
+            {'workflow_event':'push'},
+            {'workflow_event':'pull_request'},
+            {'workflow_event':'workflow_run'},
+            {'workflow_conclusion':'failure'},
+            {'workflow_conclusion':'cancelled'},
+            {'workflow_branch':'feature/any'},
+            {'workflow_branch':''},
+        ):
+            with self.subTest(override=override):
+                self.assertEqual(self.select(**(allowed|override)),('close',False))
+
+    def test_fallback_rejects_closed_days_and_overnight_late_completions(self):
+        source=dict(event='workflow_run',workflow_name='JEI Research Engine Tests',
+                    workflow_event='schedule',workflow_conclusion='success',
+                    workflow_branch='main')
+        for clock in (NOW.replace(day=7,hour=9,minute=30),
+                      NOW.replace(month=12,day=25,hour=9,minute=30),
+                      NOW.replace(day=6,hour=1,minute=30),
+                      NOW.replace(hour=8,minute=54)):
+            with self.subTest(clock=clock):
+                self.assertEqual(self.select(now=clock,**source),('close',False))
+
+    def test_fallback_workflow_wiring_is_guarded_and_sources_are_scheduled(self):
+        from pathlib import Path
+        workflow=Path('.github/workflows/jei-daily-brief.yml').read_text(encoding='utf-8')
+        self.assertIn('workflow_run:',workflow)
+        self.assertIn('JEI Research Engine Tests',workflow)
+        self.assertIn('JEI Stalled Market Feed Recovery',workflow)
+        self.assertIn("github.event.workflow_run.event == 'schedule'",workflow)
+        self.assertIn("github.event.workflow_run.head_branch == 'main'",workflow)
+        self.assertIn("github.event.workflow_run.conclusion == 'success'",workflow)
+        for name in ('NAME','EVENT','CONCLUSION','BRANCH'):
+            self.assertIn('UPSTREAM_WORKFLOW_'+name+':',workflow)
+        research=Path('.github/workflows/research-tests.yml').read_text(encoding='utf-8')
+        recovery=Path('.github/workflows/recover-stale-market-feed.yml').read_text(encoding='utf-8')
+        self.assertIn('name: JEI Research Engine Tests',research)
+        self.assertIn("cron: '0 * * * *'",research)
+        self.assertIn('name: JEI Stalled Market Feed Recovery',recovery)
+        self.assertIn("schedule:",recovery)
+
     def test_same_day_late_close_keeps_existing_dispatch_path(self):
         for cron in ['10 10 * * 1-5','40 10 * * 1-5','10 11 * * 1-5']:
             self.assertEqual(self.select(event='schedule',schedule=cron,now=NOW.replace(hour=23,minute=59)),('close',True))
