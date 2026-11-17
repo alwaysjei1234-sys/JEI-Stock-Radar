@@ -39,6 +39,14 @@ class MarketFeedWatchdogTests(unittest.TestCase):
         expected, _=assess(feed(time="08:44"), NOW)
         self.assertTrue(expected)
 
+    def test_live_feed_frozen_since_0925_triggers_recovery_at_noon(self):
+        stalled = feed("2026-11-17", "09:25")
+        stalled["data_date"] = "2026-11-17"
+        stalled["market"].update(live_valid=True, live_count=1315, live_coverage_pct=66.6)
+        needed, reason = assess(stalled, datetime(2026, 11, 17, 12, 11, tzinfo=TZ))
+        self.assertTrue(needed)
+        self.assertEqual(reason, "feed_check_stalled_166m")
+
     def test_future_timestamp_is_not_accepted(self):
         expected,reason=assess(feed(time="09:05"),NOW)
         self.assertTrue(expected)
