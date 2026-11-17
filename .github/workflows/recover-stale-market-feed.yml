@@ -12,7 +12,10 @@ on:
     - cron: '33,48 0 * * 1-5'
     - cron: '4,19,34,49 1-11 * * 1-5'
   workflow_run:
-    workflows: ["JEI Research Engine Tests"]
+    # Independent hourly audit also ran while the 5-min feed schedule stalled.
+    # This gives the existing stale-data watchdog a second upstream clock;
+    # non-scheduled and non-main completions remain filtered at job level.
+    workflows: ["JEI Research Engine Tests", "JEI Compute Provenance Audit (GitHub Actions)"]
     types: [completed]
   workflow_dispatch:
   pull_request:
