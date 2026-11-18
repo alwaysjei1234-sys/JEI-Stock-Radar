@@ -147,6 +147,29 @@ class HeartbeatTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "official_date_changed"):
             audit_observed_picks(task, fetcher=lambda: json.dumps(payload).encode())
 
+    def test_new_trading_day_never_replays_previous_task_reply(self):
+        from tools.jei_colab_heartbeat import retain_current_task_result
+        yesterday = {"task_id": "observed-2026-11-17",
+                     "status": "completed", "observed_only": True,
+                     "underperforming_aggregates": 7}
+        yesterday_task = {"task_id": "observed-2026-11-17",
+                          "kind": "audit_observed_picks"}
+        today_task = {"task_id": "observed-2026-11-18",
+                      "kind": "audit_observed_picks"}
+        self.assertEqual(retain_current_task_result(yesterday, yesterday_task), yesterday)
+        self.assertIsNone(retain_current_task_result(yesterday, today_task))
+        self.assertIsNone(retain_current_task_result(yesterday, None))
+        self.assertIsNone(retain_current_task_result(
+            {**yesterday, "observed_only": False}, yesterday_task))
+        self.assertIsNone(retain_current_task_result(
+            {**yesterday, "status": "failed"}, yesterday_task))
+        # Production worker must clear its result on task changes before
+        # forwarding the allowed review request to Actions.
+        source = Path("tools/jei_colab_heartbeat.py").read_text(encoding="utf-8")
+        self.assertIn(
+            "last_task_result = retain_current_task_result(last_task_result, task)",
+            source)
+
     def test_heartbeat_executes_task_once_and_returns_bounded_request(self):
         import threading
         task = {"kind": "audit_observed_picks", "task_id": "observed-2026-11-17",
