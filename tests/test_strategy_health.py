@@ -54,8 +54,8 @@ class StrategyHealthTests(unittest.TestCase):
         self.assertEqual(feed["attack"][0]["score"], before["attack"][0]["score"])
         self.assertEqual(feed["attack"][0]["code"], before["attack"][0]["code"])
         self.assertEqual(feed["attack"][0]["trade_readiness"], "research_only")
-        self.assertIn("僅模擬", feed["attack"][0]["reason"])
-        self.assertIn("僅模擬", feed["monster"][0]["reason"])
+        self.assertIn("僅供模擬研究", feed["attack"][0]["reason"])
+        self.assertIn("僅供模擬研究", feed["monster"][0]["reason"])
         self.assertTrue(feed["risk"]["strategy_quality_alert"])
         self.assertTrue(feed["risk"]["actionable"])  # quote validity untouched
         self.assertFalse(feed["market"]["no_new_picks"])  # no retroactive erasure
