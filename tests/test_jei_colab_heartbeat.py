@@ -21,6 +21,39 @@ class HeartbeatTests(unittest.TestCase):
         now = old + dt.timedelta(minutes=60)
         self.assertEqual(assess(heartbeat_payload("session", "a" * 40, old), now=now)["status"], "STALE")
 
+    def test_failed_official_day_handoff_retries_after_cooldown(self):
+        from tools.jei_colab_heartbeat import (
+            allow_task_attempt, TASK_RETRY_COOLDOWN_SECONDS,
+        )
+        attempts = {}
+        task = "observed-2026-11-18"
+        self.assertTrue(allow_task_attempt(attempts, task, now=100))
+        self.assertTrue(allow_task_attempt(attempts, task, now=400))
+        self.assertTrue(allow_task_attempt(attempts, task, now=700))
+        self.assertFalse(allow_task_attempt(attempts, task, now=1000))
+        # A failed public-data read used to permanently block this day's task,
+        # even after GitHub's delayed official close arrived hours later.
+        self.assertFalse(allow_task_attempt(
+            attempts, task, now=700 + TASK_RETRY_COOLDOWN_SECONDS - 1))
+        self.assertTrue(allow_task_attempt(
+            attempts, task, now=700 + TASK_RETRY_COOLDOWN_SECONDS))
+        self.assertEqual(attempts[task][0], 1)
+
+    def test_task_retry_state_is_bounded_and_resets_for_new_day(self):
+        from tools.jei_colab_heartbeat import allow_task_attempt
+        attempts = {}
+        for i in range(3):
+            self.assertTrue(allow_task_attempt(
+                attempts, "observed-2026-11-18", now=100 + 300 * i))
+        self.assertFalse(allow_task_attempt(attempts, "observed-2026-11-18", now=999))
+        self.assertTrue(allow_task_attempt(
+            attempts, "observed-2026-11-19", now=1000))
+        self.assertEqual(list(attempts), ["observed-2026-11-19"])
+        # Defensive reset if monotonic clock state is invalidated.
+        self.assertTrue(allow_task_attempt(
+            attempts, "observed-2026-11-19", now=0))
+        self.assertEqual(attempts["observed-2026-11-19"][0], 1)
+
     def test_drive_writes_keep_stable_file_identity(self):
         import os
         with tempfile.TemporaryDirectory() as tmp:
