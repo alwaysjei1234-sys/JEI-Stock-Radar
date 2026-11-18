@@ -115,7 +115,8 @@ const SYSTEM = `你是 JEI 台股投資分析會診成員。你會收到 JEI 的
 4. 不保證漲停、翻倍或獲利。可以給機率式判斷，但要說明關鍵條件與失效點。
 5. 對持股要給可執行方案：續抱/觀察/減碼/停利，以及防守價或失效條件（若資料中有）。
 6. 回答繁體中文，先講結論，再講理由、風險與下一步；通常控制在 450 字內。
-7. 多 AI 會診時要獨立判斷，不迎合其他模型。若不確定，明確寫出不確定因素。`;
+7. 多 AI 會診時要獨立判斷，不迎合其他模型。若不確定，明確寫出不確定因素。
+8. 先核對 context.strategy_quality：若 recommendation_mode 為 research_only，須明確說明短期策略觀察績效未達標，候選僅供模擬研究；不可把高分數、參考價或 AI 共識說成已驗證的買進訊號。若缺少此欄或為 unverified，也不得推定可交易績效已驗證。這不影響既有持股的防守及風險處置建議。`;
 
 function userPrompt(body){
   const history=(Array.isArray(body.history)?body.history:[]).slice(-8).filter(x=>x && typeof x==="object").map(x=>`${x.role==="assistant"?"assistant":"user"}: ${textOf(x.content,1000)}`).join("\n");
