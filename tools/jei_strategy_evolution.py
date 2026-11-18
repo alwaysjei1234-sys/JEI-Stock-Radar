@@ -10,6 +10,8 @@ import json
 import math
 from pathlib import Path
 
+from tools.jei_strategy_cohort_audit import audit_cohorts
+
 EFFECTIVE_DAY = "2026-11-19"
 GROUPS = ("attack", "next", "monster", "tomorrow_monster", "future_monster")
 HORIZONS = (3, 7, 15, 30)
@@ -159,19 +161,30 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--input", default="remote/pick_validation.json")
     p.add_argument("--out", default="audit-output/strategy_evolution.json")
+    p.add_argument("--ledger", default="remote/pick_history.json")
+    p.add_argument("--prices", default="remote/daily_prices.json")
     a = p.parse_args()
     try:
         report = json.loads(Path(a.input).read_text(encoding="utf-8"))
+        ledger = json.loads(Path(a.ledger).read_text(encoding="utf-8"))
+        archive = json.loads(Path(a.prices).read_text(encoding="utf-8"))
     except (ValueError, OSError):
-        report = None
+        report, ledger, archive = None, None, None
     result = compare(report)
+    integrity = audit_cohorts(report, ledger, archive, EFFECTIVE_DAY)
+    result["cohort_integrity"] = integrity
+    # Zero result may be valid before 11/19. Unverified or missing days are not.
+    if integrity["status"] not in ("PASS", "PASS_PRE_EFFECTIVE_DAY"):
+        result["status"] = "BLOCKED_COHORT_INTEGRITY"
     path = Path(a.out)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(result, indent=2, ensure_ascii=False)+"\n", encoding="utf-8")
     print(json.dumps({key: result.get(key) for key in (
         "status", "source_official_day", "effective_day", "prospective_signal_count",
         "mature_windows", "total_windows")}, ensure_ascii=False))
-    return 0 if result["status"] != "INVALID_SOURCE" and not result["status"].startswith("INVALID_") else 1
+    print(json.dumps({"cohort_integrity": integrity}, ensure_ascii=False))
+    return 0 if (result["status"] not in ("INVALID_SOURCE", "BLOCKED_COHORT_INTEGRITY")
+                 and not result["status"].startswith("INVALID_")) else 1
 
 
 if __name__ == "__main__":

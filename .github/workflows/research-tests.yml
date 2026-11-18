@@ -23,6 +23,7 @@ on:
       - 'scripts/update_system.py'
       - 'scripts/strategy_health.py'
       - 'tools/jei_strategy_evolution.py'
+      - 'tools/jei_strategy_cohort_audit.py'
       - 'scripts/market_sessions.py'
       - 'scripts/pick_risk_metrics.py'
       - 'remote/pick_history.json'
@@ -51,6 +52,7 @@ on:
       - 'scripts/update_system.py'
       - 'scripts/strategy_health.py'
       - 'tools/jei_strategy_evolution.py'
+      - 'tools/jei_strategy_cohort_audit.py'
       - 'scripts/market_sessions.py'
       - 'scripts/pick_risk_metrics.py'
       - 'remote/pick_history.json'
@@ -88,8 +90,10 @@ jobs:
         run: python3 -m unittest discover -s tests -p 'test_strategy_health.py' -v
       - name: Verify registered forward-only strategy comparisons
         run: python3 -m unittest discover -s tests -p 'test_jei_strategy_evolution.py' -v
+      - name: Verify immutable signal ledger and official close cohorts
+        run: python3 -m unittest discover -s tests -p 'test_jei_strategy_cohort_audit.py' -v
       - name: Run preregistered radar comparison (NO automatic policy promotion)
-        run: python3 -m tools.jei_strategy_evolution --input remote/pick_validation.json --out audit-output/strategy_evolution.json
+        run: python3 -m tools.jei_strategy_evolution --input remote/pick_validation.json --ledger remote/pick_history.json --prices remote/daily_prices.json --out audit-output/strategy_evolution.json
       - name: Archive prospective strategy research evidence
         uses: actions/upload-artifact@v4
         with:
