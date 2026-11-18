@@ -6,6 +6,7 @@ No credential or heartbeat is committed to the repository.
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 from tools.jei_colab_watchdog import assess
 
@@ -38,6 +39,23 @@ def ingest(file_id, credential_json, out):
             report = download_heartbeat(file_id, credential_json)
             result = assess(report)
             result["drive_access"] = "authenticated"
+            # Optional Colab→GitHub work request. The service account already
+            # authenticates the Drive file; still allowlist fields strictly.
+            # It only triggers read-only CI diagnostics, never deployment.
+            if result["status"] == "RECENT_HEARTBEAT" and isinstance(report, dict):
+                if report.get("actions_request") == "review_pick_quality":
+                    result["colab_request"] = "review_pick_quality"
+                ack = report.get("colab_task_result")
+                if isinstance(ack, dict):
+                    task_id = ack.get("task_id")
+                    if (isinstance(task_id, str)
+                            and re.fullmatch(r"observed-20\d{2}-\d{2}-\d{2}", task_id)
+                            and ack.get("status") == "completed"
+                            and ack.get("observed_only") is True):
+                        result["colab_task_result"] = {
+                            "task_id": task_id, "status": "completed",
+                            "observed_only": True}
+
         except Exception as exc:
             result = assess(None)
             result.update(drive_access="unavailable", reason="drive_read_failed",
