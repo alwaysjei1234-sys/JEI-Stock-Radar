@@ -18,6 +18,10 @@ on:
     types: [completed]
   pull_request:
     paths:
+      - 'scripts/build_daily_brief.py'
+      - 'scripts/send_line_brief.py'
+      - 'scripts/strategy_health.py'
+      - 'tests/test_strategy_brief_integration.py'
       - 'scripts/brief_dispatch_policy.py'
       - 'tests/test_brief_dispatch_policy.py'
       - '.github/workflows/jei-daily-brief.yml'
@@ -43,6 +47,8 @@ on:
       - 'tests/test_line_outbox.py'
       - 'scripts/publish_line_status.py'
       - 'tests/test_daily_brief.py'
+      - 'tests/test_strategy_brief_integration.py'
+      - 'scripts/strategy_health.py'
       - 'tests/test_daily_brief_publish.py'
       - 'tests/test_line_dispatch.py'
       - 'tests/test_line_payload_coverage.py'
@@ -68,6 +74,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test cross-module strategy quality in LINE and brief without sending
+        run: python -m unittest discover -s tests -p 'test_strategy_brief_integration.py' -v
       - name: Verify brief dispatch policy, expiry and LINE idempotence
         run: |
           python -m unittest discover -s tests -p 'test_brief_dispatch_policy.py' -v
@@ -94,6 +102,7 @@ jobs:
       - name: Test briefing and LINE safety
         run: |
           python -m unittest discover -s tests -p 'test_daily_brief.py' -v
+          python -m unittest discover -s tests -p 'test_strategy_brief_integration.py' -v
           python -m unittest discover -s tests -p 'test_daily_brief_publish.py' -v
           python -m unittest discover -s tests -p 'test_send_line_alert.py' -v
           python -m unittest discover -s tests -p 'test_line_dispatch.py' -v
