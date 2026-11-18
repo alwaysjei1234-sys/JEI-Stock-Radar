@@ -1,17 +1,20 @@
 {
   "schema": 1,
-  "colab_status": "UNKNOWN",
-  "reason": "drive_read_failed",
-  "evidence": "unverified",
+  "colab_status": "RECENT_HEARTBEAT",
+  "reason": "recent_heartbeat_not_proof_of_runtime",
+  "evidence": "authenticated_google_drive_heartbeat",
   "fallback": "github_actions",
   "restart_possible": false,
-  "requested_action": "configure_or_verify_drive_heartbeat_actions_fallback_active",
+  "requested_action": "colab_can_continue_if_kernel_is_running",
   "colab_task": {
     "kind": "audit_observed_picks",
     "task_id": "observed-2026-11-17",
     "official_day": "2026-11-17"
   },
-  "colab_task_ack": null,
-  "colab_requested_audit": null,
-  "status_changed_at_utc": "2026-11-18T03:41:32.730661+00:00"
+  "colab_task_ack": {
+    "task_id": "observed-2026-11-17",
+    "status": "reported_not_independently_attested"
+  },
+  "colab_requested_audit": "review_pick_quality",
+  "status_changed_at_utc": "2026-11-18T03:51:15.616456+00:00"
 }
