@@ -59,7 +59,7 @@ def task_from_picks(picks):
     if not isinstance(picks, dict) or not isinstance(picks.get("groups"), dict):
         return None
     day = picks.get("latest_official_day")
-    if not isinstance(day, str) or not re.fullmatch(r"20\\d{2}-\\d{2}-\\d{2}", day):
+    if not isinstance(day, str) or not re.fullmatch(r"20\d{2}-\d{2}-\d{2}", day):
         return None
     try:
         dt.date.fromisoformat(day)
