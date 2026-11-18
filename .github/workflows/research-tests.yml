@@ -90,6 +90,8 @@ jobs:
         run: node tests/strategy_integration.test.cjs
       - name: Frozen pick archive integrity
         run: node tests/pick_archive.test.cjs
+      - name: Guard retrospective external screenshot watchlist against fake OOS promotion
+        run: python3 -m unittest discover -s tests -p 'test_external_screenshot_cohorts.py' -v
       - name: Python pick validation
         run: python3 -m unittest discover -s tests -p 'test_pick*.py'
       - name: Strategy loss-feedback guard (lookahead safe)
