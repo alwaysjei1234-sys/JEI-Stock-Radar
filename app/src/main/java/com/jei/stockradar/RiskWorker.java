@@ -356,6 +356,10 @@ public class RiskWorker extends Worker {
         JSONObject j = new JSONObject(getStaticFeed(UPDATE_JSON));
         int remote = j.optInt("versionCode", 0);
         if (remote <= BuildConfig.VERSION_CODE) return;
+        // A denied notification permission or disabled app notifications is
+        // NOT a successful update reminder. Retry when the user enables them;
+        // otherwise bg_update_notified would permanently suppress this version.
+        if (!canPostNotifications()) return;
 
         SharedPreferences p = getApplicationContext().getSharedPreferences("jei_private", Context.MODE_PRIVATE);
         int notified = p.getInt("bg_update_notified", 0);

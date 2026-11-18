@@ -6,6 +6,7 @@ on:
       - 'app/**'
       - 'tests/smoke.cjs'
       - 'tests/test_android_risk_gate.py'
+      - 'tests/test_android_update_notification.py'
       - '.github/workflows/android-debug.yml'
   push:
     paths:
@@ -43,6 +44,8 @@ jobs:
           node tests/smoke.cjs
       - name: Replay native Android risk freshness gate
         run: python -m unittest discover -s tests -p 'test_android_risk_gate.py' -v
+      - name: Replay Android update permission and reminder dedup
+        run: python -m unittest discover -s tests -p 'test_android_update_notification.py' -v
       - name: Build debug APK
         run: gradle --no-daemon :app:assembleDebug
       - name: Verify built APK identity
