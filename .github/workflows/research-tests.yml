@@ -20,6 +20,8 @@ on:
       - 'remote/index.html'
       - 'tests/**'
       - 'scripts/update_pick_validation.py'
+      - 'scripts/update_system.py'
+      - 'scripts/strategy_health.py'
       - 'scripts/market_sessions.py'
       - 'scripts/pick_risk_metrics.py'
       - 'remote/pick_history.json'
@@ -45,6 +47,8 @@ on:
       - 'scripts/update_gooaye_watch.py'
       - 'tests/**'
       - 'scripts/update_pick_validation.py'
+      - 'scripts/update_system.py'
+      - 'scripts/strategy_health.py'
       - 'scripts/market_sessions.py'
       - 'scripts/pick_risk_metrics.py'
       - 'remote/pick_history.json'
@@ -78,6 +82,8 @@ jobs:
         run: node tests/pick_archive.test.cjs
       - name: Python pick validation
         run: python3 -m unittest discover -s tests -p 'test_pick*.py'
+      - name: Strategy loss-feedback guard (lookahead safe)
+        run: python3 -m unittest discover -s tests -p 'test_strategy_health.py' -v
       - name: Forecast audit
         run: node tests/forecast_audit.test.cjs
       - name: Target consensus
