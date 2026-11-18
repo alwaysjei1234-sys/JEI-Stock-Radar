@@ -21,6 +21,43 @@ class HeartbeatTests(unittest.TestCase):
         now = old + dt.timedelta(minutes=60)
         self.assertEqual(assess(heartbeat_payload("session", "a" * 40, old), now=now)["status"], "STALE")
 
+    def test_drive_writes_keep_stable_file_identity(self):
+        import os
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "colab_heartbeat.json"
+            write_heartbeat(path, heartbeat_payload("one", "a" * 40),
+                            preserve_drive_id=True)
+            initial_inode = os.stat(path).st_ino
+            write_heartbeat(path, heartbeat_payload("two", "a" * 40),
+                            preserve_drive_id=True)
+            self.assertEqual(os.stat(path).st_ino, initial_inode)
+            self.assertEqual(json.loads(path.read_text())["session_id"], "two")
+            self.assertFalse(path.with_name(path.name + ".tmp").exists())
+
+    def test_initial_heartbeat_written_before_slow_network_coordination(self):
+        import threading
+        entered = threading.Event()
+        release = threading.Event()
+        def blocked_reader():
+            entered.set()
+            release.wait(timeout=2)
+            return {"state": "UNKNOWN"}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "heartbeat.json"
+            try:
+                stop, thread = start_heartbeat(
+                    path, source_commit="a" * 40, interval_seconds=30,
+                    coordination_reader=blocked_reader)
+                self.assertTrue(path.exists())
+                self.assertTrue(entered.wait(2))
+                payload = json.loads(path.read_text())
+                self.assertEqual(payload["provider"], "google_colab")
+                self.assertEqual(payload["source_commit"], "a" * 40)
+            finally:
+                release.set()
+                stop.set()
+                thread.join(timeout=3)
+
     def test_thread_can_stop(self):
         with tempfile.TemporaryDirectory() as tmp:
             stop, thread = start_heartbeat(Path(tmp) / "heartbeat.json", interval_seconds=300)
@@ -102,9 +139,11 @@ class HeartbeatTests(unittest.TestCase):
                 import time
                 for _ in range(100):
                     if file.exists():
-                        break
+                        report = json.loads(file.read_text(encoding="utf-8"))
+                        if "colab_task_result" in report:
+                            break
                     time.sleep(0.01)
-                report = json.loads(file.read_text(encoding="utf-8"))
+                self.assertIn("colab_task_result", report)
                 self.assertEqual(report["actions_request"], "review_pick_quality")
                 self.assertEqual(report["colab_task_result"]["task_id"], task["task_id"])
                 self.assertNotIn("NOT_WRITTEN", json.dumps(report))
