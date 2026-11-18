@@ -41,7 +41,7 @@ class ExternalScreenshotCohortTests(unittest.TestCase):
             codes = [r["ticker"] for r in group["rows"]]
             self.assertEqual(len(codes), len(set(codes)))
             for row in group["rows"]:
-                self.assertRegex(row["ticker"], r"^\\d{4}$")
+                self.assertRegex(row["ticker"], r"^\d{4}$")
                 self.assertTrue(row["name"])
                 self.assertGreater(row["reference_price_displayed"], 0)
                 self.assertTrue(0 <= row["model_score_displayed"] <= 100)
