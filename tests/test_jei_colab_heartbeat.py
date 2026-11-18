@@ -42,6 +42,70 @@ class HeartbeatTests(unittest.TestCase):
         self.assertNotIn("PRIVATE_TOKEN", json.dumps(value))
         self.assertIn("raw.githubusercontent.com", fetch.call_args.args[0].full_url)
 
+    def test_accepts_only_bounded_verified_observation_task(self):
+        from unittest.mock import patch
+        from io import BytesIO
+        from tools.jei_colab_heartbeat import read_github_coordination
+        reply = {"schema": 1, "colab_status": "UNKNOWN",
+                 "fallback": "github_actions", "restart_possible": False,
+                 "colab_task": {"kind": "audit_observed_picks",
+                                "task_id": "observed-2026-11-17",
+                                "official_day": "2026-11-17"}}
+        with patch("urllib.request.urlopen", return_value=BytesIO(json.dumps(reply).encode())):
+            result = read_github_coordination()
+        self.assertEqual(result["task"]["task_id"], "observed-2026-11-17")
+        reply["colab_task"]["kind"] = "execute_shell_script"
+        with patch("urllib.request.urlopen", return_value=BytesIO(json.dumps(reply).encode())):
+            self.assertNotIn("task", read_github_coordination())
+
+    def test_actual_observed_recheck_and_request_from_colab(self):
+        from tools.jei_colab_heartbeat import audit_observed_picks
+        task = {"kind": "audit_observed_picks", "task_id": "observed-2026-11-17",
+                "official_day": "2026-11-17"}
+        payload = {"latest_official_day": "2026-11-17",
+                   "groups": {"attack": {"3": {"completed": 40, "win_rate_pct": 30,
+                                                "avg_estimated_net_pct": -3.5},
+                                          "7": {"completed": 10, "win_rate_pct": 90,
+                                                "avg_estimated_net_pct": 4}},
+                              "next": {"3": {"completed": 31, "win_rate_pct": 55,
+                                              "avg_estimated_net_pct": 2.5}}}}
+        result = audit_observed_picks(task, fetcher=lambda: json.dumps(payload).encode())
+        self.assertEqual(result["eligible_aggregates"], 2)
+        self.assertEqual(result["underperforming_aggregates"], 1)
+        self.assertTrue(result["observed_only"])
+        payload["latest_official_day"] = "2026-11-16"
+        with self.assertRaisesRegex(ValueError, "official_date_changed"):
+            audit_observed_picks(task, fetcher=lambda: json.dumps(payload).encode())
+
+    def test_heartbeat_executes_task_once_and_returns_bounded_request(self):
+        import threading
+        task = {"kind": "audit_observed_picks", "task_id": "observed-2026-11-17",
+                "official_day": "2026-11-17"}
+        called = threading.Event()
+        run_count = []
+        def runner(request):
+            run_count.append(request["task_id"])
+            called.set()
+            return {"task_id": request["task_id"], "status": "completed",
+                    "observed_only": True, "eligible_aggregates": 1,
+                    "underperforming_aggregates": 1, "secret": "NOT_WRITTEN"}
+        with tempfile.TemporaryDirectory() as folder:
+            file = Path(folder) / "heartbeat.json"
+            stop, thread = start_heartbeat(
+                file, source_commit="a" * 40, interval_seconds=30,
+                coordination_reader=lambda: {"state": "UNKNOWN", "task": task},
+                task_runner=runner)
+            try:
+                self.assertTrue(called.wait(3))
+                report = json.loads(file.read_text(encoding="utf-8"))
+                self.assertEqual(report["actions_request"], "review_pick_quality")
+                self.assertEqual(report["colab_task_result"]["task_id"], task["task_id"])
+                self.assertNotIn("NOT_WRITTEN", json.dumps(report))
+                self.assertEqual(len(run_count), 1)
+            finally:
+                stop.set()
+                thread.join(timeout=3)
+
     def test_rejects_untrusted_restart_instruction(self):
         from unittest.mock import patch
         from io import BytesIO
@@ -59,6 +123,7 @@ class HeartbeatTests(unittest.TestCase):
         notebook = json.loads((Path("colab") / "JEI_Colab_Audit.ipynb").read_text(encoding="utf-8"))
         code = "\n".join("".join(cell.get("source", [])) for cell in notebook["cells"])
         self.assertIn("coordination_reader=module.read_github_coordination", code)
+        self.assertIn("task_runner=module.audit_observed_picks", code)
         self.assertIn("colab_heartbeat.json", code)
         self.assertNotIn("force_restart_colab", code)
 
