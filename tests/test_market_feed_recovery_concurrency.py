@@ -35,6 +35,25 @@ class MarketRecoveryConcurrencyTests(unittest.TestCase):
         self.assertIn("github.event.workflow_run.event == 'schedule'", self.recovery)
         self.assertIn("github.event.workflow_run.head_branch == 'main'", self.recovery)
 
+    def test_verified_main_research_push_can_wake_watchdog_when_cron_stalls(self):
+        gate=self.recovery.split("\n    concurrency:\n",1)[0]
+        # A 2026-11-18 push-based research run must not be silently skipped
+        # while GitHub's independent schedule is delayed and the feed is stale.
+        self.assertIn("github.event.workflow_run.event == 'push'",gate)
+        self.assertIn("github.event.workflow_run.name == 'JEI Research Engine Tests'",gate)
+        # Never turn a failed upstream, PR or fork workflow into a market writer.
+        self.assertIn("github.event.workflow_run.conclusion == 'success'",gate)
+        self.assertIn("github.event.workflow_run.head_branch == 'main'",gate)
+        self.assertIn("github.event.workflow_run.head_repository.full_name == github.repository",gate)
+        self.assertIn("github.event_name != 'pull_request'",gate)
+        # The scheduled audit still provides its original independent clock.
+        self.assertIn("github.event.workflow_run.event == 'schedule'",gate)
+
+    def test_research_push_wakeup_remains_stale_only(self):
+        # Waking a watchdog is not permission to overwrite a healthy market feed.
+        self.assertIn("if: steps.freshness.outputs.recover == 'true'",self.recovery)
+        self.assertIn("python -m scripts.market_feed_watchdog --input remote/system.json",self.recovery)
+
     def test_healthy_no_op_still_does_not_rebuild(self):
         self.assertIn("if: steps.freshness.outputs.recover == 'true'",self.recovery)
         self.assertIn("python -m scripts.market_feed_watchdog",self.recovery)

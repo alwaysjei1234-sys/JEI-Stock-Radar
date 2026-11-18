@@ -39,11 +39,19 @@ jobs:
       - name: Verify watchdog clock and fail-closed recovery rules
         run: python -m unittest discover -s tests -p 'test_market_feed_watchdog.py' -v
   recover:
+    # GitHub may delay scheduled triggers for hours. A successful main-branch
+    # research push can provide a bounded independent wakeup for this watchdog.
+    # Exclude audit-push storms, PRs, forks, failed upstream runs and stale heads.
+    # The watchdog below STILL rebuilds only when the published feed is stale.
     if: >-
       github.event_name != 'pull_request' &&
       (github.event_name != 'workflow_run' ||
-       (github.event.workflow_run.event == 'schedule' &&
-        github.event.workflow_run.head_branch == 'main'))
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.head_repository.full_name == github.repository &&
+        (github.event.workflow_run.event == 'schedule' ||
+         (github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.name == 'JEI Research Engine Tests'))))
     # Only an eligible recovery job should occupy the shared update lock.
     # Workflow-run events that intentionally skip must not cancel queued work.
     concurrency:
