@@ -22,6 +22,31 @@ COORDINATION_URL = (
     "JEI-Stock-Radar/main/remote/colab_coordination.json"
 )
 VALID_SIGNAL_STATES = {"RECENT_HEARTBEAT", "STALE", "UNKNOWN"}
+# A temporarily unavailable GitHub snapshot must not permanently disable a
+# day's Colab -> Actions verification task while the Colab kernel is alive.
+TASK_RETRY_BUDGET = 3
+TASK_RETRY_COOLDOWN_SECONDS = 30 * 60
+
+
+def allow_task_attempt(attempts, key, now=None):
+    """Allow three attempts, pause 30m, then retry; bound state to one task.
+
+    A transient 404, date rollover, CDN delay, or rate limit must not consume
+    an official trading day's task forever. The cooldown also prevents busy
+    loops if the public data never becomes valid.
+    """
+    now = time.monotonic() if now is None else now
+    previous = attempts.get(key)
+    if (previous is None or now < previous[1] or
+            now - previous[1] >= TASK_RETRY_COOLDOWN_SECONDS):
+        attempts.clear()
+        attempts[key] = (1, now)
+        return True
+    count, _ = previous
+    if count >= TASK_RETRY_BUDGET:
+        return False
+    attempts[key] = (count + 1, now)
+    return True
 
 
 def read_github_coordination():
@@ -170,11 +195,10 @@ def start_heartbeat(path, source_commit="unknown", interval_seconds=300,
                             task = signal.get("task")
                             if task_runner is not None and isinstance(task, dict):
                                 key = task["task_id"]
-                                attempts = task_attempts.get(key, 0)
-                                if (attempts < 3 and not (isinstance(last_task_result, dict)
-                                        and last_task_result.get("task_id") == key
-                                        and last_task_result.get("status") == "completed")):
-                                    task_attempts[key] = attempts + 1
+                                already_completed = (isinstance(last_task_result, dict)
+                                    and last_task_result.get("task_id") == key
+                                    and last_task_result.get("status") == "completed")
+                                if not already_completed and allow_task_attempt(task_attempts, key):
                                     try:
                                         result = task_runner(task)
                                         if (isinstance(result, dict)
