@@ -22,6 +22,7 @@ on:
       - 'scripts/update_pick_validation.py'
       - 'scripts/update_system.py'
       - 'scripts/strategy_health.py'
+      - 'tools/jei_strategy_evolution.py'
       - 'scripts/market_sessions.py'
       - 'scripts/pick_risk_metrics.py'
       - 'remote/pick_history.json'
@@ -49,6 +50,7 @@ on:
       - 'scripts/update_pick_validation.py'
       - 'scripts/update_system.py'
       - 'scripts/strategy_health.py'
+      - 'tools/jei_strategy_evolution.py'
       - 'scripts/market_sessions.py'
       - 'scripts/pick_risk_metrics.py'
       - 'remote/pick_history.json'
@@ -84,6 +86,17 @@ jobs:
         run: python3 -m unittest discover -s tests -p 'test_pick*.py'
       - name: Strategy loss-feedback guard (lookahead safe)
         run: python3 -m unittest discover -s tests -p 'test_strategy_health.py' -v
+      - name: Verify registered forward-only strategy comparisons
+        run: python3 -m unittest discover -s tests -p 'test_jei_strategy_evolution.py' -v
+      - name: Run preregistered radar comparison (NO automatic policy promotion)
+        run: python3 -m tools.jei_strategy_evolution --input remote/pick_validation.json --out audit-output/strategy_evolution.json
+      - name: Archive prospective strategy research evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: jei-strategy-evolution-${{ github.run_id }}
+          path: audit-output/strategy_evolution.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Forecast audit
         run: node tests/forecast_audit.test.cjs
       - name: Target consensus
