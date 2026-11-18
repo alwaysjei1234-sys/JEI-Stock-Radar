@@ -280,13 +280,77 @@ def generate(edition,now,feed,paper,us_fn=fetch_us,global_fn=fetch_global,news_f
         report["blocks"].append(paper_block(paper,report["source_date"]))
     return report
 
+
+def recover_previous_close_archive(now, archive, previous):
+    """Backfill the immediately preceding session after a delayed close job.
+
+    Research-only, archive-prices-only replacement. It MUST NOT reuse current
+    intraday/old-feed risk, stock rankings, market index changes, or paper P&L.
+    This is NOT a contemporaneous closing edition or eligible LINE delivery.
+    """
+    local=now.astimezone(TAIPEI)
+    if local.hour*60+local.minute>=13*60+30:
+        return None
+    day=previous_session_day(local.date())
+    if day is None or (local.date()-date.fromisoformat(day)).days>5:
+        return None
+    if not isinstance(archive,dict) or archive.get("schema")!=1 or archive.get("kind")!="official_daily_close":
+        return None
+    days=archive.get("days")
+    if not isinstance(days,dict) or day not in days or not isinstance(days[day],dict):
+        return None
+    # The archive may have older complete sessions, but never guess that the
+    # most recent previous trading session is ready when its prices are absent.
+    quotes=days[day]
+    valid=sum(1 for price in quotes.values() if (num(price) or 0)>0)
+    if valid<500:
+        return None
+    old_day=str(previous.get("date") or "") if isinstance(previous,dict) and previous.get("status")=="ready" else ""
+    try:
+        if old_day and date.fromisoformat(old_day)>=date.fromisoformat(day):
+            return None
+    except ValueError:
+        return None
+    return {
+        "edition":"close",
+        "date":day,
+        "generated_at":local.isoformat(timespec="minutes"),
+        "status":"ready",
+        "source_quality":"archived_official_closes_only_not_independent_attestation",
+        "delayed_recovery":True,
+        "note":("跨日延遲排程補登 "+day+"；僅據官方收盤封存價核對 "+str(valid)+
+                " 檔，未重建當日市場風險、主攻股或模擬績效；不是即時盤後訊號"),
+        "source_date":day,
+        "title":"JEI 盤後收盤封存補登（非即時復盤）",
+        "blocks":[
+            {"title":"延遲補登說明","items":[
+                "封存基準日 "+day+"；有正值收盤記錄 "+str(valid)+" 檔，內部標示為官方收盤封存",
+                "當日風險分數、法人、主攻股及策略勝率未從原日快照重建，不能假設其數值",
+                "LINE 未於原盤後時段發送；這份補登不代表手機已收訊，也不作當日買賣建議",
+            ]},
+        ],
+        "us_market":[],"global_market":[],"news":[],
+        "report_url":"https://jei-stock-radar.vercel.app/remote/brief.html",
+        "privacy":"只含可公開封存價格檔數，不含個人持股與成本",
+    }
+
+
 def build(edition,now,feed_path=FEED,paper_path=PAPER,output_path=OUTPUT,archive_path=ARCHIVE):
     feed,paper=load(feed_path),load(paper_path)
     prior=load(output_path)
     result={"schema":1,"privacy":"公開市場摘要，不含個人持股、成本、LINE 資料或憑證",
             "morning":prior.get("morning"),"close":prior.get("close"),
             "checks":prior.get("checks") if isinstance(prior.get("checks"),dict) else {}}
-    checked=generate(edition,now,feed,paper,archive=load(archive_path))
+    archive=load(archive_path)
+    checked=generate(edition,now,feed,paper,archive=archive)
+    # Reconcile late close schedules without pretending a pre-close session
+    # already has an official close. A delayed backfill is a separately dated,
+    # price-only historical report; the existing LINE day-matching guard will
+    # reject it for actual dispatch after midnight.
+    if edition=="close" and checked["status"]!="ready":
+        recovered=recover_previous_close_archive(now,archive,prior.get("close"))
+        if recovered is not None:
+            checked=recovered
     result["checks"][edition]={
         "date":now.date().isoformat(),
         "checked_at":now.isoformat(timespec="minutes"),
