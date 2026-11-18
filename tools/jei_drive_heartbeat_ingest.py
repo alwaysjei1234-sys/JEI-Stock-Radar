@@ -57,9 +57,29 @@ def ingest(file_id, credential_json, out):
                             "observed_only": True}
 
         except Exception as exc:
+            # Never log the service-account JSON, response body, request URL,
+            # or full exception text (all may contain sensitive information).
+            # Preserve only HTTP status and a small diagnostic classification
+            # so an API-disabled 403 can be distinguished from a wrong-file 404.
+            response = getattr(exc, "response", None)
+            status = getattr(response, "status_code", None)
+            status = status if type(status) is int and 400 <= status <= 599 else None
             result = assess(None)
             result.update(drive_access="unavailable", reason="drive_read_failed",
                           error_type=type(exc).__name__)
+            if status is not None:
+                result["http_status"] = status
+                result["safe_hint"] = {
+                    400: "invalid_drive_request",
+                    401: "check_service_account_key",
+                    403: "check_drive_api_enabled_and_file_share",
+                    404: "check_file_id_and_file_share",
+                    429: "drive_api_rate_limited",
+                    500: "drive_api_transient_error",
+                    502: "drive_api_transient_error",
+                    503: "drive_api_transient_error",
+                    504: "drive_api_transient_error",
+                }.get(status, "inspect_drive_api_permissions")
     target = Path(out)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
