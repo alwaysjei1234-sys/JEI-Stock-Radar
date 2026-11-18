@@ -91,6 +91,53 @@ def assess_observed_quality(report, as_of, *, market_open=False):
             "reason": "close_only_result_is_not_validated_real_trading"}
 
 
+
+def published_quality_brief_block(feed):
+    """One conservative published health signal shared by daily brief + LINE.
+
+    This gate is distinct from the *market* quote-freshness gate. No observed
+    closing-return group is proof of independent OOS or broker fills.
+    """
+    if not isinstance(feed, dict):
+        return None
+    h = feed.get("strategy_health")
+    if not isinstance(h, dict) or h.get("source") != "forward_official_close_pick_validation":
+        return None
+    today, observed = _date(feed.get("data_date")), _date(h.get("latest_official_day"))
+    if today is None or observed is None or not 0 <= (today - observed).days <= MAX_AGE_DAYS:
+        return None
+    checked, weak, required = (h.get(key) for key in
+                                ("evaluated_windows", "underperforming_windows", "required_windows"))
+    if (type(checked) is not int or type(weak) is not int or type(required) is not int
+            or checked != required or required != len(FAMILIES)*len(HORIZONS)
+            or not 0 <= weak <= checked
+            or h.get("independent_oos_verified") is not False
+            or h.get("live_trading_verified") is not False):
+        return None
+    if (h.get("status") == "ALL_OBSERVED_SHORT_HORIZONS_WEAK"
+            and h.get("recommendation_mode") == "research_only" and weak == checked):
+        return {
+            "kind": "strategy_quality",
+            "title": "策略觀察績效警戒",
+            "items": [
+                f"截至 {observed.isoformat()}：主攻／下一棒／妖股等5類，3日與7日共10組成熟觀察全部未達標",
+                "新候選僅供模擬研究，不代表已驗證買點；沒有獨立樣本外或真實成交績效",
+            ],
+        }
+    if (h.get("status") == "SOME_OBSERVED_SHORT_HORIZONS_WEAK"
+            and h.get("recommendation_mode") == "review_before_using"
+            and 0 < weak < checked):
+        return {
+            "kind": "strategy_quality",
+            "title": "策略觀察績效待核對",
+            "items": [
+                f"截至 {observed.isoformat()}：10組成熟短期收盤觀察中有 {weak} 組未達標",
+                "只作研究，不可把高分候選當作已驗證可成交的獲利策略",
+            ],
+        }
+    return None
+
+
 def annotate_public_feed(feed, report, as_of, *, market_open=False):
     """Attach risk warnings to a NEW public feed, not historical frozen picks.
 

@@ -53,6 +53,9 @@ def payload(report,recipient):
     blocks=[b for b in blocks[:64] if isinstance(b,dict)] if isinstance(blocks,list) else []
     def priority(block):
         title=str(block.get("title") or "")
+        # Keep the observed-strategy-loss warning ahead of ordinary candidate
+        # lists and global-news blocks, even in a truncated free LINE payload.
+        if block.get("kind")=="strategy_quality":return -1
         if "風控" in title or title in ("大盤風險","未發布原因","資料尚未就緒"):return 0
         if "主攻候選" in title:return 1
         if block.get("kind")=="paper_performance" or title=="四策略模擬復盤":return 2

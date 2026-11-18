@@ -19,6 +19,13 @@ except ModuleNotFoundError as exc:
         raise
     from market_sessions import closure_reason
 
+try:
+    from scripts.strategy_health import published_quality_brief_block
+except ModuleNotFoundError as exc:
+    if exc.name not in ("scripts", "scripts.strategy_health"):
+        raise
+    from strategy_health import published_quality_brief_block
+
 ROOT=Path(__file__).resolve().parents[1]
 TAIPEI=ZoneInfo("Asia/Taipei")
 NEW_YORK=ZoneInfo("America/New_York")
@@ -199,7 +206,7 @@ def market_blocks(feed):
     for x in (feed.get("attack") or [])[:5]:
         price=num(x.get("price"))
         picks.append(f"{clean(x.get('code'),8)} {clean(x.get('name'),22)}｜評分 {x.get('score','--')}｜收盤 {price if price else '--'}｜{percent(x.get('change_pct'))}")
-    return [
+    blocks=[
        {"title":"大盤風控","items":[
           f"基準日 {clean(feed.get('data_date'))}｜{clean(market.get('status'))}",
           f"市場風險 {risk.get('score','--')}/100｜{clean(risk.get('label'))}｜現金參考 {clean(risk.get('cash'))}",
@@ -207,6 +214,10 @@ def market_blocks(feed):
        {"title":"族群輪動","items":sectors or ["沒有可用族群資料"]},
        {"title":"主攻候選（非下單訊號）","items":picks or ["沒有通過資料檢查的候選"]},
     ]
+    quality_block = published_quality_brief_block(feed)
+    if quality_block is not None:
+        blocks.insert(1, quality_block)
+    return blocks
 
 def paper_block(paper,day):
     stamp=paper.get("last_processed_day")
