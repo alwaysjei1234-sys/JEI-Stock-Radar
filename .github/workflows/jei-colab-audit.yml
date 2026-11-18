@@ -177,9 +177,16 @@ jobs:
         run: exit 1
 
   publish_coordination:
-    # No public write on PR/push; scheduled audit publishes only *changes*.
+    # Scheduled audits AND successful main pushes must publish queued Colab
+    # tasks. Otherwise a new task lives only in an Actions artifact until
+    # GitHub eventually schedules a run (which may be delayed/skipped).
+    # Branch-scoped push guard and the paths-ignore rule above prevent
+    # PR/feature-branch publication and self-triggering commit loops.
     needs: audit
-    if: github.event_name == 'schedule' && needs.audit.result == 'success'
+    if: >-
+      needs.audit.result == 'success' &&
+      (github.event_name == 'schedule' ||
+       (github.event_name == 'push' && github.ref == 'refs/heads/main'))
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
