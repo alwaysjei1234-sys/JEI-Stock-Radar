@@ -51,6 +51,63 @@ class ColabCoordinationTests(unittest.TestCase):
                                {**prior, "status_changed_at_utc": timestamp}, now=NOW)
             self.assertEqual(out["status_changed_at_utc"], NOW.isoformat())
 
+    def test_github_issues_one_per_official_day_safe_task(self):
+        from tools.jei_colab_coordination import task_from_picks
+        picks = {"latest_official_day": "2026-11-17", "groups": {"attack": {}}}
+        task = task_from_picks(picks)
+        self.assertEqual(task, {"kind": "audit_observed_picks",
+                                "task_id": "observed-2026-11-17",
+                                "official_day": "2026-11-17"})
+        for invalid in ({"latest_official_day": "bad", "groups": {}},
+                        {"latest_official_day": "2026-02-30", "groups": {}},
+                        {"latest_official_day": "2026-11-17", "groups": "bad"},
+                        None):
+            self.assertIsNone(task_from_picks(invalid))
+
+    def test_colab_ack_requires_authenticated_recent_matching_completion(self):
+        task_data = {"latest_official_day": "2026-11-17", "groups": {"attack": {}}}
+        watch = {"status": "RECENT_HEARTBEAT", "drive_access": "authenticated",
+                 "colab_task_result": {"task_id": "observed-2026-11-17",
+                                       "status": "completed", "observed_only": True},
+                 "colab_request": "review_pick_quality"}
+        fresh = merge_status(watch, now=NOW, picks=task_data)
+        self.assertEqual(fresh["colab_task_ack"]["status"],
+                         "reported_not_independently_attested")
+        self.assertEqual(fresh["colab_requested_audit"], "review_pick_quality")
+        for change in ({"drive_access": "unconfigured"}, {"status": "STALE"},
+                       {"colab_task_result": {"task_id": "observed-2026-11-16",
+                                               "status": "completed", "observed_only": True}}):
+            with self.subTest(change=change):
+                result = merge_status({**watch, **change}, now=NOW, picks=task_data)
+                self.assertIsNone(result["colab_task_ack"])
+                if change.get("status") == "STALE" or change.get("drive_access") == "unconfigured":
+                    self.assertIsNone(result["colab_requested_audit"])
+
+    def test_drive_ingest_allowlists_requests_and_task_result(self):
+        from unittest.mock import patch
+        from tempfile import TemporaryDirectory
+        from tools.jei_colab_heartbeat import heartbeat_payload
+        from tools.jei_drive_heartbeat_ingest import ingest
+        payload = heartbeat_payload("session", "a" * 40)
+        payload.update(actions_request="review_pick_quality",
+                       colab_task_result={"task_id": "observed-2026-11-17",
+                                          "status": "completed", "observed_only": True,
+                                          "secret": "DO_NOT_EXPOSE"})
+        with TemporaryDirectory() as folder, patch(
+                "tools.jei_drive_heartbeat_ingest.download_heartbeat",
+                return_value=payload):
+            report = ingest("fixture-id", "fixture-key", f"{folder}/result.json")
+        self.assertEqual(report["colab_request"], "review_pick_quality")
+        self.assertEqual(report["colab_task_result"]["task_id"], "observed-2026-11-17")
+        self.assertNotIn("DO_NOT_EXPOSE", json.dumps(report))
+
+    def test_colab_work_request_runs_extra_read_only_checks(self):
+        workflow = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
+        self.assertIn('status.get("colab_request") == "review_pick_quality"', workflow)
+        self.assertIn("python -m unittest discover -s tests -p 'test_pick*.py'", workflow)
+        self.assertIn("authenticated", workflow)
+        self.assertNotIn("github.event_name == 'pull_request' && contents: write", workflow)
+
     def test_workflow_runs_fallback_then_writes_transition_not_hourly_commits(self):
         workflow = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
         self.assertIn("python -m tools.jei_shared_compute --provider github_actions", workflow)

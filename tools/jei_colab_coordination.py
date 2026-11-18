@@ -8,11 +8,13 @@ written only on state transitions to avoid hourly commit cascades.
 import argparse
 import datetime as dt
 import json
+import re
 from pathlib import Path
 
 VALID_STATES = {"RECENT_HEARTBEAT", "STALE", "UNKNOWN"}
 STATUS_KEYS = ("schema", "colab_status", "reason", "evidence", "fallback",
-               "restart_possible", "requested_action")
+               "restart_possible", "requested_action", "colab_task",
+               "colab_task_ack", "colab_requested_audit")
 
 
 def sanitized_status(watchdog):
@@ -48,11 +50,52 @@ def sanitized_status(watchdog):
     }
 
 
-def merge_status(watchdog, previous=None, now=None):
+def task_from_picks(picks):
+    """Invite a running Colab to independently re-evaluate observed aggregates.
+
+    Once per official trading date, never arbitrary shell/code instructions.
+    This is a duplicate-methodology check, NOT an independent OOS backtest.
+    """
+    if not isinstance(picks, dict) or not isinstance(picks.get("groups"), dict):
+        return None
+    day = picks.get("latest_official_day")
+    if not isinstance(day, str) or not re.fullmatch(r"20\d{2}-\d{2}-\d{2}", day):
+        return None
+    try:
+        dt.date.fromisoformat(day)
+    except ValueError:
+        return None
+    return {"kind": "audit_observed_picks", "task_id": "observed-" + day,
+            "official_day": day}
+
+
+def safe_task_ack(watchdog, task):
+    if not task or not isinstance(watchdog, dict):
+        return None
+    if watchdog.get("drive_access") != "authenticated" or watchdog.get("status") != "RECENT_HEARTBEAT":
+        return None
+    ack = watchdog.get("colab_task_result")
+    if not isinstance(ack, dict) or ack.get("task_id") != task["task_id"] or ack.get("status") != "completed":
+        return None
+    if ack.get("observed_only") is not True:
+        return None
+    return {"task_id": task["task_id"], "status": "reported_not_independently_attested"}
+
+
+def merge_status(watchdog, previous=None, now=None, picks=None):
     now = now or dt.datetime.now(dt.timezone.utc)
     if now.tzinfo is None:
         raise ValueError("timezone required")
     fresh = sanitized_status(watchdog)
+    task = task_from_picks(picks)
+    fresh["colab_task"] = task
+    fresh["colab_task_ack"] = safe_task_ack(watchdog, task)
+    fresh["colab_requested_audit"] = (
+        "review_pick_quality"
+        if isinstance(watchdog, dict) and watchdog.get("status") == "RECENT_HEARTBEAT"
+        and watchdog.get("drive_access") == "authenticated"
+        and watchdog.get("colab_request") == "review_pick_quality" else None
+    )
     if isinstance(previous, dict) and all(previous.get(k) == fresh[k] for k in STATUS_KEYS):
         old_date = previous.get("status_changed_at_utc")
         try:
@@ -69,6 +112,7 @@ def main():
     parser.add_argument("--watchdog", default="audit-output/colab_watchdog.json")
     parser.add_argument("--previous", default="remote/colab_coordination.json")
     parser.add_argument("--output", default="audit-output/colab_coordination.json")
+    parser.add_argument("--picks", default="remote/pick_validation.json")
     args = parser.parse_args()
     try:
         watchdog = json.loads(Path(args.watchdog).read_text(encoding="utf-8"))
@@ -78,7 +122,11 @@ def main():
         previous = json.loads(Path(args.previous).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         previous = None
-    result = merge_status(watchdog, previous)
+    try:
+        picks = json.loads(Path(args.picks).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        picks = None
+    result = merge_status(watchdog, previous, picks=picks)
     dest = Path(args.output)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

@@ -7,6 +7,8 @@ import argparse
 import datetime as dt
 import json
 import os
+import math
+import re
 import threading
 import time
 import uuid
@@ -36,8 +38,71 @@ def read_github_coordination():
             or payload.get("restart_possible") is not False):
         raise ValueError("untrusted_github_coordination")
     # Allowlist only, never read code execution commands from remote JSON.
-    return {"state": payload["colab_status"],
-            "changed_at_utc": str(payload.get("status_changed_at_utc") or "")[:35]}
+    signal = {"state": payload["colab_status"],
+              "changed_at_utc": str(payload.get("status_changed_at_utc") or "")[:35]}
+    task = payload.get("colab_task")
+    if isinstance(task, dict):
+        day, task_id = task.get("official_day"), task.get("task_id")
+        if (task.get("kind") == "audit_observed_picks"
+                and isinstance(day, str)
+                and re.fullmatch(r"20\d{2}-\d{2}-\d{2}", day)
+                and task_id == "observed-" + day):
+            signal["task"] = {"kind": "audit_observed_picks",
+                              "task_id": task_id, "official_day": day}
+    return signal
+
+
+def audit_observed_picks(task, fetcher=None):
+    """Independent recomputation of existing aggregates (NOT OOS validation).
+
+    Executes only one fixed, built-in operation and reads a bounded public JSON.
+    No remote code execution, shell, trading, or private data.
+    """
+    if (not isinstance(task, dict) or task.get("kind") != "audit_observed_picks"
+            or task.get("task_id") != "observed-" + str(task.get("official_day"))):
+        raise ValueError("unsupported_colab_task")
+    day = task["official_day"]
+    if not re.fullmatch(r"20\d{2}-\d{2}-\d{2}", day):
+        raise ValueError("invalid_task_date")
+    url = ("https://raw.githubusercontent.com/alwaysjei1234-sys/"
+           "JEI-Stock-Radar/main/remote/pick_validation.json")
+    if fetcher is None:
+        def fetcher():
+            request = urllib.request.Request(url, headers={"User-Agent": "JEI-Colab-Observed-Check"})
+            with urllib.request.urlopen(request, timeout=20) as response:
+                return response.read(2_000_001)
+    raw = fetcher()
+    if not isinstance(raw, bytes) or len(raw) > 2_000_000:
+        raise ValueError("observed_data_invalid_or_oversize")
+    data = json.loads(raw)
+    if not isinstance(data, dict) or data.get("latest_official_day") != day:
+        raise ValueError("official_date_changed")
+    groups = data.get("groups")
+    if not isinstance(groups, dict):
+        raise ValueError("missing_observed_groups")
+    eligible = 0
+    weak = 0
+    for horizons in groups.values():
+        if not isinstance(horizons, dict):
+            continue
+        for period in ("3", "7", "15", "30"):
+            stats = horizons.get(period)
+            if not isinstance(stats, dict):
+                continue
+            n, win, net = (stats.get(key) for key in
+                           ("completed", "win_rate_pct", "avg_estimated_net_pct"))
+            if (type(n) is not int or n < 30 or type(win) not in (int, float)
+                    or type(net) not in (int, float)
+                    or not math.isfinite(win) or not math.isfinite(net)
+                    or not 0 <= win <= 100 or net < -100):
+                continue
+            eligible += 1
+            if net <= 0 or win < 50:
+                weak += 1
+    return {"task_id": task["task_id"], "status": "completed",
+            "observed_only": True, "eligible_aggregates": eligible,
+            "underperforming_aggregates": weak}
+
 
 
 
@@ -58,13 +123,15 @@ def write_heartbeat(path, payload):
 
 
 def start_heartbeat(path, source_commit="unknown", interval_seconds=300,
-                    coordination_reader=None):
+                    coordination_reader=None, task_runner=None):
     if interval_seconds < 30:
         raise ValueError("heartbeat interval must be at least 30 seconds")
     stop = threading.Event()
     session_id = str(uuid.uuid4())
     def worker():
         last_signal = None
+        last_task_result = None
+        task_attempts = {}
         while not stop.is_set():
             try:
                 payload = heartbeat_payload(session_id, source_commit)
@@ -79,11 +146,39 @@ def start_heartbeat(path, source_commit="unknown", interval_seconds=300,
                                 print("JEI GitHub coordination:", signal["state"],
                                       "(Actions fallback remains independent)", flush=True)
                                 last_signal = signal["state"]
+                            task = signal.get("task")
+                            if task_runner is not None and isinstance(task, dict):
+                                key = task["task_id"]
+                                attempts = task_attempts.get(key, 0)
+                                if (attempts < 3 and not (isinstance(last_task_result, dict)
+                                        and last_task_result.get("task_id") == key
+                                        and last_task_result.get("status") == "completed")):
+                                    task_attempts[key] = attempts + 1
+                                    try:
+                                        result = task_runner(task)
+                                        if (isinstance(result, dict)
+                                                and result.get("task_id") == key
+                                                and result.get("status") == "completed"
+                                                and result.get("observed_only") is True):
+                                            last_task_result = {k: result[k] for k in (
+                                                "task_id", "status", "observed_only",
+                                                "eligible_aggregates", "underperforming_aggregates")
+                                                if k in result}
+                                            print("JEI Colab task completed:", key, flush=True)
+                                    except (OSError, ValueError, TypeError, KeyError) as exc:
+                                        print("JEI Colab task retry:", type(exc).__name__, flush=True)
+
                     except (OSError, ValueError, TypeError) as exc:
                         # Reading a remote status is optional; never stop the
                         # local heartbeat because GitHub is unavailable.
                         print("JEI Github coordination unavailable:",
                               type(exc).__name__, flush=True)
+                if isinstance(last_task_result, dict):
+                    payload["colab_task_result"] = last_task_result
+                    if last_task_result.get("underperforming_aggregates", 0) > 0:
+                        # A bounded suggestion. GitHub runs read-only audits
+                        # only after authenticating this Drive heartbeat.
+                        payload["actions_request"] = "review_pick_quality"
                 write_heartbeat(path, payload)
             except OSError as exc:
                 print("JEI heartbeat write failed:", type(exc).__name__, flush=True)

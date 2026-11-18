@@ -40,6 +40,7 @@ on:
       - 'tools/jei_colab_coordination.py'
       - 'tests/test_jei_colab_coordination.py'
       - 'tools/jei_drive_heartbeat_ingest.py'
+      - 'tools/jei_drive_heartbeat_ingest.py'
       - 'tools/jei_batch_checkpoint.py'
       - 'tests/test_jei_batch_checkpoint.py'
       - 'tools/jei_resumable_observed.py'
@@ -102,6 +103,25 @@ jobs:
             python -m pip install google-auth requests
           fi
           python -m tools.jei_drive_heartbeat_ingest --output audit-output/colab_watchdog.json
+      - name: Execute read-only verification requested by a live Colab heartbeat
+        shell: bash
+        run: |
+          set -euo pipefail
+          if python - <<'PY'
+          import json
+          with open("audit-output/colab_watchdog.json", encoding="utf-8") as source:
+              status = json.load(source)
+          authorized = (status.get("drive_access") == "authenticated" and
+                        status.get("status") == "RECENT_HEARTBEAT" and
+                        status.get("colab_request") == "review_pick_quality")
+          raise SystemExit(0 if authorized else 1)
+          PY
+          then
+            echo "Colab requested verified pick quality regression"
+            python -m unittest discover -s tests -p 'test_pick*.py' -v
+          else
+            echo "No authenticated recent Colab review request; scheduled compute continues"
+          fi
       - name: Validate bidirectional coordination and no-false-restart logic
         run: python -m unittest discover -s tests -p 'test_jei_colab_coordination.py' -v
       - name: Produce public, credential-free Colab handoff state
