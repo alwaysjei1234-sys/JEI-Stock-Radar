@@ -8,6 +8,10 @@ on:
       - 'remote/holding-health.html'
       - 'remote/holding-health.js'
       - 'remote/holding-research.js'
+      - 'remote/strategy_integration.js'
+      - 'remote/paper.html'
+      - 'remote/cash.html'
+      - 'api/consult.js'
       - 'remote/free_research.json'
       - 'remote/research_source_directory.json'
       - 'remote/gooaye_watch.json'
@@ -18,6 +22,10 @@ on:
       - 'scripts/update_video_upload_watch.py'
       - 'scripts/update_gooaye_watch.py'
       - 'remote/index.html'
+      - 'remote/strategy_integration.js'
+      - 'remote/paper.html'
+      - 'remote/cash.html'
+      - 'api/consult.js'
       - 'tests/**'
       - 'scripts/update_pick_validation.py'
       - 'scripts/update_system.py'
@@ -82,6 +90,8 @@ jobs:
           python-version: '3.11'
       - name: Dashboard smoke tests
         run: node tests/dashboard_smoke.test.cjs
+      - name: Shared strategy quality wiring (home, AI, paper, cash)
+        run: node tests/strategy_integration.test.cjs
       - name: Frozen pick archive integrity
         run: node tests/pick_archive.test.cjs
       - name: Python pick validation
