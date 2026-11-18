@@ -108,6 +108,20 @@ class ColabCoordinationTests(unittest.TestCase):
         self.assertIn("authenticated", workflow)
         self.assertNotIn("github.event_name == 'pull_request' && contents: write", workflow)
 
+    def test_colab_work_request_is_published_after_main_push_not_only_schedule(self):
+        # Regression: the audit used to compute a fresh task on GitHub push
+        # but published it only on a future scheduled run. Until that run,
+        # the public coordination file contained no task for live Colab.
+        workflow = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
+        publisher = workflow.split("\n  publish_coordination:\n", 1)[1]
+        self.assertIn("needs.audit.result == 'success'", publisher)
+        self.assertIn("github.event_name == 'schedule'", publisher)
+        self.assertIn("github.event_name == 'push'", publisher)
+        self.assertIn("github.ref == 'refs/heads/main'", publisher)
+        self.assertIn("git diff --quiet -- remote/colab_coordination.json", publisher)
+        self.assertIn("remote/colab_coordination.json", workflow.split("paths-ignore:", 1)[1])
+        self.assertNotIn("github.event_name == 'pull_request'", publisher)
+
     def test_workflow_runs_fallback_then_writes_transition_not_hourly_commits(self):
         workflow = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
         self.assertIn("python -m tools.jei_shared_compute --provider github_actions", workflow)
