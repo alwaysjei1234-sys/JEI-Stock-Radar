@@ -39,6 +39,7 @@ on:
       - 'tests/test_jei_colab_heartbeat.py'
       - 'tools/jei_colab_coordination.py'
       - 'tests/test_jei_colab_coordination.py'
+      - 'tests/test_jei_colab_10_roundtrips.py'
       - 'tools/jei_drive_heartbeat_ingest.py'
       - 'tools/jei_drive_heartbeat_ingest.py'
       - 'tools/jei_batch_checkpoint.py'
@@ -124,6 +125,8 @@ jobs:
           fi
       - name: Validate bidirectional coordination and no-false-restart logic
         run: python -m unittest discover -s tests -p 'test_jei_colab_coordination.py' -v
+      - name: Verify 10 simulated reciprocal Colab/Actions handoffs
+        run: python -m unittest discover -s tests -p 'test_jei_colab_10_roundtrips.py' -v
       - name: Produce public, credential-free Colab handoff state
         run: python -m tools.jei_colab_coordination --watchdog audit-output/colab_watchdog.json --previous remote/colab_coordination.json --output audit-output/colab_coordination.json
       - name: Restore checkpoint from prior workflow runs
