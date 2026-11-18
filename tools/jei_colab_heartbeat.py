@@ -49,6 +49,22 @@ def allow_task_attempt(attempts, key, now=None):
     return True
 
 
+def retain_current_task_result(last_result, task):
+    """Never re-advertise yesterday's completion as today's task response.
+
+    GitHub's public coordination may move to a new official trading day while
+    the same Colab kernel stays alive. Drop the previous result before deciding
+    whether to send an Actions review request for the current task.
+    """
+    if not isinstance(task, dict) or not isinstance(last_result, dict):
+        return None
+    if last_result.get("task_id") != task.get("task_id"):
+        return None
+    if last_result.get("status") != "completed" or last_result.get("observed_only") is not True:
+        return None
+    return last_result
+
+
 def read_github_coordination():
     """Poll the shared Actions status once per heartbeat while Colab is alive."""
     request = urllib.request.Request(
@@ -193,6 +209,10 @@ def start_heartbeat(path, source_commit="unknown", interval_seconds=300,
                                       "(Actions fallback remains independent)", flush=True)
                                 last_signal = signal["state"]
                             task = signal.get("task")
+                            # A result for a previous official date must not
+                            # trigger stale review_pick_quality requests after
+                            # the Actions-side task advances to a new day.
+                            last_task_result = retain_current_task_result(last_task_result, task)
                             if task_runner is not None and isinstance(task, dict):
                                 key = task["task_id"]
                                 already_completed = (isinstance(last_task_result, dict)
