@@ -47,6 +47,47 @@ class DriveHeartbeatIngestDiagnosticsTests(unittest.TestCase):
                 self.assertEqual(result["safe_hint"], hint)
                 self.assertNotIn("SENSITIVE_TOKEN", json.dumps(result))
 
+    def test_whitelist_provider_reason_without_leaking_google_error_body(self):
+        for reason in ("insufficientFilePermissions", "accessNotConfigured",
+                       "serviceDisabled", "SERVICE_DISABLED", "domainPolicy",
+                       "PERMISSION_DENIED"):
+            with self.subTest(reason=reason):
+                response = SimpleNamespace(
+                    status_code=403,
+                    json=lambda: {"error": {
+                        "message": "private_key NEVER_PRINT_THIS",
+                        "errors": [{"reason": reason, "message": "NEVER_PRINT_THIS"}]}})
+                error = DummyHTTPError(403)
+                error.response = response
+                result = self.ingest_error(error)
+                self.assertEqual(result.get("google_error_reason"), reason)
+                self.assertNotIn("private_key", json.dumps(result))
+        bad = DummyHTTPError(403)
+        bad.response = SimpleNamespace(status_code=403,
+                                       json=lambda: {"error": {"errors": [
+                                           {"reason": "secret=NEVER_PRINT_THIS"}]}})
+        result = self.ingest_error(bad)
+        self.assertNotIn("google_error_reason", result)
+
+    def test_service_account_identity_is_boolean_not_logged(self):
+        email = "jei-colab-heartbeat-reader@jei-stock-radar.iam.gserviceaccount.com"
+        credential = json.dumps({"project_id": "jei-stock-radar",
+                                 "client_email": email, "private_key": "NEVER_PRINT_THIS"})
+        error = DummyHTTPError(403)
+        with tempfile.TemporaryDirectory() as root, patch(
+                "tools.jei_drive_heartbeat_ingest.download_heartbeat",
+                side_effect=error):
+            result = ingest("mock-id", credential, Path(root) / "watchdog.json")
+        self.assertIs(result["service_account_matches_drive_share"], True)
+        self.assertNotIn(email, json.dumps(result))
+        self.assertNotIn("NEVER_PRINT_THIS", json.dumps(result))
+        with tempfile.TemporaryDirectory() as root, patch(
+                "tools.jei_drive_heartbeat_ingest.download_heartbeat",
+                side_effect=error):
+            incorrect = ingest("mock-id", credential.replace("jei-stock-radar", "other-project"),
+                               Path(root) / "watchdog.json")
+        self.assertIs(incorrect["service_account_matches_drive_share"], False)
+
     def test_network_failure_has_no_invented_http_status(self):
         result = self.ingest_error(OSError("token=NEVER_PRINT_THIS"))
         self.assertEqual(result["error_type"], "OSError")

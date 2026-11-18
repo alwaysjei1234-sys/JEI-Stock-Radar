@@ -11,6 +11,57 @@ from pathlib import Path
 from tools.jei_colab_watchdog import assess
 
 
+# Only these known Google error codes are safe to publish. Never echo the
+# freeform Google error message, a request URL, or arbitrary untrusted reason.
+_SAFE_GOOGLE_REASONS = frozenset({
+    "accessNotConfigured", "serviceDisabled", "insufficientFilePermissions",
+    "insufficientPermissions", "forbidden", "notFound", "domainPolicy",
+    "appNotAuthorizedToFile", "cannotDownloadFile", "download_restricted_for_revision",
+    "rateLimitExceeded", "userRateLimitExceeded", "dailyLimitExceeded",
+    "quotaExceeded", "sharingRateLimitExceeded", "SERVICE_DISABLED",
+    "API_KEY_SERVICE_BLOCKED", "IAM_PERMISSION_DENIED",
+    "ACCESS_TOKEN_SCOPE_INSUFFICIENT", "PERMISSION_DENIED",
+})
+
+
+def safe_google_reason(response):
+    """Extract only a pre-approved provider reason; never dump HTTP bodies."""
+    try:
+        error = response.json().get("error", {})
+        if not isinstance(error, dict):
+            return None
+        errors = error.get("errors")
+        if isinstance(errors, list):
+            for entry in errors[:3]:
+                reason = entry.get("reason") if isinstance(entry, dict) else None
+                if reason in _SAFE_GOOGLE_REASONS:
+                    return reason
+        details = error.get("details")
+        if isinstance(details, list):
+            for entry in details[:3]:
+                reason = entry.get("reason") if isinstance(entry, dict) else None
+                if reason in _SAFE_GOOGLE_REASONS:
+                    return reason
+        status = error.get("status")
+        if status in _SAFE_GOOGLE_REASONS:
+            return status
+    except (AttributeError, TypeError, ValueError):
+        pass
+    return None
+
+
+def expected_service_account(credential_json):
+    """Return only a boolean; no account identity or key appears in logs."""
+    try:
+        info = json.loads(credential_json)
+        return bool(isinstance(info, dict)
+                    and info.get("project_id") == "jei-stock-radar"
+                    and info.get("client_email") ==
+                    "jei-colab-heartbeat-reader@jei-stock-radar.iam.gserviceaccount.com")
+    except (ValueError, TypeError):
+        return False
+
+
 def download_heartbeat(file_id, service_account_json):
     from google.oauth2 import service_account
     from google.auth.transport.requests import AuthorizedSession
@@ -67,8 +118,12 @@ def ingest(file_id, credential_json, out):
             result = assess(None)
             result.update(drive_access="unavailable", reason="drive_read_failed",
                           error_type=type(exc).__name__)
+            result["service_account_matches_drive_share"] = expected_service_account(credential_json)
             if status is not None:
                 result["http_status"] = status
+                provider_reason = safe_google_reason(response)
+                if provider_reason is not None:
+                    result["google_error_reason"] = provider_reason
                 result["safe_hint"] = {
                     400: "invalid_drive_request",
                     401: "check_service_account_key",
