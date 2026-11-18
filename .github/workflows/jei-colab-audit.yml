@@ -13,6 +13,9 @@ on:
       - feat/shared-colab-actions-compute-20261113
       - feat/colab-stall-watchdog-20261113
       - feat/colab-heartbeat-emitter-20261113
+    # Publishing status from the same workflow must not create a feedback loop.
+    paths-ignore:
+      - 'remote/colab_coordination.json'
   pull_request:
     paths:
       - 'tools/jei_actions_audit.py'
@@ -34,6 +37,8 @@ on:
       - 'tests/test_jei_colab_watchdog.py'
       - 'tools/jei_colab_heartbeat.py'
       - 'tests/test_jei_colab_heartbeat.py'
+      - 'tools/jei_colab_coordination.py'
+      - 'tests/test_jei_colab_coordination.py'
       - 'tools/jei_drive_heartbeat_ingest.py'
       - 'tools/jei_batch_checkpoint.py'
       - 'tests/test_jei_batch_checkpoint.py'
@@ -97,6 +102,10 @@ jobs:
             python -m pip install google-auth requests
           fi
           python -m tools.jei_drive_heartbeat_ingest --output audit-output/colab_watchdog.json
+      - name: Validate bidirectional coordination and no-false-restart logic
+        run: python -m unittest discover -s tests -p 'test_jei_colab_coordination.py' -v
+      - name: Produce public, credential-free Colab handoff state
+        run: python -m tools.jei_colab_coordination --watchdog audit-output/colab_watchdog.json --previous remote/colab_coordination.json --output audit-output/colab_coordination.json
       - name: Restore checkpoint from prior workflow runs
         id: checkpoint_restore
         uses: actions/cache/restore@v4
@@ -143,3 +152,53 @@ jobs:
       - name: Enforce feed audit after publishing compute evidence
         if: always() && steps.feed_audit.outcome == 'failure'
         run: exit 1
+
+  publish_coordination:
+    # No public write on PR/push; scheduled audit publishes only *changes*.
+    needs: audit
+    if: github.event_name == 'schedule' && needs.audit.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    concurrency:
+      group: jei-colab-coordination-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: jei-colab-audit-${{ github.run_id }}
+          path: audit-output
+      - name: Publish changed state only, never Drive credentials or heartbeat
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s audit-output/colab_coordination.json
+          python -m json.tool audit-output/colab_coordination.json >/dev/null
+          cp audit-output/colab_coordination.json remote/colab_coordination.json
+          if git diff --quiet -- remote/colab_coordination.json && git ls-files --error-unmatch remote/colab_coordination.json >/dev/null 2>&1; then
+            echo "Colab state unchanged; no repository write"
+            exit 0
+          fi
+          git config user.name 'JEI Colab Coordination Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add remote/colab_coordination.json
+          git commit -m 'data: publish Colab/Actions handoff state'
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            git reset --hard origin/main
+            cp audit-output/colab_coordination.json remote/colab_coordination.json
+            if git diff --quiet -- remote/colab_coordination.json; then
+              echo "Handoff state was already published by another runner"
+              exit 0
+            fi
+            git add remote/colab_coordination.json
+            git commit -m 'data: publish Colab/Actions handoff state after race'
+          done
+          echo 'Could not publish coordination status safely' >&2
+          exit 1
