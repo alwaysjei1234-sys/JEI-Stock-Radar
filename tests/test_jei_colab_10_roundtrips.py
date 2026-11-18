@@ -105,8 +105,10 @@ class TenReciprocalColabActionsRoundTrips(unittest.TestCase):
                     now=now + dt.timedelta(minutes=5), picks=picks)
                 self.assertEqual(same, reviewed)
                 successes.append(day)
+                print("SIMULATED_COLAB_ACTIONS_ROUND %02d/10 PASS day=%s" % (number, day))
         self.assertEqual(successes, days)
         self.assertEqual(len(successes), 10)
+        print("SIMULATED_COLAB_ACTIONS_ROUNDTRIPS=10/10; LIVE_COLAB_ROUNDTRIPS_VERIFIED=0")
 
     def test_disconnected_colab_never_fakes_roundtrip(self):
         now = dt.datetime.now(dt.timezone.utc)
