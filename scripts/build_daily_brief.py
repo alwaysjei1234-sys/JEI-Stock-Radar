@@ -289,7 +289,10 @@ def recover_previous_close_archive(now, archive, previous):
     This is NOT a contemporaneous closing edition or eligible LINE delivery.
     """
     local=now.astimezone(TAIPEI)
-    if local.hour*60+local.minute>=13*60+30:
+    # Give the stock-exchange official close exporter time to publish today's
+    # batch. GitHub's 15:30 nominal workflow can arrive after 13:30; stop
+    # archival catch-up after 16:00 rather than treating it as the close brief.
+    if local.hour*60+local.minute>=16*60:
         return None
     day=previous_session_day(local.date())
     if day is None or (local.date()-date.fromisoformat(day)).days>5:
@@ -298,6 +301,11 @@ def recover_previous_close_archive(now, archive, previous):
         return None
     days=archive.get("days")
     if not isinstance(days,dict) or day not in days or not isinstance(days[day],dict):
+        return None
+    # Today's completed price archive already exists: do NOT conceal a broken
+    # same-day report or overwrite it with yesterday's fallback.
+    current=days.get(local.date().isoformat())
+    if isinstance(current,dict) and sum(1 for value in current.values() if (num(value) or 0)>0)>=500:
         return None
     # The archive may have older complete sessions, but never guess that the
     # most recent previous trading session is ready when its prices are absent.

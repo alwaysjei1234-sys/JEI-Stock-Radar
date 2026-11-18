@@ -104,13 +104,30 @@ class MissedCloseRecoveryTests(unittest.TestCase):
         self.assertEqual(got["status"],"pending")
         self.assertEqual(json.loads(self.out.read_text())["close"]["date"],"2026-11-17")
 
-    def test_after_1330_cannot_promote_previous_archive_as_current_close(self):
-        for hour,minute in [(13,30),(14,0),(18,10),(23,59)]:
+    def test_delayed_after_1330_can_recover_yesterday_until_1600(self):
+        for hour,minute in [(13,30),(14,0),(15,30),(15,59)]:
+            with self.subTest(time=(hour,minute)):
+                self.out.write_text(json.dumps(prior()))
+                got=self.run_build(at(hour=hour,minute=minute))
+                self.assertEqual(got["status"],"ready")
+                self.assertEqual(got["date"],"2026-11-17")
+                self.assertTrue(got["delayed_recovery"])
+
+    def test_after_1600_never_masks_today_missing_close(self):
+        for hour,minute in [(16,0),(18,10),(23,59)]:
             with self.subTest(time=(hour,minute)):
                 self.out.write_text(json.dumps(prior()))
                 got=self.run_build(at(hour=hour,minute=minute))
                 self.assertEqual(got["status"],"pending")
                 self.assertEqual(json.loads(self.out.read_text())["close"]["date"],"2026-11-13")
+
+    def test_todays_archived_close_must_not_be_hidden_by_yesterdays_recovery(self):
+        archive=prices()
+        archive["days"]["2026-11-18"]={str(2000+i):float(i+1) for i in range(500)}
+        self.archive.write_text(json.dumps(archive))
+        got=self.run_build(at(hour=14,minute=0))
+        self.assertEqual(got["status"],"pending")
+        self.assertEqual(json.loads(self.out.read_text())["close"]["date"],"2026-11-13")
 
     def test_missing_latest_previous_session_not_masked_by_older_archive(self):
         # The immediately previous session for Nov 19 is Nov 18. Do not
