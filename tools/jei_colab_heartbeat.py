@@ -114,12 +114,30 @@ def heartbeat_payload(session_id, source_commit, now=None):
             "runtime_claim": "not_independently_attested"}
 
 
-def write_heartbeat(path, payload):
+def write_heartbeat(path, payload, *, preserve_drive_id=None):
+    """Persist a heartbeat while preserving a mounted Drive file's identity.
+
+    os.replace() works atomically on local POSIX files, but a Drive FUSE
+    rename/replace can delete and recreate a cloud file with a NEW file ID.
+    GitHub's read-only service account tracks that file ID, not the name.
+    Write the existing Drive mount file in place instead; a concurrent Drive
+    read may temporarily see partial JSON and must fail closed/retry.
+    Other paths keep their previous atomic replace behavior.
+    """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    temp = path.with_name(path.name + ".tmp")
-    temp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    os.replace(temp, path)
+    if preserve_drive_id is None:
+        # Actual Google Colab Drive mount, not local Unix scratch/temp files.
+        preserve_drive_id = path.as_posix().startswith("/content/drive/")
+    data = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+    if preserve_drive_id:
+        # Truncates/reuses the same path-backed Drive item rather than a
+        # rename. Its exact remote ID must still be verified on Google Drive.
+        path.write_text(data, encoding="utf-8")
+    else:
+        temp = path.with_name(path.name + ".tmp")
+        temp.write_text(data, encoding="utf-8")
+        os.replace(temp, path)
 
 
 def start_heartbeat(path, source_commit="unknown", interval_seconds=300,
@@ -128,6 +146,9 @@ def start_heartbeat(path, source_commit="unknown", interval_seconds=300,
         raise ValueError("heartbeat interval must be at least 30 seconds")
     stop = threading.Event()
     session_id = str(uuid.uuid4())
+    # Publish first heartbeat before any network request/task execution; an
+    # unavailable GitHub coordination URL must not delay Colab liveness.
+    write_heartbeat(path, heartbeat_payload(session_id, source_commit))
     def worker():
         last_signal = None
         last_task_result = None
