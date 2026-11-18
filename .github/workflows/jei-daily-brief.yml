@@ -19,6 +19,7 @@ on:
   pull_request:
     paths:
       - 'scripts/build_daily_brief.py'
+      - 'tests/test_delayed_close_recovery.py'
       - 'scripts/send_line_brief.py'
       - 'scripts/strategy_health.py'
       - 'tests/test_strategy_brief_integration.py'
@@ -76,6 +77,8 @@ jobs:
           python-version: '3.12'
       - name: Test cross-module strategy quality in LINE and brief without sending
         run: python -m unittest discover -s tests -p 'test_strategy_brief_integration.py' -v
+      - name: Test previous-session archive recovery against delayed scheduled jobs
+        run: python -m unittest discover -s tests -p 'test_delayed_close_recovery.py' -v
       - name: Verify brief dispatch policy, expiry and LINE idempotence
         run: |
           python -m unittest discover -s tests -p 'test_brief_dispatch_policy.py' -v
@@ -102,6 +105,7 @@ jobs:
       - name: Test briefing and LINE safety
         run: |
           python -m unittest discover -s tests -p 'test_daily_brief.py' -v
+          python -m unittest discover -s tests -p 'test_delayed_close_recovery.py' -v
           python -m unittest discover -s tests -p 'test_strategy_brief_integration.py' -v
           python -m unittest discover -s tests -p 'test_daily_brief_publish.py' -v
           python -m unittest discover -s tests -p 'test_send_line_alert.py' -v
