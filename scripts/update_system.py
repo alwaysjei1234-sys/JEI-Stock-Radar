@@ -25,6 +25,13 @@ except ModuleNotFoundError as exc:
     from market_sessions import closure_reason, next_expected_session
     from public_holding_signals import is_safe_public_holdings, build_public_holding_signals
 
+try:
+    from scripts.strategy_health import annotate_public_feed
+except ModuleNotFoundError as exc:
+    if exc.name not in ("scripts", "scripts.strategy_health"):
+        raise
+    from strategy_health import annotate_public_feed
+
 TWSE_STOCK="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
 TWSE_INDEX="https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
 TPEX_STOCK="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
@@ -2040,6 +2047,15 @@ def main():
         "web_recommendations_status":old_web_status,
         "sources":["TWSE OpenAPI STOCK_DAY_ALL","TWSE OpenAPI MI_INDEX","TPEx OpenAPI daily close quotes","TWSE MIS intraday stock/index quotes","TWSE T86 institutional investors","TPEx institutional investors OpenAPI"]
     }
+    # Strategy-quality feedback is added AFTER official historical signals are
+    # frozen above. Never rescore history or silently remove losing candidates.
+    # A successful current-day quote refresh does not validate strategy returns.
+    try:
+        observed_report=json.loads(Path("remote/pick_validation.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        observed_report=None
+    annotate_public_feed(out,observed_report,today_iso,market_open=market_open)
+
     OUT.parent.mkdir(parents=True,exist_ok=True)
     # Public feed must never expose personal portfolio positions or valuations.
     if not is_safe_public_holdings(out.get("holdings")):
