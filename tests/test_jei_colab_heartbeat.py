@@ -97,6 +97,13 @@ class HeartbeatTests(unittest.TestCase):
                 task_runner=runner)
             try:
                 self.assertTrue(called.wait(3))
+                # Callback runs before the atomic heartbeat write; avoid a
+                # scheduler-dependent race in the test itself.
+                import time
+                for _ in range(100):
+                    if file.exists():
+                        break
+                    time.sleep(0.01)
                 report = json.loads(file.read_text(encoding="utf-8"))
                 self.assertEqual(report["actions_request"], "review_pick_quality")
                 self.assertEqual(report["colab_task_result"]["task_id"], task["task_id"])
