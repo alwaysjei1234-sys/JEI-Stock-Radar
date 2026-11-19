@@ -112,6 +112,32 @@ class AuditTests(unittest.TestCase):
         feed["market"]["live_diagnostics"]["quote_refresh_window"] = True
         self.assertEqual(inspect_feed(feed)["status"], "ok")
 
+    def test_intraday_timestamp_freshness_taipei(self):
+        from tools.jei_actions_audit import REQUIRED
+        zone = dt.timezone(dt.timedelta(hours=8))
+        now = dt.datetime(2026, 11, 20, 10, 20, tzinfo=zone)
+        feed = {key: {} for key in REQUIRED}
+        feed.update(data_date="2026-11-20", market={
+            "live_valid": True, "live_count": 700,
+            "last_checked_at": "2026-11-20 10:09",
+            "live_diagnostics": {"market_open": True, "quote_refresh_window": True},
+        })
+        self.assertIn("stale_intraday_check_timestamp",
+                      inspect_feed(feed, now=now)["critical_issues"])
+        feed["market"]["last_checked_at"] = "2026-11-20 10:15"
+        self.assertNotIn("stale_intraday_check_timestamp",
+                         inspect_feed(feed, now=now)["critical_issues"])
+        feed["market"]["last_checked_at"] = "invalid"
+        self.assertIn("stale_intraday_check_timestamp",
+                      inspect_feed(feed, now=now)["critical_issues"])
+        feed["market"]["last_checked_at"] = "2026-11-20 10:00"
+        off_session = now.replace(hour=15)
+        self.assertNotIn("stale_intraday_check_timestamp",
+                         inspect_feed(feed, now=off_session)["critical_issues"])
+        feed["market"]["live_diagnostics"]["quote_refresh_window"] = False
+        self.assertNotIn("stale_intraday_check_timestamp",
+                         inspect_feed(feed, now=now)["critical_issues"])
+
     def test_unverified_institutional_is_reported_not_falsely_verified(self):
         from tools.jei_actions_audit import REQUIRED
         feed = {key: {} for key in REQUIRED}
