@@ -17,7 +17,29 @@ AREAS = ['LINE 實際送達','盤中行情刷新','TWSE/TPEx/MIS 交叉驗證','
 '持股健檢模組4','持股健檢模組5','持股健檢模組6','持股健檢模組7','持股健檢模組8',
 'AI多模型會診','外部研究來源核對','Vercel部署驗收','完整31項回歸測試']
 
-def inspect_feed(feed):
+def _intraday_timestamp_expired(market, now=None):
+    """Return True only during an active Taiwan intraday refresh window."""
+    now = now or dt.datetime.now(dt.timezone(dt.timedelta(hours=8)))
+    taipei = dt.timezone(dt.timedelta(hours=8))
+    now = now.astimezone(taipei)
+    if now.weekday() >= 5 or not (dt.time(9, 0) <= now.time() <= dt.time(13, 30)):
+        return False
+    diagnostics = market.get('live_diagnostics') or {}
+    if not (diagnostics.get('market_open') is True and
+            diagnostics.get('quote_refresh_window') is True):
+        return False
+    raw = market.get('last_checked_at')
+    if not isinstance(raw, str):
+        return True
+    try:
+        checked = dt.datetime.strptime(raw, '%Y-%m-%d %H:%M').replace(tzinfo=taipei)
+    except ValueError:
+        return True
+    age = (now - checked).total_seconds()
+    return age > 600 or age < -120
+
+
+def inspect_feed(feed, now=None):
     issues = ['missing:' + key for key in REQUIRED if key not in feed]
     if "holdings" in feed:
         holdings = feed["holdings"]
@@ -44,6 +66,8 @@ def inspect_feed(feed):
     diagnostics = market.get('live_diagnostics')
     expects_live = (isinstance(diagnostics, dict) and diagnostics.get('market_open') is True
                     and diagnostics.get('quote_refresh_window') is True)
+    if expects_live and _intraday_timestamp_expired(market, now=now):
+        issues.append('stale_intraday_check_timestamp')
     if expects_live and market.get('live_valid') is not True:
         issues.append('unverified_intraday_quotes')
     elif market.get('live_valid') is False and market.get('live_count', 0) == 0:
@@ -51,7 +75,7 @@ def inspect_feed(feed):
     institutional_status = feed.get('institutional_status')
     if isinstance(institutional_status, dict) and institutional_status.get('ok') is False:
         issues.append('institutional_unverified (institutional scoring must remain disabled)')
-    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score', 'invalid_public_holdings', 'official_close_date_mismatch', 'stale_official_close', 'unverified_official_close', 'unverified_intraday_quotes')]
+    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score', 'invalid_public_holdings', 'official_close_date_mismatch', 'stale_official_close', 'unverified_official_close', 'unverified_intraday_quotes', 'stale_intraday_check_timestamp')]
     return {'status': 'failed' if critical else 'ok', 'critical_issues': critical,
             'feed_date': date, 'updated_at': feed.get('updated_at'),
             'risk_level': risk.get('level'), 'risk_score': risk.get('score'),
