@@ -29409,10 +29409,11 @@
   ],
   "web_recommendations_updated_at": "2026-11-19 04:49",
   "web_recommendations_status": {
-    "ok": true,
-    "summary": "自動彙整公開網路研究摘要／分享線索、財經媒體、CMoney公開討論與TWSE/TPEx法人資金；每筆研究線索附原文與日期，樣本式共識不等於全網篇數",
+    "ok": false,
+    "summary": "本輪網路樣本不足，保留上一版推薦，不用空資料覆蓋",
     "method": "外部聲量為主、法人資金與JEI交叉驗證；過熱/法人背離自動扣分",
-    "errors": []
+    "errors": [],
+    "last_attempt": "2026-11-19 22:43"
   },
   "sources": [
     "TWSE OpenAPI STOCK_DAY_ALL",
