@@ -66,7 +66,7 @@ def inspect_feed(feed, now=None):
     diagnostics = market.get('live_diagnostics')
     expects_live = (isinstance(diagnostics, dict) and diagnostics.get('market_open') is True
                     and diagnostics.get('quote_refresh_window') is True)
-    if isinstance(diagnostics, dict) and _intraday_timestamp_expired(market, now=now):
+    if _intraday_timestamp_expired(market, now=now):
         issues.append('stale_intraday_check_timestamp')
     if expects_live and market.get('live_valid') is not True:
         issues.append('unverified_intraday_quotes')
