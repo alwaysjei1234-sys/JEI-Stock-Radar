@@ -143,6 +143,42 @@ class ProspectiveCohortIntegrityTests(unittest.TestCase):
             outcome = audit_cohorts(report, ledger, bad, EFFECTIVE_DAY)
             self.assertEqual(outcome["status"], "BLOCKED")
 
+    def test_mature_outcome_cannot_be_hidden_as_pending_or_missing(self):
+        for status in ("pending", "missing_price", "corporate_action_unadjusted"):
+            report, ledger, prices = sample()
+            # Turn this into a loss, then hide it without changing frozen picks.
+            prices["days"][DAYS[-1]]["3017"] = 90.0
+            for source in (ledger, report):
+                source["picks"][-1]["signal_close"] = 90.0
+            report["picks"][0]["outcomes"][0] = {"trading_days": 3, "status": status}
+            with self.subTest(status=status):
+                self.assertEqual(audit_cohorts(report, ledger, prices, EFFECTIVE_DAY)["reason"],
+                                 "prospective_outcome_status_not_reproducible")
+
+    def test_real_missing_price_remains_an_excluded_observation(self):
+        from scripts.update_pick_validation import compile_report
+        report, ledger, prices = sample()
+        del prices["days"][DAYS[1]]["3017"]
+        prices["days"][DAYS[1]]["9999"] = 100.0
+        for source in (ledger, report):
+            source["picks"] = [p for p in source["picks"] if p["day"] != DAYS[1]]
+        ledger["empty_sessions"] = [{"day": DAYS[1], "status": "verified_no_candidates",
+                                     "selection_policy": POLICY}]
+        report = compile_report(ledger["picks"], prices, "test")
+        self.assertEqual(report["picks"][0]["outcomes"][0]["status"], "missing_price")
+        self.assertEqual(audit_cohorts(report, ledger, prices, EFFECTIVE_DAY)["status"], "PASS")
+
+    def test_real_corporate_action_stays_excluded_and_cannot_be_completed(self):
+        from scripts.update_pick_validation import compile_report
+        report, ledger, prices = sample()
+        prices["corporate_actions"] = {DAYS[1]: {"3017": "除息"}}
+        honest = compile_report(ledger["picks"], prices, "test")
+        self.assertEqual(honest["picks"][0]["outcomes"][0]["status"],
+                         "corporate_action_unadjusted")
+        self.assertEqual(audit_cohorts(honest, ledger, prices, EFFECTIVE_DAY)["status"], "PASS")
+        self.assertEqual(audit_cohorts(report, ledger, prices, EFFECTIVE_DAY)["reason"],
+                         "prospective_outcome_status_not_reproducible")
+
     def test_source_inputs_not_mutated(self):
         report, ledger, prices = sample()
         before = copy.deepcopy([report,ledger,prices])

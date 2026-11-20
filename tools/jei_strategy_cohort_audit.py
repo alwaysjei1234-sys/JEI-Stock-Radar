@@ -106,7 +106,7 @@ def audit_cohorts(report, ledger, prices, effective_day):
                 "ledger_matches_outcomes": True, "selection_policy": EXPECTED_POLICY}
 
     from scripts.market_sessions import next_expected_session
-    from scripts.update_pick_validation import net_percent
+    from scripts.update_pick_validation import net_percent, compile_report
     sessions = sorted(day for day in archive_days if start <= day <= end)
     expected = start
     for actual in sessions:
@@ -169,6 +169,14 @@ def audit_cohorts(report, ledger, prices, effective_day):
 
     # A completed outcome is cross-checked against its exact horizon close
     # in the *official* dated archive; report's return cannot be cherry-picked.
+    # Recompute status from sealed prices, including genuine missing closes and
+    # corporate actions. Checking only "complete" allows a mature losing
+    # observation to disappear from the denominator by changing its status.
+    prospective_rows = [p for p in ledger_rows.values()
+                        if start <= _day(p["day"]) <= end]
+    recomputed = compile_report(prospective_rows, prices, "integrity-check")
+    expected_statuses = {(p["id"], o["trading_days"]): o["status"]
+                         for p in recomputed["picks"] for o in p["outcomes"]}
     full_archive_days = sorted(archive_days)
     positions = {day: index for index, day in enumerate(full_archive_days)}
     for p in report_rows.values():
@@ -186,8 +194,17 @@ def audit_cohorts(report, ledger, prices, effective_day):
             if horizon in seen:
                 return _fail("duplicate_prospective_horizon")
             seen.add(horizon)
-            if horizon not in HORIZONS or o.get("status") != "complete":
+            if horizon not in HORIZONS:
                 continue
+            expected_status = expected_statuses.get((p["id"], horizon))
+            if o.get("status") != "complete":
+                if o.get("status") != expected_status:
+                    return _fail("prospective_outcome_status_not_reproducible",
+                                 example=p["id"][:80], horizon=horizon)
+                continue
+            if expected_status not in ("complete", "pending"):
+                return _fail("prospective_outcome_status_not_reproducible",
+                             example=p["id"][:80], horizon=horizon)
             idx = positions[signal_day] + horizon
             if idx >= len(full_archive_days):
                 return _fail("future_outcome_claimed_complete", example=p["id"][:80])
