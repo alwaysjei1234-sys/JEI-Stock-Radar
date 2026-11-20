@@ -5,9 +5,12 @@ import json
 import tempfile
 from pathlib import Path
 
+OFF_SESSION = dt.datetime(2026, 11, 20, 20, 0, tzinfo=dt.timezone(dt.timedelta(hours=8)))
+
+
 class AuditTests(unittest.TestCase):
     def test_missing_keys_and_bad_date(self):
-        result = inspect_feed({'data_date': 'not-a-date'})
+        result = inspect_feed({'data_date': 'not-a-date'}, now=OFF_SESSION)
         self.assertIn('invalid_data_date', result['issues'])
         self.assertIn('missing:market', result['issues'])
 
@@ -19,7 +22,7 @@ class AuditTests(unittest.TestCase):
         self.assertEqual(report['source_commit'], 'abc')
 
     def test_critical_missing_fields_fail(self):
-        result = inspect_feed({'data_date': '2026-11-06', 'risk': {}, 'market': {}})
+        result = inspect_feed({'data_date': '2026-11-06', 'risk': {}, 'market': {}}, now=OFF_SESSION)
         self.assertEqual(result['status'], 'failed')
         self.assertIn('missing:summary', result['critical_issues'])
 
@@ -27,7 +30,7 @@ class AuditTests(unittest.TestCase):
         from tools.jei_actions_audit import REQUIRED
         feed = {key: {} for key in REQUIRED}
         feed.update({'data_date': '2026-11-06', 'risk': {'level': 'red', 'score': 100}, 'market': {}})
-        result = inspect_feed(feed)
+        result = inspect_feed(feed, now=OFF_SESSION)
         self.assertEqual(result['status'], 'ok')
         self.assertEqual(result['line_delivery'], 'NOT_TESTED')
 
@@ -36,13 +39,13 @@ class AuditTests(unittest.TestCase):
 
         feed = {key: {} for key in REQUIRED}
         feed.update(data_date="2026-11-13", holdings={"2330": {"score": 70}})
-        self.assertEqual(inspect_feed(feed)["status"], "ok")
+        self.assertEqual(inspect_feed(feed, now=OFF_SESSION)["status"], "ok")
         for invalid in (None, [], {"2330": {"cost": 1}}):
             with self.subTest(invalid=invalid):
                 self.assertIn("invalid_public_holdings", inspect_feed(
-                    {**feed, "holdings": invalid})["critical_issues"])
+                    {**feed, "holdings": invalid}, now=OFF_SESSION)["critical_issues"])
         del feed["holdings"]
-        self.assertIn("missing:holdings", inspect_feed(feed)["critical_issues"])
+        self.assertIn("missing:holdings", inspect_feed(feed, now=OFF_SESSION)["critical_issues"])
 
     def test_explicit_stale_official_close_fails_audit(self):
         from tools.jei_actions_audit import REQUIRED
@@ -50,7 +53,7 @@ class AuditTests(unittest.TestCase):
         feed.update({'data_date': '2026-11-13', 'risk': {},
                      'market': {'post_close_refresh': True, 'stale': True,
                                 'session_status': '已驗證'}})
-        result = inspect_feed(feed)
+        result = inspect_feed(feed, now=OFF_SESSION)
         self.assertEqual(result['status'], 'failed')
         self.assertIn('stale_official_close', result['critical_issues'])
 
@@ -60,7 +63,7 @@ class AuditTests(unittest.TestCase):
         feed.update({'data_date': '2026-11-13', 'risk': {},
                      'market': {'post_close_refresh': True, 'stale': False,
                                 'session_status': '待驗證'}})
-        self.assertIn('unverified_official_close', inspect_feed(feed)['critical_issues'])
+        self.assertIn('unverified_official_close', inspect_feed(feed, now=OFF_SESSION)['critical_issues'])
 
     def test_verified_official_close_rejects_mixed_dates(self):
         from tools.jei_actions_audit import REQUIRED
@@ -69,12 +72,12 @@ class AuditTests(unittest.TestCase):
         feed.update(data_date="2026-11-13", source_data_date="2026-11-13",
                     market={"post_close_refresh": True, "session_status": "已驗證",
                             "market_data_as_of": "2026-11-13"})
-        self.assertEqual(inspect_feed(feed)["status"], "ok")
+        self.assertEqual(inspect_feed(feed, now=OFF_SESSION)["status"], "ok")
         for candidate in (
             {**feed, "source_data_date": "TWSE:2026-11-13 / TPEx:2026-11-12"},
             {**feed, "market": {**feed["market"], "market_data_as_of": "2026-11-12"}},
         ):
-            self.assertIn("official_close_date_mismatch", inspect_feed(candidate)["critical_issues"])
+            self.assertIn("official_close_date_mismatch", inspect_feed(candidate, now=OFF_SESSION)["critical_issues"])
 
     def test_archive_can_report_lagging_source_date(self):
         from tools.jei_actions_audit import REQUIRED
@@ -83,7 +86,7 @@ class AuditTests(unittest.TestCase):
         feed.update(data_date="2026-11-13", source_data_date="2026-11-12",
                     market={"post_close_refresh": False, "historical_readonly": True,
                             "market_data_as_of": "2026-11-13"})
-        self.assertEqual(inspect_feed(feed)["status"], "ok")
+        self.assertEqual(inspect_feed(feed, now=OFF_SESSION)["status"], "ok")
 
     def test_off_session_no_live_quotes_is_not_critical(self):
         from tools.jei_actions_audit import REQUIRED
@@ -92,7 +95,7 @@ class AuditTests(unittest.TestCase):
                      'market': {'post_close_refresh': True, 'stale': False,
                                 'session_status': '已驗證', 'live_valid': False,
                                 'live_count': 0}})
-        self.assertEqual(inspect_feed(feed)['status'], 'ok')
+        self.assertEqual(inspect_feed(feed, now=OFF_SESSION)['status'], 'ok')
 
     def test_intraday_unverified_quotes_fail_audit(self):
         from tools.jei_actions_audit import REQUIRED
@@ -168,7 +171,7 @@ class AuditTests(unittest.TestCase):
         feed = json.loads(Path('remote/system.json').read_text())
         # Replay yesterday's valid off-session shape at today's real trading clock.
         feed['market']['last_checked_at'] = '2026-11-19 19:05'
-        feed['market']['live_diagnostics'] = {'market_open': False, 'quote_refresh_window': False}
+        feed['market'].pop('live_diagnostics', None)
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp);source = root/'system.json';source.write_text(json.dumps(feed))
             with patch.object(audit.dt, 'datetime', Clock), patch.object(sys,'argv',
@@ -184,7 +187,7 @@ class AuditTests(unittest.TestCase):
         feed = {key: {} for key in REQUIRED}
         feed.update({'data_date': '2026-11-13', 'risk': {}, 'market': {},
                      'institutional_status': {'ok': False, 'count': 0}})
-        result = inspect_feed(feed)
+        result = inspect_feed(feed, now=OFF_SESSION)
         self.assertIs(result['institutional_verified'], False)
         self.assertTrue(any('institutional_unverified' in issue for issue in result['issues']))
         self.assertEqual(result['status'], 'ok')  # degraded source, not a false full outage
