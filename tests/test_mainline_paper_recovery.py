@@ -52,3 +52,20 @@ class MainlinePaperRecoveryTests(unittest.TestCase):
         changed=copy.deepcopy(prices);changed['days'][DAY2]['2603']=101
         with self.assertRaisesRegex(ValueError,'prices conflict'):
             r.recover(state,prices,sources,now,lambda _:changed)
+
+
+class RuleSourceCompatibilityTests(unittest.TestCase):
+    def test_transport_only_change_is_compatible_for_frozen_replay(self):
+        old = b"RULE = 85\ndef fetch_json(url):\n    return url\ndef select(score):\n    return score >= RULE\n"
+        new = b"RULE = 85\ndef fetch_json(url):\n    raise TimeoutError(url)\ndef read_json_with_budget(response, deadline):\n    return response\ndef select(score):\n    return score >= RULE\n"
+        self.assertTrue(r.compatible_rule_source('scripts/update_system.py', old, new))
+        self.assertFalse(r.compatible_rule_source('scripts/update_system.py', old, new.replace(b'RULE = 85', b'RULE = 80')))
+        self.assertFalse(r.compatible_rule_source('scripts/update_system.py', old, new.replace(b'score >= RULE', b'score > RULE')))
+        self.assertFalse(r.compatible_rule_source('scripts/update_paper_performance.py', old, new))
+
+    def test_top_level_effects_decorators_and_invalid_code_are_not_ignored(self):
+        old = b"RULE = 85\ndef fetch_json(url):\n    return url\n"
+        self.assertFalse(r.compatible_rule_source('scripts/update_system.py', old, old+b"RULE = 80\n"))
+        self.assertFalse(r.compatible_rule_source('scripts/update_system.py', old, old.replace(b'def fetch_json',b'@modify_rules\ndef fetch_json')))
+        self.assertFalse(r.compatible_rule_source('scripts/update_system.py', old, b'invalid ('))
+        self.assertFalse(r.compatible_rule_source('scripts/update_system.py', old, old.replace(b'(url):',b'(url=modify_rules()):')))
