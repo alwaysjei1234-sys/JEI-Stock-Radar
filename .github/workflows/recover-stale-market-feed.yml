@@ -137,3 +137,28 @@ jobs:
           path: ${{ runner.temp }}/jei-line-recovery-result.json
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Publish public intraday LINE decision without recipient or credentials
+        if: always() && github.event_name != 'pull_request'
+        env:
+          LINE_RECEIPT_PATH: ${{ runner.temp }}/jei-line-recovery-result.json
+          LINE_RUN_ID: ${{ github.run_id }}
+        run: |
+          if [ ! -f "$LINE_RECEIPT_PATH" ]; then exit 0; fi
+          python scripts/publish_line_status.py --receipt "$LINE_RECEIPT_PATH" --run-id "$LINE_RUN_ID"
+          for i in 1 2 3; do
+            if git diff --quiet -- remote/line_status.json && git ls-files --error-unmatch remote/line_status.json >/dev/null 2>&1; then exit 0; fi
+            git config user.name 'JEI LINE Status Bot'
+            git config user.email 'actions@users.noreply.github.com'
+            git add remote/line_status.json
+            git commit -m 'Auto-update public LINE dispatch status'
+            if git push origin HEAD:main; then exit 0; fi
+            if [ "$i" = 3 ]; then break; fi
+            # Receipt lives outside checkout; merge it into the latest main
+            # after a race, preserving newer records and all unrelated files.
+            git fetch origin main
+            git reset --hard origin/main
+            python scripts/publish_line_status.py --receipt "$LINE_RECEIPT_PATH" --run-id "$LINE_RUN_ID"
+          done
+          echo 'LINE status could not be published; API artifact remains available'
+          exit 1
