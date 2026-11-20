@@ -15,6 +15,7 @@ on:
     workflows:
       - JEI Research Engine Tests
       - JEI Stalled Market Feed Recovery
+      - JEI Compute Provenance Audit (GitHub Actions)
     types: [completed]
   pull_request:
     paths:
@@ -85,19 +86,22 @@ jobs:
           python -m unittest discover -s tests -p 'test_line_policy_receipt.py' -v
           python -m unittest discover -s tests -p 'test_line_outbox.py' -v
   generate:
-    # Ignore PR/push/failed/upstream-chained runs; neither untrusted code nor
+    # Reject PR/failed/chained callbacks; push builds stay non-sending by policy.
+    # Only same-repository scheduled main completions may dispatch LINE; neither untrusted code nor
     # an unrelated workflow completion may initiate an actual LINE push.
     if: >-
       github.event_name != 'pull_request' &&
       (github.event_name != 'workflow_run' ||
       (github.event.workflow_run.event == 'schedule' &&
        github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository &&
        github.event.workflow_run.conclusion == 'success'))
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:

@@ -86,7 +86,8 @@ class BriefDispatchPolicyTests(unittest.TestCase):
         self.assertEqual(self.select(event='schedule',schedule='55 0 * * 1-5',now=morning),('morning',True))
 
     def test_independent_scheduled_workflow_can_recover_missed_morning_line(self):
-        for source in ('JEI Research Engine Tests', 'JEI Stalled Market Feed Recovery'):
+        for source in ('JEI Research Engine Tests', 'JEI Stalled Market Feed Recovery',
+                       'JEI Compute Provenance Audit (GitHub Actions)'):
             with self.subTest(source=source):
                 extra=dict(event='workflow_run',workflow_name=source,
                            workflow_event='schedule',workflow_conclusion='success',
@@ -153,3 +154,73 @@ class BriefDispatchPolicyTests(unittest.TestCase):
     def test_same_day_late_close_keeps_existing_dispatch_path(self):
         for cron in ['10 10 * * 1-5','40 10 * * 1-5','10 11 * * 1-5']:
             self.assertEqual(self.select(event='schedule',schedule=cron,now=NOW.replace(hour=23,minute=59)),('close',True))
+
+    def test_compute_clock_rejects_non_scheduled_or_non_main_completions(self):
+        origin=dict(event='workflow_run',
+                    workflow_name='JEI Compute Provenance Audit (GitHub Actions)',
+                    workflow_event='schedule',workflow_conclusion='success',
+                    workflow_branch='main',now=NOW.replace(day=20,hour=18,minute=25))
+        self.assertEqual(self.select(**origin),('close',True))
+        for override in ({'workflow_event':'push'},{'workflow_event':'pull_request'},
+                         {'workflow_event':'workflow_run'},{'workflow_conclusion':'failure'},
+                         {'workflow_branch':'feature/any'},
+                         {'now':NOW.replace(day=21,hour=18,minute=25)},
+                         {'now':NOW.replace(day=20,hour=1,minute=25)}):
+            with self.subTest(override=override):
+                self.assertEqual(self.select(**(origin|override)),('close',False))
+
+    def test_compute_fallback_wiring_uses_trusted_current_main(self):
+        from pathlib import Path
+        workflow=Path('.github/workflows/jei-daily-brief.yml').read_text()
+        compute=Path('.github/workflows/jei-colab-audit.yml').read_text()
+        self.assertIn('- JEI Compute Provenance Audit (GitHub Actions)',workflow)
+        self.assertIn('github.event.workflow_run.head_repository.full_name == github.repository',workflow)
+        generate=workflow.split('  generate:',1)[1]
+        self.assertIn('ref: main',generate)
+        self.assertIn("cron: '37 * * * *'",compute)
+
+    def test_compute_completion_freezes_and_deduplicates_same_day_close(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import MagicMock, patch
+        from urllib.error import HTTPError
+        from scripts import line_outbox as outbox, send_line_brief as sender
+        from scripts.publish_line_status import merge_status
+        now=NOW.replace(day=20,hour=18,minute=25)
+        edition,eligible=self.select(event='workflow_run',now=now,
+            workflow_name='JEI Compute Provenance Audit (GitHub Actions)',
+            workflow_event='schedule',workflow_conclusion='success',workflow_branch='main')
+        self.assertTrue(eligible)
+        report={'date':now.date().isoformat(),'edition':edition,'status':'ready',
+                'title':'Verified close','blocks':[]}
+        self.assertTrue(sender.can_send(report,edition,now,'true','test-token','U'+'a'*32)[0])
+        self.assertFalse(sender.can_send(report,edition,now,'false','test-token','U'+'a'*32)[0])
+        self.assertFalse(sender.can_send(report|{'date':'2026-11-19'},edition,now,
+                                        'true','test-token','U'+'a'*32)[0])
+        accepted=MagicMock();accepted.__enter__.return_value=accepted
+        accepted.status=200;accepted.headers={'x-line-request-id':'original'}
+        duplicate=HTTPError(sender.PUSH,409,'conflict',
+                            {'x-line-accepted-request-id':'original'},None)
+        receipts=[]
+        with tempfile.TemporaryDirectory() as temp:
+            path=Path(temp)/'outbox.json'
+            outbox.freeze({edition:report},edition,now,path,{})
+            with patch.object(sender,'quota_ok',return_value=True), \
+                 patch.object(sender.urllib.request,'urlopen',side_effect=[accepted,duplicate]) as network:
+                for _ in range(2):
+                    receipt={'date':report['date'],'edition':edition,
+                             'checked_at':now.isoformat(),'delivery_confirmed':False}
+                    sender.push(report,edition,'test-token','U'+'a'*32,receipt,
+                                message_payload=outbox.load(path,report['date'],edition))
+                    receipts.append(receipt)
+            requests=[call.args[0] for call in network.call_args_list]
+            self.assertEqual(requests[0].data,requests[1].data)
+            self.assertEqual(requests[0].get_header('X-line-retry-key'),
+                             requests[1].get_header('X-line-retry-key'))
+        public=merge_status({},receipts[-1],'123',now)
+        self.assertEqual([r['status'] for r in receipts],['accepted','already_accepted'])
+        self.assertTrue(public['editions'][edition]['api_accepted'])
+        self.assertFalse(public['editions'][edition]['delivery_confirmed'])
+        self.assertNotIn('test-token',json.dumps(public))
+        self.assertNotIn('U'+'a'*32,json.dumps(public))

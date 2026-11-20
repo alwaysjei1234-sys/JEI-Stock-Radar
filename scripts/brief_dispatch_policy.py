@@ -23,6 +23,7 @@ CLOSE={'10 10 * * 1-5':18*60+10,'40 10 * * 1-5':18*60+40,
 FALLBACK_WORKFLOWS={
     'JEI Research Engine Tests',
     'JEI Stalled Market Feed Recovery',
+    'JEI Compute Provenance Audit (GitHub Actions)',
 }
 
 
