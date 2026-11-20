@@ -3,6 +3,7 @@
 Historical reconstruction is research only. Missing days, revised prices, changed
 rules or late publications stop the whole recovery without modifying the caller.
 """
+import ast
 import copy
 import hashlib
 import json
@@ -14,11 +15,49 @@ from scripts.update_pick_validation import close_verified, TZ
 from scripts.update_paper_performance import advance
 
 
+def compatible_rule_source(path, historical, current):
+    """Frozen replay never fetches quotes; transport-only edits are not rules.
+
+    All other files stay byte-exact. Retain every non-transport AST node,
+    including imports, constants, selections and top-level statements. Refuse
+    decorators/default expressions that could execute when defining a helper.
+    """
+    if historical == current:
+        return True
+    if path != 'scripts/update_system.py':
+        return False
+    transport = {'fetch_json', 'fetch_json_fast', 'read_json_with_budget'}
+
+    def rules(code):
+        tree = ast.parse(code)
+        kept = []
+        for node in tree.body:
+            if isinstance(node, ast.FunctionDef) and node.name in transport:
+                args = node.args
+                defaults = args.defaults + [d for d in args.kw_defaults if d is not None]
+                parameters = args.posonlyargs + args.args + args.kwonlyargs
+                parameters += [a for a in (args.vararg, args.kwarg) if a is not None]
+                if (node.decorator_list or node.returns is not None
+                        or any(a.annotation is not None for a in parameters)
+                        or any(not isinstance(d, ast.Constant) for d in defaults)):
+                    raise ValueError('Transport definition has import-time effects')
+                continue
+            kept.append(node)
+        tree.body = kept
+        return ast.dump(tree, include_attributes=False)
+
+    try:
+        return rules(historical) == rules(current)
+    except (SyntaxError, ValueError, TypeError):
+        return False
+
+
 def read_source(source):
     sha = source['sha']
     def blob(path):
         return subprocess.check_output(['git', 'show', sha+':'+path], cwd=ROOT)
-    if any(blob(path) != (ROOT/path).read_bytes() for path in RULE_FILES):
+    if any(not compatible_rule_source(path, blob(path), (ROOT/path).read_bytes())
+           for path in RULE_FILES):
         raise ValueError('Historical strategy rules differ; cannot reconstruct '+sha)
     return json.loads(blob('remote/daily_prices.json'))
 
