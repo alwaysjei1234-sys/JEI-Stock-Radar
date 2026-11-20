@@ -97,20 +97,87 @@ class AuditTests(unittest.TestCase):
     def test_intraday_unverified_quotes_fail_audit(self):
         from tools.jei_actions_audit import REQUIRED
 
+        now = dt.datetime(2026, 11, 13, 10, 20, tzinfo=dt.timezone(dt.timedelta(hours=8)))
         feed = dict.fromkeys(REQUIRED, {})
         feed["data_date"] = "2026-11-13"
         for count in (0, 120):
             with self.subTest(count=count):
                 feed["market"] = {
+                    "last_checked_at": "2026-11-13 10:20",
                     "live_count": count, "live_valid": False,
                     "live_diagnostics": {"market_open": True, "quote_refresh_window": True},
                 }
-                self.assertIn("unverified_intraday_quotes", inspect_feed(feed)["critical_issues"])
+                self.assertIn("unverified_intraday_quotes", inspect_feed(feed, now=now)["critical_issues"])
                 feed["market"]["live_diagnostics"]["quote_refresh_window"] = False
-                self.assertEqual(inspect_feed(feed)["status"], "ok")
+                self.assertEqual(inspect_feed(feed, now=now)["status"], "ok")
         feed["market"].update(live_count=600, live_valid=True)
         feed["market"]["live_diagnostics"]["quote_refresh_window"] = True
-        self.assertEqual(inspect_feed(feed)["status"], "ok")
+        self.assertEqual(inspect_feed(feed, now=now)["status"], "ok")
+
+    def test_intraday_check_time_cannot_be_bypassed_by_stale_feed_flags(self):
+        from tools.jei_actions_audit import REQUIRED
+        zone = dt.timezone(dt.timedelta(hours=8))
+        now = dt.datetime(2026, 11, 20, 10, 20, tzinfo=zone)
+        for active in (True, False):
+            feed = {key: {} for key in REQUIRED}
+            feed.update(data_date="2026-11-20", market={
+                "live_valid": True, "live_count": 700,
+                "last_checked_at": "2026-11-20 10:09",
+                "live_diagnostics": {"market_open": active, "quote_refresh_window": active},
+            })
+            with self.subTest(active=active):
+                result = inspect_feed(feed, now=now)
+                self.assertEqual(result["status"], "failed")
+                self.assertIn("stale_intraday_check_timestamp", result["critical_issues"])
+
+    def test_intraday_timestamp_boundaries_and_closed_sessions(self):
+        from tools.jei_actions_audit import REQUIRED
+        zone = dt.timezone(dt.timedelta(hours=8))
+        now = dt.datetime(2026, 11, 20, 10, 20, tzinfo=zone)
+        feed = {key: {} for key in REQUIRED}
+        feed.update(data_date="2026-11-20", market={
+            "live_valid": True, "live_count": 700,
+            "live_diagnostics": {"market_open": True, "quote_refresh_window": True}})
+        for stamp, expired in (("2026-11-20 10:10", False),
+                               ("2026-11-20 10:09", True),
+                               ("2026-11-20 10:22", False),
+                               ("2026-11-20 10:23", True),
+                               ("2026-11-19 10:20", True), ("invalid", True), (None, True)):
+            feed["market"]["last_checked_at"] = stamp
+            with self.subTest(stamp=stamp):
+                for clock in (now, now.astimezone(dt.timezone.utc)):
+                    result = inspect_feed(feed, now=clock)
+                    self.assertEqual("stale_intraday_check_timestamp" in result["critical_issues"], expired)
+        for clock in (now.replace(hour=8), now.replace(hour=14), now.replace(day=21),
+                      now.replace(month=12, day=25), now.replace(month=10, day=23)):
+            with self.subTest(clock=clock):
+                self.assertNotIn("stale_intraday_check_timestamp",inspect_feed(feed,now=clock)["critical_issues"])
+        with self.assertRaises(ValueError):
+            inspect_feed(feed, now=now.replace(tzinfo=None))
+
+    def test_cli_stale_snapshot_fails_and_preserves_diagnostic_artifact(self):
+        import sys
+        from unittest.mock import patch
+        from tools import jei_actions_audit as audit
+        original = dt.datetime
+        class Clock(original):
+            @classmethod
+            def now(cls, tz=None):
+                value = original(2026, 11, 20, 2, 20, tzinfo=dt.timezone.utc)
+                return value.astimezone(tz) if tz else value.replace(tzinfo=None)
+        feed = json.loads(Path('remote/system.json').read_text())
+        # Replay yesterday's valid off-session shape at today's real trading clock.
+        feed['market']['last_checked_at'] = '2026-11-19 19:05'
+        feed['market']['live_diagnostics'] = {'market_open': False, 'quote_refresh_window': False}
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp);source = root/'system.json';source.write_text(json.dumps(feed))
+            with patch.object(audit.dt, 'datetime', Clock), patch.object(sys,'argv',
+                    ['audit','--feed',str(source),'--out',str(root/'out'),'--commit','a'*40]):
+                self.assertEqual(audit.main(),1)
+            report = json.loads((root/'out/jei_audit.json').read_text())
+            self.assertIn('stale_intraday_check_timestamp',report['results']['critical_issues'])
+            self.assertEqual(report['results']['line_delivery'],'NOT_TESTED')
+            self.assertIsNone(report['completion_percent'])
 
     def test_unverified_institutional_is_reported_not_falsely_verified(self):
         from tools.jei_actions_audit import REQUIRED
