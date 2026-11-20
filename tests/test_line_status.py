@@ -35,6 +35,33 @@ class LineStatusTests(unittest.TestCase):
             self.assertNotIn(value, str(result))
         self.assertEqual(original, before)
 
+    def test_intraday_acceptance_survives_daily_report_and_policy_updates(self):
+        from scripts.publish_line_status import merge_policy_status
+        prior = merge_status({}, receipt(), '123', NOW)
+        intraday = receipt(edition='intraday_risk', checked_at='2026-11-04T10:00:00+08:00',
+                           to='PRIVATE_RECIPIENT', request_id='PRIVATE_REQUEST')
+        result = merge_status(prior, intraday, '124', NOW)
+        self.assertTrue(result['editions']['intraday_risk']['api_accepted'])
+        result = merge_status(result, receipt(edition='morning',
+                              checked_at='2026-11-04T09:00:00+08:00'), '125', NOW)
+        result = merge_policy_status(result, receipt(edition='morning', status='policy_skipped',
+                              record_kind='policy_check', policy_code='morning_window_expired',
+                              checked_at='2026-11-04T11:00:00+08:00'), '126', NOW)
+        self.assertEqual(result['editions']['intraday_risk']['evidence_url'].rsplit('/', 1)[1], '124')
+        self.assertFalse(result['editions']['intraday_risk']['delivery_confirmed'])
+        self.assertNotIn('PRIVATE', str(result))
+        self.assertIn('close', result['editions'])
+
+    def test_intraday_decisions_preserve_exact_alert_buckets(self):
+        result = merge_status({}, receipt(edition='intraday_risk'), '123', NOW)
+        result = merge_status(result, receipt(edition='intraday_momentum'), '124', NOW)
+        for status in ('disabled', 'no_alert', 'blocked', 'failed'):
+            result = merge_status(result, receipt(edition='intraday', status=status,
+                                  http_status=None), '125', NOW)
+            self.assertFalse(result['editions']['intraday']['api_accepted'])
+            self.assertTrue(result['editions']['intraday_risk']['api_accepted'])
+            self.assertTrue(result['editions']['intraday_momentum']['api_accepted'])
+
     def test_duplicate_is_distinct_from_a_new_acceptance(self):
         row = merge_status({}, receipt(status='already_accepted', http_status=409), '123', NOW)['editions']['close']
         self.assertEqual(row['status'], 'already_accepted')
@@ -123,9 +150,17 @@ class LineStatusTests(unittest.TestCase):
                 self.assertNotIn('accepted_attempt', row)
 
     def test_workflow_recovers_from_a_real_push_race_without_losing_market_data(self):
+        for name in ('jei-daily-brief.yml', 'recover-stale-market-feed.yml', 'update-system.yml'):
+            with self.subTest(workflow=name):
+                self.verify_workflow_push_race(name)
+
+    def verify_workflow_push_race(self, name):
         root = Path(__file__).resolve().parents[1]
-        workflow = (root/'.github/workflows/jei-daily-brief.yml').read_text()
-        block = workflow.split('      - name: Publish public LINE decision without recipient or credentials\n', 1)[1]
+        workflow = (root/'.github/workflows'/name).read_text()
+        title = ('Publish public LINE decision without recipient or credentials'
+                 if name == 'jei-daily-brief.yml'
+                 else 'Publish public intraday LINE decision without recipient or credentials')
+        block = workflow.split('      - name: ' + title + '\n', 1)[1]
         script = '\n'.join(line[10:] for line in block.split('        run: |\n', 1)[1].splitlines())
         real_git = shutil.which('git')
         with tempfile.TemporaryDirectory() as tmp:
@@ -151,12 +186,15 @@ class LineStatusTests(unittest.TestCase):
             (competitor/'remote/line_status.json').write_text(json.dumps(morning))
             (competitor/'remote/system.json').write_text('{"marker":"new-main"}')
             git('add', '.', cwd=competitor); git('commit', '-m', 'concurrent market update', cwd=competitor)
-            raw = base/'receipt.json'; raw.write_text(json.dumps(receipt()))
+            slot = 'close' if name == 'jei-daily-brief.yml' else 'intraday_risk'
+            raw = base/'receipt.json'; raw.write_text(json.dumps(receipt(edition=slot)))
+            if slot == 'intraday_risk':
+                git('checkout', '--detach', cwd=work)
             bin_path = base/'bin'; bin_path.mkdir()
             wrapper = bin_path/'git'
             wrapper.write_text('#!/usr/bin/env python3\nimport os,subprocess,sys\nfrom pathlib import Path\n'
                 'marker=Path(os.environ["RACE_MARKER"])\n'
-                'if sys.argv[1:]==["push"] and not marker.exists():\n'
+                'if sys.argv[1:2]==["push"] and not marker.exists():\n'
                 ' subprocess.run([os.environ["REAL_GIT"],"-C",os.environ["COMPETITOR"],"push"],check=True)\n'
                 ' marker.touch()\n'
                 'os.execv(os.environ["REAL_GIT"],[os.environ["REAL_GIT"],*sys.argv[1:]])\n')
@@ -169,7 +207,7 @@ class LineStatusTests(unittest.TestCase):
             self.assertTrue((base/'raced').exists())
             self.assertEqual(json.loads((work/'remote/system.json').read_text())['marker'], 'new-main')
             merged = json.loads((work/'remote/line_status.json').read_text())
-            self.assertEqual(set(merged['editions']), {'morning', 'close'})
+            self.assertEqual(set(merged['editions']), {'morning', slot})
             self.assertEqual(git('rev-parse', 'HEAD', cwd=work), git('rev-parse', 'refs/heads/main', cwd=bare))
 
 

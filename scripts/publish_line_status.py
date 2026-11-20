@@ -9,8 +9,10 @@ from zoneinfo import ZoneInfo
 
 TAIPEI = ZoneInfo('Asia/Taipei')
 RUN_BASE = 'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/'
-STATUSES = {'accepted', 'already_accepted', 'blocked', 'quota_blocked', 'failed'}
-EDITIONS = {'morning', 'close', 'morning_unavailable', 'close_unavailable'}
+STATUSES = {'accepted', 'already_accepted', 'blocked', 'quota_blocked', 'failed', 'disabled', 'no_alert'}
+EDITIONS = {'morning', 'close', 'morning_unavailable', 'close_unavailable',
+            'intraday', 'intraday_risk', 'intraday_momentum'}
+SLOTS = ('morning', 'close', 'intraday', 'intraday_risk', 'intraday_momentum')
 POLICY_CODES = {'non_weekday', 'market_closed', 'morning_window_expired', 'dispatch_window_not_open', 'brief_failed_before_send'}
 
 
@@ -18,7 +20,8 @@ def public_record(receipt, run_id, now):
     if not isinstance(receipt, dict) or not re.fullmatch(r'[1-9][0-9]{0,23}', str(run_id)):
         raise ValueError('Invalid LINE evidence')
     status, edition = receipt.get('status'), receipt.get('edition')
-    if status not in STATUSES or edition not in EDITIONS:
+    if (status not in STATUSES or edition not in EDITIONS
+            or (status in {'disabled', 'no_alert'} and edition != 'intraday')):
         raise ValueError('Invalid LINE decision')
     try:
         day = date.fromisoformat(receipt['date'])
@@ -79,7 +82,7 @@ def merge_status(document, receipt, run_id, now=None):
     acceptances = []
     prior = document.get('editions') if isinstance(document, dict) else None
     if isinstance(prior, dict):
-        for slot in ('morning', 'close'):
+        for slot in SLOTS:
             row = prior.get(slot)
             if not isinstance(row, dict):
                 continue
@@ -90,7 +93,7 @@ def merge_status(document, receipt, run_id, now=None):
                 clean = public_record(row, url[len(RUN_BASE):], now)
             except (ValueError, TypeError):
                 continue
-            if clean['edition'].split('_', 1)[0] == slot:
+            if clean['edition'].removesuffix('_unavailable') == slot:
                 records[slot] = clean
                 if clean['api_accepted']:
                     acceptances.append(clean)
@@ -106,7 +109,7 @@ def merge_status(document, receipt, run_id, now=None):
                                 and accepted['edition'] == clean['edition']
                                 and accepted['checked_at'] <= clean['checked_at']):
                             acceptances.append(accepted)
-    slot = incoming['edition'].split('_', 1)[0]
+    slot = incoming['edition'].removesuffix('_unavailable')
     previous = records.get(slot)
     if previous is None or incoming['checked_at'] >= previous['checked_at']:
         records[slot] = incoming
@@ -135,10 +138,10 @@ def merge_policy_status(document, receipt, run_id, now=None):
     # Reuse the acceptance sanitizer, including same-day accepted_attempt
     # preservation. A policy decision must never replace an API attempt.
     prior=document.get('editions') if isinstance(document,dict) else None
-    for slot in ('morning','close'):
+    for slot in SLOTS:
         row=prior.get(slot) if isinstance(prior,dict) else None
         if not isinstance(row,dict):continue
-        if str(row.get('edition','')).split('_',1)[0]!=slot:continue
+        if str(row.get('edition','')).removesuffix('_unavailable')!=slot:continue
         url=row.get('evidence_url')
         if not isinstance(url,str) or not url.startswith(RUN_BASE):continue
         try:result=merge_status(document,row,url[len(RUN_BASE):],now)

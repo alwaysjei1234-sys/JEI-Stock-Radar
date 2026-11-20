@@ -5,6 +5,7 @@ import json
 import pathlib
 import sys
 
+from scripts.market_sessions import closure_reason
 from scripts.public_holding_signals import is_safe_public_holdings
 from tools.jei_colab_watchdog import assess
 
@@ -20,14 +21,13 @@ AREAS = ['LINE 實際送達','盤中行情刷新','TWSE/TPEx/MIS 交叉驗證','
 def _intraday_timestamp_expired(market, now=None):
     """Return True only during an active Taiwan intraday refresh window."""
     now = now or dt.datetime.now(dt.timezone(dt.timedelta(hours=8)))
+    if now.tzinfo is None or now.utcoffset() is None:
+        raise ValueError("audit clock requires timezone")
     taipei = dt.timezone(dt.timedelta(hours=8))
     now = now.astimezone(taipei)
-    if now.weekday() >= 5 or not (dt.time(9, 0) <= now.time() <= dt.time(13, 30)):
+    if closure_reason(now.date()) is not None or not (dt.time(9, 0) <= now.time() <= dt.time(13, 30)):
         return False
-    diagnostics = market.get('live_diagnostics') or {}
-    if not (diagnostics.get('market_open') is True and
-            diagnostics.get('quote_refresh_window') is True):
-        return False
+    # The snapshot's old off-session flags cannot disable today's clock check.
     raw = market.get('last_checked_at')
     if not isinstance(raw, str):
         return True
@@ -66,7 +66,7 @@ def inspect_feed(feed, now=None):
     diagnostics = market.get('live_diagnostics')
     expects_live = (isinstance(diagnostics, dict) and diagnostics.get('market_open') is True
                     and diagnostics.get('quote_refresh_window') is True)
-    if expects_live and _intraday_timestamp_expired(market, now=now):
+    if isinstance(diagnostics, dict) and _intraday_timestamp_expired(market, now=now):
         issues.append('stale_intraday_check_timestamp')
     if expects_live and market.get('live_valid') is not True:
         issues.append('unverified_intraday_quotes')

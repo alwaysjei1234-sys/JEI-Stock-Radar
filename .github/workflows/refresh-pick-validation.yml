@@ -1,6 +1,18 @@
 name: Refresh pick validation report
 
 on:
+  workflow_run:
+    workflows: ["Update JEI Market Feed", "JEI Stalled Market Feed Recovery"]
+    types: [completed]
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refresh-pick-validation.yml'
+      - 'tests/test_pick_refresh_workflow.py'
+  pull_request:
+    paths:
+      - '.github/workflows/refresh-pick-validation.yml'
+      - 'tests/test_pick_refresh_workflow.py'
   workflow_dispatch:
   schedule:
     - cron: "10 12 * * 1-5"
@@ -13,11 +25,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m unittest discover -s tests -p 'test_pick_refresh_workflow.py' -v
+      - run: python -m unittest discover -s tests -p 'test_pick_history_recovery.py' -v
   refresh:
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.event_name != 'workflow_run' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.head_repository.full_name == github.repository))
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main
           persist-credentials: true
           fetch-depth: 0
       - uses: actions/setup-python@v5
