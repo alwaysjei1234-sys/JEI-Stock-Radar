@@ -1,0 +1,47 @@
+{
+  "TWSE": {
+    "valid_equity_prices": 1090,
+    "matched": 1090,
+    "missing_codes": [],
+    "mismatches": []
+  },
+  "TPEx": {
+    "valid_equity_prices": 883,
+    "matched": 883,
+    "missing_codes": [],
+    "mismatches": []
+  },
+  "source_day": "2026-11-20",
+  "archive_equities": 1973,
+  "index_pct": -6.23,
+  "retrieval_checks": [
+    {
+      "source": "twse",
+      "url": "https://www.twse.com.tw/exchangeReport/MI_INDEX?date=20261120&type=ALLBUT0999&response=json",
+      "started_at": "2026-11-21T01:07:23.732083+08:00",
+      "exit_code": 0,
+      "http_status": "200",
+      "error": "",
+      "finished_at": "2026-11-21T01:07:30.704088+08:00",
+      "bytes": 252889,
+      "sha256": "c5cf6e276c6e24b871264650794b8cdd063405673718e12088ddaf899d2d153b",
+      "json_complete": true,
+      "date": "20261120",
+      "status": "OK"
+    },
+    {
+      "source": "tpex",
+      "url": "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes?date=2026%2F11%2F20&id=&response=json",
+      "started_at": "2026-11-21T01:07:23.732288+08:00",
+      "exit_code": 0,
+      "http_status": "200",
+      "error": "",
+      "finished_at": "2026-11-21T01:07:34.168290+08:00",
+      "bytes": 2007641,
+      "sha256": "0878593e9ad2a4802ed24444ea6e61303e50edcb1b04c44fb8695533ffa10922",
+      "json_complete": true,
+      "date": "20261120",
+      "status": "ok"
+    }
+  ]
+}
