@@ -1,0 +1,30 @@
+name: Market JSON response budget tests
+on:
+  pull_request:
+    paths:
+      - 'scripts/update_system.py'
+      - 'tests/test_market_json_budget.py'
+      - '.github/workflows/market-json-budget-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/update_system.py'
+      - 'tests/test_market_json_budget.py'
+      - '.github/workflows/market-json-budget-tests.yml'
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify response budgets and official fallback without network or credentials
+        run: |
+          python -m unittest discover -s tests -p 'test_market_json_budget.py' -v
+          python -m unittest discover -s tests -p 'test_tpex*.py' -v
+          python -m unittest discover -s tests -p 'test_update_system_recovery.py' -v
+          python -m unittest discover -s tests -p 'test_mis*.py' -v

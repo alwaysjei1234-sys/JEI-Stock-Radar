@@ -91,13 +91,38 @@ SECTOR_BASKETS={
     "航運":["2609","2603","2615"]
 }
 
+def read_json_with_budget(response, deadline):
+    """Check an attempt budget between chunks, rather than one unbounded read.
+
+    urlopen's socket timeout remains active for a blocking operation; DNS and
+    that operation can still exceed this budget before control returns here.
+    """
+    chunks=[]
+    reader=getattr(response,"read1",None) or response.read
+    while True:
+        if time.monotonic()>=deadline:
+            raise TimeoutError("Market JSON response exceeded attempt budget")
+        chunk=reader(65536)
+        if time.monotonic()>=deadline:
+            raise TimeoutError("Market JSON response exceeded attempt budget")
+        if not chunk:break
+        chunks.append(chunk)
+    body=b"".join(chunks)
+    header=getattr(response,"getheader",None)
+    length=header("Content-Length") if callable(header) else None
+    if length is not None and str(length).isdigit() and len(body)!=int(length):
+        raise ValueError("Market JSON response body incomplete")
+    return json.loads(body.decode("utf-8-sig"))
+
+
 def fetch_json(url,tries=3):
     last=None
     for i in range(tries):
         try:
             req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 JEI-Stock-Radar-Updater/3.2","Accept":"application/json"})
+            deadline=time.monotonic()+35
             with urllib.request.urlopen(req,timeout=35) as r:
-                return json.loads(r.read().decode("utf-8-sig"))
+                return read_json_with_budget(r,deadline)
         except Exception as e:
             last=e
             if i+1<tries: time.sleep(1.2*(i+1))
@@ -188,8 +213,9 @@ def fetch_json_fast(url, timeout=8, tries=1):
     for i in range(tries):
         try:
             req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 JEI-Stock-Radar-Updater/3.2","Accept":"application/json"})
+            deadline=time.monotonic()+timeout
             with urllib.request.urlopen(req,timeout=timeout) as r:
-                return json.loads(r.read().decode("utf-8-sig"))
+                return read_json_with_budget(r,deadline)
         except Exception as e:
             last=e
     raise last
