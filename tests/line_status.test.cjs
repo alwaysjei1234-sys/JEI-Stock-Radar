@@ -46,3 +46,22 @@ doc.editions.close=olderAttempt;
 
 doc.policy_checks.close={...policy,policy_code:'brief_failed_before_send'};
 assert.match(context.lineStatusText(doc,'close','2026-11-05'),/報告產生或發布未完成.*不是 API 發送嘗試/);
+
+// A current intraday crash receipt must remain visible beside either daily report.
+const risk={date:'2026-11-20',edition:'intraday_risk',checked_at:'2026-11-20T12:13:30+08:00',status:'already_accepted',http_status:409,delivery_confirmed:false,evidence_url:'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44672493203',token:'SECRET'};
+vm.runInContext('lineData='+JSON.stringify({schema:1,editions:{intraday_risk:risk}})+'; renderLineStatus()',context);
+assert.match(nodes.get('line-intraday-status')?.textContent||'',/盤中風險警報.*API 已接受過.*手機實收尚未確認/);
+assert.equal(nodes.get('line-intraday-evidence').href,risk.evidence_url);
+assert.equal(nodes.get('line-intraday-evidence').hidden,false);
+assert.ok(!nodes.get('line-intraday-status').textContent.includes('SECRET'));
+vm.runInContext("edition='close';renderLineStatus()",context);
+assert.match(nodes.get('line-intraday-status').textContent,/盤中風險警報/);
+for(const invalid of [{...risk,edition:'close'},{...risk,status:'delivered'},{...risk,http_status:500}]){
+ vm.runInContext('lineData='+JSON.stringify({schema:1,editions:{intraday_risk:invalid}})+';renderLineStatus()',context);
+ assert.match(nodes.get('line-intraday-status').textContent,/尚無可核對/);
+ assert.equal(nodes.get('line-intraday-evidence').hidden,true);
+}
+vm.runInContext('lineData=null;renderLineStatus()',context);
+assert.match(nodes.get('line-intraday-status').textContent,/尚無可核對/);
+assert.equal(nodes.get('line-intraday-evidence').hidden,true);
+console.log('Intraday risk receipt stays visible independently of daily reports and rejects forged acceptance.');

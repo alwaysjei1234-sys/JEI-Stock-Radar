@@ -24,6 +24,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--blue)}
 <div class="buttons"><button id="morning" aria-pressed="true">☀ 開盤前早報</button><button id="close" aria-pressed="false">🌙 盤後復盤</button></div>
 <div class="card" id="status" role="status">正在載入研究摘要…</div>
 <div class="card" role="status"><h2>LINE 推播狀態</h2><p id="line-status" class="meta">正在讀取發送紀錄…</p><a id="line-evidence" hidden target="_blank" rel="noopener noreferrer">查看發送紀錄</a></div>
+<div class="card" role="status"><h2>LINE 盤中風險警報</h2><p id="line-intraday-status" class="meta">正在讀取發送紀錄…</p><a id="line-intraday-evidence" hidden target="_blank" rel="noopener noreferrer">查看盤中警報紀錄</a></div>
 <div id="content"></div>
 <div class="card warning"><h2>閱讀提醒</h2><p class="meta">新聞標題不是投資建議；模擬績效以官方收盤價計算，不能代表實際成交與獲利。私人持股資料不會被發到公開網頁或 GitHub。LINE 未授權前也不會推播。</p></div>
 </main><script>
@@ -36,7 +37,7 @@ function lineAttemptText(document,selected,today){
  const row=document&&document.schema===1&&document.editions&&document.editions[selected];
  const labels={accepted:'API 已接受',already_accepted:'API 已接受過，這次未重複發送',blocked:'發送條件未通過',quota_blocked:'免費額度安全檢查未通過',failed:'發送失敗'};
  if(!row||!Object.hasOwn(labels,row.status)||typeof row.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(row.date)||typeof row.checked_at!=='string'||!Number.isFinite(Date.parse(row.checked_at)))return '尚無可核對的發送紀錄；不能確認已發送或手機收到。';
- const type=String(row.edition).endsWith('_unavailable')?'資料異常通知':'市場摘要';
+ const type=row.edition==='intraday_risk'?'盤中風險警報':String(row.edition).endsWith('_unavailable')?'資料異常通知':'市場摘要';
  const current=row.date===today?'今日紀錄':'歷史紀錄（今天尚無發送紀錄）';
  const prior=row.accepted_attempt;
  const accepted=prior&&prior.date===row.date&&prior.edition===row.edition&&
@@ -64,6 +65,18 @@ function renderLineStatus(){
  const link=row&&typeof row.evidence_url==='string'&&/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/actions\/runs\/[1-9][0-9]*$/.test(row.evidence_url)?row.evidence_url:null;
  $('line-evidence').hidden=!link;
  if(link)$('line-evidence').href=link;
+ const risk=lineData?.schema===1&&lineData.editions?.intraday_risk;
+ const validRisk=risk&&risk.edition==='intraday_risk'&&
+  (['blocked','quota_blocked','failed'].includes(risk.status)||
+   (risk.status==='accepted'&&risk.http_status===200)||
+   (risk.status==='already_accepted'&&risk.http_status===409))&&
+  typeof risk.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(risk.date)&&
+  typeof risk.checked_at==='string'&&Number.isFinite(Date.parse(risk.checked_at));
+ $('line-intraday-status').textContent=lineAttemptText(
+  validRisk?{schema:1,editions:{intraday_risk:risk}}:null,'intraday_risk',today);
+ const riskLink=validRisk&&typeof risk.evidence_url==='string'&&/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/actions\/runs\/[1-9][0-9]*$/.test(risk.evidence_url)?risk.evidence_url:null;
+ $('line-intraday-evidence').hidden=!riskLink;
+ if(riskLink)$('line-intraday-evidence').href=riskLink;
 }
 function render(){
  renderLineStatus();
@@ -102,6 +115,7 @@ function render(){
 async function reload(){
  $('status').textContent='正在更新報告…';
  $('line-status').textContent='正在讀取發送紀錄…';
+ $('line-intraday-status').textContent='正在讀取發送紀錄…';
  const lineRequest=fetch('./line_status.json?t='+Date.now(),{cache:'no-store'}).then(async r=>{if(!r.ok)throw Error('LINE record unavailable');const x=await r.json();lineData=x.schema===1?x:null}).catch(()=>{lineData=null}).finally(renderLineStatus);
  try{
   const r=await fetch('./brief.json?t='+Date.now(),{cache:'no-store'});
