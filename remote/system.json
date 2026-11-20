@@ -1,15 +1,15 @@
 {
   "selection_policy": "jei-user-radar-gates-v1",
   "schema": 4,
-  "updated_at": "2026-11-20 15:39",
+  "updated_at": "2026-11-20 16:04",
   "data_date": "2026-11-20",
   "source_data_date": "2026-11-20",
-  "summary": "2026-11-20 15:42 本次 TWSE／TPEx 來源重抓未通過；保留今日已驗證收盤，暫停新判讀；保留 2026-11-20 歷史名單，暫停今日新選股。",
+  "summary": "JEI 多因子決策：大盤風險 → 族群強弱 → 個股動能/流動性 → 市場風險與動態風控；避免只看單日漲幅。",
   "risk": {
     "level": "red",
     "label": "高風險防守",
     "score": 100,
-    "actionable": false,
+    "actionable": true,
     "as_of": "2026-11-20",
     "cash": "70%↑",
     "reasons": [
@@ -19,7 +19,7 @@
       "市場中位數 -6.40%",
       "跌逾3% 1587｜跌逾5% 1248｜跌停附近 442",
       "最強族群 航運 2分",
-      "部分資料源降級：法人籌碼:雙市場同日資料不完整，停用全市場法人評分與趨勢；TWSE法人:T86 dated endpoints unavailable or unverified for 2026-11-20；TPEx法人:TPEx institutional response dates no"
+      "部分資料源降級：法人籌碼:雙市場同日資料不完整，停用全市場法人評分與趨勢；TWSE法人:T86 dated endpoints unavailable or unverified for 2026-11-20；TWSE T86: no dated reconciled institutional"
     ],
     "breadth": 3.4,
     "median_pct": -6.4,
@@ -35,54 +35,45 @@
   },
   "market": {
     "status": "紅燈防守",
-    "mode": "最近收盤",
-    "last_checked_at": "2026-11-20 15:42",
+    "mode": "今日收盤",
+    "last_checked_at": "2026-11-20 16:04",
     "index": {
       "change_pct": -6.23,
       "data_date": "2026-11-20",
       "source": "TWSE MI_INDEX dated response",
       "date_verified": true,
-      "checked_at": "2026-11-20 15:39"
+      "checked_at": "2026-11-20 16:04"
     },
     "live_count": 0,
     "close_count": 1981,
     "live_coverage_pct": 0.0,
     "live_valid": false,
-    "stale": true,
-    "historical_readonly": true,
-    "post_close_refresh": true,
+    "stale": false,
+    "historical_readonly": false,
+    "post_close_refresh": false,
     "live_diagnostics": {
       "attempted": false,
       "market_open": false,
       "quote_refresh_window": false,
-      "updater_time_taipei": "2026-11-20 15:42",
+      "updater_time_taipei": "2026-11-20 16:04",
       "valid_trades": 0,
       "mis_stats": {},
       "required_trades": 500,
       "required_coverage_pct": 35,
       "errors": [],
-      "reason": "本次 TWSE／TPEx 來源重抓未通過；保留今日已驗證收盤，暫停新判讀"
+      "reason": "非行情更新時段"
     },
     "analysis_scope": {
       "mode": "official_close",
       "count": 1981,
       "universe_count": 1981
     },
-    "brief": "收盤重驗失敗｜本次 TWSE／TPEx 來源重抓未通過；保留今日已驗證收盤，暫停新判讀｜最近有效收盤 2026-11-20｜歷史名單僅供研究",
+    "brief": "今日收盤多因子市場｜加權 -6.23%｜廣度 3.4%｜中位數 -6.40%｜跌逾5% 1248｜行情時間以最近檢查時間為準",
     "market_data_as_of": "2026-11-20",
-    "session_status": "收盤重驗失敗",
-    "no_new_picks": true,
-    "partial_live": {
-      "asof": "2026-11-20 15:42",
-      "verified_count": 0,
-      "coverage_pct": 0.0,
-      "complete": false,
-      "quotes": []
-    },
-    "candidate_readiness": "research_only",
-    "status_updated_at": "2026-11-20 15:42",
-    "session_reason": "本次 TWSE／TPEx 來源重抓未通過；保留今日已驗證收盤，暫停新判讀",
-    "next_expected_session": null
+    "session_status": "已驗證",
+    "no_new_picks": false,
+    "partial_live": null,
+    "candidate_readiness": "research_only"
   },
   "sectors": [
     {
@@ -10316,19 +10307,6527 @@
       "market": "TPEX"
     }
   ],
-  "institutional": {},
+  "institutional": {
+    "1240": {
+      "foreign": -9000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -9000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1259": {
+      "foreign": 17000.0,
+      "trust": 0.0,
+      "dealer": 2000.0,
+      "total": 19000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1264": {
+      "foreign": -7668.0,
+      "trust": 0.0,
+      "dealer": 672.0,
+      "total": -6996.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1268": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": -21.0,
+      "total": -4021.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1294": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": -60.0,
+      "total": 3940.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1295": {
+      "foreign": -9000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -9000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1336": {
+      "foreign": -12074.0,
+      "trust": 0.0,
+      "dealer": 843.0,
+      "total": -11231.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1565": {
+      "foreign": 34200.0,
+      "trust": 0.0,
+      "dealer": 316.0,
+      "total": 34516.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1569": {
+      "foreign": 266000.0,
+      "trust": 0.0,
+      "dealer": -14994.0,
+      "total": 251006.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1570": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1580": {
+      "foreign": 9950.0,
+      "trust": 0.0,
+      "dealer": 457.0,
+      "total": 10407.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1584": {
+      "foreign": -147106.0,
+      "trust": 0.0,
+      "dealer": -1.0,
+      "total": -147107.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1586": {
+      "foreign": -55857.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -55857.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1591": {
+      "foreign": 79000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 79000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1593": {
+      "foreign": -6000.0,
+      "trust": 0.0,
+      "dealer": 569.0,
+      "total": -5431.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1595": {
+      "foreign": 192000.0,
+      "trust": 0.0,
+      "dealer": -10532.0,
+      "total": 181468.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1599": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 218.0,
+      "total": 4218.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1742": {
+      "foreign": 22000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 22000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1777": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 574.0,
+      "total": -426.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1780": {
+      "foreign": -19000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -19000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1781": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1784": {
+      "foreign": 54000.0,
+      "trust": 0.0,
+      "dealer": -698.0,
+      "total": 53302.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1785": {
+      "foreign": -44742.0,
+      "trust": 1461000.0,
+      "dealer": -1144.0,
+      "total": 1415114.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1788": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1796": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1799": {
+      "foreign": -15000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -15000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "1815": {
+      "foreign": -550631.0,
+      "trust": 5000.0,
+      "dealer": -317484.0,
+      "total": -863115.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2035": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2061": {
+      "foreign": 402186.0,
+      "trust": 0.0,
+      "dealer": -1289.0,
+      "total": 400897.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2063": {
+      "foreign": 11000.0,
+      "trust": 0.0,
+      "dealer": -3584.0,
+      "total": 7416.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2065": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": -28.0,
+      "total": -2028.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2066": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": -203.0,
+      "total": -3203.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2070": {
+      "foreign": 10000.0,
+      "trust": 0.0,
+      "dealer": -140.0,
+      "total": 9860.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2221": {
+      "foreign": 624026.0,
+      "trust": 0.0,
+      "dealer": -5578.0,
+      "total": 618448.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2230": {
+      "foreign": 74000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 74000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2249": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2596": {
+      "foreign": 26000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 26000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2640": {
+      "foreign": -16900.0,
+      "trust": 0.0,
+      "dealer": 651.0,
+      "total": -16249.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2641": {
+      "foreign": -69507.0,
+      "trust": 0.0,
+      "dealer": 27959.0,
+      "total": -41548.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2643": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2718": {
+      "foreign": -7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2719": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2729": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": -189.0,
+      "total": -4189.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2732": {
+      "foreign": 33000.0,
+      "trust": 0.0,
+      "dealer": -906.0,
+      "total": 32094.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2734": {
+      "foreign": -5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -5000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2736": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -432.0,
+      "total": -432.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2743": {
+      "foreign": 37000.0,
+      "trust": 0.0,
+      "dealer": -1509.0,
+      "total": 35491.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2745": {
+      "foreign": 47000.0,
+      "trust": 0.0,
+      "dealer": 1292.0,
+      "total": 48292.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2751": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2752": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2754": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 116.0,
+      "total": 4116.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2755": {
+      "foreign": 28000.0,
+      "trust": 0.0,
+      "dealer": 112.0,
+      "total": 28112.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2756": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2916": {
+      "foreign": 25000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 25000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2926": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2937": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2938": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "2949": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 7000.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3066": {
+      "foreign": -16312.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -16312.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3071": {
+      "foreign": 42000.0,
+      "trust": 0.0,
+      "dealer": 990.0,
+      "total": 42990.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3073": {
+      "foreign": -9000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -9000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3078": {
+      "foreign": 311000.0,
+      "trust": 0.0,
+      "dealer": -137.0,
+      "total": 310863.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3081": {
+      "foreign": 65497.0,
+      "trust": -26507.0,
+      "dealer": -5300.0,
+      "total": 33690.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3083": {
+      "foreign": 47000.0,
+      "trust": 0.0,
+      "dealer": 405.0,
+      "total": 47405.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3086": {
+      "foreign": 13000.0,
+      "trust": 0.0,
+      "dealer": -1679.0,
+      "total": 11321.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3088": {
+      "foreign": 22350.0,
+      "trust": 0.0,
+      "dealer": 1904.0,
+      "total": 24254.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3093": {
+      "foreign": 203000.0,
+      "trust": 0.0,
+      "dealer": -36.0,
+      "total": 202964.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3105": {
+      "foreign": 1625373.0,
+      "trust": 8813.0,
+      "dealer": -148540.0,
+      "total": 1485646.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3114": {
+      "foreign": 125300.0,
+      "trust": 0.0,
+      "dealer": -255.0,
+      "total": 125045.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3115": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 5000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3118": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -284.0,
+      "total": -284.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3122": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 422.0,
+      "total": 422.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3128": {
+      "foreign": 39000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 39000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3131": {
+      "foreign": -77000.0,
+      "trust": 72.0,
+      "dealer": -2563.0,
+      "total": -79491.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3141": {
+      "foreign": 542750.0,
+      "trust": 0.0,
+      "dealer": -19025.0,
+      "total": 523725.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3147": {
+      "foreign": 130003.0,
+      "trust": 0.0,
+      "dealer": -25721.0,
+      "total": 104282.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3152": {
+      "foreign": -78439.0,
+      "trust": 150000.0,
+      "dealer": 4120.0,
+      "total": 75681.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3158": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3162": {
+      "foreign": 206700.0,
+      "trust": 0.0,
+      "dealer": -5208.0,
+      "total": 201492.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3163": {
+      "foreign": 34175.0,
+      "trust": -350.0,
+      "dealer": -3005.0,
+      "total": 30820.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3169": {
+      "foreign": -7000.0,
+      "trust": 0.0,
+      "dealer": -2007.0,
+      "total": -9007.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3171": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 999.0,
+      "total": -1.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3176": {
+      "foreign": 77853.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 77853.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3178": {
+      "foreign": -23000.0,
+      "trust": 0.0,
+      "dealer": -147.0,
+      "total": -23147.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3188": {
+      "foreign": 72421.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 72421.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3191": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3205": {
+      "foreign": 15000.0,
+      "trust": 0.0,
+      "dealer": 549.0,
+      "total": 15549.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3206": {
+      "foreign": 60000.0,
+      "trust": 0.0,
+      "dealer": 1202.0,
+      "total": 61202.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3207": {
+      "foreign": -85000.0,
+      "trust": 0.0,
+      "dealer": -5.0,
+      "total": -85005.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3211": {
+      "foreign": 76478.0,
+      "trust": -178800.0,
+      "dealer": -101460.0,
+      "total": -203782.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3213": {
+      "foreign": -25399.0,
+      "trust": -1603.0,
+      "dealer": -123.0,
+      "total": -27125.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3217": {
+      "foreign": -73795.0,
+      "trust": 0.0,
+      "dealer": -47441.0,
+      "total": -121236.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3218": {
+      "foreign": 152000.0,
+      "trust": 0.0,
+      "dealer": -14148.0,
+      "total": 137852.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3219": {
+      "foreign": -192950.0,
+      "trust": 0.0,
+      "dealer": -34515.0,
+      "total": -227465.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3221": {
+      "foreign": 265006.0,
+      "trust": 0.0,
+      "dealer": -1050.0,
+      "total": 263956.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3224": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3227": {
+      "foreign": 323475.0,
+      "trust": 7000.0,
+      "dealer": -31451.0,
+      "total": 299024.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3228": {
+      "foreign": 57000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 57000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3230": {
+      "foreign": 120850.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 120850.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3232": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 5000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3234": {
+      "foreign": 7500.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 7500.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3236": {
+      "foreign": 160979.0,
+      "trust": 0.0,
+      "dealer": -6238.0,
+      "total": 154741.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3259": {
+      "foreign": -12000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -12000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3260": {
+      "foreign": 2405851.0,
+      "trust": 10795.0,
+      "dealer": -92159.0,
+      "total": 2324487.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3264": {
+      "foreign": 1468745.0,
+      "trust": -987000.0,
+      "dealer": 9622.0,
+      "total": 491367.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3265": {
+      "foreign": -236400.0,
+      "trust": 0.0,
+      "dealer": -781.0,
+      "total": -237181.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3268": {
+      "foreign": 15000.0,
+      "trust": 0.0,
+      "dealer": -71.0,
+      "total": 14929.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3272": {
+      "foreign": 23000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 23000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3276": {
+      "foreign": -29000.0,
+      "trust": 0.0,
+      "dealer": -3.0,
+      "total": -29003.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3284": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3285": {
+      "foreign": 54000.0,
+      "trust": 0.0,
+      "dealer": -1066.0,
+      "total": 52934.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3287": {
+      "foreign": 19000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 19000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3288": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3289": {
+      "foreign": 485061.0,
+      "trust": 0.0,
+      "dealer": -33942.0,
+      "total": 451119.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3290": {
+      "foreign": 23400.0,
+      "trust": 0.0,
+      "dealer": -32524.0,
+      "total": -9124.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3293": {
+      "foreign": 159115.0,
+      "trust": 59000.0,
+      "dealer": -34347.0,
+      "total": 183768.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3294": {
+      "foreign": -91500.0,
+      "trust": 0.0,
+      "dealer": -25.0,
+      "total": -91525.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3297": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3303": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": -1229.0,
+      "total": 3771.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3306": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": -931.0,
+      "total": -2931.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3310": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3313": {
+      "foreign": 11000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 11000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3317": {
+      "foreign": 140975.0,
+      "trust": 0.0,
+      "dealer": -294.0,
+      "total": 140681.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3322": {
+      "foreign": 220000.0,
+      "trust": 0.0,
+      "dealer": -780.0,
+      "total": 219220.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3323": {
+      "foreign": 174342.0,
+      "trust": 0.0,
+      "dealer": -1907.0,
+      "total": 172435.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3324": {
+      "foreign": 66486.0,
+      "trust": -10545.0,
+      "dealer": -40612.0,
+      "total": 15329.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3325": {
+      "foreign": 138000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 138000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3332": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": -800.0,
+      "total": -1800.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3339": {
+      "foreign": 65000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 65000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3349": {
+      "foreign": -20000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -20000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3354": {
+      "foreign": -42000.0,
+      "trust": 0.0,
+      "dealer": -28.0,
+      "total": -42028.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3357": {
+      "foreign": 450673.0,
+      "trust": 0.0,
+      "dealer": -9536.0,
+      "total": 441137.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3360": {
+      "foreign": -29000.0,
+      "trust": 0.0,
+      "dealer": -666.0,
+      "total": -29666.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3362": {
+      "foreign": -162725.0,
+      "trust": 0.0,
+      "dealer": -5547.0,
+      "total": -168272.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3363": {
+      "foreign": 148105.0,
+      "trust": 0.0,
+      "dealer": -15211.0,
+      "total": 132894.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3372": {
+      "foreign": -24000.0,
+      "trust": 0.0,
+      "dealer": 132.0,
+      "total": -23868.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3373": {
+      "foreign": -21000.0,
+      "trust": 0.0,
+      "dealer": 50.0,
+      "total": -20950.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3374": {
+      "foreign": -210898.0,
+      "trust": 1524.0,
+      "dealer": -95625.0,
+      "total": -304999.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3379": {
+      "foreign": -17000.0,
+      "trust": 0.0,
+      "dealer": -217.0,
+      "total": -17217.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3388": {
+      "foreign": 99487.0,
+      "trust": 0.0,
+      "dealer": 626.0,
+      "total": 100113.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3390": {
+      "foreign": 41894.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 41894.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3402": {
+      "foreign": 42040.0,
+      "trust": -1585.0,
+      "dealer": -709.0,
+      "total": 39746.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3430": {
+      "foreign": 63020.0,
+      "trust": 0.0,
+      "dealer": 147.0,
+      "total": 63167.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3434": {
+      "foreign": -36000.0,
+      "trust": 0.0,
+      "dealer": -33.0,
+      "total": -36033.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3438": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 38.0,
+      "total": 3038.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3441": {
+      "foreign": 13000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 13000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3444": {
+      "foreign": -20000.0,
+      "trust": 0.0,
+      "dealer": 3116.0,
+      "total": -16884.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3455": {
+      "foreign": 102000.0,
+      "trust": 0.0,
+      "dealer": -5132.0,
+      "total": 96868.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3465": {
+      "foreign": 13000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 13000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3466": {
+      "foreign": 95000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 95000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3467": {
+      "foreign": -3128.0,
+      "trust": 0.0,
+      "dealer": -39.0,
+      "total": -3167.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3479": {
+      "foreign": 97000.0,
+      "trust": -1730.0,
+      "dealer": 1892.0,
+      "total": 97162.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3483": {
+      "foreign": 405000.0,
+      "trust": -62255.0,
+      "dealer": -3089.0,
+      "total": 339656.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3484": {
+      "foreign": 53275.0,
+      "trust": 0.0,
+      "dealer": 21464.0,
+      "total": 74739.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3485": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": -245.0,
+      "total": 755.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3489": {
+      "foreign": -15000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -15000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3490": {
+      "foreign": 531190.0,
+      "trust": 0.0,
+      "dealer": 603.0,
+      "total": 531793.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3491": {
+      "foreign": 17614.0,
+      "trust": 674.0,
+      "dealer": -34116.0,
+      "total": -15828.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3492": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3498": {
+      "foreign": 22000.0,
+      "trust": 0.0,
+      "dealer": -41646.0,
+      "total": -19646.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3499": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3508": {
+      "foreign": 52000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 52000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3511": {
+      "foreign": 57000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 57000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3512": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3516": {
+      "foreign": -13000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": -14000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3520": {
+      "foreign": 79000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 79000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3521": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3522": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3526": {
+      "foreign": 38294.0,
+      "trust": -60629.0,
+      "dealer": -2781.0,
+      "total": -25116.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3527": {
+      "foreign": 56000.0,
+      "trust": 0.0,
+      "dealer": -163.0,
+      "total": 55837.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3529": {
+      "foreign": 116186.0,
+      "trust": 1179.0,
+      "dealer": -56598.0,
+      "total": 60767.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3537": {
+      "foreign": 58001.0,
+      "trust": 0.0,
+      "dealer": -12112.0,
+      "total": 45889.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3540": {
+      "foreign": -50980.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -50980.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3541": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": -3000.0,
+      "total": -5000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3546": {
+      "foreign": -64329.0,
+      "trust": 0.0,
+      "dealer": -2702.0,
+      "total": -67031.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3548": {
+      "foreign": 78000.0,
+      "trust": 0.0,
+      "dealer": -2540.0,
+      "total": 75460.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3551": {
+      "foreign": 19927.0,
+      "trust": 58000.0,
+      "dealer": -2072.0,
+      "total": 75855.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3552": {
+      "foreign": 53000.0,
+      "trust": 0.0,
+      "dealer": 142.0,
+      "total": 53142.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3555": {
+      "foreign": 11100.0,
+      "trust": 0.0,
+      "dealer": -1091.0,
+      "total": 10009.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3556": {
+      "foreign": 36824.0,
+      "trust": 0.0,
+      "dealer": -2052.0,
+      "total": 34772.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3558": {
+      "foreign": 63000.0,
+      "trust": 0.0,
+      "dealer": 7837.0,
+      "total": 70837.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3564": {
+      "foreign": -247835.0,
+      "trust": 0.0,
+      "dealer": -337.0,
+      "total": -248172.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3567": {
+      "foreign": 13000.0,
+      "trust": 0.0,
+      "dealer": -264.0,
+      "total": 12736.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3570": {
+      "foreign": 52000.0,
+      "trust": 0.0,
+      "dealer": 2000.0,
+      "total": 54000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3577": {
+      "foreign": 56092.0,
+      "trust": 0.0,
+      "dealer": -8418.0,
+      "total": 47674.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3580": {
+      "foreign": -115000.0,
+      "trust": 0.0,
+      "dealer": 5327.0,
+      "total": -109673.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3581": {
+      "foreign": -68020.0,
+      "trust": 0.0,
+      "dealer": -2511.0,
+      "total": -70531.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3587": {
+      "foreign": 220473.0,
+      "trust": 0.0,
+      "dealer": -300.0,
+      "total": 220173.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3594": {
+      "foreign": 70000.0,
+      "trust": 0.0,
+      "dealer": -3343.0,
+      "total": 66657.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3597": {
+      "foreign": 37000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 37000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3609": {
+      "foreign": -20000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -20000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3611": {
+      "foreign": 7836.0,
+      "trust": 0.0,
+      "dealer": 84.0,
+      "total": 7920.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3615": {
+      "foreign": -10816.0,
+      "trust": 0.0,
+      "dealer": 455.0,
+      "total": -10361.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3623": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 163.0,
+      "total": 2163.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3624": {
+      "foreign": 21000.0,
+      "trust": 0.0,
+      "dealer": -31108.0,
+      "total": -10108.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3625": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -91.0,
+      "total": -91.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3628": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 93.0,
+      "total": 93.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3630": {
+      "foreign": 160510.0,
+      "trust": 0.0,
+      "dealer": -5755.0,
+      "total": 154755.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3631": {
+      "foreign": 66000.0,
+      "trust": 0.0,
+      "dealer": -2000.0,
+      "total": 64000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3646": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3663": {
+      "foreign": 143000.0,
+      "trust": 0.0,
+      "dealer": 147.0,
+      "total": 143147.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3666": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3672": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3675": {
+      "foreign": 114624.0,
+      "trust": 0.0,
+      "dealer": -10583.0,
+      "total": 104041.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3680": {
+      "foreign": 31094.0,
+      "trust": 428.0,
+      "dealer": -18375.0,
+      "total": 13147.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3684": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -107.0,
+      "total": -107.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3685": {
+      "foreign": -23001.0,
+      "trust": 0.0,
+      "dealer": -741.0,
+      "total": -23742.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3687": {
+      "foreign": 25000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 25000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3689": {
+      "foreign": 117624.0,
+      "trust": 0.0,
+      "dealer": -11586.0,
+      "total": 106038.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3691": {
+      "foreign": -155614.0,
+      "trust": 0.0,
+      "dealer": 33839.0,
+      "total": -121775.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3693": {
+      "foreign": 48212.0,
+      "trust": 0.0,
+      "dealer": -52745.0,
+      "total": -4533.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3707": {
+      "foreign": -443832.0,
+      "trust": 0.0,
+      "dealer": -25555.0,
+      "total": -469387.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3709": {
+      "foreign": 260795.0,
+      "trust": 0.0,
+      "dealer": -9899.0,
+      "total": 250896.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3710": {
+      "foreign": 15000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 15000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3713": {
+      "foreign": 10000.0,
+      "trust": 0.0,
+      "dealer": -50000.0,
+      "total": -40000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "3718": {
+      "foreign": 566947.0,
+      "trust": 2000.0,
+      "dealer": -49896.0,
+      "total": 519051.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4102": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 60.0,
+      "total": 60.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4105": {
+      "foreign": -256860.0,
+      "trust": 0.0,
+      "dealer": -16728.0,
+      "total": -273588.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4107": {
+      "foreign": -9500.0,
+      "trust": 0.0,
+      "dealer": 305.0,
+      "total": -9195.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4109": {
+      "foreign": 43000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 43000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4111": {
+      "foreign": -6050.0,
+      "trust": 0.0,
+      "dealer": -3.0,
+      "total": -6053.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4113": {
+      "foreign": 42000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 42000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4114": {
+      "foreign": 60789.0,
+      "trust": 0.0,
+      "dealer": -1424.0,
+      "total": 59365.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4116": {
+      "foreign": 28000.0,
+      "trust": 0.0,
+      "dealer": -363.0,
+      "total": 27637.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4120": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": -415.0,
+      "total": -4415.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4121": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": 557.0,
+      "total": 7557.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4123": {
+      "foreign": 745733.0,
+      "trust": 0.0,
+      "dealer": -116032.0,
+      "total": 629701.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4126": {
+      "foreign": -27346.0,
+      "trust": 0.0,
+      "dealer": 353.0,
+      "total": -26993.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4127": {
+      "foreign": 17000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 17000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4128": {
+      "foreign": 476365.0,
+      "trust": 0.0,
+      "dealer": -12131.0,
+      "total": 464234.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4129": {
+      "foreign": -62000.0,
+      "trust": 0.0,
+      "dealer": 169.0,
+      "total": -61831.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4131": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4138": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 4399.0,
+      "total": 399.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4147": {
+      "foreign": -441298.0,
+      "trust": 0.0,
+      "dealer": -2874.0,
+      "total": -444172.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4157": {
+      "foreign": 46000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 46000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4160": {
+      "foreign": -1004.0,
+      "trust": 0.0,
+      "dealer": -382.0,
+      "total": -1386.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4161": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4162": {
+      "foreign": -12000.0,
+      "trust": 0.0,
+      "dealer": -7417.0,
+      "total": -19417.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4163": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 402.0,
+      "total": 1402.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4166": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4167": {
+      "foreign": -619222.0,
+      "trust": 0.0,
+      "dealer": 61546.0,
+      "total": -557676.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4168": {
+      "foreign": 13000.0,
+      "trust": 0.0,
+      "dealer": -146.0,
+      "total": 12854.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4171": {
+      "foreign": 26000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 26000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4173": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 665.0,
+      "total": -335.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4174": {
+      "foreign": 106000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 106000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4175": {
+      "foreign": -600.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -600.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4188": {
+      "foreign": 33000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 33000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4205": {
+      "foreign": -11000.0,
+      "trust": 0.0,
+      "dealer": -189.0,
+      "total": -11189.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4207": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": -784.0,
+      "total": -2784.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4303": {
+      "foreign": 771038.0,
+      "trust": 0.0,
+      "dealer": -747.0,
+      "total": 770291.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4304": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4305": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4401": {
+      "foreign": -10000.0,
+      "trust": 0.0,
+      "dealer": -1047.0,
+      "total": -11047.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4406": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4416": {
+      "foreign": 132000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 132000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4417": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": -265.0,
+      "total": -3265.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4420": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4430": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4432": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": 955.0,
+      "total": 9955.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4433": {
+      "foreign": -5000.0,
+      "trust": 0.0,
+      "dealer": -149.0,
+      "total": -5149.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4442": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": -100.0,
+      "total": 1900.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4502": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4503": {
+      "foreign": 94000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 94000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4506": {
+      "foreign": -61000.0,
+      "trust": 0.0,
+      "dealer": 229.0,
+      "total": -60771.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4510": {
+      "foreign": 319149.0,
+      "trust": 0.0,
+      "dealer": -459.0,
+      "total": 318690.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4513": {
+      "foreign": 116000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 116000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4523": {
+      "foreign": 21000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 21000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4527": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 9000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4528": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": 74.0,
+      "total": 9074.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4533": {
+      "foreign": -3971.0,
+      "trust": 0.0,
+      "dealer": -14316.0,
+      "total": -18287.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4534": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4535": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 950.0,
+      "total": 950.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4538": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -336.0,
+      "total": -336.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4541": {
+      "foreign": -82037.0,
+      "trust": 0.0,
+      "dealer": -1999.0,
+      "total": -84036.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4542": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": -3005.0,
+      "total": 3995.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4543": {
+      "foreign": 1162.0,
+      "trust": 0.0,
+      "dealer": -86.0,
+      "total": 1076.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4549": {
+      "foreign": 32000.0,
+      "trust": 0.0,
+      "dealer": 798.0,
+      "total": 32798.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4550": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 5000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4554": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 519.0,
+      "total": -2481.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4556": {
+      "foreign": 34000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 34000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4558": {
+      "foreign": 8000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 8000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4561": {
+      "foreign": 22000.0,
+      "trust": 0.0,
+      "dealer": 155.0,
+      "total": 22155.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4563": {
+      "foreign": -12999.0,
+      "trust": 0.0,
+      "dealer": 52.0,
+      "total": -12947.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4568": {
+      "foreign": -6000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -6000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4577": {
+      "foreign": -10000.0,
+      "trust": 0.0,
+      "dealer": -33000.0,
+      "total": -43000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4580": {
+      "foreign": 15000.0,
+      "trust": 0.0,
+      "dealer": 273.0,
+      "total": 15273.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4702": {
+      "foreign": 2792.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2792.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4706": {
+      "foreign": -10000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": -11000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4707": {
+      "foreign": 446852.0,
+      "trust": 0.0,
+      "dealer": -62558.0,
+      "total": 384294.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4711": {
+      "foreign": -5000.0,
+      "trust": 0.0,
+      "dealer": -112.0,
+      "total": -5112.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4714": {
+      "foreign": 701097.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 701097.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4716": {
+      "foreign": 22000.0,
+      "trust": 0.0,
+      "dealer": -20.0,
+      "total": 21980.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4721": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": -1305.0,
+      "total": 7695.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4726": {
+      "foreign": -49000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -49000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4728": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 24.0,
+      "total": 1024.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4729": {
+      "foreign": -11000.0,
+      "trust": 0.0,
+      "dealer": 3000.0,
+      "total": -8000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4735": {
+      "foreign": 20000.0,
+      "trust": 0.0,
+      "dealer": 152.0,
+      "total": 20152.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4741": {
+      "foreign": 71949.0,
+      "trust": 0.0,
+      "dealer": -105.0,
+      "total": 71844.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4743": {
+      "foreign": 282181.0,
+      "trust": 0.0,
+      "dealer": -20810.0,
+      "total": 261371.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4744": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": -3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4745": {
+      "foreign": -7000.0,
+      "trust": 0.0,
+      "dealer": -16.0,
+      "total": -7016.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4747": {
+      "foreign": 78080.0,
+      "trust": 0.0,
+      "dealer": 5.0,
+      "total": 78085.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4749": {
+      "foreign": -78386.0,
+      "trust": 71210.0,
+      "dealer": -37245.0,
+      "total": -44421.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4754": {
+      "foreign": 11000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 11000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4760": {
+      "foreign": 5790.0,
+      "trust": 0.0,
+      "dealer": -31262.0,
+      "total": -25472.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4767": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4768": {
+      "foreign": 50037.0,
+      "trust": 0.0,
+      "dealer": -24780.0,
+      "total": 25257.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4772": {
+      "foreign": 279511.0,
+      "trust": 1000.0,
+      "dealer": -7210.0,
+      "total": 273301.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4903": {
+      "foreign": -155963.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -155963.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4905": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4907": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4908": {
+      "foreign": -17000.0,
+      "trust": 0.0,
+      "dealer": -15080.0,
+      "total": -32080.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4909": {
+      "foreign": 42262.0,
+      "trust": 0.0,
+      "dealer": -1734.0,
+      "total": 40528.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4911": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4923": {
+      "foreign": 33410.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 33410.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4924": {
+      "foreign": -8810.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -8810.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4931": {
+      "foreign": 90552.0,
+      "trust": 0.0,
+      "dealer": -42572.0,
+      "total": 47980.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4933": {
+      "foreign": 171000.0,
+      "trust": 0.0,
+      "dealer": 1304.0,
+      "total": 172304.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4939": {
+      "foreign": -125000.0,
+      "trust": 0.0,
+      "dealer": -6457.0,
+      "total": -131457.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4946": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4951": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": -413.0,
+      "total": 3587.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4953": {
+      "foreign": -48900.0,
+      "trust": 8481.0,
+      "dealer": -4383.0,
+      "total": -44802.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4966": {
+      "foreign": 130218.0,
+      "trust": 7000.0,
+      "dealer": -1455.0,
+      "total": 135763.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4971": {
+      "foreign": 15648.0,
+      "trust": 0.0,
+      "dealer": -358.0,
+      "total": 15290.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4972": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 487.0,
+      "total": 4487.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4973": {
+      "foreign": 469194.0,
+      "trust": 0.0,
+      "dealer": -12023.0,
+      "total": 457171.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4974": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 1178.0,
+      "total": 178.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4979": {
+      "foreign": 26140.0,
+      "trust": 1000.0,
+      "dealer": -43213.0,
+      "total": -16073.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4991": {
+      "foreign": 63001.0,
+      "trust": 0.0,
+      "dealer": -600.0,
+      "total": 62401.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "4995": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 533.0,
+      "total": -2467.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5009": {
+      "foreign": -1810198.0,
+      "trust": 0.0,
+      "dealer": 91447.0,
+      "total": -1718751.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5011": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5013": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5014": {
+      "foreign": -8000.0,
+      "trust": 0.0,
+      "dealer": -179.0,
+      "total": -8179.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5015": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 241.0,
+      "total": -759.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5016": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5201": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 491.0,
+      "total": 3491.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5202": {
+      "foreign": 351317.0,
+      "trust": 0.0,
+      "dealer": 5000.0,
+      "total": 356317.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5205": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5206": {
+      "foreign": -23030.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -23030.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5209": {
+      "foreign": 57431.0,
+      "trust": 0.0,
+      "dealer": -3865.0,
+      "total": 53566.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5210": {
+      "foreign": -62422.0,
+      "trust": 0.0,
+      "dealer": -2000.0,
+      "total": -64422.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5211": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5212": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 8.0,
+      "total": 8.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5213": {
+      "foreign": 32000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 32000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5220": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5223": {
+      "foreign": 10000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 10000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5227": {
+      "foreign": 52100.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 52100.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5228": {
+      "foreign": 16000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 16000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5230": {
+      "foreign": 93000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 93000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5245": {
+      "foreign": 78000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 78000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5251": {
+      "foreign": 14100.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 14100.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5263": {
+      "foreign": 188125.0,
+      "trust": 0.0,
+      "dealer": -936.0,
+      "total": 187189.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5272": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": -65.0,
+      "total": 3935.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5274": {
+      "foreign": 101792.0,
+      "trust": -38881.0,
+      "dealer": -2016.0,
+      "total": 60895.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5278": {
+      "foreign": 48016.0,
+      "trust": 0.0,
+      "dealer": 16000.0,
+      "total": 64016.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5287": {
+      "foreign": -6000.0,
+      "trust": 0.0,
+      "dealer": -103.0,
+      "total": -6103.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5289": {
+      "foreign": 523255.0,
+      "trust": 271800.0,
+      "dealer": -7779.0,
+      "total": 787276.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5291": {
+      "foreign": -55809.0,
+      "trust": 0.0,
+      "dealer": 340.0,
+      "total": -55469.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5299": {
+      "foreign": 40255.0,
+      "trust": 0.0,
+      "dealer": -1603.0,
+      "total": 38652.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5301": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5302": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5309": {
+      "foreign": -195331.0,
+      "trust": 0.0,
+      "dealer": -72396.0,
+      "total": -267727.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5310": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5312": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": -199.0,
+      "total": 3801.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5314": {
+      "foreign": 4119450.0,
+      "trust": 0.0,
+      "dealer": 297550.0,
+      "total": 4417000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5315": {
+      "foreign": 57000.0,
+      "trust": 0.0,
+      "dealer": -324.0,
+      "total": 56676.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5321": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": -100.0,
+      "total": 1900.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5324": {
+      "foreign": -94000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -94000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5328": {
+      "foreign": 652000.0,
+      "trust": 0.0,
+      "dealer": -19764.0,
+      "total": 632236.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5340": {
+      "foreign": -89055.0,
+      "trust": 0.0,
+      "dealer": -19668.0,
+      "total": -108723.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5347": {
+      "foreign": 373262.0,
+      "trust": 27193.0,
+      "dealer": -49096.0,
+      "total": 351359.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5351": {
+      "foreign": 2454634.0,
+      "trust": 2000.0,
+      "dealer": -27979.0,
+      "total": 2428655.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5353": {
+      "foreign": -30000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -30000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5355": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5356": {
+      "foreign": -11000.0,
+      "trust": 0.0,
+      "dealer": 8484.0,
+      "total": -2516.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5364": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5381": {
+      "foreign": 122897.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 122897.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5386": {
+      "foreign": 658406.0,
+      "trust": 0.0,
+      "dealer": 57.0,
+      "total": 658463.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5392": {
+      "foreign": 584000.0,
+      "trust": 0.0,
+      "dealer": 2201.0,
+      "total": 586201.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5398": {
+      "foreign": 10000.0,
+      "trust": 0.0,
+      "dealer": -16.0,
+      "total": 9984.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5403": {
+      "foreign": -5584.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -5584.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5410": {
+      "foreign": -145130.0,
+      "trust": 0.0,
+      "dealer": 237.0,
+      "total": -144893.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5425": {
+      "foreign": 381159.0,
+      "trust": -1467000.0,
+      "dealer": -6832.0,
+      "total": -1092673.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5426": {
+      "foreign": -17216.0,
+      "trust": 0.0,
+      "dealer": -1841.0,
+      "total": -19057.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5432": {
+      "foreign": 77000.0,
+      "trust": 0.0,
+      "dealer": 8.0,
+      "total": 77008.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5438": {
+      "foreign": -16593.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -16593.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5439": {
+      "foreign": 154459.0,
+      "trust": 0.0,
+      "dealer": -7674.0,
+      "total": 146785.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5443": {
+      "foreign": 65924.0,
+      "trust": 0.0,
+      "dealer": -8213.0,
+      "total": 57711.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5450": {
+      "foreign": 55000.0,
+      "trust": 0.0,
+      "dealer": -127.0,
+      "total": 54873.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5452": {
+      "foreign": 420000.0,
+      "trust": 0.0,
+      "dealer": -9136.0,
+      "total": 410864.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5455": {
+      "foreign": -12000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -12000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5457": {
+      "foreign": 336615.0,
+      "trust": 500000.0,
+      "dealer": -55678.0,
+      "total": 780937.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5460": {
+      "foreign": 16000.0,
+      "trust": 0.0,
+      "dealer": -537.0,
+      "total": 15463.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5464": {
+      "foreign": 11000.0,
+      "trust": 0.0,
+      "dealer": -597.0,
+      "total": 10403.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5465": {
+      "foreign": 248000.0,
+      "trust": 0.0,
+      "dealer": -43050.0,
+      "total": 204950.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5468": {
+      "foreign": 20000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 20000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5474": {
+      "foreign": 74344.0,
+      "trust": 0.0,
+      "dealer": 538.0,
+      "total": 74882.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5475": {
+      "foreign": -151100.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": -152100.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5478": {
+      "foreign": -5120.0,
+      "trust": 0.0,
+      "dealer": -1594.0,
+      "total": -6714.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5481": {
+      "foreign": -9000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -9000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5483": {
+      "foreign": 1041864.0,
+      "trust": -1422413.0,
+      "dealer": -384459.0,
+      "total": -765008.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5487": {
+      "foreign": 15000.0,
+      "trust": 0.0,
+      "dealer": 735.0,
+      "total": 15735.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5488": {
+      "foreign": 107000.0,
+      "trust": 0.0,
+      "dealer": -1.0,
+      "total": 106999.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5489": {
+      "foreign": -24000.0,
+      "trust": 0.0,
+      "dealer": 50.0,
+      "total": -23950.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5490": {
+      "foreign": 45998.0,
+      "trust": 0.0,
+      "dealer": 1.0,
+      "total": 45999.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5493": {
+      "foreign": 29000.0,
+      "trust": 0.0,
+      "dealer": -561.0,
+      "total": 28439.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5498": {
+      "foreign": -12000.0,
+      "trust": 0.0,
+      "dealer": -13931.0,
+      "total": -25931.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5508": {
+      "foreign": -66487.0,
+      "trust": 0.0,
+      "dealer": -479.0,
+      "total": -66966.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5511": {
+      "foreign": -79849.0,
+      "trust": 0.0,
+      "dealer": -2883.0,
+      "total": -82732.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5512": {
+      "foreign": 42185.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 42185.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5514": {
+      "foreign": -5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -5000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5529": {
+      "foreign": -89233.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -89233.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5530": {
+      "foreign": -16000.0,
+      "trust": 0.0,
+      "dealer": 72.0,
+      "total": -15928.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5536": {
+      "foreign": -284534.0,
+      "trust": 335010.0,
+      "dealer": -3049.0,
+      "total": 47427.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5543": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5547": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5548": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": 290.0,
+      "total": 9290.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5603": {
+      "foreign": 8000.0,
+      "trust": 0.0,
+      "dealer": 623.0,
+      "total": 8623.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5604": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5609": {
+      "foreign": -56000.0,
+      "trust": 0.0,
+      "dealer": -1135.0,
+      "total": -57135.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5701": {
+      "foreign": 10000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 10000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5704": {
+      "foreign": 17000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 17000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5864": {
+      "foreign": 1134133.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1134133.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5878": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5902": {
+      "foreign": 6000.0,
+      "trust": 0.0,
+      "dealer": -128.0,
+      "total": 5872.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5903": {
+      "foreign": 6360.0,
+      "trust": 0.0,
+      "dealer": -1084.0,
+      "total": 5276.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5904": {
+      "foreign": 822182.0,
+      "trust": 12400.0,
+      "dealer": -72418.0,
+      "total": 762164.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "5905": {
+      "foreign": 85000.0,
+      "trust": 0.0,
+      "dealer": -7.0,
+      "total": 84993.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6015": {
+      "foreign": -33200.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -33200.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6016": {
+      "foreign": 280958.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 280958.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6020": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6021": {
+      "foreign": -34000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -34000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6023": {
+      "foreign": -634500.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -634500.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6026": {
+      "foreign": -1163452.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1163452.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6028": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6101": {
+      "foreign": 9100.0,
+      "trust": 0.0,
+      "dealer": 1282.0,
+      "total": 10382.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6103": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6104": {
+      "foreign": 397493.0,
+      "trust": 0.0,
+      "dealer": -9053.0,
+      "total": 388440.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6109": {
+      "foreign": -20000.0,
+      "trust": 0.0,
+      "dealer": -10.0,
+      "total": -20010.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6111": {
+      "foreign": 70120.0,
+      "trust": 0.0,
+      "dealer": -8803.0,
+      "total": 61317.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6113": {
+      "foreign": 29000.0,
+      "trust": 0.0,
+      "dealer": -500.0,
+      "total": 28500.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6114": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -204.0,
+      "total": -204.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6118": {
+      "foreign": 28000.0,
+      "trust": 0.0,
+      "dealer": -277.0,
+      "total": 27723.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6121": {
+      "foreign": -309436.0,
+      "trust": 61177.0,
+      "dealer": -20612.0,
+      "total": -268871.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6122": {
+      "foreign": -25500.0,
+      "trust": 0.0,
+      "dealer": -4602.0,
+      "total": -30102.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6123": {
+      "foreign": 13000.0,
+      "trust": 0.0,
+      "dealer": 525.0,
+      "total": 13525.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6124": {
+      "foreign": 10000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 10000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6125": {
+      "foreign": 828000.0,
+      "trust": 0.0,
+      "dealer": -9821.0,
+      "total": 818179.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6126": {
+      "foreign": 115000.0,
+      "trust": 0.0,
+      "dealer": 81.0,
+      "total": 115081.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6127": {
+      "foreign": -114500.0,
+      "trust": 0.0,
+      "dealer": -9004.0,
+      "total": -123504.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6129": {
+      "foreign": 23536.0,
+      "trust": 0.0,
+      "dealer": 196.0,
+      "total": 23732.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6130": {
+      "foreign": -6000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -6000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6134": {
+      "foreign": -108000.0,
+      "trust": 0.0,
+      "dealer": -375.0,
+      "total": -108375.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6138": {
+      "foreign": 98033.0,
+      "trust": -2000.0,
+      "dealer": -1765.0,
+      "total": 94268.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6140": {
+      "foreign": 28000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 28000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6143": {
+      "foreign": 425200.0,
+      "trust": -2376.0,
+      "dealer": 264.0,
+      "total": 423088.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6146": {
+      "foreign": -31802.0,
+      "trust": -1992.0,
+      "dealer": -15470.0,
+      "total": -49264.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6147": {
+      "foreign": -84900.0,
+      "trust": 1400000.0,
+      "dealer": 2324.0,
+      "total": 1317424.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6148": {
+      "foreign": -790643.0,
+      "trust": 0.0,
+      "dealer": 1318.0,
+      "total": -789325.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6150": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": -12582.0,
+      "total": -9582.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6151": {
+      "foreign": -21000.0,
+      "trust": 0.0,
+      "dealer": -146.0,
+      "total": -21146.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6154": {
+      "foreign": -7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6156": {
+      "foreign": 105538.0,
+      "trust": 0.0,
+      "dealer": 17736.0,
+      "total": 123274.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6158": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": -27.0,
+      "total": 3973.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6160": {
+      "foreign": -10000.0,
+      "trust": 0.0,
+      "dealer": -630.0,
+      "total": -10630.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6161": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": -777.0,
+      "total": -4777.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6163": {
+      "foreign": 265000.0,
+      "trust": 0.0,
+      "dealer": -16724.0,
+      "total": 248276.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6167": {
+      "foreign": -39000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -39000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6170": {
+      "foreign": -116055.0,
+      "trust": 0.0,
+      "dealer": -829.0,
+      "total": -116884.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6171": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6173": {
+      "foreign": -37389.0,
+      "trust": 0.0,
+      "dealer": -16939.0,
+      "total": -54328.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6174": {
+      "foreign": -28000.0,
+      "trust": 0.0,
+      "dealer": 508.0,
+      "total": -27492.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6175": {
+      "foreign": 509000.0,
+      "trust": 0.0,
+      "dealer": -1443.0,
+      "total": 507557.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6179": {
+      "foreign": 221073.0,
+      "trust": 0.0,
+      "dealer": -49726.0,
+      "total": 171347.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6180": {
+      "foreign": 15563.0,
+      "trust": 0.0,
+      "dealer": 2839.0,
+      "total": 18402.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6182": {
+      "foreign": 2216700.0,
+      "trust": -314000.0,
+      "dealer": 22666.0,
+      "total": 1925366.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6185": {
+      "foreign": 28000.0,
+      "trust": 0.0,
+      "dealer": 92.0,
+      "total": 28092.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6186": {
+      "foreign": -84000.0,
+      "trust": 0.0,
+      "dealer": 2000.0,
+      "total": -82000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6187": {
+      "foreign": -130747.0,
+      "trust": 52149.0,
+      "dealer": -7954.0,
+      "total": -86552.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6188": {
+      "foreign": 704210.0,
+      "trust": 15000.0,
+      "dealer": -11529.0,
+      "total": 707681.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6190": {
+      "foreign": 405931.0,
+      "trust": 0.0,
+      "dealer": -59334.0,
+      "total": 346597.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6194": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 3000.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6195": {
+      "foreign": -6000.0,
+      "trust": 0.0,
+      "dealer": -19.0,
+      "total": -6019.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6198": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6199": {
+      "foreign": -2866879.0,
+      "trust": 0.0,
+      "dealer": -9669.0,
+      "total": -2876548.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6203": {
+      "foreign": 10000.0,
+      "trust": 0.0,
+      "dealer": -407.0,
+      "total": 9593.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6204": {
+      "foreign": 90000.0,
+      "trust": 0.0,
+      "dealer": 119.0,
+      "total": 90119.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6207": {
+      "foreign": 339000.0,
+      "trust": 0.0,
+      "dealer": -121726.0,
+      "total": 217274.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6208": {
+      "foreign": 101000.0,
+      "trust": 0.0,
+      "dealer": 2820.0,
+      "total": 103820.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6210": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6212": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6217": {
+      "foreign": 17000.0,
+      "trust": 0.0,
+      "dealer": 2258.0,
+      "total": 19258.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6218": {
+      "foreign": 390258.0,
+      "trust": 0.0,
+      "dealer": 563.0,
+      "total": 390821.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6219": {
+      "foreign": -27000.0,
+      "trust": 0.0,
+      "dealer": 14000.0,
+      "total": -13000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6220": {
+      "foreign": 30000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 30000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6221": {
+      "foreign": 25000.0,
+      "trust": 0.0,
+      "dealer": 14535.0,
+      "total": 39535.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6223": {
+      "foreign": 37254.0,
+      "trust": 5305.0,
+      "dealer": -10977.0,
+      "total": 31582.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6227": {
+      "foreign": 99344.0,
+      "trust": 0.0,
+      "dealer": -62554.0,
+      "total": 36790.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6229": {
+      "foreign": 6000.0,
+      "trust": 0.0,
+      "dealer": -116.0,
+      "total": 5884.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6231": {
+      "foreign": 202225.0,
+      "trust": 1000.0,
+      "dealer": -15896.0,
+      "total": 187329.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6233": {
+      "foreign": -38000.0,
+      "trust": 0.0,
+      "dealer": -3.0,
+      "total": -38003.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6234": {
+      "foreign": -218000.0,
+      "trust": 0.0,
+      "dealer": -7542.0,
+      "total": -225542.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6237": {
+      "foreign": 107103.0,
+      "trust": 0.0,
+      "dealer": 148.0,
+      "total": 107251.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6240": {
+      "foreign": -20000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -20000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6241": {
+      "foreign": -20000.0,
+      "trust": 0.0,
+      "dealer": 6000.0,
+      "total": -14000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6244": {
+      "foreign": 337050.0,
+      "trust": 0.0,
+      "dealer": -90334.0,
+      "total": 246716.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6245": {
+      "foreign": -323993.0,
+      "trust": -2505.0,
+      "dealer": -36779.0,
+      "total": -363277.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6246": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6248": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": -531.0,
+      "total": -3531.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6259": {
+      "foreign": 32000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 32000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6261": {
+      "foreign": 120040.0,
+      "trust": 0.0,
+      "dealer": -1536.0,
+      "total": 118504.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6263": {
+      "foreign": -76040.0,
+      "trust": 0.0,
+      "dealer": -2150.0,
+      "total": -78190.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6264": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6265": {
+      "foreign": 798110.0,
+      "trust": 0.0,
+      "dealer": -4719.0,
+      "total": 793391.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6266": {
+      "foreign": 18000.0,
+      "trust": 0.0,
+      "dealer": -434.0,
+      "total": 17566.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6270": {
+      "foreign": 64000.0,
+      "trust": 0.0,
+      "dealer": -2.0,
+      "total": 63998.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6274": {
+      "foreign": 985342.0,
+      "trust": -28000.0,
+      "dealer": -14000.0,
+      "total": 943342.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6275": {
+      "foreign": 125000.0,
+      "trust": 0.0,
+      "dealer": 51.0,
+      "total": 125051.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6276": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6279": {
+      "foreign": 4419.0,
+      "trust": 0.0,
+      "dealer": -24654.0,
+      "total": -20235.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6284": {
+      "foreign": 202001.0,
+      "trust": 10000.0,
+      "dealer": -9638.0,
+      "total": 202363.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6290": {
+      "foreign": 340955.0,
+      "trust": 1000.0,
+      "dealer": 2788.0,
+      "total": 344743.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6291": {
+      "foreign": 48000.0,
+      "trust": 0.0,
+      "dealer": -55.0,
+      "total": 47945.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6292": {
+      "foreign": -35000.0,
+      "trust": 0.0,
+      "dealer": -65.0,
+      "total": -35065.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6294": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 390.0,
+      "total": -1610.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6411": {
+      "foreign": 126060.0,
+      "trust": 0.0,
+      "dealer": 377.0,
+      "total": 126437.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6417": {
+      "foreign": 62000.0,
+      "trust": 0.0,
+      "dealer": 1702.0,
+      "total": 63702.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6418": {
+      "foreign": 76107.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": 77107.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6419": {
+      "foreign": -172492.0,
+      "trust": 0.0,
+      "dealer": -3990.0,
+      "total": -176482.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6423": {
+      "foreign": 43000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 43000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6425": {
+      "foreign": -21000.0,
+      "trust": 0.0,
+      "dealer": -10015.0,
+      "total": -31015.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6432": {
+      "foreign": 160000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 160000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6435": {
+      "foreign": 90849.0,
+      "trust": 0.0,
+      "dealer": -1847.0,
+      "total": 89002.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6441": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6461": {
+      "foreign": 18000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 18000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6462": {
+      "foreign": -27588.0,
+      "trust": 0.0,
+      "dealer": -14910.0,
+      "total": -42498.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6465": {
+      "foreign": 105000.0,
+      "trust": 0.0,
+      "dealer": -14142.0,
+      "total": 90858.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6469": {
+      "foreign": 194140.0,
+      "trust": 0.0,
+      "dealer": -344.0,
+      "total": 193796.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6470": {
+      "foreign": 10000.0,
+      "trust": 0.0,
+      "dealer": 1999.0,
+      "total": 11999.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6474": {
+      "foreign": -7000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -7000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6482": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6485": {
+      "foreign": 81316.0,
+      "trust": 0.0,
+      "dealer": -245.0,
+      "total": 81071.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6486": {
+      "foreign": -27725.0,
+      "trust": 0.0,
+      "dealer": -1085.0,
+      "total": -28810.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6488": {
+      "foreign": 1504633.0,
+      "trust": -1037918.0,
+      "dealer": 16540.0,
+      "total": 483255.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6492": {
+      "foreign": 159000.0,
+      "trust": 0.0,
+      "dealer": -542.0,
+      "total": 158458.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6494": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6496": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6498": {
+      "foreign": -25000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -25000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6499": {
+      "foreign": 285000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 285000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6506": {
+      "foreign": 22390.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 22390.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6508": {
+      "foreign": 6000.0,
+      "trust": 0.0,
+      "dealer": -40.0,
+      "total": 5960.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6509": {
+      "foreign": -747431.0,
+      "trust": 1000.0,
+      "dealer": -22407.0,
+      "total": -768838.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6510": {
+      "foreign": 11000.0,
+      "trust": 104.0,
+      "dealer": 1621.0,
+      "total": 12725.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6516": {
+      "foreign": -2930.0,
+      "trust": 0.0,
+      "dealer": 65.0,
+      "total": -2865.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6517": {
+      "foreign": 22750.0,
+      "trust": 0.0,
+      "dealer": -93.0,
+      "total": 22657.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6523": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 728.0,
+      "total": -2272.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6530": {
+      "foreign": 117279.0,
+      "trust": 0.0,
+      "dealer": 627.0,
+      "total": 117906.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6532": {
+      "foreign": 68000.0,
+      "trust": 0.0,
+      "dealer": -1038.0,
+      "total": 66962.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6535": {
+      "foreign": 1890.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1890.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6538": {
+      "foreign": 128000.0,
+      "trust": 0.0,
+      "dealer": 19857.0,
+      "total": 147857.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6546": {
+      "foreign": 152002.0,
+      "trust": 0.0,
+      "dealer": -5144.0,
+      "total": 146858.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6547": {
+      "foreign": 1220970.0,
+      "trust": 0.0,
+      "dealer": 12000.0,
+      "total": 1232970.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6548": {
+      "foreign": 503494.0,
+      "trust": 130000.0,
+      "dealer": -71048.0,
+      "total": 562446.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6560": {
+      "foreign": -11000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -11000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6561": {
+      "foreign": 15104.0,
+      "trust": -613.0,
+      "dealer": -1000.0,
+      "total": 13491.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6568": {
+      "foreign": 22000.0,
+      "trust": 0.0,
+      "dealer": -4246.0,
+      "total": 17754.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6569": {
+      "foreign": -32000.0,
+      "trust": 0.0,
+      "dealer": 15306.0,
+      "total": -16694.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6570": {
+      "foreign": -24000.0,
+      "trust": 0.0,
+      "dealer": 222.0,
+      "total": -23778.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6574": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6576": {
+      "foreign": -6000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -6000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6577": {
+      "foreign": 6000.0,
+      "trust": 0.0,
+      "dealer": 551.0,
+      "total": 6551.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6578": {
+      "foreign": 17000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": 18000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6584": {
+      "foreign": 31889.0,
+      "trust": 58000.0,
+      "dealer": -2008.0,
+      "total": 87881.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6588": {
+      "foreign": 45000.0,
+      "trust": 0.0,
+      "dealer": 207.0,
+      "total": 45207.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6590": {
+      "foreign": -61000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": -62000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6593": {
+      "foreign": 7000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": 6000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6596": {
+      "foreign": 59000.0,
+      "trust": 0.0,
+      "dealer": 228.0,
+      "total": 59228.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6603": {
+      "foreign": 387370.0,
+      "trust": 0.0,
+      "dealer": -31048.0,
+      "total": 356322.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6604": {
+      "foreign": -10000.0,
+      "trust": 0.0,
+      "dealer": -65090.0,
+      "total": -75090.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6609": {
+      "foreign": 14000.0,
+      "trust": 0.0,
+      "dealer": -13001.0,
+      "total": 999.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6612": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -2000.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6613": {
+      "foreign": 0.0,
+      "trust": -852.0,
+      "dealer": 14.0,
+      "total": -838.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6615": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6617": {
+      "foreign": 94982.0,
+      "trust": 0.0,
+      "dealer": -31.0,
+      "total": 94951.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6620": {
+      "foreign": 433600.0,
+      "trust": 0.0,
+      "dealer": -130687.0,
+      "total": 302913.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6624": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6629": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6637": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 296.0,
+      "total": 1296.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6640": {
+      "foreign": -2000.0,
+      "trust": -4000.0,
+      "dealer": -3673.0,
+      "total": -9673.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6642": {
+      "foreign": -10800.0,
+      "trust": 0.0,
+      "dealer": -293.0,
+      "total": -11093.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6643": {
+      "foreign": 109525.0,
+      "trust": 0.0,
+      "dealer": -13168.0,
+      "total": 96357.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6649": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -362.0,
+      "total": -362.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6651": {
+      "foreign": -73000.0,
+      "trust": 0.0,
+      "dealer": -1831.0,
+      "total": -74831.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6654": {
+      "foreign": 38000.0,
+      "trust": 0.0,
+      "dealer": -385.0,
+      "total": 37615.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6664": {
+      "foreign": 123979.0,
+      "trust": 10000.0,
+      "dealer": 1577.0,
+      "total": 135556.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6667": {
+      "foreign": 41328.0,
+      "trust": 0.0,
+      "dealer": -6593.0,
+      "total": 34735.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6679": {
+      "foreign": 100150.0,
+      "trust": 0.0,
+      "dealer": -1293.0,
+      "total": 98857.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6683": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 6724.0,
+      "total": 6724.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6684": {
+      "foreign": 45000.0,
+      "trust": 0.0,
+      "dealer": -638.0,
+      "total": 44362.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6690": {
+      "foreign": -188088.0,
+      "trust": 0.0,
+      "dealer": -10137.0,
+      "total": -198225.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6692": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 200.0,
+      "total": -800.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6693": {
+      "foreign": 209000.0,
+      "trust": 0.0,
+      "dealer": -4046.0,
+      "total": 204954.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6697": {
+      "foreign": -93198.0,
+      "trust": 0.0,
+      "dealer": -38000.0,
+      "total": -131198.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6703": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6708": {
+      "foreign": 87000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 87000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6712": {
+      "foreign": 25294.0,
+      "trust": 0.0,
+      "dealer": -1077.0,
+      "total": 24217.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6716": {
+      "foreign": 58000.0,
+      "trust": 0.0,
+      "dealer": -1314.0,
+      "total": 56686.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6720": {
+      "foreign": 11000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 11000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6721": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6725": {
+      "foreign": -41142.0,
+      "trust": 0.0,
+      "dealer": 2027.0,
+      "total": -39115.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6727": {
+      "foreign": -9001.0,
+      "trust": 0.0,
+      "dealer": -6374.0,
+      "total": -15375.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6728": {
+      "foreign": 11090.0,
+      "trust": 0.0,
+      "dealer": -27.0,
+      "total": 11063.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6730": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6732": {
+      "foreign": 5370.0,
+      "trust": 0.0,
+      "dealer": -900.0,
+      "total": 4470.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6733": {
+      "foreign": -31000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -31000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6735": {
+      "foreign": 41000.0,
+      "trust": 0.0,
+      "dealer": 229.0,
+      "total": 41229.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6739": {
+      "foreign": 33900.0,
+      "trust": 0.0,
+      "dealer": -2640.0,
+      "total": 31260.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6741": {
+      "foreign": -51323.0,
+      "trust": 0.0,
+      "dealer": -433.0,
+      "total": -51756.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6751": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 75851.0,
+      "total": 75851.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6752": {
+      "foreign": -11000.0,
+      "trust": 0.0,
+      "dealer": -237.0,
+      "total": -11237.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6761": {
+      "foreign": 21000.0,
+      "trust": 0.0,
+      "dealer": -78.0,
+      "total": 20922.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6762": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 5000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6763": {
+      "foreign": 372541.0,
+      "trust": -4000.0,
+      "dealer": -7266.0,
+      "total": 361275.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6785": {
+      "foreign": 82000.0,
+      "trust": 0.0,
+      "dealer": -1243.0,
+      "total": 80757.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6788": {
+      "foreign": 259836.0,
+      "trust": 0.0,
+      "dealer": -10701.0,
+      "total": 249135.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6791": {
+      "foreign": -10000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -10000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6803": {
+      "foreign": -42000.0,
+      "trust": 0.0,
+      "dealer": -31.0,
+      "total": -42031.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6804": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -700.0,
+      "total": -700.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6811": {
+      "foreign": 24000.0,
+      "trust": 0.0,
+      "dealer": -191.0,
+      "total": 23809.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6821": {
+      "foreign": -14000.0,
+      "trust": 0.0,
+      "dealer": -20.0,
+      "total": -14020.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6823": {
+      "foreign": 49000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 49000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6825": {
+      "foreign": 8000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 8000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6829": {
+      "foreign": 68771.0,
+      "trust": 0.0,
+      "dealer": -9159.0,
+      "total": 59612.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6840": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 465.0,
+      "total": 5465.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6841": {
+      "foreign": 64890.0,
+      "trust": 0.0,
+      "dealer": -795.0,
+      "total": 64095.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6843": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6844": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6846": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6855": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 4000.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6859": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": -2149.0,
+      "total": -5149.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6865": {
+      "foreign": -52000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -52000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6870": {
+      "foreign": -35000.0,
+      "trust": 0.0,
+      "dealer": -799.0,
+      "total": -35799.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6872": {
+      "foreign": 4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6874": {
+      "foreign": 19000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 19000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6875": {
+      "foreign": -15000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -15000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6877": {
+      "foreign": -17000.0,
+      "trust": 0.0,
+      "dealer": 210.0,
+      "total": -16790.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6881": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": -4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6884": {
+      "foreign": -6000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -6000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6894": {
+      "foreign": 42000.0,
+      "trust": 0.0,
+      "dealer": -422.0,
+      "total": 41578.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6895": {
+      "foreign": 83000.0,
+      "trust": 0.0,
+      "dealer": 1.0,
+      "total": 83001.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6898": {
+      "foreign": -18000.0,
+      "trust": 0.0,
+      "dealer": -2000.0,
+      "total": -20000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6899": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6903": {
+      "foreign": 122634.0,
+      "trust": 0.0,
+      "dealer": -4798.0,
+      "total": 117836.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6904": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6907": {
+      "foreign": 298000.0,
+      "trust": 0.0,
+      "dealer": 221.0,
+      "total": 298221.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6910": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6913": {
+      "foreign": 34955.0,
+      "trust": 0.0,
+      "dealer": -22576.0,
+      "total": 12379.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6922": {
+      "foreign": -46396.0,
+      "trust": 0.0,
+      "dealer": -2046.0,
+      "total": -48442.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6925": {
+      "foreign": 855000.0,
+      "trust": 0.0,
+      "dealer": 4126.0,
+      "total": 859126.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6938": {
+      "foreign": -27000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -27000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6945": {
+      "foreign": 37000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 37000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6953": {
+      "foreign": 25024.0,
+      "trust": 0.0,
+      "dealer": -691.0,
+      "total": 24333.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6961": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6967": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": 800.0,
+      "total": 9800.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6968": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -1268.0,
+      "total": -1268.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6971": {
+      "foreign": 8000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 8000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6982": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": -199.0,
+      "total": 4801.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6983": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": 290.0,
+      "total": 9290.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6986": {
+      "foreign": -26000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -26000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "6996": {
+      "foreign": -10150.0,
+      "trust": 0.0,
+      "dealer": 168.0,
+      "total": -9982.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7402": {
+      "foreign": 238020.0,
+      "trust": 0.0,
+      "dealer": -144.0,
+      "total": 237876.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7547": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7556": {
+      "foreign": 3557.0,
+      "trust": 0.0,
+      "dealer": 1254.0,
+      "total": 4811.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7584": {
+      "foreign": -50000.0,
+      "trust": 0.0,
+      "dealer": -3950.0,
+      "total": -53950.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7703": {
+      "foreign": 46010.0,
+      "trust": 0.0,
+      "dealer": -327.0,
+      "total": 45683.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7704": {
+      "foreign": 63130.0,
+      "trust": 0.0,
+      "dealer": -2.0,
+      "total": 63128.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7708": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7709": {
+      "foreign": 52000.0,
+      "trust": 0.0,
+      "dealer": -451.0,
+      "total": 51549.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7712": {
+      "foreign": -35022.0,
+      "trust": 0.0,
+      "dealer": -3970.0,
+      "total": -38992.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7714": {
+      "foreign": 5462.0,
+      "trust": 0.0,
+      "dealer": -957.0,
+      "total": 4505.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7715": {
+      "foreign": -10000.0,
+      "trust": 0.0,
+      "dealer": -200.0,
+      "total": -10200.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7718": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7723": {
+      "foreign": 22000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 22000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7728": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -514.0,
+      "total": -514.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7734": {
+      "foreign": 16000.0,
+      "trust": 0.0,
+      "dealer": -2431.0,
+      "total": 13569.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7738": {
+      "foreign": -4765.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -4765.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7743": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7744": {
+      "foreign": -21100.0,
+      "trust": 0.0,
+      "dealer": -270.0,
+      "total": -21370.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7751": {
+      "foreign": 15005.0,
+      "trust": 0.0,
+      "dealer": 4350.0,
+      "total": 19355.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7753": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7757": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7767": {
+      "foreign": 326542.0,
+      "trust": 0.0,
+      "dealer": 1593.0,
+      "total": 328135.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7772": {
+      "foreign": 27000.0,
+      "trust": 0.0,
+      "dealer": 791.0,
+      "total": 27791.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7777": {
+      "foreign": 377000.0,
+      "trust": 0.0,
+      "dealer": -13983.0,
+      "total": 363017.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7782": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 5000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7792": {
+      "foreign": 77790.0,
+      "trust": 0.0,
+      "dealer": -7044.0,
+      "total": 70746.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7805": {
+      "foreign": 26000.0,
+      "trust": 0.0,
+      "dealer": 161.0,
+      "total": 26161.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7806": {
+      "foreign": 5000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": 4000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7810": {
+      "foreign": -4800.0,
+      "trust": 0.0,
+      "dealer": -3420.0,
+      "total": -8220.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7814": {
+      "foreign": 8000.0,
+      "trust": 0.0,
+      "dealer": -5000.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7819": {
+      "foreign": -14000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -14000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7825": {
+      "foreign": 41000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 41000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7828": {
+      "foreign": -100521.0,
+      "trust": 380000.0,
+      "dealer": 2575.0,
+      "total": 282054.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7839": {
+      "foreign": 21000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 21000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7842": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7848": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "7856": {
+      "foreign": 18027.0,
+      "trust": 0.0,
+      "dealer": 22.0,
+      "total": 18049.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8024": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -124.0,
+      "total": -124.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8027": {
+      "foreign": 204069.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 204069.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8032": {
+      "foreign": 14000.0,
+      "trust": 0.0,
+      "dealer": 335.0,
+      "total": 14335.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8034": {
+      "foreign": -14000.0,
+      "trust": 0.0,
+      "dealer": -15.0,
+      "total": -14015.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8038": {
+      "foreign": -103000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -103000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8040": {
+      "foreign": 32025.0,
+      "trust": 0.0,
+      "dealer": -2994.0,
+      "total": 29031.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8042": {
+      "foreign": 17000.0,
+      "trust": 0.0,
+      "dealer": 54659.0,
+      "total": 71659.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8043": {
+      "foreign": 232168.0,
+      "trust": 0.0,
+      "dealer": -10916.0,
+      "total": 221252.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8044": {
+      "foreign": -19510.0,
+      "trust": 0.0,
+      "dealer": 2027.0,
+      "total": -17483.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8048": {
+      "foreign": -12000.0,
+      "trust": 0.0,
+      "dealer": 981.0,
+      "total": -11019.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8049": {
+      "foreign": 29000.0,
+      "trust": 0.0,
+      "dealer": 497.0,
+      "total": 29497.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8050": {
+      "foreign": -108048.0,
+      "trust": 0.0,
+      "dealer": -3906.0,
+      "total": -111954.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8054": {
+      "foreign": 51508.0,
+      "trust": 0.0,
+      "dealer": -20573.0,
+      "total": 30935.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8059": {
+      "foreign": 21000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 21000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8064": {
+      "foreign": -5899.0,
+      "trust": 0.0,
+      "dealer": -10198.0,
+      "total": -16097.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8066": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 185.0,
+      "total": -2815.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8068": {
+      "foreign": 85000.0,
+      "trust": 0.0,
+      "dealer": -4000.0,
+      "total": 81000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8069": {
+      "foreign": -175246.0,
+      "trust": 239044.0,
+      "dealer": -118734.0,
+      "total": -54936.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8071": {
+      "foreign": 64960.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 64960.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8074": {
+      "foreign": -10000.0,
+      "trust": 0.0,
+      "dealer": -4205.0,
+      "total": -14205.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8076": {
+      "foreign": 256000.0,
+      "trust": 0.0,
+      "dealer": -4827.0,
+      "total": 251173.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8080": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8083": {
+      "foreign": -15071.0,
+      "trust": 0.0,
+      "dealer": 997.0,
+      "total": -14074.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8085": {
+      "foreign": -23000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -23000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8086": {
+      "foreign": 452235.0,
+      "trust": 0.0,
+      "dealer": -39793.0,
+      "total": 412442.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8087": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": -130.0,
+      "total": 2870.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8088": {
+      "foreign": 284000.0,
+      "trust": 0.0,
+      "dealer": 1.0,
+      "total": 284001.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8089": {
+      "foreign": -157407.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -157407.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8091": {
+      "foreign": 80035.0,
+      "trust": 0.0,
+      "dealer": -3426.0,
+      "total": 76609.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8092": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": 2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8096": {
+      "foreign": 440584.0,
+      "trust": 0.0,
+      "dealer": -9768.0,
+      "total": 430816.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8097": {
+      "foreign": 14000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 14000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8099": {
+      "foreign": -211954.0,
+      "trust": 0.0,
+      "dealer": 1939.0,
+      "total": -210015.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8107": {
+      "foreign": 11000.0,
+      "trust": 0.0,
+      "dealer": -585.0,
+      "total": 10415.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8109": {
+      "foreign": -48535.0,
+      "trust": 0.0,
+      "dealer": -8517.0,
+      "total": -57052.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8111": {
+      "foreign": -67740.0,
+      "trust": 0.0,
+      "dealer": -55187.0,
+      "total": -122927.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8121": {
+      "foreign": 40950.0,
+      "trust": 0.0,
+      "dealer": -723.0,
+      "total": 40227.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8147": {
+      "foreign": 73174.0,
+      "trust": 0.0,
+      "dealer": -1801.0,
+      "total": 71373.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8155": {
+      "foreign": 273473.0,
+      "trust": 0.0,
+      "dealer": -14318.0,
+      "total": 259155.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8171": {
+      "foreign": 97051.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": 98051.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8176": {
+      "foreign": -14999.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -14999.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8182": {
+      "foreign": 152410.0,
+      "trust": 0.0,
+      "dealer": 394.0,
+      "total": 152804.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8227": {
+      "foreign": 108000.0,
+      "trust": 0.0,
+      "dealer": -18553.0,
+      "total": 89447.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8234": {
+      "foreign": 263009.0,
+      "trust": 0.0,
+      "dealer": -572.0,
+      "total": 262437.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8240": {
+      "foreign": -106372.0,
+      "trust": 0.0,
+      "dealer": -569.0,
+      "total": -106941.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8255": {
+      "foreign": 19050.0,
+      "trust": 0.0,
+      "dealer": -449.0,
+      "total": 18601.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8272": {
+      "foreign": -44000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -44000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8277": {
+      "foreign": 9999.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 9999.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8279": {
+      "foreign": -4000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": -3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8284": {
+      "foreign": 6000.0,
+      "trust": 0.0,
+      "dealer": 4000.0,
+      "total": 10000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8289": {
+      "foreign": 26600.0,
+      "trust": 0.0,
+      "dealer": -5286.0,
+      "total": 21314.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8299": {
+      "foreign": 1244617.0,
+      "trust": 4762.0,
+      "dealer": -279036.0,
+      "total": 970343.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8349": {
+      "foreign": 26000.0,
+      "trust": 0.0,
+      "dealer": -29.0,
+      "total": 25971.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8354": {
+      "foreign": 1001.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1001.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8358": {
+      "foreign": 4216.0,
+      "trust": 905500.0,
+      "dealer": 49000.0,
+      "total": 958716.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8383": {
+      "foreign": 29744.0,
+      "trust": 0.0,
+      "dealer": 8942.0,
+      "total": 38686.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8390": {
+      "foreign": 56000.0,
+      "trust": 0.0,
+      "dealer": 1173.0,
+      "total": 57173.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8401": {
+      "foreign": -15000.0,
+      "trust": 0.0,
+      "dealer": -59.0,
+      "total": -15059.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8403": {
+      "foreign": 17000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 17000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8409": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8410": {
+      "foreign": 21000.0,
+      "trust": 0.0,
+      "dealer": -6000.0,
+      "total": 15000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8415": {
+      "foreign": 683486.0,
+      "trust": 0.0,
+      "dealer": -32802.0,
+      "total": 650684.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8416": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8421": {
+      "foreign": 6000.0,
+      "trust": 0.0,
+      "dealer": -1000.0,
+      "total": 5000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8423": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8424": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8426": {
+      "foreign": 3000.0,
+      "trust": 0.0,
+      "dealer": -17.0,
+      "total": 2983.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8431": {
+      "foreign": 33000.0,
+      "trust": 0.0,
+      "dealer": -286.0,
+      "total": 32714.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8432": {
+      "foreign": 23000.0,
+      "trust": 0.0,
+      "dealer": 734.0,
+      "total": 23734.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8433": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -35.0,
+      "total": -35.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8435": {
+      "foreign": 8000.0,
+      "trust": 0.0,
+      "dealer": 141.0,
+      "total": 8141.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8436": {
+      "foreign": -48000.0,
+      "trust": 0.0,
+      "dealer": -4305.0,
+      "total": -52305.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8437": {
+      "foreign": 18000.0,
+      "trust": 0.0,
+      "dealer": 1000.0,
+      "total": 19000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8440": {
+      "foreign": 18000.0,
+      "trust": 0.0,
+      "dealer": 6143.0,
+      "total": 24143.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8446": {
+      "foreign": 31000.0,
+      "trust": 0.0,
+      "dealer": 713.0,
+      "total": 31713.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8450": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": -44.0,
+      "total": -44.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8455": {
+      "foreign": -6990.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -6990.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8472": {
+      "foreign": 0.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 0.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8477": {
+      "foreign": -10000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -10000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8489": {
+      "foreign": 48000.0,
+      "trust": 0.0,
+      "dealer": 4984.0,
+      "total": 52984.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8905": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -3000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8906": {
+      "foreign": -16000.0,
+      "trust": 0.0,
+      "dealer": -5.0,
+      "total": -16005.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8916": {
+      "foreign": -22925.0,
+      "trust": 0.0,
+      "dealer": -120660.0,
+      "total": -143585.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8924": {
+      "foreign": 5050.0,
+      "trust": 0.0,
+      "dealer": -42.0,
+      "total": 5008.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8927": {
+      "foreign": 105000.0,
+      "trust": 0.0,
+      "dealer": -138.0,
+      "total": 104862.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8928": {
+      "foreign": -3000.0,
+      "trust": 0.0,
+      "dealer": -22.0,
+      "total": -3022.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8929": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": -390.0,
+      "total": -2390.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8930": {
+      "foreign": 21000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 21000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8931": {
+      "foreign": 2000.0,
+      "trust": 0.0,
+      "dealer": 2203.0,
+      "total": 4203.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8932": {
+      "foreign": 1932945.0,
+      "trust": 0.0,
+      "dealer": -368517.0,
+      "total": 1564428.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8933": {
+      "foreign": 9000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": 9000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8935": {
+      "foreign": -18000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -18000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8936": {
+      "foreign": 1604895.0,
+      "trust": 0.0,
+      "dealer": -927447.0,
+      "total": 677448.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8937": {
+      "foreign": -16000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -16000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8938": {
+      "foreign": 25000.0,
+      "trust": 0.0,
+      "dealer": 440.0,
+      "total": 25440.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "8942": {
+      "foreign": -80000.0,
+      "trust": 0.0,
+      "dealer": -241.0,
+      "total": -80241.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "9949": {
+      "foreign": -2000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -2000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "9951": {
+      "foreign": 1000.0,
+      "trust": 0.0,
+      "dealer": -73.0,
+      "total": 927.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "9960": {
+      "foreign": -1000.0,
+      "trust": 0.0,
+      "dealer": 0.0,
+      "total": -1000.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    },
+    "9962": {
+      "foreign": -37000.0,
+      "trust": 0.0,
+      "dealer": 251.0,
+      "total": -36749.0,
+      "source": "TPEx OpenAPI",
+      "data_date": "2026-11-20"
+    }
+  },
   "institutional_status": {
     "ok": false,
-    "partial": false,
+    "partial": true,
     "data_date": null,
-    "count": 0,
+    "count": 808,
     "errors": [
       "TWSE法人:T86 dated endpoints unavailable or unverified for 2026-11-20",
-      "TPEx法人:TPEx institutional response dates not verified for 2026-11-20",
-      "TWSE T86: no dated reconciled institutional totals",
-      "TPEx OpenAPI: no dated reconciled institutional totals"
+      "TWSE T86: no dated reconciled institutional totals"
     ],
-    "debug": {}
+    "debug": {
+      "tpex_keys": [
+        "Date",
+        "SecuritiesCompanyCode",
+        "CompanyName",
+        "Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Total Buy",
+        " Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Total Sell",
+        "Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Difference",
+        "Foreign Dealers-Total Buy",
+        "Foreign Dealers-TotalSell",
+        "ForeignDealers-Difference",
+        "ForeignInvestorsIncludeMainlandAreaInvestors-TotalBuy",
+        "ForeignInvestorsIncludeMainlandAreaInvestors-TotalSell",
+        "ForeignInvestorsInclude MainlandAreaInvestors-Difference",
+        "SecuritiesInvestmentTrustCompanies-TotalBuy",
+        "SecuritiesInvestmentTrustCompanies-TotalSell",
+        "SecuritiesInvestmentTrustCompanies-Difference",
+        "Dealers-TotalBuy",
+        "Dealers-TotalSell",
+        "Dealers-Difference",
+        "Dealers -TotalSell",
+        "TotalDifference"
+      ],
+      "tpex_first": {
+        "Date": "1151120",
+        "SecuritiesCompanyCode": "00411A",
+        "CompanyName": "主動統一前沿科技",
+        "Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Total Buy": "3077000",
+        " Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Total Sell": "307000",
+        "Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)-Difference": "2770000",
+        "Foreign Dealers-Total Buy": "0",
+        "Foreign Dealers-TotalSell": "0",
+        "ForeignDealers-Difference": "0",
+        "ForeignInvestorsIncludeMainlandAreaInvestors-TotalBuy": "3077000",
+        "ForeignInvestorsIncludeMainlandAreaInvestors-TotalSell": "307000",
+        "ForeignInvestorsInclude MainlandAreaInvestors-Difference": "2770000",
+        "SecuritiesInvestmentTrustCompanies-TotalBuy": "0",
+        "SecuritiesInvestmentTrustCompanies-TotalSell": "0",
+        "SecuritiesInvestmentTrustCompanies-Difference": "0",
+        "Dealers-TotalBuy": "7640000",
+        "Dealers-TotalSell": "1003165",
+        "Dealers-Difference": "6636835",
+        "Dealers -TotalSell": "1003165",
+        "TotalDifference": "9406835"
+      }
+    }
   },
   "holdings": {
     "1711": {
@@ -10485,8 +16984,8 @@
     {
       "code": "2468",
       "name": "華經",
-      "score": 93,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.86%｜5日 +2.4%｜成交值 56.9億｜收盤位置 100%｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +20.0%／MoM -31.7%；季報 2026-Q3 公告 2026-11-19 EPS 0.88、毛利率 10.5%、負債率 50.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "score": 94,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.86%｜5日 -6.9%｜成交值 56.9億｜收盤位置 100%｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +20.0%／MoM -31.7%；季報 2026-Q3 公告 2026-11-19 EPS 0.88、毛利率 10.5%、負債率 50.0%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 69.1,
       "change_pct": 9.86,
       "market": "TWSE",
@@ -10521,124 +17020,10 @@
       "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
     },
     {
-      "code": "2471",
-      "name": "資通",
-      "score": 92,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.98%｜5日 -2.9%｜成交值 13.5億｜收盤位置 100%｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +5.3%／MoM -1.0%；季報 2026-Q3 公告 2026-11-19 EPS 3.08、毛利率 44.3%、負債率 39.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 62.8,
-      "change_pct": 9.98,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 61.04,
-      "entry_high": 62.8,
-      "defense": 57.46,
-      "target1": 70.01,
-      "target2": 75.41,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-20",
-        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
-        "publication_dates": {
-          "revenue": "2026-11-17",
-          "financials": "2026-11-19"
-        },
-        "periods": {
-          "revenue": "2026-10",
-          "financials": "2026-Q3"
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-10 公告 2026-11-17 YoY +5.3%／MoM -1.0%；季報 2026-Q3 公告 2026-11-19 EPS 3.08、毛利率 44.3%、負債率 39.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      },
-      "trade_readiness": "research_only",
-      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
-    },
-    {
-      "code": "7828",
-      "name": "創新服務",
-      "score": 91,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.75%｜5日 -9.4%｜成交值 12.4億｜收盤位置 100%｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +224.6%／MoM +82.9%；季報 2026-Q3 公告 2026-11-19 EPS 8.70、毛利率 79.0%、負債率 18.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 1295.0,
-      "change_pct": 9.75,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 1258.74,
-      "entry_high": 1295.0,
-      "defense": 1184.92,
-      "target1": 1443.6,
-      "target2": 1555.05,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-20",
-        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
-        "publication_dates": {
-          "revenue": "2026-11-17",
-          "financials": "2026-11-19"
-        },
-        "periods": {
-          "revenue": "2026-10",
-          "financials": "2026-Q3"
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-10 公告 2026-11-17 YoY +224.6%／MoM +82.9%；季報 2026-Q3 公告 2026-11-19 EPS 8.70、毛利率 79.0%、負債率 18.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      },
-      "trade_readiness": "research_only",
-      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
-    },
-    {
-      "code": "6925",
-      "name": "意藍",
-      "score": 91,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.66%｜5日 +3.9%｜成交值 12.3億｜收盤位置 100%｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY -1.6%／MoM -18.7%；季報 2026-Q3 公告 2026-11-19 EPS 2.08、毛利率 77.5%、負債率 20.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 101.0,
-      "change_pct": 9.66,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 98.17,
-      "entry_high": 101.0,
-      "defense": 92.42,
-      "target1": 112.59,
-      "target2": 121.28,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-20",
-        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
-        "publication_dates": {
-          "revenue": "2026-11-17",
-          "financials": "2026-11-19"
-        },
-        "periods": {
-          "revenue": "2026-10",
-          "financials": "2026-Q3"
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-10 公告 2026-11-17 YoY -1.6%／MoM -18.7%；季報 2026-Q3 公告 2026-11-19 EPS 2.08、毛利率 77.5%、負債率 20.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      },
-      "trade_readiness": "research_only",
-      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
-    },
-    {
       "code": "7765",
       "name": "中華資安",
-      "score": 89,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.89%｜5日 +20.2%｜成交值 24.0億｜收盤位置 100%｜過熱警戒｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +32.2%／MoM -6.7%；季報 2026-Q3 公告 2026-11-19 EPS 8.75、毛利率 45.1%、負債率 27.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "score": 92,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.89%｜5日 +9.3%｜成交值 24.0億｜收盤位置 100%｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +32.2%／MoM -6.7%；季報 2026-Q3 公告 2026-11-19 EPS 8.75、毛利率 45.1%、負債率 27.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 294.5,
       "change_pct": 9.89,
       "market": "TWSE",
@@ -10673,20 +17058,58 @@
       "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
     },
     {
-      "code": "5457",
-      "name": "宣德",
-      "score": 86,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.95%｜5日 +11.5%｜成交值 1.4億｜收盤位置 100%｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY -12.6%／MoM +10.2%；季報 2026-Q3 公告 2026-11-19 EPS -1.26、毛利率 14.3%、負債率 64.7%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 23.75,
-      "change_pct": 9.95,
+      "code": "2471",
+      "name": "資通",
+      "score": 91,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.98%｜5日 -11.7%｜成交值 13.5億｜收盤位置 100%｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +5.3%／MoM -1.0%；季報 2026-Q3 公告 2026-11-19 EPS 3.08、毛利率 44.3%、負債率 39.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
+      "price": 62.8,
+      "change_pct": 9.98,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 61.04,
+      "entry_high": 62.8,
+      "defense": 57.46,
+      "target1": 70.01,
+      "target2": 75.41,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-20",
+        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
+        "publication_dates": {
+          "revenue": "2026-11-17",
+          "financials": "2026-11-19"
+        },
+        "periods": {
+          "revenue": "2026-10",
+          "financials": "2026-Q3"
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-10 公告 2026-11-17 YoY +5.3%／MoM -1.0%；季報 2026-Q3 公告 2026-11-19 EPS 3.08、毛利率 44.3%、負債率 39.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      },
+      "trade_readiness": "research_only",
+      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
+    },
+    {
+      "code": "6925",
+      "name": "意藍",
+      "score": 91,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.66%｜5日 -5.2%｜成交值 12.3億｜收盤位置 100%｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY -1.6%／MoM -18.7%；季報 2026-Q3 公告 2026-11-19 EPS 2.08、毛利率 77.5%、負債率 20.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
+      "price": 101.0,
+      "change_pct": 9.66,
       "market": "TPEX",
       "sector": "族群未分類",
       "sector_score": 50,
-      "entry_low": 23.09,
-      "entry_high": 23.75,
-      "defense": 21.73,
-      "target1": 26.48,
-      "target2": 28.52,
+      "entry_low": 98.17,
+      "entry_high": 101.0,
+      "defense": 92.42,
+      "target1": 112.59,
+      "target2": 121.28,
       "financial_context": {
         "status": "verified",
         "as_of": "2026-11-20",
@@ -10705,7 +17128,45 @@
           "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
           "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
         },
-        "text": "月營收 2026-10 公告 2026-11-17 YoY -12.6%／MoM +10.2%；季報 2026-Q3 公告 2026-11-19 EPS -1.26、毛利率 14.3%、負債率 64.7%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+        "text": "月營收 2026-10 公告 2026-11-17 YoY -1.6%／MoM -18.7%；季報 2026-Q3 公告 2026-11-19 EPS 2.08、毛利率 77.5%、負債率 20.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      },
+      "trade_readiness": "research_only",
+      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
+    },
+    {
+      "code": "7828",
+      "name": "創新服務",
+      "score": 90,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.75%｜5日 -5.8%｜成交值 12.4億｜收盤位置 100%｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +224.6%／MoM +82.9%；季報 2026-Q3 公告 2026-11-19 EPS 8.70、毛利率 79.0%、負債率 18.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
+      "price": 1295.0,
+      "change_pct": 9.75,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 1258.74,
+      "entry_high": 1295.0,
+      "defense": 1184.92,
+      "target1": 1443.6,
+      "target2": 1555.05,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-20",
+        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
+        "publication_dates": {
+          "revenue": "2026-11-17",
+          "financials": "2026-11-19"
+        },
+        "periods": {
+          "revenue": "2026-10",
+          "financials": "2026-Q3"
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-10 公告 2026-11-17 YoY +224.6%／MoM +82.9%；季報 2026-Q3 公告 2026-11-19 EPS 8.70、毛利率 79.0%、負債率 18.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
       },
       "trade_readiness": "research_only",
       "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
@@ -10714,7 +17175,7 @@
       "code": "7767",
       "name": "仁大資訊",
       "score": 85,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.94%｜5日 +1.8%｜成交值 0.9億｜收盤位置 100%｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY -1.5%／MoM -13.4%；季報 2026-Q3 公告 2026-11-19 EPS 3.33、毛利率 12.0%、負債率 71.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.94%｜5日 -7.4%｜成交值 0.9億｜收盤位置 100%｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY -1.5%／MoM -13.4%；季報 2026-Q3 公告 2026-11-19 EPS 3.33、毛利率 12.0%、負債率 71.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 55.3,
       "change_pct": 9.94,
       "market": "TPEX",
@@ -10749,10 +17210,48 @@
       "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
     },
     {
+      "code": "5457",
+      "name": "宣德",
+      "score": 84,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.95%｜5日 +15.3%｜成交值 1.4億｜收盤位置 100%｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY -12.6%／MoM +10.2%；季報 2026-Q3 公告 2026-11-19 EPS -1.26、毛利率 14.3%、負債率 64.7%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
+      "price": 23.75,
+      "change_pct": 9.95,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 23.09,
+      "entry_high": 23.75,
+      "defense": 21.73,
+      "target1": 26.48,
+      "target2": 28.52,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-20",
+        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
+        "publication_dates": {
+          "revenue": "2026-11-17",
+          "financials": "2026-11-19"
+        },
+        "periods": {
+          "revenue": "2026-10",
+          "financials": "2026-Q3"
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-10 公告 2026-11-17 YoY -12.6%／MoM +10.2%；季報 2026-Q3 公告 2026-11-19 EPS -1.26、毛利率 14.3%、負債率 64.7%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      },
+      "trade_readiness": "research_only",
+      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
+    },
+    {
       "code": "6725",
       "name": "矽科宏晟",
       "score": 84,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.93%｜5日 -10.9%｜成交值 0.6億｜收盤位置 100%｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +72.2%／MoM +114.1%；季報 2026-Q3 公告 2026-11-19 EPS 7.98、毛利率 23.6%、負債率 55.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +9.93%｜5日 -11.7%｜成交值 0.6億｜收盤位置 100%｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +72.2%／MoM +114.1%；季報 2026-Q3 公告 2026-11-19 EPS 7.98、毛利率 23.6%、負債率 55.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 155.0,
       "change_pct": 9.93,
       "market": "TPEX",
@@ -10789,8 +17288,8 @@
     {
       "code": "6614",
       "name": "資拓宏宇",
-      "score": 81,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +10.00%｜5日 +21.5%｜成交值 0.7億｜收盤位置 100%｜過熱警戒｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +2.1%／MoM -16.1%；季報 2026-Q3 公告 2026-11-19 EPS 0.33、毛利率 10.3%、負債率 67.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "score": 82,
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +10.00%｜5日 +10.4%｜成交值 0.7億｜收盤位置 100%｜過熱警戒｜月營收 2026-10 公告 2026-11-17 YoY +2.1%／MoM -16.1%；季報 2026-Q3 公告 2026-11-19 EPS 0.33、毛利率 10.3%、負債率 67.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 40.7,
       "change_pct": 10.0,
       "market": "TWSE",
@@ -10828,7 +17327,7 @@
       "code": "6148",
       "name": "驊宏資",
       "score": 78,
-      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +6.60%｜5日 -0.8%｜成交值 26.9億｜收盤位置 82%｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +145.1%／MoM +107.6%；季報 2026-Q3 公告 2026-11-19 EPS 0.48、毛利率 24.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "reason": "強勢加速｜族群資料未涵蓋（中性計分）｜今日 +6.60%｜5日 -9.6%｜成交值 26.9億｜收盤位置 82%｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +145.1%／MoM +107.6%；季報 2026-Q3 公告 2026-11-19 EPS 0.48、毛利率 24.8%、負債率 51.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 52.5,
       "change_pct": 6.6,
       "market": "TPEX",
@@ -10868,7 +17367,7 @@
       "code": "7788",
       "name": "松川精密",
       "score": 80,
-      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +3.74%｜5日 -13.8%｜10日 -11.7%｜收盤位置 71%｜成交值 12.3億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +53.6%／MoM -3.2%；季報 2026-Q3 公告 2026-11-19 EPS 8.35、毛利率 28.7%、負債率 48.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "reason": "隔日爆發候選｜族群資料未涵蓋（中性計分）｜今日 +3.74%｜5日 -8.6%｜10日 -6.7%｜收盤位置 71%｜成交值 12.3億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +53.6%／MoM -3.2%；季報 2026-Q3 公告 2026-11-19 EPS 8.35、毛利率 28.7%、負債率 48.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 180.5,
       "change_pct": 3.74,
       "market": "TWSE",
@@ -10907,8 +17406,8 @@
     {
       "code": "5522",
       "name": "遠雄",
-      "score": 60,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -0.79%｜5日 +8.8%｜10日 +7.0%｜20日 +1.3%｜成交值 1.3億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY -18.1%／MoM +7.6%；季報 2026-Q3 公告 2026-11-19 EPS 4.70、毛利率 32.9%、負債率 59.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "score": 61,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -0.79%｜5日 +8.6%｜10日 +10.5%｜20日 +1.8%｜成交值 1.3億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY -18.1%／MoM +7.6%；季報 2026-Q3 公告 2026-11-19 EPS 4.70、毛利率 32.9%、負債率 59.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 62.9,
       "change_pct": -0.79,
       "market": "TWSE",
@@ -10947,94 +17446,10 @@
       "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
     },
     {
-      "code": "6690",
-      "name": "安碁資訊",
-      "score": 56,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +3.31%｜5日 -3.1%｜10日 +2.7%｜20日 +3.9%｜成交值 6.6億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +8.5%／MoM -15.6%；季報 2026-Q3 公告 2026-11-19 EPS 8.14、毛利率 40.1%、負債率 32.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 187.0,
-      "change_pct": 3.31,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 181.76,
-      "entry_high": 187.0,
-      "defense": 171.11,
-      "target1": 208.46,
-      "target2": 224.55,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-20",
-        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
-        "publication_dates": {
-          "revenue": "2026-11-17",
-          "financials": "2026-11-19"
-        },
-        "periods": {
-          "revenue": "2026-10",
-          "financials": "2026-Q3"
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-10 公告 2026-11-17 YoY +8.5%／MoM -15.6%；季報 2026-Q3 公告 2026-11-19 EPS 8.14、毛利率 40.1%、負債率 32.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      },
-      "trade_readiness": "research_only",
-      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
-    },
-    {
-      "code": "1584",
-      "name": "精剛",
-      "score": 55,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +1.24%｜5日 +1.9%｜10日 +2.5%｜20日 -7.9%｜成交值 0.3億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +5.1%／MoM +1.9%；季報 2026-Q3 公告 2026-11-19 EPS 0.40、毛利率 15.7%、負債率 40.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 16.3,
-      "change_pct": 1.24,
-      "market": "TPEX",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 15.91,
-      "entry_high": 16.3,
-      "defense": 14.91,
-      "target1": 18.17,
-      "target2": 19.57,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-20",
-        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
-        "publication_dates": {
-          "revenue": "2026-11-17",
-          "financials": "2026-11-19"
-        },
-        "periods": {
-          "revenue": "2026-10",
-          "financials": "2026-Q3"
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
-          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
-        },
-        "text": "月營收 2026-10 公告 2026-11-17 YoY +5.1%／MoM +1.9%；季報 2026-Q3 公告 2026-11-19 EPS 0.40、毛利率 15.7%、負債率 40.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      },
-      "trade_readiness": "research_only",
-      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
-    },
-    {
       "code": "6870",
       "name": "騰雲",
-      "score": 53,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.25%｜5日 -19.9%｜10日 -4.5%｜20日 +14.2%｜成交值 2.1億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +35.6%／MoM -6.2%；季報 2026-Q3 公告 2026-11-19 EPS 4.41、毛利率 68.2%、負債率 50.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "score": 57,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.25%｜5日 -20.9%｜10日 +6.1%｜20日 +19.8%｜成交值 2.1億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +35.6%／MoM -6.2%；季報 2026-Q3 公告 2026-11-19 EPS 4.41、毛利率 68.2%、負債率 50.6%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 394.0,
       "change_pct": 0.25,
       "market": "TPEX",
@@ -11073,10 +17488,94 @@
       "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
     },
     {
+      "code": "1584",
+      "name": "精剛",
+      "score": 54,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +1.24%｜5日 +1.6%｜10日 -1.2%｜20日 -8.2%｜成交值 0.3億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +5.1%／MoM +1.9%；季報 2026-Q3 公告 2026-11-19 EPS 0.40、毛利率 15.7%、負債率 40.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
+      "price": 16.3,
+      "change_pct": 1.24,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 15.91,
+      "entry_high": 16.3,
+      "defense": 14.91,
+      "target1": 18.17,
+      "target2": 19.57,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-20",
+        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
+        "publication_dates": {
+          "revenue": "2026-11-17",
+          "financials": "2026-11-19"
+        },
+        "periods": {
+          "revenue": "2026-10",
+          "financials": "2026-Q3"
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-10 公告 2026-11-17 YoY +5.1%／MoM +1.9%；季報 2026-Q3 公告 2026-11-19 EPS 0.40、毛利率 15.7%、負債率 40.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      },
+      "trade_readiness": "research_only",
+      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
+    },
+    {
+      "code": "6690",
+      "name": "安碁資訊",
+      "score": 53,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +3.31%｜5日 -11.8%｜10日 +2.2%｜20日 +2.2%｜成交值 6.6億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +8.5%／MoM -15.6%；季報 2026-Q3 公告 2026-11-19 EPS 8.14、毛利率 40.1%、負債率 32.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
+      "price": 187.0,
+      "change_pct": 3.31,
+      "market": "TPEX",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 181.76,
+      "entry_high": 187.0,
+      "defense": 171.11,
+      "target1": 208.46,
+      "target2": 224.55,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-20",
+        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
+        "publication_dates": {
+          "revenue": "2026-11-17",
+          "financials": "2026-11-19"
+        },
+        "periods": {
+          "revenue": "2026-10",
+          "financials": "2026-Q3"
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+          "income": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
+          "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
+        },
+        "text": "月營收 2026-10 公告 2026-11-17 YoY +8.5%／MoM -15.6%；季報 2026-Q3 公告 2026-11-19 EPS 8.14、毛利率 40.1%、負債率 32.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      },
+      "trade_readiness": "research_only",
+      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
+    },
+    {
       "code": "4153",
       "name": "鈺緯",
-      "score": 53,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -0.65%｜5日 +1.3%｜10日 -0.6%｜20日 資料不足｜成交值 0.6億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +41.7%／MoM +0.0%；季報 2026-Q3 公告 2026-11-19 EPS 1.45、毛利率 29.6%、負債率 26.7%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "score": 52,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -0.65%｜5日 -1.1%｜10日 +1.7%｜20日 資料不足｜成交值 0.6億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +41.7%／MoM +0.0%；季報 2026-Q3 公告 2026-11-19 EPS 1.45、毛利率 29.6%、負債率 26.7%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 30.75,
       "change_pct": -0.65,
       "market": "TPEX",
@@ -11115,10 +17614,52 @@
       "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
     },
     {
+      "code": "7788",
+      "name": "松川精密",
+      "score": 51,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +3.74%｜5日 -8.6%｜10日 -6.7%｜20日 -37.5%｜成交值 12.3億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +53.6%／MoM -3.2%；季報 2026-Q3 公告 2026-11-19 EPS 8.35、毛利率 28.7%、負債率 48.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
+      "price": 180.5,
+      "change_pct": 3.74,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 175.45,
+      "entry_high": 180.5,
+      "defense": 165.16,
+      "target1": 201.21,
+      "target2": 216.75,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-20",
+        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
+        "publication_dates": {
+          "revenue": "2026-11-17",
+          "financials": "2026-11-19"
+        },
+        "periods": {
+          "revenue": "2026-10",
+          "financials": "2026-Q3"
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-10 公告 2026-11-17 YoY +53.6%／MoM -3.2%；季報 2026-Q3 公告 2026-11-19 EPS 8.35、毛利率 28.7%、負債率 48.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      },
+      "trade_readiness": "research_only",
+      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
+    },
+    {
       "code": "4923",
       "name": "力士",
       "score": 51,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +4.14%｜5日 -3.3%｜10日 +6.5%｜20日 -11.6%｜成交值 1.6億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +3.5%／MoM -16.6%；季報 2026-Q3 公告 2026-11-19 EPS 2.09、毛利率 30.2%、負債率 31.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +4.14%｜5日 -2.3%｜10日 +8.1%｜20日 -13.2%｜成交值 1.6億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +3.5%／MoM -16.6%；季報 2026-Q3 公告 2026-11-19 EPS 2.09、毛利率 30.2%、負債率 31.8%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 42.8,
       "change_pct": 4.14,
       "market": "TPEX",
@@ -11160,7 +17701,7 @@
       "code": "2451",
       "name": "創見",
       "score": 50,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.00%｜5日 -8.7%｜10日 -17.1%｜20日 -21.7%｜成交值 17.0億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +191.6%／MoM -16.7%；季報 2026-Q3 公告 2026-11-19 EPS 62.74、毛利率 70.1%、負債率 19.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.00%｜5日 -9.2%｜10日 -14.6%｜20日 -23.0%｜成交值 17.0億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +191.6%／MoM -16.7%；季報 2026-Q3 公告 2026-11-19 EPS 62.74、毛利率 70.1%、負債率 19.2%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 211.0,
       "change_pct": 0.0,
       "market": "TWSE",
@@ -11199,94 +17740,10 @@
       "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
     },
     {
-      "code": "7788",
-      "name": "松川精密",
-      "score": 49,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +3.74%｜5日 -13.8%｜10日 -11.7%｜20日 -37.1%｜成交值 12.3億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +53.6%／MoM -3.2%；季報 2026-Q3 公告 2026-11-19 EPS 8.35、毛利率 28.7%、負債率 48.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 180.5,
-      "change_pct": 3.74,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 175.45,
-      "entry_high": 180.5,
-      "defense": 165.16,
-      "target1": 201.21,
-      "target2": 216.75,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-20",
-        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
-        "publication_dates": {
-          "revenue": "2026-11-17",
-          "financials": "2026-11-19"
-        },
-        "periods": {
-          "revenue": "2026-10",
-          "financials": "2026-Q3"
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-10 公告 2026-11-17 YoY +53.6%／MoM -3.2%；季報 2026-Q3 公告 2026-11-19 EPS 8.35、毛利率 28.7%、負債率 48.5%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      },
-      "trade_readiness": "research_only",
-      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
-    },
-    {
-      "code": "1558",
-      "name": "伸興",
-      "score": 49,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +0.47%｜5日 -4.1%｜10日 +2.4%｜20日 -7.8%｜成交值 0.4億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +29.7%／MoM -24.5%；季報 2026-Q3 公告 2026-11-19 EPS 7.77、毛利率 25.0%、負債率 37.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
-      "price": 106.0,
-      "change_pct": 0.47,
-      "market": "TWSE",
-      "sector": "族群未分類",
-      "sector_score": 50,
-      "entry_low": 104.04,
-      "entry_high": 106.0,
-      "defense": 96.99,
-      "target1": 118.16,
-      "target2": 127.29,
-      "research_status": "尚無足夠產業研報佐證",
-      "research_independent_sources": 0,
-      "research_institutions": [],
-      "research_only": true,
-      "financial_context": {
-        "status": "verified",
-        "as_of": "2026-11-20",
-        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
-        "publication_dates": {
-          "revenue": "2026-11-17",
-          "financials": "2026-11-19"
-        },
-        "periods": {
-          "revenue": "2026-10",
-          "financials": "2026-Q3"
-        },
-        "availability": null,
-        "sources": {
-          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
-          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
-        },
-        "text": "月營收 2026-10 公告 2026-11-17 YoY +29.7%／MoM -24.5%；季報 2026-Q3 公告 2026-11-19 EPS 7.77、毛利率 25.0%、負債率 37.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
-      },
-      "trade_readiness": "research_only",
-      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
-    },
-    {
       "code": "3290",
       "name": "東浦",
-      "score": 48,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -1.40%｜5日 -6.6%｜10日 -7.2%｜20日 -14.5%｜成交值 0.4億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +57.3%／MoM -7.3%；季報 2026-Q3 公告 2026-11-19 EPS 5.09、毛利率 24.4%、負債率 59.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "score": 49,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -1.40%｜5日 -7.2%｜10日 -2.7%｜20日 -15.8%｜成交值 0.4億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +57.3%／MoM -7.3%；季報 2026-Q3 公告 2026-11-19 EPS 5.09、毛利率 24.4%、負債率 59.4%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 42.2,
       "change_pct": -1.4,
       "market": "TPEX",
@@ -11328,7 +17785,7 @@
       "code": "5314",
       "name": "世紀*",
       "score": 47,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +1.28%｜5日 -13.6%｜10日 -6.6%｜20日 -24.6%｜成交值 10.0億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +50.7%／MoM +2.3%；季報 2026-Q3 公告 2026-11-19 EPS 0.18、毛利率 38.9%、負債率 46.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +1.28%｜5日 -21.3%｜10日 -5.3%｜20日 -24.8%｜成交值 10.0億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +50.7%／MoM +2.3%；季報 2026-Q3 公告 2026-11-19 EPS 0.18、毛利率 38.9%、負債率 46.1%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 19.75,
       "change_pct": 1.28,
       "market": "TPEX",
@@ -11369,8 +17826,8 @@
     {
       "code": "3570",
       "name": "大塚",
-      "score": 46,
-      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +1.56%｜5日 -12.6%｜10日 +2.2%｜20日 -0.9%｜成交值 0.8億｜低過熱｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。｜月營收 2026-10 公告 2026-11-17 YoY +67.0%／MoM +8.6%；季報 2026-Q3 公告 2026-11-19 EPS 12.51、毛利率 27.0%、負債率 29.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）",
+      "score": 47,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 +1.56%｜5日 -20.5%｜10日 +5.2%｜20日 -2.1%｜成交值 0.8億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +67.0%／MoM +8.6%；季報 2026-Q3 公告 2026-11-19 EPS 12.51、毛利率 27.0%、負債率 29.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
       "price": 162.5,
       "change_pct": 1.56,
       "market": "TPEX",
@@ -11404,6 +17861,48 @@
           "balance": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci"
         },
         "text": "月營收 2026-10 公告 2026-11-17 YoY +67.0%／MoM +8.6%；季報 2026-Q3 公告 2026-11-19 EPS 12.51、毛利率 27.0%、負債率 29.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
+      },
+      "trade_readiness": "research_only",
+      "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
+    },
+    {
+      "code": "2023",
+      "name": "燁輝",
+      "score": 46,
+      "reason": "1–4週價量潛力觀察｜族群資料未涵蓋（中性計分）｜今日 -1.81%｜5日 -5.6%｜10日 -6.8%｜20日 -7.5%｜成交值 0.5億｜低過熱｜月營收 2026-10 公告 2026-11-17 YoY +7.1%／MoM +11.6%；季報 2026-Q3 公告 2026-11-19 EPS -1.08、毛利率 9.6%、負債率 70.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）｜⚠ 主攻／下一棒／妖股等五類的3日與7日收盤觀察，10組達樣本門檻的結果全部不佳；新候選僅供模擬研究，不構成已驗證的買進建議，尚無獨立OOS交易績效。",
+      "price": 13.6,
+      "change_pct": -1.81,
+      "market": "TWSE",
+      "sector": "族群未分類",
+      "sector_score": 50,
+      "entry_low": 13.46,
+      "entry_high": 13.6,
+      "defense": 12.84,
+      "target1": 14.63,
+      "target2": 15.4,
+      "research_status": "尚無足夠產業研報佐證",
+      "research_independent_sources": 0,
+      "research_institutions": [],
+      "research_only": true,
+      "financial_context": {
+        "status": "verified",
+        "as_of": "2026-11-20",
+        "snapshot_generated_at": "2026-11-19T20:04:07+00:00",
+        "publication_dates": {
+          "revenue": "2026-11-17",
+          "financials": "2026-11-19"
+        },
+        "periods": {
+          "revenue": "2026-10",
+          "financials": "2026-Q3"
+        },
+        "availability": null,
+        "sources": {
+          "revenue": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+          "income": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
+          "balance": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci"
+        },
+        "text": "月營收 2026-10 公告 2026-11-17 YoY +7.1%／MoM +11.6%；季報 2026-Q3 公告 2026-11-19 EPS -1.08、毛利率 9.6%、負債率 70.9%（官方公開財務資料；僅供基本面參考，不納入現行技術分數／回測）"
       },
       "trade_readiness": "research_only",
       "observed_quality_warning": "短期觀察績效全面未達標；僅模擬"
@@ -11450,16 +17949,16 @@
       "reason": "2026-11-20收盤漲幅 9.86%｜短線追高風險，等新交易日確認"
     },
     {
+      "code": "7765",
+      "name": "中華資安",
+      "as_of": "2026-11-20",
+      "reason": "2026-11-20收盤漲幅 9.89%｜短線追高風險，等新交易日確認"
+    },
+    {
       "code": "2471",
       "name": "資通",
       "as_of": "2026-11-20",
       "reason": "2026-11-20收盤漲幅 9.98%｜短線追高風險，等新交易日確認"
-    },
-    {
-      "code": "7828",
-      "name": "創新服務",
-      "as_of": "2026-11-20",
-      "reason": "2026-11-20收盤漲幅 9.75%｜短線追高風險，等新交易日確認"
     },
     {
       "code": "6925",
@@ -11468,22 +17967,22 @@
       "reason": "2026-11-20收盤漲幅 9.66%｜短線追高風險，等新交易日確認"
     },
     {
-      "code": "7765",
-      "name": "中華資安",
+      "code": "7828",
+      "name": "創新服務",
       "as_of": "2026-11-20",
-      "reason": "2026-11-20收盤漲幅 9.89%｜短線追高風險，等新交易日確認"
-    },
-    {
-      "code": "5457",
-      "name": "宣德",
-      "as_of": "2026-11-20",
-      "reason": "2026-11-20收盤漲幅 9.95%｜短線追高風險，等新交易日確認"
+      "reason": "2026-11-20收盤漲幅 9.75%｜短線追高風險，等新交易日確認"
     },
     {
       "code": "7767",
       "name": "仁大資訊",
       "as_of": "2026-11-20",
       "reason": "2026-11-20收盤漲幅 9.94%｜短線追高風險，等新交易日確認"
+    },
+    {
+      "code": "5457",
+      "name": "宣德",
+      "as_of": "2026-11-20",
+      "reason": "2026-11-20收盤漲幅 9.95%｜短線追高風險，等新交易日確認"
     },
     {
       "code": "6725",
@@ -12893,7 +19392,7 @@
     "evaluated_windows": 10,
     "underperforming_windows": 10,
     "required_windows": 10,
-    "latest_official_day": "2026-11-19",
+    "latest_official_day": "2026-11-20",
     "reason": "all_five_families_have_weak_3d_and_7d_close_only_results"
   }
 }
