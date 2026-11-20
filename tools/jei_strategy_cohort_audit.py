@@ -140,7 +140,8 @@ def audit_cohorts(report, ledger, prices, effective_day):
         base = _close(archive_days[day], p.get("code"))
         quoted = p.get("signal_close")
         if (base is None or type(quoted) not in (int, float)
-                or not math.isfinite(quoted) or abs(base/quoted-1) > .005):
+                or not math.isfinite(quoted) or quoted <= 0
+                or abs(base/quoted-1) > .005):
             return _fail("signal_close_differs_from_official_archive",
                          example=p["id"][:80])
         frozen_by_day[day].append(p)
@@ -215,7 +216,7 @@ def audit_cohorts(report, ledger, prices, effective_day):
             if (o.get("end_day") != target_day.isoformat() or end_close is None
                     or type(observed_end_close) not in (float, int)
                     or type(result_net) not in (float, int)
-                    or not math.isfinite(observed_end_close)
+                    or not math.isfinite(observed_end_close) or observed_end_close <= 0
                     or not math.isfinite(result_net)
                     or abs(end_close/observed_end_close - 1) > .0001
                     or o.get("observed_closes") != horizon
