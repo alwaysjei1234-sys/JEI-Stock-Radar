@@ -1,0 +1,463 @@
+{
+  "checked_at": "2026-11-20T12:14:05.038193+08:00",
+  "starting_main": "4566aa96584aa29cfa17dae8fc7b90474e8f2914",
+  "merge_sha": "c82ba5b2a7576c22e84bacdafbb5311fa29e3a13",
+  "pr": 197,
+  "source_files": [
+    "scripts/publish_line_status.py",
+    ".github/workflows/update-system.yml",
+    ".github/workflows/recover-stale-market-feed.yml"
+  ],
+  "test_files": [
+    "tests/test_line_status.py"
+  ],
+  "tests": {
+    "line": 84,
+    "sender": 22,
+    "watchdog": 12,
+    "UI": "PASS",
+    "real_git_races": 3
+  },
+  "repair_paths": [
+    "擴充既有 allowlist publisher 並接入兩條盤中流程，保留狀態分類及競爭重試。",
+    "核對既有 Actions artifact API accepted，僅保留 artifact 無法修復公開狀態缺漏。實際下載 SHA256 通過並以新 publisher 重播通過。"
+  ],
+  "pr_ci": [
+    44672376555,
+    44672376490,
+    44672376574
+  ],
+  "postmerge_ci": [
+    44672458937,
+    44672458923,
+    44672458967
+  ],
+  "line_prior_verified": {
+    "run": 44661616418,
+    "checked_at": "2026-11-20T10:35:10+08:00",
+    "status": "accepted",
+    "http_status": 200,
+    "delivery_confirmed": false,
+    "zip_sha256": "a72521b73b5ac0aa6a96b6be317ee5851e079c1774c253738b74db19443314e9"
+  },
+  "colab": {
+    "status": "STALE",
+    "source": "authenticated Drive via Actions",
+    "direct_drive_search_results": 0,
+    "minutes_since_heartbeat_at_1209": 2843.8,
+    "fallback": "github_actions",
+    "audit_run": 44672458967,
+    "artifact_id": 14599903993,
+    "zip_sha256": "a7b335f666aa5f2eb5ea8136c7b614594e4d9639e497f4c5c3ae647bac7929a8",
+    "manifest_files_verified": 8,
+    "observed_rows_cold_replay_verified": 20,
+    "independent_oos_verified": false
+  },
+  "android": {
+    "versionCode": 42,
+    "versionName": "3.9.19 RISK GUARD",
+    "ota_on_phone_verified": false
+  },
+  "acceptance": {
+    "denominator": 31,
+    "new_full_pass": 0,
+    "full_revalidation_completed": false,
+    "prior_counts": {
+      "PASS": 2,
+      "FAIL": 3,
+      "BLOCKED": 26
+    },
+    "rows": [
+      {
+        "id": 1,
+        "requirement": "手機瀏覽器逾時處理",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR #139 網頁及 Android JVM 對於矛盾日期成功備援，Playwright 與 debug APK 通過，正式更新簽章及裝置待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 2,
+        "requirement": "休市與假日判斷",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "休市及錯誤日期負向測試通過。仍缺整年兩市場與臨時休市端到端資料。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 3,
+        "requirement": "開盤後自動恢復更新",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺本輪開盤自動恢復證據",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 4,
+        "requirement": "盤中每5分鐘更新及新鮮度",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "盤中空行情偵測及不中斷備援產物已通過本地重播。真實交易日五分鐘更新未達。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 5,
+        "requirement": "TWSE／TPEx／MIS交叉驗證",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/13 13:33 加權指數 43,675.12 與 TWSE 收盤報表一致。TPEx API 403，TPEx 報表及 MIS 上櫃檢索本輪無法驗證，交易日盤中三方逐檔待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 6,
+        "requirement": "缺漏、過期、異常資料保護",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "發佈端、網頁與原生 APK 均能拒絕來源日期矛盾。正式網頁 READY，真實盤中缺漏和 Android 實機待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 7,
+        "requirement": "每日選股封存與歷史紀錄",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "原 399 筆封存順序與內容維持，追加 11/13 16 筆；11/12、11/13 快照與官方收盤檔已補齊。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 8,
+        "requirement": "模擬績效及交易日計算",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "03:52 紙上排程完成，帳本仍為已核對的 11/13 110 筆訊號、318 筆模擬平倉。該次無 artifact。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 9,
+        "requirement": "LINE盤前、盤中、盤後推播",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR #197 盤中 API receipt 公開發布修正，84 LINE 測試、22 sender、12 watchdog及三個真實 Git 競爭重播通過。手機送達仍待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 10,
+        "requirement": "GitHub、Vercel、Android串接",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR #140 簽章配置有命中快取，但 APK 公開憑證指紋與 v42 不一致。正式發布維持阻擋，需要原始簽章金鑰及實機升級驗收。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 11,
+        "requirement": "持股成本、股數與分類",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "為保護隱私未讀私人部位；匯入持久化仍待裝置驗證",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 12,
+        "requirement": "持股權重與集中度",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺私人裝置集中度計算端到端驗收",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 13,
+        "requirement": "營收、毛利與獲利品質",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺逐欄公告日期與財報來源核對",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 14,
+        "requirement": "EPS與自由現金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "EPS與自由現金流完整來源驗收不足",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 15,
+        "requirement": "存貨、應收帳款異常",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "既有單元測試不等於全公司財報監測已實測",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 16,
+        "requirement": "同業、產業與估值",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同業估值自動比較未驗收",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 17,
+        "requirement": "法人與大戶資金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/13 正式法人 1,865 筆與雙交易所官方資料逐筆相符，大戶持股集中度與跨日趨勢待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 18,
+        "requirement": "強勢、震盪、轉弱情境",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "情境單元測試存在；實際資料端到端未驗",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 19,
+        "requirement": "模擬勝率、盈虧與回撤",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "帳本 318 筆中 285 缺來源證明、33 為重建。下一交易日收盤重播 3/7/15 日配對淨期望 −4.103%／−8.705%／−14.900%，合格 OOS 0。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 20,
+        "requirement": "每日續抱／減碼理由",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "公開信號存在；八模組與私人端決策未實機驗證",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 21,
+        "requirement": "主流資金與族群輪動",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同日雙市場法人欄位已對帳，跨日族群輪動與實機操作待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 22,
+        "requirement": "突破、妖股與潛力妖股",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "未放寬選股；未有完整前瞻有效性證據",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 23,
+        "requirement": "3–5個獨立來源財經新聞",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "來源去重及逐條新聞核實未完成",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 24,
+        "requirement": "券商報告、目標價與催化劑自動取得",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "免費券商目標價及催化劑自動取得未驗收",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 25,
+        "requirement": "AI多模型會診及失敗復原",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "正式健康GET及錯誤token401通過；未實際呼叫多模型",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 26,
+        "requirement": "個股決策儀表板與手機首頁",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "替代雲端Chromium實際打開首頁與績效頁、重讀表格成功；本地Playwright缺執行檔/系統socket拒絕，Android與手機尺寸實機仍未驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 27,
+        "requirement": "大盤修正與逃命警示",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR #138 颱風與補假重播都攔截矛盾盤中高風險快照。真實交易日警報與手機實收待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 28,
+        "requirement": "現金與當沖分開模擬",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "現股及當沖分開實際驗證未完成",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 29,
+        "requirement": "3／7／15／30／60交易日績效及策略調整",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR #154 補齊快取結果與來源的一致性；合併 artifact 5 組 15 列均與乾淨重算一致。獨立 OOS 0。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 30,
+        "requirement": "自動測試、部署與缺陷追蹤",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR #154 合併前後各三組 CI 通過，主線 artifact 已下載核對。工具專用提交的 Vercel 部署取消，既有正式部署 READY。真實 Colab、LINE 實收及 Android 實機待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 31,
+        "requirement": "推薦顯示八大指標、AI與全球市場影響",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "八指標、多模型與全球影響整合未完整驗收",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      }
+    ]
+  },
+  "open_prs_at_start": [
+    196,
+    59,
+    46,
+    45,
+    44,
+    2
+  ],
+  "paper": {
+    "data_date": "2026-11-19",
+    "total_frozen_picks": 470,
+    "horizons": [
+      {
+        "days": 3,
+        "observations": 425,
+        "estimated_winners": 120,
+        "descriptive_win_rate_pct": 28.235,
+        "mean_estimated_net_pct": -4.643
+      },
+      {
+        "days": 7,
+        "observations": 359,
+        "estimated_winners": 78,
+        "descriptive_win_rate_pct": 21.727,
+        "mean_estimated_net_pct": -8.023
+      },
+      {
+        "days": 15,
+        "observations": 199,
+        "estimated_winners": 23,
+        "descriptive_win_rate_pct": 11.558,
+        "mean_estimated_net_pct": -16.189
+      },
+      {
+        "days": 30,
+        "observations": 0,
+        "estimated_winners": 0,
+        "descriptive_win_rate_pct": null,
+        "mean_estimated_net_pct": null
+      }
+    ],
+    "costs": {
+      "buy_fee": 0.001425,
+      "sell_fee": 0.001425,
+      "sell_tax": 0.003,
+      "slippage_included": false
+    },
+    "independent_oos_qualified": null,
+    "threshold80_verified": false,
+    "note": "封存收盤觀察非獨立OOS。各族群可能重疊，無滑價、獨立市場狀態及可比組合回撤證據，證據不足。"
+  },
+  "latest_verified_main": "10ea00289826d433215bcff20b41fb3dc9637775",
+  "source_fix_count": 1,
+  "market": {
+    "updated_at": "2026-11-20 12:10",
+    "data_date": "2026-11-20",
+    "live_count": 1144,
+    "total": 1974,
+    "coverage_pct": 58,
+    "index": {
+      "change_pct": -5.695699027425848,
+      "data_date": "2026-11-20",
+      "source": "TWSE MIS validated quote",
+      "date_verified": true,
+      "checked_at": "2026-11-20 12:10"
+    },
+    "initial_delay_minutes_at_1204": 91,
+    "ending_snapshot_age_minutes_at_1214": 4,
+    "freshness_5_min_cadence_verified": false,
+    "same_day_official_close_both_markets_verified": false,
+    "primary_run_cancelled": 44672458969,
+    "recovery_run": 44672458893,
+    "recovery_result": "success_on_second_attempt_after_main_race",
+    "system_readback_sha256": "7ac9e2d2e0d80c2c2918c0c62fe16991c18dd5fbb51e51b2688bdd8dd81fa000"
+  },
+  "line_current": {
+    "date": "2026-11-20",
+    "edition": "intraday_risk",
+    "checked_at": "2026-11-20T12:13:30+08:00",
+    "status": "already_accepted",
+    "api_accepted": true,
+    "delivery_confirmed": false,
+    "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44672493203",
+    "http_status": 409,
+    "attempts": 1,
+    "accepted_attempt": {
+      "date": "2026-11-20",
+      "edition": "intraday_risk",
+      "checked_at": "2026-11-20T12:13:17+08:00",
+      "status": "already_accepted",
+      "api_accepted": true,
+      "delivery_confirmed": false,
+      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44672458893",
+      "http_status": 409,
+      "attempts": 1
+    }
+  },
+  "production": {
+    "merge_deployment": "CANCELED",
+    "data_and_status_ready_sha": "e54622e6e8a643c47fbd709dae565cd061b55a36",
+    "manual_deploy": false,
+    "latest_ready_sha": "10ea00289826d433215bcff20b41fb3dc9637775",
+    "latest_ready_id": "dpl_2oUPhJxprYviFHHTFBaRMNfBCyJG"
+  },
+  "next_blockers": [
+    "五分鐘實際更新間距尚未達標",
+    "LINE手機送達尚未驗證",
+    "Android42 OTA實機未驗",
+    "Drive可認證讀取的Colab心跳已過期",
+    "11/19後凍結訊號仍需累積成熟前瞻樣本"
+  ]
+}
