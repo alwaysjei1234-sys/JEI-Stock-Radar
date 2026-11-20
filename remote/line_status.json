@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-20T02:57:38+08:00",
+  "updated_at": "2026-11-20T12:13:17+08:00",
   "editions": {
     "morning": {
       "date": "2026-11-18",
@@ -43,6 +43,28 @@
         "delivery_confirmed": false,
         "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/42079731045",
         "http_status": 200,
+        "attempts": 1
+      }
+    },
+    "intraday_risk": {
+      "date": "2026-11-20",
+      "edition": "intraday_risk",
+      "checked_at": "2026-11-20T12:13:17+08:00",
+      "status": "already_accepted",
+      "api_accepted": true,
+      "delivery_confirmed": false,
+      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44672458893",
+      "http_status": 409,
+      "attempts": 1,
+      "accepted_attempt": {
+        "date": "2026-11-20",
+        "edition": "intraday_risk",
+        "checked_at": "2026-11-20T12:13:17+08:00",
+        "status": "already_accepted",
+        "api_accepted": true,
+        "delivery_confirmed": false,
+        "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44672458893",
+        "http_status": 409,
         "attempts": 1
       }
     }
