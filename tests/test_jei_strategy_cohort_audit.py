@@ -179,6 +179,55 @@ class ProspectiveCohortIntegrityTests(unittest.TestCase):
         self.assertEqual(audit_cohorts(report, ledger, prices, EFFECTIVE_DAY)["reason"],
                          "prospective_outcome_status_not_reproducible")
 
+    def test_nonpositive_signal_close_returns_blocked_without_division(self):
+        for value in (0, 0.0, -0.0, -1.0):
+            report, ledger, prices = sample()
+            for source in (report, ledger):
+                source["picks"][0]["signal_close"] = value
+            with self.subTest(value=value):
+                result = audit_cohorts(report, ledger, prices, EFFECTIVE_DAY)
+                self.assertEqual(result["status"], "BLOCKED")
+                self.assertEqual(result["reason"], "signal_close_differs_from_official_archive")
+
+    def test_nonpositive_outcome_close_returns_blocked_without_division(self):
+        for value in (0, 0.0, -0.0, -1.0):
+            report, ledger, prices = sample()
+            report["picks"][0]["outcomes"][0]["end_close"] = value
+            with self.subTest(value=value):
+                result = audit_cohorts(report, ledger, prices, EFFECTIVE_DAY)
+                self.assertEqual(result["status"], "BLOCKED")
+                self.assertEqual(result["reason"], "prospective_outcome_not_reproducible_from_closes")
+
+    def test_zero_prices_cli_writes_blocked_report_and_exits_one(self):
+        import contextlib
+        import io
+        import json
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import patch
+        from tools.jei_strategy_evolution import main
+
+        for field in ("signal_close", "end_close"):
+            report, ledger, prices = sample()
+            if field == "signal_close":
+                for source in (report, ledger):
+                    source["picks"][0][field] = 0
+            else:
+                report["picks"][0]["outcomes"][0][field] = 0
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                for name, data in (("input", report), ("ledger", ledger), ("prices", prices)):
+                    (root / name).write_text(json.dumps(data), encoding="utf-8")
+                output = root / "result.json"
+                args = ["strategy", "--input", str(root / "input"), "--ledger",
+                        str(root / "ledger"), "--prices", str(root / "prices"),
+                        "--out", str(output)]
+                with patch("sys.argv", args), contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(main(), 1)
+                result = json.loads(output.read_text(encoding="utf-8"))
+                self.assertEqual(result["status"], "BLOCKED_COHORT_INTEGRITY")
+                self.assertEqual(result["cohort_integrity"]["status"], "BLOCKED")
+
     def test_source_inputs_not_mutated(self):
         report, ledger, prices = sample()
         before = copy.deepcopy([report,ledger,prices])
