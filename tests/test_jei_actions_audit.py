@@ -189,6 +189,24 @@ class AuditTests(unittest.TestCase):
         self.assertTrue(any('institutional_unverified' in issue for issue in result['issues']))
         self.assertEqual(result['status'], 'ok')  # degraded source, not a false full outage
 
+    def test_missing_or_invalid_live_diagnostics_cannot_bypass_clock_audit(self):
+        from tools.jei_actions_audit import REQUIRED
+        zone = dt.timezone(dt.timedelta(hours=8))
+        now = dt.datetime(2026, 11, 20, 10, 20, tzinfo=zone)
+        for diagnostics in (None, {}, [], "invalid"):
+            with self.subTest(diagnostics=diagnostics):
+                feed = {key: {} for key in REQUIRED}
+                feed.update(data_date="2026-11-20", market={
+                    "live_valid": True, "live_count": 700,
+                    "last_checked_at": "2026-11-20 10:09",
+                    "live_diagnostics": diagnostics,
+                })
+                self.assertIn("stale_intraday_check_timestamp",
+                              inspect_feed(feed, now=now)["critical_issues"])
+                feed["market"]["last_checked_at"] = "2026-11-20 10:20"
+                self.assertNotIn("stale_intraday_check_timestamp",
+                                 inspect_feed(feed, now=now)["critical_issues"])
+
     def test_missing_colab_heartbeat_is_unknown_not_stopped(self):
         self.assertEqual(heartbeat_status()['status'], 'UNKNOWN')
         self.assertEqual(heartbeat_status('/no/such/drive/heartbeat.json')['status'], 'UNKNOWN')
