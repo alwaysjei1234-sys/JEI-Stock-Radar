@@ -282,22 +282,43 @@ public class MainActivity extends Activity {
 
     private String httpGet(String url) throws Exception {
         HttpURLConnection c = (HttpURLConnection)new URL(url).openConnection();
-        c.setConnectTimeout(9000);
-        c.setReadTimeout(12000);
-        c.setRequestMethod("GET");
-        c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.5");
-        c.setRequestProperty("Accept", "application/json,text/html,*/*");
-        c.setRequestProperty("Cache-Control", "no-cache");
-        int status = c.getResponseCode();
-        InputStream in = status >= 200 && status < 300 ? c.getInputStream() : c.getErrorStream();
-        if (in == null) throw new Exception("HTTP " + status);
-        BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) sb.append(line).append('\n');
-        r.close();
-        if (status < 200 || status >= 300) throw new Exception("HTTP " + status + ": " + sb);
-        return sb.toString();
+        try {
+            c.setConnectTimeout(9000);
+            c.setReadTimeout(12000);
+            c.setRequestMethod("GET");
+            c.setRequestProperty("User-Agent", "Mozilla/5.0 JEIStockRadar/3.5");
+            c.setRequestProperty("Accept", "application/json,text/html,*/*");
+            c.setRequestProperty("Cache-Control", "no-cache");
+            int status = c.getResponseCode();
+            if (status < 200 || status >= 300) throw new java.io.IOException("HTTP " + status);
+            try (InputStream in = c.getInputStream()) {
+                return readStaticBody(c, in, 12000, 16 * 1024 * 1024);
+            }
+        } finally {
+            c.disconnect();
+        }
+    }
+
+    private String readStaticBody(HttpURLConnection connection, InputStream input,
+                                  int budgetMillis, int maxBytes) throws java.io.IOException {
+        // Socket readTimeout alone is an idle timeout. A continuously trickling
+        // body (especially without a newline) must still release the worker
+        // and allow getRemoteStatic to try its repository fallback.
+        long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(budgetMillis);
+        java.io.ByteArrayOutputStream body = new java.io.ByteArrayOutputStream();
+        byte[] chunk = new byte[8192];
+        while (true) {
+            long remaining = deadline - System.nanoTime();
+            if (remaining <= 0) throw new java.net.SocketTimeoutException("Static body read budget exceeded");
+            connection.setReadTimeout((int)Math.max(1, (remaining + 999999L) / 1000000L));
+            int count = input.read(chunk);
+            if (System.nanoTime() >= deadline)
+                throw new java.net.SocketTimeoutException("Static body read budget exceeded");
+            if (count < 0) break;
+            if (count > maxBytes - body.size()) throw new java.io.IOException("Static body size limit exceeded");
+            body.write(chunk, 0, count);
+        }
+        return new String(body.toByteArray(), StandardCharsets.UTF_8);
     }
 
     // The repository fallback carries only public UI, market data and version metadata.
