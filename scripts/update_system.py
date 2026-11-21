@@ -626,7 +626,10 @@ def mis_index_change(messages, asof):
         previous,price=num(m.get("y")),live_price(m)
         if previous is None or previous<=0 or price is None:
             return None,"invalid_price"
-        values.add((m["d"],m["t"],previous,price))
+        # Bind duplicate identity to the same execution time as its price.
+        # A fresh order-book timestamp may wrap an older nested trade.
+        execution=mis_execution(m)
+        values.add((execution["d"],execution["t"],previous,price))
     # Identical duplicates are harmless; differing timestamps or prices in a
     # one-channel response are ambiguous and cannot set market risk.
     if len(values)!=1:return None,"conflicting_quotes"

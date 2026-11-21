@@ -64,6 +64,26 @@ class MisIndexIdentityTests(unittest.TestCase):
         self.assertIsNone(index)
         self.assertEqual(stats['index_quote_status'], 'identity_mismatch')
 
+    def test_nested_execution_deduplicates_by_trade_time_not_book_time(self):
+        trade={'t':'09:59:00','z':'40400','v':1}
+        first=self.quote(z='-',t='09:59:20',trade=trade)
+        second=self.quote(z='-',t='09:59:40',trade=dict(trade))
+        result=self.exercise([first,second])
+        self.assertAlmostEqual(result[2],1.0)
+        self.assertEqual(result[4]['index_quote_status'],'verified')
+
+    def test_distinct_nested_trade_times_remain_conflicting_even_same_price_and_book_time(self):
+        first=self.quote(z='-',t='09:59:40',trade={'t':'09:59:00','z':'40400','v':1})
+        second=self.quote(z='-',t='09:59:40',trade={'t':'09:59:10','z':'40400','v':1})
+        result=self.exercise([first,second])
+        self.assertIsNone(result[2])
+        self.assertEqual(result[4]['index_quote_status'],'conflicting_quotes')
+
+    def test_matching_flat_and_nested_execution_are_the_same_observation(self):
+        flat=self.quote(t='09:59:00')
+        nested=self.quote(z='-',t='09:59:40',trade={'t':'09:59:00','z':'40400','v':1})
+        self.assertAlmostEqual(self.exercise([flat,nested])[2],1.0)
+
     def test_nonfinite_calculated_percentage_is_rejected(self):
         self.assertIsNone(self.exercise([self.quote(z='1e308', y='1e-308')])[2])
 
