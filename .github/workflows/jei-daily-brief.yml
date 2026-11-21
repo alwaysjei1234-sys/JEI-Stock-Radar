@@ -19,6 +19,8 @@ on:
     types: [completed]
   pull_request:
     paths:
+      - 'scripts/publish_line_status.py'
+      - 'tests/test_line_status.py'
       - 'scripts/build_daily_brief.py'
       - 'tests/test_delayed_close_recovery.py'
       - 'scripts/send_line_brief.py'
@@ -82,6 +84,7 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_delayed_close_recovery.py' -v
       - name: Verify brief dispatch policy, expiry and LINE idempotence
         run: |
+          python -m unittest discover -s tests -p 'test_line_status.py' -v
           python -m unittest discover -s tests -p 'test_brief_dispatch_policy.py' -v
           python -m unittest discover -s tests -p 'test_line_policy_receipt.py' -v
           python -m unittest discover -s tests -p 'test_line_outbox.py' -v
