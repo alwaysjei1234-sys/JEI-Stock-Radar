@@ -379,9 +379,9 @@
         "requirement": "手機瀏覽器逾時處理",
         "weight": 1,
         "status": "BLOCKED",
-        "evidence_or_blocker": "本輪PR210合併48f5993，Android持續慢速本文不再無限等待readLine；實際JVM/HTTP回放1983→318ms（縮時測試），DebugAPK43成功。連線/表頭與單次idle等待仍獨立，正式簽章缺失，實機未驗。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "evidence_or_blocker": "先前輪次PR210合併48f5993，Android持續慢速本文不再無限等待readLine；實際JVM/HTTP回放1983→318ms（縮時測試），DebugAPK43成功。連線/表頭與單次idle等待仍獨立，正式簽章缺失，實機未驗。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 2,
@@ -389,27 +389,27 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "本輪PR212合併ae89d29，五種休市/盤外案例在MIS前跳過；真實16:06主線指數流程no_alert回執已核SHA。年度雙市場與臨時休市完整E2E仍未驗，維持BLOCKED。",
-        "prior_evidence_as_of": "2026-11-15",
         "current_round_full_e2e_reverified": false,
-        "current_round_partial_evidence": true
+        "current_round_partial_evidence": true,
+        "evidence_scope": "current_round_partial_only"
       },
       {
         "id": 3,
         "requirement": "開盤後自動恢復更新",
         "weight": 1,
         "status": "BLOCKED",
-        "evidence_or_blocker": "缺本輪開盤自動恢復證據",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "evidence_or_blocker": "缺先前輪次開盤自動恢復證據",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 4,
         "requirement": "盤中每5分鐘更新及新鮮度",
         "weight": 1,
         "status": "FAIL",
-        "evidence_or_blocker": "PR #202 盤中缺少live_diagnostics不再繞過時間戳稽核；本輪補強6項時鐘不穩定測試。實際5分鐘行情服務仍未驗收。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "evidence_or_blocker": "PR #202 盤中缺少live_diagnostics不再繞過時間戳稽核；先前輪次補強6項時鐘不穩定測試。實際5分鐘行情服務仍未驗收。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 5,
@@ -417,18 +417,18 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "本輪16:05fresh官方TWSE1090及TPEx883普通股，11/20收盤1973筆全部與封存相符；MIS與5分鐘盤中服務待交易時段實驗證。",
-        "prior_evidence_as_of": "2026-11-15",
         "current_round_full_e2e_reverified": false,
-        "current_round_partial_evidence": true
+        "current_round_partial_evidence": true,
+        "evidence_scope": "current_round_partial_only"
       },
       {
         "id": 6,
         "requirement": "缺漏、過期、異常資料保護",
         "weight": 1,
         "status": "BLOCKED",
-        "evidence_or_blocker": "本輪PR #204攔截零訊號價與零出場價，兩處除零錯誤改為BLOCKED原因；18項cohort、8項策略及30項pick測試通過，CLI兩種合成異常均輸出JSON及退出1。真實盤中及手機仍待驗。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "evidence_or_blocker": "先前輪次PR #204攔截零訊號價與零出場價，兩處除零錯誤改為BLOCKED原因；18項cohort、8項策略及30項pick測試通過，CLI兩種合成異常均輸出JSON及退出1。真實盤中及手機仍待驗。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 7,
@@ -436,17 +436,17 @@
         "weight": 1,
         "status": "PASS",
         "evidence_or_blocker": "PR #199 從最早當日主線 af326085 恢復11筆，保留原470筆；正常工具、前瞻稽核及正式站481筆讀回通過。新回呼封存流程44716912104成功。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 8,
         "requirement": "模擬績效及交易日計算",
         "weight": 1,
         "status": "BLOCKED",
-        "evidence_or_blocker": "本輪新讀真實排程44828516220（06:23）成功，復原步驟確認無待補交易日；週末正確跳過新績效計算與發布。正式站帳本11/20、131訊號與main完全一致。仍缺下一有效交易日自動評估發布端到端證據，維持部分通過。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "evidence_or_blocker": "先前輪次新讀真實排程44828516220（06:23）成功，復原步驟確認無待補交易日；週末正確跳過新績效計算與發布。正式站帳本11/20、131訊號與main完全一致。仍缺下一有效交易日自動評估發布端到端證據，維持部分通過。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 9,
@@ -454,9 +454,9 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "PR212修正盤外指數警報先抓MIS問題；34相關測試及PRCI通過，真實主線44883256675正確no_alert/market_closed_or_outside_window。這不是LINE API接受或手機送達；index狀態仍僅artifact，整項BLOCKED。",
-        "prior_evidence_as_of": "2026-11-15",
         "current_round_full_e2e_reverified": false,
-        "current_round_partial_evidence": true
+        "current_round_partial_evidence": true,
+        "evidence_scope": "current_round_partial_only"
       },
       {
         "id": 10,
@@ -464,8 +464,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "PR210實際DebugAPK43/3.9.20建置成功、PRartifactZIP與APK雜湊核對；主線Debug/Research/Smoke/Compute成功。正式簽章發布44873975058因原V42憑證缺失失敗，APK未發布、manifest仍42，手機OTA未驗。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 11,
@@ -473,8 +473,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "為保護隱私未讀私人部位；匯入持久化仍待裝置驗證",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 12,
@@ -482,8 +482,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "缺私人裝置集中度計算端到端驗收",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 13,
@@ -491,8 +491,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "缺逐欄公告日期與財報來源核對",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 14,
@@ -500,8 +500,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "EPS與自由現金流完整來源驗收不足",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 15,
@@ -509,8 +509,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "既有單元測試不等於全公司財報監測已實測",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 16,
@@ -518,8 +518,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "同業估值自動比較未驗收",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 17,
@@ -527,8 +527,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "11/13 正式法人 1,865 筆與雙交易所官方資料逐筆相符，大戶持股集中度與跨日趨勢待驗。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 18,
@@ -536,8 +536,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "情境單元測試存在；實際資料端到端未驗",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 19,
@@ -545,8 +545,8 @@
         "weight": 1,
         "status": "FAIL",
         "evidence_or_blocker": "帳本 318 筆中 285 缺來源證明、33 為重建。下一交易日收盤重播 3/7/15 日配對淨期望 −4.103%／−8.705%／−14.900%，合格 OOS 0。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 20,
@@ -554,8 +554,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "公開信號存在；八模組與私人端決策未實機驗證",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 21,
@@ -563,8 +563,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "同日雙市場法人欄位已對帳，跨日族群輪動與實機操作待驗。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 22,
@@ -572,8 +572,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "未放寬選股；未有完整前瞻有效性證據",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 23,
@@ -581,8 +581,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "來源去重及逐條新聞核實未完成",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 24,
@@ -590,26 +590,26 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "免費券商目標價及催化劑自動取得未驗收",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 25,
         "requirement": "AI多模型會診及失敗復原",
         "weight": 1,
         "status": "BLOCKED",
-        "evidence_or_blocker": "本輪PR211合併6ee6418，AI/OOS驗證入口遇非objectJSON改為固定REJECT並覆寫舊REVIEW；10gate+11tradebacktest測試及PRCI通過。Artifact仍明確NOT_CONNECTED/NOT_EXECUTED，並非多模型會診已驗收。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "evidence_or_blocker": "先前輪次PR211合併6ee6418，AI/OOS驗證入口遇非objectJSON改為固定REJECT並覆寫舊REVIEW；10gate+11tradebacktest測試及PRCI通過。Artifact仍明確NOT_CONNECTED/NOT_EXECUTED，並非多模型會診已驗收。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 26,
         "requirement": "個股決策儀表板與手機首頁",
         "weight": 1,
         "status": "BLOCKED",
-        "evidence_or_blocker": "本輪PR #208修正雲端績效刷新亂序覆蓋；4競爭/失敗/重試測試、14靜態資料對照及73smoke通過，合併前後390px手機網頁CI成功，正式頁面與測試版一致。Android實機仍待驗。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "evidence_or_blocker": "先前輪次PR #208修正雲端績效刷新亂序覆蓋；4競爭/失敗/重試測試、14靜態資料對照及73smoke通過，合併前後390px手機網頁CI成功，正式頁面與測試版一致。Android實機仍待驗。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 27,
@@ -617,9 +617,9 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "本輪保留既有盤中身份/日期/新鮮度/分級測試，修正盤外不必要MIS等待與來源故障誤分類；真實交易日警報與手機實收仍待驗。",
-        "prior_evidence_as_of": "2026-11-15",
         "current_round_full_e2e_reverified": false,
-        "current_round_partial_evidence": true
+        "current_round_partial_evidence": true,
+        "evidence_scope": "current_round_partial_only"
       },
       {
         "id": 28,
@@ -627,17 +627,17 @@
         "weight": 1,
         "status": "FAIL",
         "evidence_or_blocker": "現股及當沖分開實際驗證未完成",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 29,
         "requirement": "3／7／15／30／60交易日績效及策略調整",
         "weight": 1,
         "status": "BLOCKED",
-        "evidence_or_blocker": "本輪PR #203已合併；成熟虧損被改標pending/缺價/除權息的三種錯誤PASS均已重現並攔截，真正缺價與除權息排除測試通過。正式前瞻20訊號、0成熟比較窗，獨立OOS未驗。",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "evidence_or_blocker": "先前輪次PR #203已合併；成熟虧損被改標pending/缺價/除權息的三種錯誤PASS均已重現並攔截，真正缺價與除權息排除測試通過。正式前瞻20訊號、0成熟比較窗，獨立OOS未驗。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       },
       {
         "id": 30,
@@ -645,9 +645,9 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "PR212所有PR檢查綠燈後合併；主線Index/Research/Smoke/Compute成功，新indexZIP與compute8檔雜湊通過，並保留同時寫入的Gooaye資料提交。正式APK既有簽章阻礙仍未解。",
-        "prior_evidence_as_of": "2026-11-15",
         "current_round_full_e2e_reverified": false,
-        "current_round_partial_evidence": true
+        "current_round_partial_evidence": true,
+        "evidence_scope": "current_round_partial_only"
       },
       {
         "id": 31,
@@ -655,8 +655,8 @@
         "weight": 1,
         "status": "BLOCKED",
         "evidence_or_blocker": "八指標、多模型與全球影響整合未完整驗收",
-        "prior_evidence_as_of": "2026-11-15",
-        "current_round_full_e2e_reverified": false
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "inherited_not_revalidated_this_round"
       }
     ],
     "status_counts": {
