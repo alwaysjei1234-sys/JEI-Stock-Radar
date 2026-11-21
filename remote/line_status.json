@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-21T17:03:49+08:00",
+  "updated_at": "2026-11-21T18:05:45+08:00",
   "editions": {
     "morning": {
       "date": "2026-11-18",
@@ -77,6 +77,16 @@
         "http_status": 409,
         "attempts": 1
       }
+    },
+    "intraday_index": {
+      "date": "2026-11-21",
+      "edition": "intraday_index",
+      "checked_at": "2026-11-21T18:05:45+08:00",
+      "status": "no_alert",
+      "api_accepted": false,
+      "delivery_confirmed": false,
+      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44892663876",
+      "reason_code": "market_closed_or_outside_window"
     }
   },
   "policy_checks": {
