@@ -103,5 +103,94 @@ public class NativeHttpBodyHarness {
             server.server_close()
 
 
+
+class BackgroundBodyServer(http.server.BaseHTTPRequestHandler):
+    def log_message(self, *_):
+        pass
+
+    def do_GET(self):
+        path = self.path.split('?', 1)[0]
+        if path == '/slow.json':
+            body = b'{"market":{},"source":"slow-primary","padding":"1234567890"}'
+        elif path == '/large':
+            body = b'x' * 200
+        else:
+            body = '{"market":{},"source":"backup","text":"台股"}'.encode()
+        self.send_response(503 if path == '/unavailable' else 200)
+        self.send_header('Content-Length', str(len(body)))
+        self.end_headers()
+        try:
+            if path == '/slow.json':
+                for byte in body:
+                    self.wfile.write(bytes([byte]))
+                    self.wfile.flush()
+                    time.sleep(.04)
+            else:
+                self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            pass
+
+
+class BackgroundHttpBodyBudgetTests(unittest.TestCase):
+    def test_background_trickle_releases_risk_and_update_fallback(self):
+        java = shutil.which('java')
+        if not java:
+            self.skipTest('Java compiler runtime required; provided by Android CI')
+        source = (JAVA_DIR / 'RiskWorker.java').read_text()
+        bodies = method(source, 'get', 'String')
+        if 'private String readBody(' in source:
+            bodies += '\n' + method(source, 'readBody', 'String')
+        bodies += '\n' + method(source, 'getStaticFeed', 'String')
+        bodies = bodies.replace('12000', '300').replace('16 * 1024 * 1024', '64')
+        server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), BackgroundBodyServer)
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        base = 'http://127.0.0.1:' + str(server.server_port)
+        bodies = bodies.replace(
+            'https://raw.githubusercontent.com/alwaysjei1234-sys/JEI-Stock-Radar/main/remote/',
+            base + '/fallback/')
+        harness = '''import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
+public class BackgroundBodyHarness {
+  // Only the has accessor is needed by the extracted production fallback.
+  // This adapter is not an Android JSON parser/device test.
+  static class JSONObject {
+    final String text;
+    JSONObject(String text){this.text=text;}
+    boolean has(String key){return text.contains("\\\""+key+"\\\"");}
+  }
+  static final String SYSTEM_JSON="BASE/slow.json", UPDATE_JSON="BASE/update.json";
+  METHODS
+  public static void main(String[] args)throws Exception{
+    BackgroundBodyHarness h=new BackgroundBodyHarness();
+    long started=System.nanoTime();
+    String result=h.getStaticFeed(SYSTEM_JSON);
+    long elapsed=(System.nanoTime()-started)/1000000;
+    if(!result.contains("backup") || !result.contains("台股") || elapsed>1200)
+      throw new AssertionError("background slow body prevented fallback: "+elapsed+"ms");
+    try{h.get("BASE/large");throw new AssertionError("oversized background body accepted");}
+    catch(IOException expected){}
+    try{h.get("BASE/unavailable");throw new AssertionError("503 accepted");}
+    catch(Exception expected){if(!expected.getMessage().contains("HTTP 503"))throw expected;}
+    if(!h.getStaticFeed(UPDATE_JSON).contains("台股"))
+      throw new AssertionError("body failure prevented the next update check");
+    System.out.println("PASS background real HTTP: trickle fallback "+elapsed+"ms, size bound, HTTP failure, next update read");
+  }
+}'''.replace('BASE',base).replace('METHODS',bodies)
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                path=pathlib.Path(tmp)/'BackgroundBodyHarness.java'
+                path.write_text(harness)
+                compiled=subprocess.run([java,'-m','jdk.compiler/com.sun.tools.javac.Main','-d',tmp,str(path)],
+                    capture_output=True,text=True,timeout=30)
+                self.assertEqual(compiled.returncode,0,compiled.stderr)
+                run=subprocess.run([java,'-cp',tmp,'BackgroundBodyHarness'],capture_output=True,text=True,timeout=10)
+                self.assertEqual(run.returncode,0,run.stderr)
+                print(run.stdout.strip())
+        finally:
+            server.shutdown();server.server_close()
+
+
 if __name__ == '__main__':
     unittest.main()

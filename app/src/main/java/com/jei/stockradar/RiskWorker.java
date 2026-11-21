@@ -17,9 +17,7 @@ import androidx.work.WorkerParameters;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -168,19 +166,39 @@ public class RiskWorker extends Worker {
     private String get(String url) throws Exception {
         String sep = url.contains("?") ? "&" : "?";
         HttpURLConnection c = (HttpURLConnection)new URL(url + sep + "bg=" + System.currentTimeMillis()).openConnection();
-        c.setConnectTimeout(9000);
-        c.setReadTimeout(12000);
-        c.setRequestProperty("User-Agent", "JEIStockRadar-Background/3.7.1");
-        int status = c.getResponseCode();
-        InputStream in = status >= 200 && status < 300 ? c.getInputStream() : c.getErrorStream();
-        if (in == null) throw new Exception("HTTP " + status);
-        BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) sb.append(line);
-        r.close();
-        if (status < 200 || status >= 300) throw new Exception("HTTP " + status);
-        return sb.toString();
+        try {
+            c.setConnectTimeout(9000);
+            c.setReadTimeout(12000);
+            c.setRequestProperty("User-Agent", "JEIStockRadar-Background/3.7.1");
+            int status = c.getResponseCode();
+            if (status < 200 || status >= 300) throw new java.io.IOException("HTTP " + status);
+            try (InputStream in = c.getInputStream()) {
+                return readBody(c, in, 12000, 16 * 1024 * 1024);
+            }
+        } finally {
+            c.disconnect();
+        }
+    }
+
+    private String readBody(HttpURLConnection connection, InputStream input,
+                            int budgetMillis, int maxBytes) throws java.io.IOException {
+        // A socket idle timeout does not bound a continuously trickling body.
+        // Release background risk/update work so static feeds can try backup.
+        long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.MILLISECONDS.toNanos(budgetMillis);
+        java.io.ByteArrayOutputStream body = new java.io.ByteArrayOutputStream();
+        byte[] chunk = new byte[8192];
+        while (true) {
+            long remaining = deadline - System.nanoTime();
+            if (remaining <= 0) throw new java.net.SocketTimeoutException("Background body read budget exceeded");
+            connection.setReadTimeout((int)Math.max(1, (remaining + 999999L) / 1000000L));
+            int count = input.read(chunk);
+            if (System.nanoTime() >= deadline)
+                throw new java.net.SocketTimeoutException("Background body read budget exceeded");
+            if (count < 0) break;
+            if (count > maxBytes - body.size()) throw new java.io.IOException("Background body size limit exceeded");
+            body.write(chunk, 0, count);
+        }
+        return new String(body.toByteArray(), StandardCharsets.UTF_8);
     }
 
     // Only static public JEI files may use GitHub Raw as a read-only failover.
