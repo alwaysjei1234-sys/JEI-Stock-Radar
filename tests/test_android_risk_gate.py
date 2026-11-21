@@ -30,7 +30,9 @@ class AndroidRiskGateTests(unittest.TestCase):
         signatures = ('private static SimpleDateFormat taipeiParser(',
                       'private static String taipeiFormat(',
                       'static boolean taipeiMarketOpen(',
-                      'static boolean trustedLiveFeed(')
+                      'static boolean trustedLiveFeed(',
+                      'static boolean trustedExecutedTrade(',
+                      'private static double toDouble(')
         bodies = '\n'.join(method(source, s) for s in signatures)
         # Compile the actual production freshness constant into the extracted
         # JVM harness rather than silently testing a separate threshold.
@@ -100,6 +102,26 @@ public class NativeRiskGateHarness {
     blocked=feed();blocked.set("data_date","2026-11-09");
     check(!trustedLiveFeed(blocked,now),"yesterday still alerts");
     check(!trustedLiveFeed(feed(),taipeiParser("yyyy-MM-dd HH:mm").parse("2026-11-10 14:00").getTime()),"closed session still alerts");
+    JSONObject trade=new JSONObject().set("d","20261110").set("t","10:04:00")
+      .set("z","90").set("y","100").set("v","1234");
+    check(trustedExecutedTrade(trade,now),"valid executed trade rejected");
+    for(String volume:new String[]{"0","-1","-","NaN","Infinity","1e309",""}){
+      trade.set("v",volume);
+      check(!trustedExecutedTrade(trade,now),"unexecuted/nonfinite volume accepted: "+volume);
+    }
+    trade.remove("v");check(!trustedExecutedTrade(trade,now),"missing volume accepted");
+    trade.set("v","1234");
+    for(String field:new String[]{"z","y"}){
+      String original=trade.optString(field,"");
+      for(String price:new String[]{"0","-1","-","NaN","Infinity","1e309",""}){
+        trade.set(field,price);
+        check(!trustedExecutedTrade(trade,now),"invalid price accepted: "+field+"="+price);
+      }
+      trade.set(field,original);
+    }
+    trade.set("t","09:56:00");check(!trustedExecutedTrade(trade,now),"old execution accepted");
+    trade.set("t","10:04:00").set("d","20261109");
+    check(!trustedExecutedTrade(trade,now),"yesterday execution accepted");
     System.out.println("PASS native risk gate replays; no notification/network/device invoked");
   }
 }'''.replace('METHODS', bodies)
