@@ -26,10 +26,17 @@
 const KEY='jei-cash-trades-v1';
 const $=id=>document.getElementById(id);
 const JEI_STATIC_PENDING={};
+function validateJeiStatic(kind,data){
+ if(!data||typeof data!=='object'||Array.isArray(data))throw Error('JEI 資料格式錯誤');
+ if(kind==='system'&&!data.market)throw Error('市場資料格式錯誤');
+ if(kind==='daily'&&(!data.days||data.kind!=='official_daily_close'))throw Error('歷史資料格式錯誤');
+ if(kind==='performance'&&(data.schema!==1||!data.strategies||data.mode!=='official_daily_close_paper_observation'))throw Error('雲端模擬資料格式錯誤');
+ return data;
+}
 window.JEI_STATIC={
  onData(kind,raw){
   const waiting=JEI_STATIC_PENDING[kind]||[];delete JEI_STATIC_PENDING[kind];
-  try{const data=JSON.parse(raw);waiting.forEach(x=>x.resolve(data));}
+  try{const data=validateJeiStatic(kind,JSON.parse(raw));waiting.forEach(x=>x.resolve(data));}
   catch(e){waiting.forEach(x=>x.reject(Error('JEI feed 格式錯誤')))}
  },
  onError(kind,error){
@@ -55,11 +62,7 @@ async function readJeiStatic(kind){
  const file=kind==='system'?'system.json':kind==='daily'?'daily_prices.json':'strategy_performance.json';
  const response=await fetch('./'+file+'?ts='+Date.now(),{cache:'no-store'});
  if(!response.ok)throw Error('HTTP '+response.status);
- const data=await response.json();
- if(kind==='system'&&!data.market)throw Error('市場資料格式錯誤');
- if(kind==='daily'&&(!data.days||data.kind!=='official_daily_close'))throw Error('歷史資料格式錯誤');
- if(kind==='performance'&&(data.schema!==1||!data.strategies||data.mode!=='official_daily_close_paper_observation'))throw Error('雲端模擬資料格式錯誤');
- return data;
+ return validateJeiStatic(kind,await response.json());
 }
 
 const twDay=()=>{const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day};
