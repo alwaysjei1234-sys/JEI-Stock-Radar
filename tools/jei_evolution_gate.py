@@ -14,6 +14,17 @@ MIN_REGIMES = 3
 MIN_WIN_RATE = 0.80
 
 def evaluate(bundle):
+    # Model/export JSON may be valid JSON without being an evaluation object.
+    # Reject at this boundary so both callers and the CLI produce a current
+    # refusal receipt instead of crashing and leaving an older REVIEW file.
+    if not isinstance(bundle, dict):
+        return {"decision": "REJECT", "reasons": ["invalid_bundle_object"],
+                "auto_deploy": False}
+    invalid_blocks = [label + "_invalid_metrics_object"
+                      for label in ("candidate", "baseline")
+                      if label in bundle and not isinstance(bundle[label], dict)]
+    if invalid_blocks:
+        return {"decision": "REJECT", "reasons": invalid_blocks, "auto_deploy": False}
     reasons = []
     proposals = bundle.get("proposals", [])
     role_models = {"researcher": set(), "critic": set()}

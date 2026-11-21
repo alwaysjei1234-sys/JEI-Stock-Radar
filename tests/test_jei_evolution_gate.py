@@ -1,3 +1,8 @@
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
 import unittest
 from tools.jei_evolution_gate import evaluate
 
@@ -20,6 +25,38 @@ def example():
     }
 
 class EvolutionTests(unittest.TestCase):
+    def test_non_object_bundle_and_metric_blocks_fail_closed(self):
+        for value in (None, [], 'unexpected model text', 1, True):
+            with self.subTest(root=value):
+                result = evaluate(value)
+                self.assertEqual(result, {'decision': 'REJECT',
+                    'reasons': ['invalid_bundle_object'], 'auto_deploy': False})
+            for label in ('candidate', 'baseline'):
+                with self.subTest(label=label, value=value):
+                    bundle = example()
+                    bundle[label] = value
+                    result = evaluate(bundle)
+                    self.assertEqual(result['decision'], 'REJECT')
+                    self.assertIn(label + '_invalid_metrics_object', result['reasons'])
+                    self.assertFalse(result['auto_deploy'])
+
+    def test_cli_replaces_old_review_receipt_for_malformed_model_json(self):
+        cases = [[], None, {'candidate': None}, {'baseline': []}]
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / 'model.json', Path(tmp) / 'evaluation.json'
+            for bundle in cases:
+                with self.subTest(bundle=bundle):
+                    source.write_text(json.dumps(bundle))
+                    output.write_text(json.dumps({'decision': 'REVIEW', 'auto_deploy': False}))
+                    run = subprocess.run([sys.executable, '-m', 'tools.jei_evolution_gate',
+                        '--input', str(source), '--output', str(output)],
+                        capture_output=True, text=True, timeout=10)
+                    self.assertEqual(run.returncode, 1)
+                    result = json.loads(output.read_text())
+                    self.assertEqual(result['decision'], 'REJECT', run.stderr)
+                    self.assertFalse(result['auto_deploy'])
+                    self.assertEqual(json.loads(run.stdout), result)
+
     def test_valid_candidate_requires_review_not_deploy(self):
         r = evaluate(example())
         self.assertEqual(r["decision"], "REVIEW")
