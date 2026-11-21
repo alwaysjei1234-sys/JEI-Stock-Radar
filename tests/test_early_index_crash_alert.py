@@ -48,6 +48,43 @@ class EarlyIndexCrashTests(unittest.TestCase):
                                  ('no_alert','market_closed_or_outside_window'))
                 self.assertFalse(receipt['delivery_confirmed'])
 
+    def test_unverifiable_responses_are_not_a_verified_no_alert(self):
+        env={"JEI_LINE_ENABLED":"true","JEI_LINE_ALERTS_ENABLED":"true",
+             "JEI_LINE_CHANNEL_ACCESS_TOKEN":SECRET,"JEI_LINE_USER_ID":RECIPIENT}
+        cases=(
+            ({}, "index_invalid_response"), ([], "index_unavailable"),
+            ([quote(ex="otc")], "index_identity_mismatch"),
+            ([quote(d="20261113")], "index_stale_or_invalid_time"),
+            ([quote(t="09:16:00")], "index_stale_or_invalid_time"),
+            ([quote(t="09:29:00")], "index_stale_or_invalid_time"),
+            ([quote(z="-",b="970_",a="969_")], "index_invalid_price"),
+            ([quote(y="0")], "index_invalid_price"),
+            ([quote(),quote(z="969")], "index_conflicting_quotes"),
+        )
+        for messages,reason in cases:
+            with self.subTest(reason=reason,messages=messages),tempfile.TemporaryDirectory() as tmp:
+                dest=Path(tmp)/"receipt.json"
+                with patch.dict(os.environ,env,clear=True),patch.object(siren,"datetime") as clock,patch.object(
+                    siren,"fetch_mis_channels",return_value=messages),patch.object(siren,"push") as push,contextlib.redirect_stdout(io.StringIO()):
+                    clock.now.return_value=NOW
+                    siren.main(["--result-path",str(dest)])
+                    push.assert_not_called()
+                result=json.loads(dest.read_text())
+                self.assertEqual((result["status"],result["reason_code"]),("unverified",reason))
+                self.assertFalse(result["delivery_confirmed"])
+                self.assertNotIn(SECRET,str(result))
+                self.assertNotIn(RECIPIENT,str(result))
+
+    def test_verified_below_threshold_remains_no_alert(self):
+        env={"JEI_LINE_ENABLED":"true","JEI_LINE_ALERTS_ENABLED":"true",
+             "JEI_LINE_CHANNEL_ACCESS_TOKEN":SECRET,"JEI_LINE_USER_ID":RECIPIENT}
+        result={"delivery_confirmed":False}
+        with patch.dict(os.environ,env,clear=True),patch.object(
+            siren,"fetch_mis_channels",return_value=[quote(z="990")]),patch.object(siren,"push") as push:
+            siren.dispatch(NOW,result)
+            push.assert_not_called()
+        self.assertEqual((result["status"],result["reason_code"]),("no_alert","decline_below_threshold"))
+
     def test_fast_3pct_drop_uses_only_verified_current_taiex_trade(self):
         report,reason=siren.report_for_index([quote()],NOW)
         self.assertEqual(reason,"verified_index_decline")

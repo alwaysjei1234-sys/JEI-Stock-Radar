@@ -92,7 +92,11 @@ def dispatch(now, receipt):
         return
     report, reason = report_for_index(messages, now)
     if report is None:
-        receipt.update(status="no_alert", reason_code=reason)
+        # A stale, malformed or wrong-identity quote cannot establish that
+        # the market is below the warning threshold. Match transport failures
+        # as unverified; only a verified small decline is a benign no-alert.
+        status = "no_alert" if reason == "decline_below_threshold" else "unverified"
+        receipt.update(status=status, reason_code=reason)
         return
     receipt["edition"] = report["edition"]
     ok, why = can_send(report, report["edition"], now, "true", token, recipient)
