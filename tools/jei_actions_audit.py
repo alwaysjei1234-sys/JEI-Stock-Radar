@@ -40,12 +40,25 @@ def _intraday_timestamp_expired(market, now=None):
 
 
 def inspect_feed(feed, now=None):
-    issues = ['missing:' + key for key in REQUIRED if key not in feed]
+    issues = []
+    if not isinstance(feed, dict):
+        issues.append('invalid_feed')
+        feed = {}
+    issues.extend('missing:' + key for key in REQUIRED if key not in feed)
     if "holdings" in feed:
         holdings = feed["holdings"]
         if not isinstance(holdings, dict) or not is_safe_public_holdings(holdings):
             issues.append("invalid_public_holdings")
-    risk, market = feed.get('risk') or {}, feed.get('market') or {}
+    risk, market = feed.get('risk'), feed.get('market')
+    # Validate before .get(), including falsey malformed values such as [].
+    if not isinstance(risk, dict):
+        if 'risk' in feed:
+            issues.append('invalid_risk')
+        risk = {}
+    if not isinstance(market, dict):
+        if 'market' in feed:
+            issues.append('invalid_market')
+        market = {}
     date = feed.get('data_date') or feed.get('source_data_date')
     try:
         dt.date.fromisoformat(date)
@@ -78,7 +91,7 @@ def inspect_feed(feed, now=None):
     institutional_status = feed.get('institutional_status')
     if isinstance(institutional_status, dict) and institutional_status.get('ok') is False:
         issues.append('institutional_unverified (institutional scoring must remain disabled)')
-    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score', 'invalid_public_holdings', 'official_close_date_mismatch', 'stale_official_close', 'unverified_official_close', 'unverified_intraday_quotes', 'stale_intraday_check_timestamp')]
+    critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_feed', 'invalid_risk', 'invalid_market', 'invalid_data_date', 'invalid_risk_score', 'invalid_public_holdings', 'official_close_date_mismatch', 'stale_official_close', 'unverified_official_close', 'unverified_intraday_quotes', 'stale_intraday_check_timestamp')]
     return {'status': 'failed' if critical else 'ok', 'critical_issues': critical,
             'feed_date': date, 'updated_at': feed.get('updated_at'),
             'risk_level': risk.get('level'), 'risk_score': score if valid_score else None,

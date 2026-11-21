@@ -32,6 +32,44 @@ class AuditTests(unittest.TestCase):
             feed.update(data_date='2026-11-20', risk={'level': 'red', 'score': score})
             self.assertEqual(inspect_feed(feed, now=OFF_SESSION)['status'], 'ok')
 
+    def test_invalid_feed_object_shapes_fail_closed(self):
+        from tools.jei_actions_audit import REQUIRED
+        for value in (None, [], [1], 'invalid', 42, False):
+            with self.subTest(root=value):
+                result = inspect_feed(value, now=OFF_SESSION)
+                self.assertEqual(result['status'], 'failed')
+                self.assertIn('invalid_feed', result['critical_issues'])
+        for field in ('risk', 'market'):
+            for value in (None, [], [1], '', 'invalid', 42, False):
+                with self.subTest(field=field, value=value):
+                    feed = {key: {} for key in REQUIRED}
+                    feed.update(data_date='2026-11-20')
+                    feed[field] = value
+                    result = inspect_feed(feed, now=OFF_SESSION)
+                    self.assertEqual(result['status'], 'failed')
+                    self.assertIn('invalid_' + field, result['critical_issues'])
+                    json.dumps(result, allow_nan=False)
+
+    def test_cli_shape_failure_retains_diagnostics_and_checklist(self):
+        import contextlib
+        import io
+        from unittest.mock import patch
+        from tools import jei_actions_audit as audit
+        feed = {key: {} for key in audit.REQUIRED}
+        feed.update(data_date='2026-11-20')
+        for value in ([], {**feed, 'risk': [1]}, {**feed, 'market': [1]}):
+            with self.subTest(value=value), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                source = root / 'feed.json'
+                source.write_text(json.dumps(value))
+                with patch('sys.argv', ['audit', '--feed', str(source), '--out', str(root/'out')]), contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(audit.main(), 1)
+                report = json.loads((root/'out/jei_audit.json').read_text())
+                self.assertEqual(report['results']['status'], 'failed')
+                self.assertEqual(report['results']['line_delivery'], 'NOT_TESTED')
+                self.assertEqual(len(json.loads((root/'out/working_31_item_checklist.json').read_text())), 31)
+                self.assertIsNone(report['completion_percent'])
+
     def test_red_risk_not_claim_delivery(self):
         feed = {'data_date':'2026-11-06', 'risk':{'level':'red','score':100}, 'market':{}}
         report = build_report(feed, 'abc')
