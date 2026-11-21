@@ -1,0 +1,36 @@
+{
+  "computed_at": "2026-11-21T22:06:37.176813+08:00",
+  "source_commit": "fc381bc4138e37ce5dd9e99e7f90a8fdb51e0b9b",
+  "provider": "local_diagnostic",
+  "live_gate_reasons": [
+    "目前不在台股盤中時段",
+    "行情資料日 2026-11-20 與今天不同",
+    "行情狀態為 最近收盤，不是盤中即時",
+    "市場資料標記為過期、唯讀或未驗證",
+    "交易所休市",
+    "盤中行情尚未通過有效性驗證",
+    "行情風控明確暫停新判讀",
+    "風控資料日期缺漏或與今天不同",
+    "市場明確暫停新判讀",
+    "有效成交 0/500 檔，覆蓋未達門檻",
+    "行情快照時間不在台股盤中時段",
+    "行情更新已延遲 1380 分鐘"
+  ],
+  "feed_inspection": {
+    "status": "ok",
+    "critical_issues": [],
+    "feed_date": "2026-11-20",
+    "updated_at": "2026-11-20 23:06",
+    "risk_level": "red",
+    "risk_score": 100,
+    "live_valid": false,
+    "live_count": 0,
+    "institutional_verified": true,
+    "issues": [
+      "live_not_verified (may be expected outside session)"
+    ],
+    "line_delivery": "NOT_TESTED",
+    "android_device": "NOT_TESTED"
+  },
+  "network_send_invoked": false
+}
