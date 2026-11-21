@@ -51,7 +51,10 @@ def inspect_feed(feed, now=None):
         dt.date.fromisoformat(date)
     except (ValueError, TypeError):
         issues.append('invalid_data_date')
-    if risk.get('level') in ('red', 'orange') and not isinstance(risk.get('score'), (int, float)):
+    score = risk.get('score')
+    # bool is an int subclass; range checks also exclude NaN and infinity.
+    valid_score = type(score) in (int, float) and 0 <= score <= 100
+    if (risk.get('level') in ('red', 'orange') or 'score' in risk) and not valid_score:
         issues.append('invalid_risk_score')
     # An explicit failed official-close refresh is a genuine data integrity failure,
     # unlike zero live quotes outside the trading session.
@@ -78,7 +81,7 @@ def inspect_feed(feed, now=None):
     critical = [issue for issue in issues if issue.startswith('missing:') or issue in ('invalid_data_date', 'invalid_risk_score', 'invalid_public_holdings', 'official_close_date_mismatch', 'stale_official_close', 'unverified_official_close', 'unverified_intraday_quotes', 'stale_intraday_check_timestamp')]
     return {'status': 'failed' if critical else 'ok', 'critical_issues': critical,
             'feed_date': date, 'updated_at': feed.get('updated_at'),
-            'risk_level': risk.get('level'), 'risk_score': risk.get('score'),
+            'risk_level': risk.get('level'), 'risk_score': score if valid_score else None,
             'live_valid': market.get('live_valid'), 'live_count': market.get('live_count'),
             'institutional_verified': (institutional_status.get('ok') is True if isinstance(institutional_status, dict) else None),
             'issues': issues, 'line_delivery': 'NOT_TESTED', 'android_device': 'NOT_TESTED'}

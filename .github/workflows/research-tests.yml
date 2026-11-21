@@ -27,6 +27,7 @@ on:
       - 'scripts/update_system.py'
       - 'scripts/strategy_health.py'
       - 'scripts/recover_mainline_paper.py'
+      - 'tools/jei_actions_audit.py'
       - 'tools/jei_strategy_evolution.py'
       - 'tools/jei_strategy_cohort_audit.py'
       - 'scripts/market_sessions.py'
@@ -57,6 +58,7 @@ on:
       - 'scripts/update_system.py'
       - 'scripts/strategy_health.py'
       - 'scripts/recover_mainline_paper.py'
+      - 'tools/jei_actions_audit.py'
       - 'tools/jei_strategy_evolution.py'
       - 'tools/jei_strategy_cohort_audit.py'
       - 'scripts/market_sessions.py'
@@ -102,6 +104,8 @@ jobs:
         run: python3 -m unittest discover -s tests -p 'test_pick*.py'
       - name: Verify immutable paper recovery and transport-only compatibility
         run: PYTHONPATH=tests:. python3 -m unittest test_mainline_paper_recovery test_recover_archived_paper_day -v
+      - name: Verify public feed audit risk domain and diagnostic artifacts
+        run: python3 -m unittest discover -s tests -p 'test_jei_actions_audit.py' -v
       - name: Strategy loss-feedback guard (lookahead safe)
         run: python3 -m unittest discover -s tests -p 'test_strategy_health.py' -v
       - name: Verify registered forward-only strategy comparisons
