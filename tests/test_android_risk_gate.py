@@ -32,6 +32,7 @@ class AndroidRiskGateTests(unittest.TestCase):
                       'static boolean taipeiMarketOpen(',
                       'static boolean trustedLiveFeed(',
                       'static boolean trustedExecutedTrade(',
+                      'static JSONObject lastExecution(',
                       'private static double toDouble(')
         bodies = '\n'.join(method(source, s) for s in signatures)
         # Compile the actual production freshness constant into the extracted
@@ -122,6 +123,31 @@ public class NativeRiskGateHarness {
     trade.set("t","09:56:00");check(!trustedExecutedTrade(trade,now),"old execution accepted");
     trade.set("t","10:04:00").set("d","20261109");
     check(!trustedExecutedTrade(trade,now),"yesterday execution accepted");
+    JSONObject book=new JSONObject().set("d","20261110").set("t","10:04:30")
+      .set("z","-").set("y","100").set("v","99999")
+      .set("trade",new JSONObject().set("t","10:04:00").set("z","90").set("v","1"));
+    check(trustedExecutedTrade(book,now),"fresh nested execution skipped");
+    check("90".equals(lastExecution(book).optString("z","")),"holding price not nested execution");
+    JSONObject nested=book.optJSONObject("trade");
+    nested.set("t","09:40:00");
+    check(!trustedExecutedTrade(book,now),"old trade borrowed fresh book time");
+    nested.set("t","10:04:40");
+    check(!trustedExecutedTrade(book,now),"trade after book timestamp accepted");
+    nested.set("t","10:04:00").set("d","20261109");
+    check(!trustedExecutedTrade(book,now),"nested date mismatch accepted");
+    nested.remove("d");nested.set("v","0");
+    check(!trustedExecutedTrade(book,now),"nested zero volume borrowed book volume");
+    nested.set("v","1").set("z","Infinity");
+    check(!trustedExecutedTrade(book,now),"nonfinite nested price accepted");
+    nested.set("z","90");book.set("z","NaN");
+    check(!trustedExecutedTrade(book,now),"malformed primary price used nested fallback");
+    book.set("z","-").set("t","99:00:00");
+    check(!trustedExecutedTrade(book,now),"invalid book clock accepted");
+    book.set("t","10:04:30");nested.set("t","08:59:00");
+    long opening=taipeiParser("yyyy-MM-dd HH:mm").parse("2026-11-10 09:01").getTime();
+    check(!trustedExecutedTrade(book,opening),"preopen trade accepted");
+    nested.set("t","10:04:00");check(trustedExecutedTrade(book,now),"restored nested trade rejected");
+
     System.out.println("PASS native risk gate replays; no notification/network/device invoked");
   }
 }'''.replace('METHODS', bodies)

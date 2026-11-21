@@ -118,24 +118,45 @@ public class RiskWorker extends Worker {
         }
     }
 
+    static JSONObject lastExecution(JSONObject row) {
+        if (row == null) return null;
+        String price = row.optString("z", "");
+        if (!price.isEmpty() && !"-".equals(price)) return row;
+        JSONObject trade = row.optJSONObject("trade");
+        if (trade == null || !row.optString("d", "").equals(
+                trade.optString("d", row.optString("d", "")))) return null;
+        // The nested price belongs to its execution clock, not the newer book.
+        String executed = trade.optString("t", "");
+        String reported = row.optString("t", "");
+        if (!executed.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                || !reported.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                || executed.compareTo(reported) > 0) return null;
+        try {
+            taipeiParser("HH:mm:ss").parse(reported);
+        } catch (Exception invalidBookClock) { return null; }
+        return trade;
+    }
+
     static boolean trustedExecutedTrade(JSONObject row, long now) {
         if (row == null || !taipeiMarketOpen(now)) return false;
         if (!taipeiFormat("yyyyMMdd", now).equals(row.optString("d", ""))) return false;
         // A quoted price without positive executed volume is not a trade.
         // Keep all alert arithmetic finite; parseDouble also accepts Infinity.
-        double price = toDouble(row.optString("z", ""));
+        JSONObject execution = lastExecution(row);
+        if (execution == null) return false;
+        double price = toDouble(execution.optString("z", ""));
         double previous = toDouble(row.optString("y", ""));
-        double volume = toDouble(row.optString("v", ""));
+        double volume = toDouble(execution.optString("v", ""));
         if (!Double.isFinite(price) || price <= 0
                 || !Double.isFinite(previous) || previous <= 0
                 || !Double.isFinite(volume) || volume <= 0) return false;
-        String clock = row.optString("t", "");
+        String clock = execution.optString("t", "");
         if (!clock.matches("\\d{1,2}:\\d{2}(?::\\d{2})?")) return false;
         try {
             String fullTime = clock.length() == 5 ? clock + ":00" : clock;
             Date executed = taipeiParser("yyyyMMdd HH:mm:ss")
                     .parse(taipeiFormat("yyyyMMdd", now) + " " + fullTime);
-            if (executed == null) return false;
+            if (executed == null || !taipeiMarketOpen(executed.getTime())) return false;
             long lag = now - executed.getTime();
             return lag >= -120000L && lag <= 8L * 60L * 1000L;
         } catch (Exception e) {
@@ -300,7 +321,7 @@ public class RiskWorker extends Worker {
             if (!(cost > 0) || shares <= 0) continue;
 
             // A valid last execution (z) is required. Never substitute bid/ask or yesterday's close.
-            double price = toDouble(quote.optString("z", ""));
+            double price = toDouble(lastExecution(quote).optString("z", ""));
             double prev = toDouble(quote.optString("y", ""));
             double ch = (price - prev) / prev * 100.0;
             double ret = (price - cost) / cost * 100.0;
