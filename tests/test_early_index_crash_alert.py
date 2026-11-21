@@ -26,6 +26,20 @@ def quote(**changes):
 
 
 class EarlyIndexCrashTests(unittest.TestCase):
+    def test_nested_index_conflict_never_pushes_a_crash_siren(self):
+        env={"JEI_LINE_ENABLED":"true","JEI_LINE_ALERTS_ENABLED":"true",
+             "JEI_LINE_CHANNEL_ACCESS_TOKEN":SECRET,"JEI_LINE_USER_ID":RECIPIENT}
+        messages=[quote(z='-',t='09:26:40',trade={'t':stamp,'z':'970','v':1})
+                  for stamp in ('09:26:00','09:26:10')]
+        receipt={"status":"failed","delivery_confirmed":False}
+        with patch.dict(os.environ,env,clear=True),patch.object(
+            siren,'fetch_mis_channels',return_value=messages),patch.object(siren,'push') as push:
+            siren.dispatch(NOW,receipt)
+            push.assert_not_called()
+        self.assertEqual((receipt['status'],receipt['reason_code']),
+                         ('unverified','index_conflicting_quotes'))
+        self.assertFalse(receipt['delivery_confirmed'])
+
     def test_closed_or_offhours_dispatch_never_waits_for_mis(self):
         env={"JEI_LINE_ENABLED":"true","JEI_LINE_ALERTS_ENABLED":"true",
              "JEI_LINE_CHANNEL_ACCESS_TOKEN":SECRET,"JEI_LINE_USER_ID":RECIPIENT}
