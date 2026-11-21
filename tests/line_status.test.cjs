@@ -65,3 +65,17 @@ vm.runInContext('lineData=null;renderLineStatus()',context);
 assert.match(nodes.get('line-intraday-status').textContent,/尚無可核對/);
 assert.equal(nodes.get('line-intraday-evidence').hidden,true);
 console.log('Intraday risk receipt stays visible independently of daily reports and rejects forged acceptance.');
+
+// Index receipt diagnostics keep all escalation tiers separate from broad risk.
+for(const slot of ['intraday_index','intraday_index_crash','intraday_index_crash_4pct','intraday_index_crash_6pct']){
+ const index={...risk,edition:slot,status:slot==='intraday_index'?'unverified':'accepted',http_status:slot==='intraday_index'?null:200};
+ vm.runInContext('lineData='+JSON.stringify({schema:1,editions:{[slot]:index}})+';renderLineStatus()',context);
+ assert.match(nodes.get('line-'+slot+'-status')?.textContent||'',/加權指數.*手機實收尚未確認/);
+ if(slot==='intraday_index')assert.match(nodes.get('line-'+slot+'-status').textContent,/行情未驗證/);
+ assert.equal(nodes.get('line-'+slot+'-evidence').href,risk.evidence_url);
+ for(const change of [{edition:'intraday_risk'},{status:'delivered'},{status:'accepted',http_status:500},{evidence_url:'javascript:alert(1)'}]){
+  vm.runInContext('lineData='+JSON.stringify({schema:1,editions:{[slot]:{...index,...change}}})+';renderLineStatus()',context);
+  assert.equal(nodes.get('line-'+slot+'-evidence').hidden,true);
+ }
+}
+console.log('Index diagnostics: separate tiers, unverified data, safe evidence and no phone-delivery claim.');

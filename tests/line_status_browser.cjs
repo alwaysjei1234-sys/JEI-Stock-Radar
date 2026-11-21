@@ -25,12 +25,18 @@ async function run(){
   const record={date:'2026-11-04',edition:'close',checked_at:'2026-11-04T19:15:51+08:00',status:'accepted',evidence_url:'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/123'};
   let recordStatus=200,policyChecks={};
   const risk={date:'2026-11-05',edition:'intraday_risk',checked_at:'2026-11-05T01:09:00+08:00',status:'already_accepted',http_status:409,evidence_url:'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/789',delivery_confirmed:true,token:'SECRET'};
-  await p.route('**/line_status.json*',route=>route.fulfill({status:recordStatus,contentType:'application/json',body:JSON.stringify({schema:1,editions:{close:record,intraday_risk:risk},policy_checks:policyChecks})}));
+  const index={...risk,edition:'intraday_index',status:'unverified',http_status:null};
+  const extreme={...risk,edition:'intraday_index_crash_6pct',status:'accepted',http_status:200};
+  await p.route('**/line_status.json*',route=>route.fulfill({status:recordStatus,contentType:'application/json',body:JSON.stringify({schema:1,editions:{close:record,intraday_risk:risk,intraday_index:index,intraday_index_crash_6pct:extreme},policy_checks:policyChecks})}));
   await p.route('**/brief.json*',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({schema:1,close:{date:'2026-11-04',status:'ready',blocks:[{title:'測試摘要',items:['公開行情測試資料']}]}})}));
   await p.goto('http://127.0.0.1:'+server.address().port+'/remote/brief.html',{waitUntil:'networkidle'});
   await p.waitForFunction(()=>document.querySelector('#line-status').textContent.includes('尚無可核對'));
   assert.match(await p.locator('#line-intraday-status').innerText(),/今日紀錄.*盤中風險警報.*API 已接受過.*手機實收尚未確認/);
   assert.equal(await p.locator('#line-intraday-evidence').getAttribute('href'),risk.evidence_url);
+  assert.match(await p.locator('#line-intraday_index-status').innerText(),/行情未驗證.*手機實收尚未確認/);
+  assert.match(await p.locator('#line-intraday_index_crash_6pct-status').innerText(),/加權指數.*API 已接受.*手機實收尚未確認/);
+  assert.equal(await p.locator('#line-intraday_index_crash_6pct-evidence').getAttribute('href'),extreme.evidence_url);
+  assert.ok(!(await p.locator('#line-intraday_index-status').innerText()).includes('SECRET'));
   await p.locator('#close').click();
   assert.match(await p.locator('#line-intraday-status').innerText(),/盤中風險警報/);
   await p.waitForFunction(()=>document.querySelector('#line-status').textContent.includes('歷史紀錄'));
@@ -64,11 +70,16 @@ async function run(){
   await p.locator('#reload').click();
   await p.waitForFunction(()=>document.querySelector('#line-intraday-evidence').hidden);
   assert.ok(!(await p.locator('#line-intraday-status').innerText()).includes('SECRET'));
+  index.evidence_url='javascript:alert(1)';
+  await p.locator('#reload').click();
+  await p.waitForFunction(()=>document.querySelector('#line-intraday_index-evidence').hidden);
   recordStatus=503;await p.locator('#reload').click();
   await p.waitForFunction(()=>document.querySelector('#line-status').textContent.includes('尚無可核對'));
   assert.match(await p.locator('#line-intraday-status').innerText(),/尚無可核對/);
   assert.ok(await p.locator('#line-intraday-evidence').isHidden());
   assert.ok(await p.locator('#content section').count()>0,'diagnostic failure must not hide the valid report');
+  assert.match(await p.locator('#line-intraday_index-status').innerText(),/尚無可核對/);
+  assert.ok(await p.locator('#line-intraday_index_crash_6pct-evidence').isHidden());
   assert.deepEqual(errors,[]);
   console.log('PASS 390px mobile LINE status: dated evidence, missing record, current quota block, safe link, outage isolation and no overflow');
  }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve))}

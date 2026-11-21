@@ -25,6 +25,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--blue)}
 <div class="card" id="status" role="status">正在載入研究摘要…</div>
 <div class="card" role="status"><h2>LINE 推播狀態</h2><p id="line-status" class="meta">正在讀取發送紀錄…</p><a id="line-evidence" hidden target="_blank" rel="noopener noreferrer">查看發送紀錄</a></div>
 <div class="card" role="status"><h2>LINE 盤中風險警報</h2><p id="line-intraday-status" class="meta">正在讀取發送紀錄…</p><a id="line-intraday-evidence" hidden target="_blank" rel="noopener noreferrer">查看盤中警報紀錄</a></div>
+<div class="card" role="status"><h2>LINE 加權指數快速警報</h2><p class="meta">單一指數警報，與全市場風險警報分開。各級保留獨立紀錄。</p><h3>指數檢查</h3><p id="line-intraday_index-status" class="meta">正在讀取紀錄…</p><a id="line-intraday_index-evidence" hidden target="_blank" rel="noopener noreferrer">查看指數警報紀錄</a><h3>急跌 −2%</h3><p id="line-intraday_index_crash-status" class="meta">正在讀取紀錄…</p><a id="line-intraday_index_crash-evidence" hidden target="_blank" rel="noopener noreferrer">查看指數警報紀錄</a><h3>加劇 −4%</h3><p id="line-intraday_index_crash_4pct-status" class="meta">正在讀取紀錄…</p><a id="line-intraday_index_crash_4pct-evidence" hidden target="_blank" rel="noopener noreferrer">查看指數警報紀錄</a><h3>極端 −6%</h3><p id="line-intraday_index_crash_6pct-status" class="meta">正在讀取紀錄…</p><a id="line-intraday_index_crash_6pct-evidence" hidden target="_blank" rel="noopener noreferrer">查看指數警報紀錄</a></div>
 <div id="content"></div>
 <div class="card warning"><h2>閱讀提醒</h2><p class="meta">新聞標題不是投資建議；模擬績效以官方收盤價計算，不能代表實際成交與獲利。私人持股資料不會被發到公開網頁或 GitHub。LINE 未授權前也不會推播。</p></div>
 </main><script>
@@ -35,9 +36,9 @@ function make(tag,value){const node=document.createElement(tag);node.textContent
 function safeUrl(raw){try{const u=new URL(raw);return u.protocol==='https:'?u.href:null}catch{return null}}
 function lineAttemptText(document,selected,today){
  const row=document&&document.schema===1&&document.editions&&document.editions[selected];
- const labels={accepted:'API 已接受',already_accepted:'API 已接受過，這次未重複發送',blocked:'發送條件未通過',quota_blocked:'免費額度安全檢查未通過',failed:'發送失敗'};
+ const labels={unverified:'行情未驗證，不能判定安全',no_alert:'本次未觸發警報（休市或未達門檻）',disabled:'警報開關未啟用',accepted:'API 已接受',already_accepted:'API 已接受過，這次未重複發送',blocked:'發送條件未通過',quota_blocked:'免費額度安全檢查未通過',failed:'發送失敗'};
  if(!row||!Object.hasOwn(labels,row.status)||typeof row.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(row.date)||typeof row.checked_at!=='string'||!Number.isFinite(Date.parse(row.checked_at)))return '尚無可核對的發送紀錄；不能確認已發送或手機收到。';
- const type=row.edition==='intraday_risk'?'盤中風險警報':String(row.edition).endsWith('_unavailable')?'資料異常通知':'市場摘要';
+ const type=String(row.edition).startsWith('intraday_index')?'加權指數快速警報':row.edition==='intraday_risk'?'盤中風險警報':String(row.edition).endsWith('_unavailable')?'資料異常通知':'市場摘要';
  const current=row.date===today?'今日紀錄':'歷史紀錄（今天尚無發送紀錄）';
  const prior=row.accepted_attempt;
  const accepted=prior&&prior.date===row.date&&prior.edition===row.edition&&
@@ -77,6 +78,21 @@ function renderLineStatus(){
  const riskLink=validRisk&&typeof risk.evidence_url==='string'&&/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/actions\/runs\/[1-9][0-9]*$/.test(risk.evidence_url)?risk.evidence_url:null;
  $('line-intraday-evidence').hidden=!riskLink;
  if(riskLink)$('line-intraday-evidence').href=riskLink;
+ for(const slot of ['intraday_index','intraday_index_crash','intraday_index_crash_4pct','intraday_index_crash_6pct']){
+  const index=lineData?.schema===1&&lineData.editions?.[slot];
+  const url=index&&typeof index.evidence_url==='string'&&/^https:\/\/github\.com\/alwaysjei1234-sys\/JEI-Stock-Radar\/actions\/runs\/[1-9][0-9]*$/.test(index.evidence_url)?index.evidence_url:null;
+  const valid=index&&index.edition===slot&&url&&
+   (['blocked','quota_blocked','failed'].includes(index.status)||
+    (slot==='intraday_index'&&['unverified','no_alert','disabled'].includes(index.status))||
+    (index.status==='accepted'&&index.http_status===200)||
+    (index.status==='already_accepted'&&index.http_status===409))&&
+   typeof index.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(index.date)&&
+   typeof index.checked_at==='string'&&Number.isFinite(Date.parse(index.checked_at));
+  $('line-'+slot+'-status').textContent=lineAttemptText(valid?{schema:1,editions:{[slot]:index}}:null,slot,today);
+  $('line-'+slot+'-evidence').hidden=!valid;
+  if(valid)$('line-'+slot+'-evidence').href=url;
+ }
+
 }
 function render(){
  renderLineStatus();

@@ -9,10 +9,12 @@ from zoneinfo import ZoneInfo
 
 TAIPEI = ZoneInfo('Asia/Taipei')
 RUN_BASE = 'https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/'
-STATUSES = {'accepted', 'already_accepted', 'blocked', 'quota_blocked', 'failed', 'disabled', 'no_alert'}
+INDEX_EDITIONS = ('intraday_index', 'intraday_index_crash',
+                  'intraday_index_crash_4pct', 'intraday_index_crash_6pct')
+STATUSES = {'unverified', 'accepted', 'already_accepted', 'blocked', 'quota_blocked', 'failed', 'disabled', 'no_alert'}
 EDITIONS = {'morning', 'close', 'morning_unavailable', 'close_unavailable',
-            'intraday', 'intraday_risk', 'intraday_momentum'}
-SLOTS = ('morning', 'close', 'intraday', 'intraday_risk', 'intraday_momentum')
+            'intraday', 'intraday_risk', 'intraday_momentum'} | set(INDEX_EDITIONS)
+SLOTS = ('morning', 'close', 'intraday', 'intraday_risk', 'intraday_momentum') + INDEX_EDITIONS
 POLICY_CODES = {'non_weekday', 'market_closed', 'morning_window_expired', 'dispatch_window_not_open', 'brief_failed_before_send'}
 # Fixed codes emitted by send_line_alert, never arbitrary receipt/exception text.
 INTRADAY_REASON_STATUSES = {
@@ -24,13 +26,24 @@ INTRADAY_REASON_STATUSES = {
     'dispatch_gate': 'blocked',
 }
 
+# Index verification failures are diagnostic decisions, not benign no-alerts.
+INDEX_REASON_STATUSES = {
+    'alerts_disabled': 'disabled', 'master_switch_or_credentials': 'blocked',
+    'market_closed_or_outside_window': 'no_alert',
+    'decline_below_threshold': 'no_alert', 'dispatch_gate': 'blocked',
+    **{'index_' + code: 'unverified' for code in (
+        'source_unavailable', 'invalid_response', 'unavailable', 'identity_mismatch',
+        'stale_or_invalid_time', 'invalid_price', 'conflicting_quotes')},
+}
+
 
 def public_record(receipt, run_id, now):
     if not isinstance(receipt, dict) or not re.fullmatch(r'[1-9][0-9]{0,23}', str(run_id)):
         raise ValueError('Invalid LINE evidence')
     status, edition = receipt.get('status'), receipt.get('edition')
     if (status not in STATUSES or edition not in EDITIONS
-            or (status in {'disabled', 'no_alert'} and edition != 'intraday')):
+            or (status in {'disabled', 'no_alert'} and edition not in {'intraday', 'intraday_index'})
+            or (status == 'unverified' and edition != 'intraday_index')):
         raise ValueError('Invalid LINE decision')
     try:
         day = date.fromisoformat(receipt['date'])
@@ -58,6 +71,9 @@ def public_record(receipt, run_id, now):
     if (edition in {'intraday', 'intraday_risk', 'intraday_momentum'}
             and isinstance(reason_code, str)
             and INTRADAY_REASON_STATUSES.get(reason_code) == status):
+        result['reason_code'] = reason_code
+    if (edition in INDEX_EDITIONS and isinstance(reason_code, str)
+            and INDEX_REASON_STATUSES.get(reason_code) == status):
         result['reason_code'] = reason_code
     # Intentionally exclude request_id, recipient, body, reason, exception text,
     # environment and credentials, including arbitrary fields in older records.
