@@ -223,12 +223,49 @@ class LineStatusTests(unittest.TestCase):
                                    checked_at='2026-11-04T09:15:00+08:00'), '125', NOW)['editions']['close']
                 self.assertNotIn('accepted_attempt', row)
 
+    def test_cli_merges_multiple_receipts_without_private_fields(self):
+        root=Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(tmp);output=base/'status.json';index=base/'index.json';broad=base/'broad.json'
+            index.write_text(json.dumps(receipt(edition='intraday_index',status='no_alert',
+                http_status=None,reason_code='market_closed_or_outside_window',token='PRIVATE_TOKEN')))
+            broad.write_text(json.dumps(receipt(edition='intraday',status='blocked',
+                http_status=None,reason_code='live_gate',to='PRIVATE_RECIPIENT')))
+            result=subprocess.run([os.sys.executable,str(root/'scripts/publish_line_status.py'),
+                '--receipt',str(index),'--receipt',str(broad),'--run-id','123','--output',str(output)],
+                capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            published=json.loads(output.read_text())
+            self.assertEqual(set(published['editions']),{'intraday_index','intraday'})
+            self.assertEqual(published['editions']['intraday_index']['reason_code'],'market_closed_or_outside_window')
+            self.assertNotIn('PRIVATE',output.read_text())
+            self.assertTrue(all(not row['api_accepted'] and not row['delivery_confirmed']
+                                for row in published['editions'].values()))
+
+    def test_invalid_second_receipt_cannot_partially_replace_public_status(self):
+        root=Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(tmp);output=base/'status.json';valid=base/'valid.json';invalid=base/'invalid.json'
+            original=json.dumps(merge_status({},receipt(),'123',NOW));output.write_text(original)
+            valid.write_text(json.dumps(receipt(edition='intraday_index',status='unverified',
+                http_status=None,reason_code='index_invalid_price')))
+            invalid.write_text('{"token":"PRIVATE_TOKEN"}')
+            result=subprocess.run([os.sys.executable,str(root/'scripts/publish_line_status.py'),
+                '--receipt',str(valid),'--receipt',str(invalid),'--run-id','124','--output',str(output)],
+                capture_output=True,text=True)
+            self.assertNotEqual(result.returncode,0)
+            self.assertEqual(output.read_text(),original)
+            self.assertNotIn('PRIVATE',result.stdout+result.stderr)
+
+    def test_primary_publishes_index_even_if_broad_alert_step_never_produced_receipt(self):
+        self.verify_workflow_push_race('update-system.yml',index_only=True)
+
     def test_workflow_recovers_from_a_real_push_race_without_losing_market_data(self):
         for name in ('jei-daily-brief.yml', 'recover-stale-market-feed.yml', 'update-system.yml', 'jei-early-index-crash.yml'):
             with self.subTest(workflow=name):
                 self.verify_workflow_push_race(name)
 
-    def verify_workflow_push_race(self, name):
+    def verify_workflow_push_race(self, name, index_only=False):
         root = Path(__file__).resolve().parents[1]
         workflow = (root/'.github/workflows'/name).read_text()
         title = ('Publish public LINE decision without recipient or credentials'
@@ -263,6 +300,10 @@ class LineStatusTests(unittest.TestCase):
             slot = ('close' if name == 'jei-daily-brief.yml' else
                     'intraday_index_crash_6pct' if name == 'jei-early-index-crash.yml' else 'intraday_risk')
             raw = base/'receipt.json'; raw.write_text(json.dumps(receipt(edition=slot)))
+            index=base/'index.json'
+            index.write_text(json.dumps(receipt(edition='intraday_index',status='no_alert',
+                http_status=None,reason_code='market_closed_or_outside_window')))
+            if index_only:raw.unlink()
             if slot != 'close':
                 git('checkout', '--detach', cwd=work)
             bin_path = base/'bin'; bin_path.mkdir()
@@ -277,12 +318,15 @@ class LineStatusTests(unittest.TestCase):
             result = subprocess.run(['bash', '-eo', 'pipefail', '-c', script], cwd=work, capture_output=True, text=True,
                 env={**os.environ, 'PATH':str(bin_path)+os.pathsep+os.environ['PATH'], 'REAL_GIT':real_git,
                      'RACE_MARKER':str(base/'raced'), 'COMPETITOR':str(competitor),
-                     'LINE_RECEIPT_PATH':str(raw), 'LINE_RUN_ID':'123'})
+                     'LINE_RECEIPT_PATH':str(raw), 'LINE_INDEX_RECEIPT_PATH':str(index), 'LINE_RUN_ID':'123'})
             self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
             self.assertTrue((base/'raced').exists())
             self.assertEqual(json.loads((work/'remote/system.json').read_text())['marker'], 'new-main')
             merged = json.loads((work/'remote/line_status.json').read_text())
-            self.assertEqual(set(merged['editions']), {'morning', slot})
+            expected={'morning'}
+            if not index_only:expected.add(slot)
+            if name=='update-system.yml':expected.add('intraday_index')
+            self.assertEqual(set(merged['editions']),expected)
             self.assertEqual(git('rev-parse', 'HEAD', cwd=work), git('rev-parse', 'refs/heads/main', cwd=bare))
 
 
