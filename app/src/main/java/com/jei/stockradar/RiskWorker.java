@@ -121,7 +121,14 @@ public class RiskWorker extends Worker {
     static boolean trustedExecutedTrade(JSONObject row, long now) {
         if (row == null || !taipeiMarketOpen(now)) return false;
         if (!taipeiFormat("yyyyMMdd", now).equals(row.optString("d", ""))) return false;
-        if (!(toDouble(row.optString("z", "")) > 0) || !(toDouble(row.optString("y", "")) > 0)) return false;
+        // A quoted price without positive executed volume is not a trade.
+        // Keep all alert arithmetic finite; parseDouble also accepts Infinity.
+        double price = toDouble(row.optString("z", ""));
+        double previous = toDouble(row.optString("y", ""));
+        double volume = toDouble(row.optString("v", ""));
+        if (!Double.isFinite(price) || price <= 0
+                || !Double.isFinite(previous) || previous <= 0
+                || !Double.isFinite(volume) || volume <= 0) return false;
         String clock = row.optString("t", "");
         if (!clock.matches("\\d{1,2}:\\d{2}(?::\\d{2})?")) return false;
         try {
