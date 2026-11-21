@@ -22,6 +22,38 @@ def receipt(**changes):
 
 
 class LineStatusTests(unittest.TestCase):
+    def test_index_receipts_keep_each_tier_and_strip_private_fields(self):
+        from scripts.publish_line_status import merge_policy_status
+        result={}
+        editions=('intraday_index_crash','intraday_index_crash_4pct','intraday_index_crash_6pct')
+        for i,edition in enumerate(editions):
+            result=merge_status(result,receipt(edition=edition,token='PRIVATE_TOKEN',
+                to='PRIVATE_RECIPIENT',delivery_confirmed=True),'12'+str(i+1),NOW)
+        for reason,status in (('market_closed_or_outside_window','no_alert'),
+                              ('index_stale_or_invalid_time','unverified'),
+                              ('index_invalid_price','unverified'),
+                              ('index_source_unavailable','unverified'),
+                              ('alerts_disabled','disabled')):
+            with self.subTest(reason=reason):
+                result=merge_status(result,receipt(edition='intraday_index',status=status,
+                    http_status=None,reason_code=reason,reason='PRIVATE_TOKEN'),'125',NOW)
+                result=merge_policy_status(result,receipt(edition='morning',status='policy_skipped',
+                    record_kind='policy_check',policy_code='non_weekday'),'126',NOW)
+                for edition in editions:
+                    self.assertTrue(result['editions'][edition]['api_accepted'])
+                    self.assertFalse(result['editions'][edition]['delivery_confirmed'])
+                self.assertEqual(result['editions']['intraday_index']['reason_code'],reason)
+                self.assertFalse(result['editions']['intraday_index']['api_accepted'])
+                self.assertNotIn('PRIVATE',str(result))
+        row=merge_status({},receipt(edition='intraday_index',status='unverified',http_status=None,
+            reason_code='PRIVATE_TOKEN'),'125',NOW)['editions']['intraday_index']
+        self.assertNotIn('reason_code',row)
+        for edition in ('close','intraday_risk','intraday_index_crash_6pct'):
+            with self.assertRaises(ValueError):
+                merge_status({},receipt(edition=edition,status='unverified',http_status=None),'123',NOW)
+        with self.assertRaises(ValueError):
+            merge_status({},receipt(edition='intraday_index_crash',http_status=500),'123',NOW)
+
     def test_preserves_allowlisted_intraday_blocking_reasons_across_merges(self):
         from scripts.publish_line_status import merge_policy_status
         for reason, status in (
@@ -192,7 +224,7 @@ class LineStatusTests(unittest.TestCase):
                 self.assertNotIn('accepted_attempt', row)
 
     def test_workflow_recovers_from_a_real_push_race_without_losing_market_data(self):
-        for name in ('jei-daily-brief.yml', 'recover-stale-market-feed.yml', 'update-system.yml'):
+        for name in ('jei-daily-brief.yml', 'recover-stale-market-feed.yml', 'update-system.yml', 'jei-early-index-crash.yml'):
             with self.subTest(workflow=name):
                 self.verify_workflow_push_race(name)
 
@@ -228,9 +260,10 @@ class LineStatusTests(unittest.TestCase):
             (competitor/'remote/line_status.json').write_text(json.dumps(morning))
             (competitor/'remote/system.json').write_text('{"marker":"new-main"}')
             git('add', '.', cwd=competitor); git('commit', '-m', 'concurrent market update', cwd=competitor)
-            slot = 'close' if name == 'jei-daily-brief.yml' else 'intraday_risk'
+            slot = ('close' if name == 'jei-daily-brief.yml' else
+                    'intraday_index_crash_6pct' if name == 'jei-early-index-crash.yml' else 'intraday_risk')
             raw = base/'receipt.json'; raw.write_text(json.dumps(receipt(edition=slot)))
-            if slot == 'intraday_risk':
+            if slot != 'close':
                 git('checkout', '--detach', cwd=work)
             bin_path = base/'bin'; bin_path.mkdir()
             wrapper = bin_path/'git'
