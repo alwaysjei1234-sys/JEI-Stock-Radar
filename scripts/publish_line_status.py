@@ -188,16 +188,21 @@ def merge_policy_status(document, receipt, run_id, now=None):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--receipt', required=True)
+    parser.add_argument('--receipt', required=True, action='append',
+                        help='Receipt path; repeat to publish one workflow batch')
     parser.add_argument('--run-id', required=True)
     parser.add_argument('--output', default='remote/line_status.json')
     args = parser.parse_args()
     output = Path(args.output)
     try:
         prior = json.loads(output.read_text(encoding='utf-8')) if output.exists() else {}
-        receipt = json.loads(Path(args.receipt).read_text(encoding='utf-8'))
-        merge=merge_policy_status if receipt.get('record_kind')=='policy_check' else merge_status
-        result = merge(prior, receipt, args.run_id)
+        # Validate and sanitize the complete batch before writing anything.
+        # A single --receipt retains the original CLI behavior.
+        result = prior
+        for path in args.receipt:
+            receipt = json.loads(Path(path).read_text(encoding='utf-8'))
+            merge=merge_policy_status if receipt.get('record_kind')=='policy_check' else merge_status
+            result = merge(result, receipt, args.run_id)
     except (OSError, ValueError, TypeError, AttributeError):
         raise SystemExit('LINE status evidence unavailable or invalid; nothing published') from None
     output.parent.mkdir(parents=True, exist_ok=True)
