@@ -14,6 +14,24 @@ class AuditTests(unittest.TestCase):
         self.assertIn('invalid_data_date', result['issues'])
         self.assertIn('missing:market', result['issues'])
 
+    def test_invalid_risk_numbers_fail_without_nonstandard_json(self):
+        from tools.jei_actions_audit import REQUIRED
+        for level in ('red', 'orange', 'green'):
+            for score in (True, False, float('nan'), float('inf'), -float('inf'),
+                          -1, 101, '100', None):
+                with self.subTest(level=level, score=score):
+                    feed = {key: {} for key in REQUIRED}
+                    feed.update(data_date='2026-11-20', risk={'level': level, 'score': score})
+                    result = inspect_feed(feed, now=OFF_SESSION)
+                    self.assertEqual(result['status'], 'failed')
+                    self.assertIn('invalid_risk_score', result['critical_issues'])
+                    self.assertIsNone(result['risk_score'])
+                    json.dumps(result, allow_nan=False)
+        for score in (0, 55.5, 100):
+            feed = {key: {} for key in REQUIRED}
+            feed.update(data_date='2026-11-20', risk={'level': 'red', 'score': score})
+            self.assertEqual(inspect_feed(feed, now=OFF_SESSION)['status'], 'ok')
+
     def test_red_risk_not_claim_delivery(self):
         feed = {'data_date':'2026-11-06', 'risk':{'level':'red','score':100}, 'market':{}}
         report = build_report(feed, 'abc')
