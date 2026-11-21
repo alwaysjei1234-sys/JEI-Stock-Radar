@@ -26,6 +26,28 @@ def quote(**changes):
 
 
 class EarlyIndexCrashTests(unittest.TestCase):
+    def test_closed_or_offhours_dispatch_never_waits_for_mis(self):
+        env={"JEI_LINE_ENABLED":"true","JEI_LINE_ALERTS_ENABLED":"true",
+             "JEI_LINE_CHANNEL_ACCESS_TOKEN":SECRET,"JEI_LINE_USER_ID":RECIPIENT}
+        for at in (
+            datetime(2026,11,21,9,27,tzinfo=TZ),
+            datetime(2026,12,25,9,27,tzinfo=TZ),
+            datetime(2026,11,16,8,59,tzinfo=TZ),
+            datetime(2026,11,16,13,30,tzinfo=TZ),
+            datetime(2026,11,16,13,31,tzinfo=TZ),
+        ):
+            with self.subTest(at=at):
+                receipt={"status":"failed","delivery_confirmed":False}
+                with patch.dict(os.environ,env,clear=True),patch.object(
+                    siren,"fetch_mis_channels",side_effect=OSError("MIS unavailable")) as fetch,patch.object(
+                    siren,"push") as push:
+                    siren.dispatch(at,receipt)
+                    fetch.assert_not_called()
+                    push.assert_not_called()
+                self.assertEqual((receipt['status'],receipt['reason_code']),
+                                 ('no_alert','market_closed_or_outside_window'))
+                self.assertFalse(receipt['delivery_confirmed'])
+
     def test_fast_3pct_drop_uses_only_verified_current_taiex_trade(self):
         report,reason=siren.report_for_index([quote()],NOW)
         self.assertEqual(reason,"verified_index_decline")
@@ -34,6 +56,24 @@ class EarlyIndexCrashTests(unittest.TestCase):
         self.assertIn("-3.00%",report["blocks"][0]["items"][0])
         self.assertIn("尚非全市場",report["blocks"][1]["items"][0])
         self.assertNotIn("個股將下跌",str(report))
+
+    def test_closed_cli_writes_no_alert_receipt_without_network_or_push(self):
+        env={"JEI_LINE_ENABLED":"true","JEI_LINE_ALERTS_ENABLED":"true",
+             "JEI_LINE_CHANNEL_ACCESS_TOKEN":SECRET,"JEI_LINE_USER_ID":RECIPIENT}
+        with tempfile.TemporaryDirectory() as tmp:
+            dest=Path(tmp)/'receipt.json'
+            with patch.dict(os.environ,env,clear=True),patch.object(siren,'datetime') as clock,patch.object(
+                siren,'fetch_mis_channels') as fetch,patch.object(siren,'push') as push,contextlib.redirect_stdout(io.StringIO()):
+                clock.now.return_value=datetime(2026,11,21,16,0,tzinfo=TZ)
+                siren.main(['--result-path',str(dest)])
+                fetch.assert_not_called()
+                push.assert_not_called()
+            result=json.loads(dest.read_text())
+            self.assertEqual((result['status'],result['reason_code']),
+                             ('no_alert','market_closed_or_outside_window'))
+            self.assertFalse(result['delivery_confirmed'])
+            self.assertNotIn(SECRET,str(result))
+            self.assertNotIn(RECIPIENT,str(result))
 
     def test_exact_two_percent_triggers_but_smaller_drop_does_not(self):
         self.assertIsNotNone(siren.report_for_index([quote(z="980")],NOW)[0])

@@ -25,13 +25,19 @@ INDEX_EXTREME_THRESHOLD_PCT = -6.0
 INDEX_CHANNEL = "tse_t00.tw"
 
 
-def report_for_index(messages, now):
+def index_window_open(now):
     if now.tzinfo is None or now.utcoffset() is None:
         raise ValueError("timestamp must have timezone")
     local = now.astimezone(TAIPEI)
     minute = local.hour * 60 + local.minute
-    if local.weekday() > 4 or closure_reason(local.date()) is not None or not 540 <= minute < 810:
+    return (local.weekday() < 5 and closure_reason(local.date()) is None
+            and 540 <= minute < 810)
+
+
+def report_for_index(messages, now):
+    if not index_window_open(now):
         return None, "market_closed_or_outside_window"
+    local = now.astimezone(TAIPEI)
     pct, status = mis_index_change(messages, local)
     if status != "verified" or pct is None:
         return None, "index_" + status
@@ -73,6 +79,11 @@ def dispatch(now, receipt):
     recipient = os.getenv("JEI_LINE_USER_ID", "")
     if os.getenv("JEI_LINE_ENABLED", "").lower() != "true" or not token or not recipient:
         receipt.update(status="blocked", reason_code="master_switch_or_credentials")
+        return
+    # This helper also runs before the full market updater. A closed session
+    # must not wait for MIS or be mislabeled as an index-source failure.
+    if not index_window_open(now):
+        receipt.update(status="no_alert", reason_code="market_closed_or_outside_window")
         return
     try:
         messages = fetch_mis_channels([INDEX_CHANNEL])
