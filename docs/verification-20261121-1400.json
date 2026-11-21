@@ -1,0 +1,808 @@
+{
+  "checked_at_utc": "2026-11-21T06:09:11Z",
+  "timezone": "Asia/Taipei",
+  "starting_main": "d166dc85389c6b37e354c6a7b00243e921fc7883",
+  "ending_main": "94535b2f4e2c5516d2e493b477c7de9069b5c048",
+  "source_fix_count": 1,
+  "data_change_count": 1,
+  "source_files": [
+    "app/src/main/java/com/jei/stockradar/MainActivity.java",
+    ".github/workflows/android-debug.yml"
+  ],
+  "test_files": [
+    "tests/test_native_http_body_budget.py"
+  ],
+  "pr": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/pull/210",
+  "new_main_commit": "48f5993842c043e8ec5b837170059d7951852b64",
+  "diagnosis": [
+    "AndroidhttpGetusedreadLinewithidle-onlyreadtimeout;anHTTPbodythatcontinuouslytrickleswithoutnewlinecouldholdsharedI/Oworkersanddelayfallbackindefinitely.",
+    "ActualmethodbodyreplayedagainstlocalHTTPserver:oldpathdelayedfallback1983mswithtestbudgetscaledto300ms;newpath319mslocal/318msPRCI. PositiveUTF8,oversizedbodyrejectionandlaterretryallpassed.",
+    "Readboundedchunks,check12sbodyprogressdeadline,cap16MiB,closeconnectiononalloutcomes. Existingconnect/header/idlewaitsremainseparate;nohardwhole-requestdeadlineclaim.",
+    "Firstpost-fixharnesscompilefailedbecauseitsimports omittedTimeUnit;readconcretejavacerror,addedmissingtestharnessimportandreranallrelatedchecks.",
+    "PostmergeformalreleasefailedbeforecompilewithOriginalV42keystorecredentialsmissing;debugbuildpassed. Noalternatekeyorstableupdatewaspublished."
+  ],
+  "paths_explored": [
+    {
+      "path": "A socket-idle timeout/readLine",
+      "adopted": false,
+      "result": "FreshrealHTTP testdemonstratedcontinuousbytesavoididleexpiryanddelayfallback1983ms;merelyshorteningidletimeoutdoesnotaddprogressbudget."
+    },
+    {
+      "path": "B bytechunks withbodyprogressbudgetandsizecap",
+      "adopted": true,
+      "result": "Actualhelper/httpGet/getRemoteStaticcontrolflowpassed localandPRCIrealHTTPtest;existingqueue/fallback/retrycasespassed;fullDebugAPKbuilt."
+    },
+    {
+      "path": "C fullHTTPclientmigration",
+      "adopted": false,
+      "result": "Notneededforboundedbodyprogressfix;currentOkHttpcanonicalmetadata/docsverificationincomplete,dependencycostandAndroidcompatibilitynotvalidated."
+    }
+  ],
+  "market": {
+    "source_requests": [
+      {
+        "source": "TWSE",
+        "url": "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL",
+        "started_at": "2026-11-21T14:04:47.634604+08:00",
+        "finished_at": "2026-11-21T14:04:56.139949+08:00",
+        "exit_code": 0,
+        "bytes": 323782,
+        "sha256": "bfe0f33b74da1dcaa836561bc0552f8a6d35b38253ed280bcac1397745ad687e",
+        "error": ""
+      },
+      {
+        "source": "TPEx",
+        "url": "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes?date=2026%2F11%2F20&id=&response=json",
+        "started_at": "2026-11-21T14:04:47.635080+08:00",
+        "finished_at": "2026-11-21T14:05:00.199788+08:00",
+        "exit_code": 0,
+        "bytes": 2007641,
+        "sha256": "0878593e9ad2a4802ed24444ea6e61303e50edcb1b04c44fb8695533ffa10922",
+        "error": ""
+      }
+    ],
+    "data_date": "2026-11-20",
+    "live_verified": false,
+    "TWSE": {
+      "valid": 1090,
+      "matched": 1090,
+      "missing": [],
+      "mismatch": [],
+      "dates": [
+        "1151120"
+      ]
+    },
+    "TPEx": {
+      "valid": 883,
+      "matched": 883,
+      "missing": [],
+      "mismatch": [],
+      "dates": [
+        "2026-11-20"
+      ]
+    },
+    "checked_at": "2026-11-21T14:05:00.326073+08:00",
+    "coverage_note": "1973ordinaryequityclosesverified;feedclose_count1981includes8otherinstrumentsnotindividuallyrecheckedthisround."
+  },
+  "feed": {
+    "updated_at": "2026-11-20 23:06",
+    "market": {
+      "status": "紅燈防守",
+      "mode": "最近收盤",
+      "last_checked_at": "2026-11-21 00:59",
+      "index": {
+        "change_pct": -6.23,
+        "data_date": "2026-11-20",
+        "source": "TWSE MI_INDEX dated response",
+        "date_verified": true,
+        "checked_at": "2026-11-20 23:06"
+      },
+      "live_count": 0,
+      "close_count": 1981,
+      "live_coverage_pct": 0,
+      "live_valid": false,
+      "stale": true,
+      "historical_readonly": true,
+      "post_close_refresh": false,
+      "live_diagnostics": {
+        "attempted": false,
+        "market_open": false,
+        "quote_refresh_window": false,
+        "updater_time_taipei": "2026-11-21 00:59",
+        "valid_trades": 0,
+        "mis_stats": {},
+        "required_trades": 500,
+        "required_coverage_pct": 35,
+        "errors": [],
+        "reason": "官方休市，不更新即時行情"
+      },
+      "analysis_scope": {
+        "mode": "official_close",
+        "count": 1981,
+        "universe_count": 1981
+      },
+      "brief": "今日休市（週末例假日）｜最近有效收盤 2026-11-20｜歷史候選僅供研究，不是今日選股",
+      "market_data_as_of": "2026-11-20",
+      "session_status": "休市",
+      "no_new_picks": true,
+      "partial_live": {
+        "asof": "2026-11-21 00:59",
+        "verified_count": 0,
+        "coverage_pct": 0,
+        "complete": false,
+        "quotes": []
+      },
+      "candidate_readiness": "research_only",
+      "status_updated_at": "2026-11-21 00:59",
+      "session_reason": "週末例假日",
+      "next_expected_session": "2026-11-23"
+    },
+    "rewritten": false,
+    "reason": "Weekendclosure;retain11/20validclose. Source-dateageisnotintradaylatency;MISand5minserviceunverified."
+  },
+  "tests": {
+    "worktree_base": "d166dc85389c6b37e354c6a7b00243e921fc7883",
+    "tested_files_equal_postmerge_main": true,
+    "jvm_methods_passed": 5,
+    "jvm_scope": [
+      "1realHTTPbody/fallback/size/retryharness",
+      "2nativequeue/fallbackharnesses",
+      "1Androidrisksessiongate",
+      "1updatenotificationpermissionharness"
+    ],
+    "smoke_passed": 73,
+    "before_fix_fallback_ms": 1983,
+    "after_fix_local_ms": 319,
+    "after_fix_pr_ci_ms": 318,
+    "test_time_scale": "12secondidle/bodyvalues→300msand16MiB→64bytes;endpointaddressesloopback;productionread/fallbacklogicextractedunchanged.",
+    "body_budget_limitation": "Progressdeadlinecheckedbetweenreads;in-progresssocketreadandconnection/headerwaitsstillhaveownidletimeouts. NoAndroidhardwareorstrictwhole-calldeadlineproof."
+  },
+  "scope": "OneAndroidsourcefixmergedaftergreenPRtestsandDebugAPKbuild;notdeliveredthroughstableOTA.",
+  "artifact": {
+    "run_id": 44873975016,
+    "artifact_id": 14694993192,
+    "zip_sha256": "9ddf32cd16cb94c5dd1c8a10d8b12113442b185200dbe939c97d8beab9ed8166",
+    "source_commit": "48f5993842c043e8ec5b837170059d7951852b64",
+    "indexed_files_verified": 8,
+    "watchdog": {
+      "status": "STALE",
+      "reason": "heartbeat_expired",
+      "minutes_since_heartbeat": 4401.3,
+      "restart_possible": false,
+      "fallback": "github_actions",
+      "note": "Recent heartbeat is not a live Colab API check; free Colab cannot be forcibly restarted via this workflow.",
+      "drive_access": "authenticated"
+    },
+    "checkpoint_reused_groups": 5
+  },
+  "line": {
+    "updated_at": "2026-11-21T14:07:14+08:00",
+    "intraday": {
+      "date": "2026-11-21",
+      "edition": "intraday",
+      "checked_at": "2026-11-21T14:07:14+08:00",
+      "status": "blocked",
+      "api_accepted": false,
+      "delivery_confirmed": false,
+      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44874009947",
+      "reason_code": "live_gate"
+    },
+    "close": {
+      "date": "2026-11-20",
+      "edition": "close",
+      "checked_at": "2026-11-20T19:07:22+08:00",
+      "status": "accepted",
+      "api_accepted": true,
+      "delivery_confirmed": false,
+      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44724922329",
+      "http_status": 200,
+      "attempts": 1,
+      "accepted_attempt": {
+        "date": "2026-11-20",
+        "edition": "close",
+        "checked_at": "2026-11-20T19:07:22+08:00",
+        "status": "accepted",
+        "api_accepted": true,
+        "delivery_confirmed": false,
+        "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44724922329",
+        "http_status": 200,
+        "attempts": 1
+      }
+    },
+    "scheduled": true,
+    "eligible_today": false,
+    "api_accepted_today": false,
+    "phone_delivery_verified": false,
+    "classification": "Weekendlive_gateblocked;11/20closehistoricalHTTP200only."
+  },
+  "android": {
+    "public_update": {
+      "versionCode": 42,
+      "versionName": "3.9.19 RISK GUARD",
+      "uiVersion": "3.9.16-partial-quotes",
+      "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/releases/download/jei-latest/JEI_Stock_Radar_V3.apk",
+      "message": "Android 背景警報須驗證至少 500 檔且覆蓋至少 35%。APK 版本已核對，Android 實機仍待驗收。"
+    },
+    "pr_debug_artifact": {
+      "run_id": 44873797141,
+      "artifact_id": 14694379673,
+      "source_commit": "c2917e2d90116ea95dbf66854f238afb308371c0",
+      "zip_sha256": "74babccaa137e712ad31249e57238927f8a3bb608792b5cdad7034719771444f",
+      "apk_file": "app-debug.apk",
+      "apk_bytes": 2319686,
+      "apk_sha256": "135b01453fba32bc6155667df78c42173c285f8d98ce82c3b756865cf7ce3b71",
+      "versionCode": 43,
+      "versionName": "3.9.20",
+      "type": "DEBUG_ONLY_NOT_STABLE_OTA"
+    },
+    "postmerge_debug_build": "success",
+    "formal_release": "BLOCKED_ORIGINAL_SIGNER",
+    "formal_release_run": 44873975058,
+    "stable_manifest_changed": false,
+    "device_ota_verified": false,
+    "source_fix_delivered_to_existing_phone": false,
+    "required_setup_once": [
+      "JEI_STABLE_KEYSTORE_B64",
+      "JEI_STORE_PASSWORD",
+      "JEI_KEY_ALIAS",
+      "JEI_KEY_PASSWORD"
+    ],
+    "setup_note": "AtleastoneoriginalV42signercredentialmissing;existingsecretcontentsneverreadorprinted;donotgenerateanotherkey."
+  },
+  "colab": {
+    "public_coordination": {
+      "schema": 1,
+      "colab_status": "STALE",
+      "reason": "heartbeat_expired",
+      "evidence": "authenticated_google_drive_heartbeat",
+      "fallback": "github_actions",
+      "restart_possible": false,
+      "requested_action": "inspect_colab_manually_actions_fallback_active",
+      "colab_task": {
+        "kind": "audit_observed_picks",
+        "task_id": "observed-2026-11-20",
+        "official_day": "2026-11-20"
+      },
+      "colab_task_ack": null,
+      "colab_requested_audit": null,
+      "status_changed_at_utc": "2026-11-20T10:08:30.091805+00:00"
+    },
+    "direct_drive_visibility": "UNKNOWN",
+    "exact_name_results": 0,
+    "status": "COLAB_UNVERIFIED",
+    "authenticated_actions_watchdog": {
+      "status": "STALE",
+      "reason": "heartbeat_expired",
+      "minutes_since_heartbeat": 4401.3,
+      "restart_possible": false,
+      "fallback": "github_actions",
+      "note": "Recent heartbeat is not a live Colab API check; free Colab cannot be forcibly restarted via this workflow.",
+      "drive_access": "authenticated"
+    },
+    "actual_colab_execution_this_round": false,
+    "actions_fallback_run": 44873975016,
+    "force_restart": false
+  },
+  "performance": {
+    "historical_paper": {
+      "last_day": "2026-11-20",
+      "signals": 131,
+      "interval": [
+        "2026-10-13",
+        "2026-11-20"
+      ],
+      "fees": {
+        "buy_fee_rate": 0.001425,
+        "sell_fee_rate": 0.001425,
+        "sell_tax_rate": 0.003
+      },
+      "metrics": {
+        "fixed5": {
+          "closed": 113,
+          "wins": 25,
+          "win_rate_pct": 22.12,
+          "ci95": [
+            15.46,
+            30.62
+          ],
+          "mean_net_return_pct": -4.349,
+          "max_drawdown_pct": 44.86
+        },
+        "fixed7": {
+          "closed": 110,
+          "wins": 21,
+          "win_rate_pct": 19.09,
+          "ci95": [
+            12.84,
+            27.43
+          ],
+          "mean_net_return_pct": -4.499,
+          "max_drawdown_pct": 45.89
+        },
+        "fixed10": {
+          "closed": 102,
+          "wins": 14,
+          "win_rate_pct": 13.73,
+          "ci95": [
+            8.36,
+            21.73
+          ],
+          "mean_net_return_pct": -4.676,
+          "max_drawdown_pct": 39.097
+        },
+        "trailing": {
+          "closed": 94,
+          "wins": 16,
+          "win_rate_pct": 17.02,
+          "ci95": [
+            10.76,
+            25.87
+          ],
+          "mean_net_return_pct": -4.872,
+          "max_drawdown_pct": 36.67
+        }
+      },
+      "benchmark": null,
+      "qualified_oos": false,
+      "production_equals_starting_main": true
+    },
+    "prospective_frozen_signals": 20,
+    "mature_comparison_windows": 0,
+    "total_windows": 80,
+    "official_sessions_checked": 2,
+    "cohort_integrity": "PASS",
+    "qualified_oos_closed": 0,
+    "qualified_market_regimes": 0,
+    "threshold80_met": false,
+    "prospective_win_rate": null,
+    "prospective_net_expectancy": null,
+    "prospective_max_drawdown": null,
+    "benchmark": null,
+    "evidence": "INSUFFICIENT",
+    "win_rate_definition": "Profitableclosedtrades/allclosedtrades",
+    "strategy_rules_effective": "2026-11-19",
+    "strategy_families": "fixed5/fixed7/fixed10/trailinghistoricalpaper;preregisteredforwardclosecomparisonfrom11/19",
+    "scope": "Historicalclosepaperisresearchonly,correlatednotindependentOOSoractualfills;fees/taxestimated;slippagestressnotfullportfolio replay. Noqualifiedwalkforward/baselineproof."
+  },
+  "deployment": {
+    "merged": true,
+    "source_merge_sha": "48f5993842c043e8ec5b837170059d7951852b64",
+    "source_only_vercel": {
+      "id": "dpl_E4rvb6Pefms2gM9wLmqowx95aYAS",
+      "state": "CANCELED",
+      "reason": "IgnoredBuildStep"
+    },
+    "downstream_data_vercel": {
+      "id": "dpl_G6HQAnvCCJE6QqhAqotYoAysLJDz",
+      "sha": "94535b2f4e2c5516d2e493b477c7de9069b5c048",
+      "state": "READY"
+    },
+    "android_debug": "CI_SUCCESS",
+    "android_stable_ota": "NOT_PUBLISHED",
+    "manual_redeploy": false,
+    "url": "https://jei-stock-radar.vercel.app"
+  },
+  "acceptance": {
+    "denominator": 31,
+    "new_full_pass": 0,
+    "full_revalidation_completed": false,
+    "rows": [
+      {
+        "id": 1,
+        "requirement": "手機瀏覽器逾時處理",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪PR210合併48f5993，Android持續慢速本文不再無限等待readLine；實際JVM/HTTP回放1983→318ms（縮時測試），DebugAPK43成功。連線/表頭與單次idle等待仍獨立，正式簽章缺失，實機未驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false,
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 2,
+        "requirement": "休市與假日判斷",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "休市及錯誤日期負向測試通過。仍缺整年兩市場與臨時休市端到端資料。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 3,
+        "requirement": "開盤後自動恢復更新",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺本輪開盤自動恢復證據",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 4,
+        "requirement": "盤中每5分鐘更新及新鮮度",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "PR #202 盤中缺少live_diagnostics不再繞過時間戳稽核；本輪補強6項時鐘不穩定測試。實際5分鐘行情服務仍未驗收。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 5,
+        "requirement": "TWSE／TPEx／MIS交叉驗證",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪14:04–14:05重新取得TWSE1090及TPEx883普通股，11/20收盤1973筆全部與封存一致；MIS與盤中5分鐘服務待交易時段驗證。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false,
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 6,
+        "requirement": "缺漏、過期、異常資料保護",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪PR #204攔截零訊號價與零出場價，兩處除零錯誤改為BLOCKED原因；18項cohort、8項策略及30項pick測試通過，CLI兩種合成異常均輸出JSON及退出1。真實盤中及手機仍待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 7,
+        "requirement": "每日選股封存與歷史紀錄",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "PR #199 從最早當日主線 af326085 恢復11筆，保留原470筆；正常工具、前瞻稽核及正式站481筆讀回通過。新回呼封存流程44716912104成功。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 8,
+        "requirement": "模擬績效及交易日計算",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪新讀真實排程44828516220（06:23）成功，復原步驟確認無待補交易日；週末正確跳過新績效計算與發布。正式站帳本11/20、131訊號與main完全一致。仍缺下一有效交易日自動評估發布端到端證據，維持部分通過。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 9,
+        "requirement": "LINE盤前、盤中、盤後推播",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪PR209已合併16662d8，保留固定白名單未發送原因；82相關Python測試及Node通過。真實13:08Recovery44869434594→回執→main→VercelJSON讀回live_gate，APIaccepted與手機delivery仍false。未宣稱推播手機實收，整項仍BLOCKED。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 10,
+        "requirement": "GitHub、Vercel、Android串接",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR210實際DebugAPK43/3.9.20建置成功、PRartifactZIP與APK雜湊核對；主線Debug/Research/Smoke/Compute成功。正式簽章發布44873975058因原V42憑證缺失失敗，APK未發布、manifest仍42，手機OTA未驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false,
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 11,
+        "requirement": "持股成本、股數與分類",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "為保護隱私未讀私人部位；匯入持久化仍待裝置驗證",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 12,
+        "requirement": "持股權重與集中度",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺私人裝置集中度計算端到端驗收",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 13,
+        "requirement": "營收、毛利與獲利品質",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺逐欄公告日期與財報來源核對",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 14,
+        "requirement": "EPS與自由現金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "EPS與自由現金流完整來源驗收不足",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 15,
+        "requirement": "存貨、應收帳款異常",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "既有單元測試不等於全公司財報監測已實測",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 16,
+        "requirement": "同業、產業與估值",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同業估值自動比較未驗收",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 17,
+        "requirement": "法人與大戶資金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/13 正式法人 1,865 筆與雙交易所官方資料逐筆相符，大戶持股集中度與跨日趨勢待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 18,
+        "requirement": "強勢、震盪、轉弱情境",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "情境單元測試存在；實際資料端到端未驗",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 19,
+        "requirement": "模擬勝率、盈虧與回撤",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "帳本 318 筆中 285 缺來源證明、33 為重建。下一交易日收盤重播 3/7/15 日配對淨期望 −4.103%／−8.705%／−14.900%，合格 OOS 0。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 20,
+        "requirement": "每日續抱／減碼理由",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "公開信號存在；八模組與私人端決策未實機驗證",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 21,
+        "requirement": "主流資金與族群輪動",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同日雙市場法人欄位已對帳，跨日族群輪動與實機操作待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 22,
+        "requirement": "突破、妖股與潛力妖股",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "未放寬選股；未有完整前瞻有效性證據",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 23,
+        "requirement": "3–5個獨立來源財經新聞",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "來源去重及逐條新聞核實未完成",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 24,
+        "requirement": "券商報告、目標價與催化劑自動取得",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "免費券商目標價及催化劑自動取得未驗收",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 25,
+        "requirement": "AI多模型會診及失敗復原",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "正式健康GET及錯誤token401通過；未實際呼叫多模型",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 26,
+        "requirement": "個股決策儀表板與手機首頁",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪PR #208修正雲端績效刷新亂序覆蓋；4競爭/失敗/重試測試、14靜態資料對照及73smoke通過，合併前後390px手機網頁CI成功，正式頁面與測試版一致。Android實機仍待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 27,
+        "requirement": "大盤修正與逃命警示",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR #138 颱風與補假重播都攔截矛盾盤中高風險快照。真實交易日警報與手機實收待驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 28,
+        "requirement": "現金與當沖分開模擬",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "現股及當沖分開實際驗證未完成",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 29,
+        "requirement": "3／7／15／30／60交易日績效及策略調整",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪PR #203已合併；成熟虧損被改標pending/缺價/除權息的三種錯誤PASS均已重現並攔截，真正缺價與除權息排除測試通過。正式前瞻20訊號、0成熟比較窗，獨立OOS未驗。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      },
+      {
+        "id": 30,
+        "requirement": "自動測試、部署與缺陷追蹤",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR210全PR檢查綠燈後合併；新增真實HTTP本文期限/大小測試並接DebugCI，同時接既有nativequeue回放。合併後正式APK流程因原簽章憑證失敗，未宣稱全部CI成功。",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false,
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 31,
+        "requirement": "推薦顯示八大指標、AI與全球市場影響",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "八指標、多模型與全球影響整合未完整驗收",
+        "prior_evidence_as_of": "2026-11-15",
+        "current_round_full_e2e_reverified": false
+      }
+    ],
+    "status_counts": {
+      "PASS": 1,
+      "FAIL": 3,
+      "BLOCKED": 27
+    },
+    "full_pass_downgraded_this_round": 0,
+    "status_changes_this_round": []
+  },
+  "scheduling": {
+    "this_execution_pr_merged": 210,
+    "new_source_execution_records": true,
+    "next_actual_trigger_time": "UNKNOWN",
+    "blocker": "Cronconfigurationdoesnotproveanextactualexecutiontime;repositoryhourlycodingguarddoesnotproveactualrepair."
+  },
+  "next_blockers": [
+    "OriginalV42signercredentialsrequiredforstableupgrade;debugAPKcannotbecountedassuccessfulOTA.",
+    "AndroidphysicalWebView/networkbehaviourandwhole-requesttimingstillneeddeviceacceptance;headers/DNSnotcoveredbybodyprogressbudget.",
+    "Nexttradingsessionneededfor5minute/MISandriskalertactualdeliveryverification.",
+    "ColabauthenticatedDriveheartbeatremainsSTALE;directconnectorvisibilityUNKNOWN;noverifiedliveColabexecution.",
+    "QualifiedOOSclosed0;prospectivewindows0of80mature;benchmarkmissing."
+  ],
+  "ci": {
+    "pr_checks": [
+      {
+        "name": "Vercel Preview Comments",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/runs/136753922097"
+      },
+      {
+        "name": "node-tests",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873797178/job/136753919077"
+      },
+      {
+        "name": "smoke",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873797202/job/136753919013"
+      },
+      {
+        "name": "build-debug",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873797141/job/136753918722"
+      },
+      {
+        "name": "node-tests",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873794258/job/136753909194"
+      },
+      {
+        "name": "build-debug",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873794281/job/136753909107"
+      },
+      {
+        "name": "smoke",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873794262/job/136753908997"
+      }
+    ],
+    "pr_debug_run": 44873797141,
+    "pr_debug_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873797141",
+    "post_merge": [
+      {
+        "id": 44873975072,
+        "status": "completed",
+        "result": "success",
+        "sha": "48f5993842c043e8ec5b837170059d7951852b64",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873975072"
+      },
+      {
+        "id": 44873975031,
+        "status": "completed",
+        "result": "success",
+        "sha": "48f5993842c043e8ec5b837170059d7951852b64",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873975031"
+      },
+      {
+        "id": 44873975024,
+        "status": "completed",
+        "result": "success",
+        "sha": "48f5993842c043e8ec5b837170059d7951852b64",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873975024"
+      },
+      {
+        "id": 44873975016,
+        "status": "completed",
+        "result": "success",
+        "sha": "48f5993842c043e8ec5b837170059d7951852b64",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873975016"
+      },
+      {
+        "id": 44873975058,
+        "status": "completed",
+        "result": "failure",
+        "sha": "48f5993842c043e8ec5b837170059d7951852b64",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/44873975058"
+      }
+    ],
+    "all_pr_checks_green_before_merge": true,
+    "all_postmerge_checks_green": false,
+    "postmerge_release_failure": {
+      "job_id": 136754469321,
+      "step": "Restore originalV42signer fromprotectedsecret",
+      "error": "Original V42 keystore credentials missing; refusing incompatible update. Never generate another signer.",
+      "build_and_publication": "skipped"
+    },
+    "note": "SignedreleasecredentialfailureisnotreportedastestpassorsuccessfulAndroiddeployment."
+  },
+  "artifact_scope": "NewpostmergemainComputeZIPand8indexedhashesverified;GitHubActionsfallbackonly.",
+  "requirements_and_attachments": "Fixed31-rowledger/equalweightsretained;no newfullPASSandno90percentclaim. PriorrowsarenotfreshwholeE2Erevalidation. No newattachmentsread;privateholdingsnotpublished.",
+  "public_code_research": {
+    "official_reference": "https://developer.android.com/reference/java/net/URLConnection#setReadTimeout(int)",
+    "verified_finding": "Readtimeoutexpiresifdataunavailable;realHTTPregressiondemonstratedwhycontinuousbodyneedsseparateprogressbudget.",
+    "candidate": "https://github.com/square/okhttp",
+    "candidate_status": "CanonicalGitHubmetadatareturnedMovedPermanentlytoAPIrepository5152285;numericredirectendpointnotavailablethroughconnector;features/callsdocsURL404.",
+    "candidate_license": "NOT_VERIFIED_THIS_ROUND",
+    "candidate_last_maintenance": "UNKNOWN",
+    "adopted_external_code": false,
+    "adopted_dependency": false,
+    "reason": "MinimalexistingHttpURLConnectionbodyfixverifiedwithoutdependencymigration;fullclientmigrationrequiresprovenance/license/Androidcompatibilityvalidation.",
+    "test_method": "Real localHTTPtricklingbody,UTF8,oversize,retry;actualJavaHTTPandfallbackmethodbodies;CIJava17plusDebugAPKbuild",
+    "risk": "JVMtestsnotAndroidhardware;bodyprogressbudgetnotahardglobalcalltimeout."
+  },
+  "result": "本輪1項Android原始碼修復，PR210已合併；DebugAPK與相關CI成功。正式APK因原簽章缺失未發布，實機OTA未通過，驗收PASS增量0。",
+  "data_change_scope": "DownstreamLINEstatusbot94535b2; no manualmarket/holdings/OTAmanifest edits.",
+  "fix_head": "c2917e2d90116ea95dbf66854f238afb308371c0",
+  "execution_window_local": "2026-11-21 13:58–14:10"
+}
