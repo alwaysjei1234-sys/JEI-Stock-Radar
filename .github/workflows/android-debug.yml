@@ -7,6 +7,8 @@ on:
       - 'tests/smoke.cjs'
       - 'tests/test_android_risk_gate.py'
       - 'tests/test_android_update_notification.py'
+      - 'tests/test_native_http_body_budget.py'
+      - 'tests/test_native_refresh_queue.py'
       - '.github/workflows/android-debug.yml'
   push:
     paths:
@@ -46,6 +48,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_android_risk_gate.py' -v
       - name: Replay Android update permission and reminder dedup
         run: python -m unittest discover -s tests -p 'test_android_update_notification.py' -v
+      - name: Replay real static HTTP body timeout, fallback and queue recovery
+        run: |
+          python -m unittest discover -s tests -p 'test_native_http_body_budget.py' -v
+          python -m unittest discover -s tests -p 'test_native_refresh_queue.py' -v
       - name: Build debug APK
         run: gradle --no-daemon :app:assembleDebug
       - name: Verify built APK identity
