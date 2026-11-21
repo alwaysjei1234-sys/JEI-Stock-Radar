@@ -14,6 +14,15 @@ EDITIONS = {'morning', 'close', 'morning_unavailable', 'close_unavailable',
             'intraday', 'intraday_risk', 'intraday_momentum'}
 SLOTS = ('morning', 'close', 'intraday', 'intraday_risk', 'intraday_momentum')
 POLICY_CODES = {'non_weekday', 'market_closed', 'morning_window_expired', 'dispatch_window_not_open', 'brief_failed_before_send'}
+# Fixed codes emitted by send_line_alert, never arbitrary receipt/exception text.
+INTRADAY_REASON_STATUSES = {
+    'alerts_disabled': 'disabled',
+    'master_switch_or_credentials': 'blocked',
+    'feed_unreadable': 'blocked',
+    'live_gate': 'blocked',
+    'conditions_not_met': 'no_alert',
+    'dispatch_gate': 'blocked',
+}
 
 
 def public_record(receipt, run_id, now):
@@ -45,6 +54,11 @@ def public_record(receipt, run_id, now):
     attempts = receipt.get('attempts')
     if type(attempts) is int and 1 <= attempts <= 3:
         result['attempts'] = attempts
+    reason_code = receipt.get('reason_code')
+    if (edition in {'intraday', 'intraday_risk', 'intraday_momentum'}
+            and isinstance(reason_code, str)
+            and INTRADAY_REASON_STATUSES.get(reason_code) == status):
+        result['reason_code'] = reason_code
     # Intentionally exclude request_id, recipient, body, reason, exception text,
     # environment and credentials, including arbitrary fields in older records.
     return result

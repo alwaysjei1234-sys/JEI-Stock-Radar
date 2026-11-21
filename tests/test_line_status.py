@@ -22,6 +22,48 @@ def receipt(**changes):
 
 
 class LineStatusTests(unittest.TestCase):
+    def test_preserves_allowlisted_intraday_blocking_reasons_across_merges(self):
+        from scripts.publish_line_status import merge_policy_status
+        for reason, status in (
+            ('alerts_disabled', 'disabled'),
+            ('master_switch_or_credentials', 'blocked'),
+            ('feed_unreadable', 'blocked'), ('live_gate', 'blocked'),
+            ('conditions_not_met', 'no_alert'), ('dispatch_gate', 'blocked'),
+        ):
+            with self.subTest(reason=reason):
+                item = receipt(edition='intraday', status=status, http_status=None,
+                               reason_code=reason, reason='PRIVATE_TOKEN')
+                result = merge_status({}, item, '123', NOW)
+                self.assertEqual(result['editions']['intraday'].get('reason_code'), reason)
+                result = merge_status(result, receipt(), '124', NOW)
+                result = merge_policy_status(result, receipt(
+                    edition='morning', status='policy_skipped', record_kind='policy_check',
+                    policy_code='non_weekday'), '125', NOW)
+                self.assertEqual(result['editions']['intraday'].get('reason_code'), reason)
+                self.assertNotIn('PRIVATE_TOKEN', str(result))
+
+    def test_rejects_unknown_or_contradictory_reason_codes_without_leaking(self):
+        for code in ('PRIVATE_TOKEN', {'token': 'PRIVATE_TOKEN'}, ['live_gate'], None):
+            with self.subTest(code=code):
+                row = merge_status({}, receipt(edition='intraday', status='blocked',
+                    http_status=None, reason_code=code), '123', NOW)['editions']['intraday']
+                self.assertNotIn('reason_code', row)
+                self.assertNotIn('PRIVATE_TOKEN', str(row))
+        for changes in ({'status': 'accepted', 'http_status': 200},
+                        {'status': 'no_alert', 'http_status': None},
+                        {'edition': 'close', 'status': 'blocked', 'http_status': None}):
+            item = receipt(edition='intraday', reason_code='live_gate') | changes
+            row = merge_status({}, item, '123', NOW)['editions'][item['edition']]
+            self.assertNotIn('reason_code', row)
+
+    def test_dispatch_gate_preserves_exact_risk_and_momentum_edition(self):
+        for edition in ('intraday_risk', 'intraday_momentum'):
+            row = merge_status({}, receipt(edition=edition, status='blocked',
+                http_status=None, reason_code='dispatch_gate'), '123', NOW)['editions'][edition]
+            self.assertEqual(row['reason_code'], 'dispatch_gate')
+            self.assertFalse(row['api_accepted'])
+            self.assertFalse(row['delivery_confirmed'])
+
     def test_acceptance_never_claims_phone_delivery_or_copies_private_fields(self):
         original = receipt(delivery_confirmed=True, to='U'+'a'*32, token='SECRET',
                            request_id='PRIVATE_ID', reason='SECRET', payload={'cost': 100})
