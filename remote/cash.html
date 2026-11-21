@@ -168,10 +168,14 @@ function renderCloudEvidence(data){
  }
 }
 
+let CLOUD_PERFORMANCE_REQUEST=0;
 async function loadCloudPerformance(){
+ const request=++CLOUD_PERFORMANCE_REQUEST;
  const status=$('cloudStatus'),body=$('cloudRows');body.replaceChildren();$('cloudEvidenceRows').replaceChildren();status.textContent='正在讀取 GitHub 每日策略紀錄…';
  try{
-  const data=await readJeiStatic('performance'),d=String(data.last_processed_day||'');
+  const data=await readJeiStatic('performance');
+  if(request!==CLOUD_PERFORMANCE_REQUEST)return;
+  const d=String(data.last_processed_day||'');
   status.textContent='已更新交易日 '+(d||'未知')+'｜當日紀錄 '+(Number(data.latest_signal_count)||0)+' 檔訊號｜每策略模擬本金 '+money(data.capital_per_strategy||1000000)+(d!==twDay()?'｜非今日行情（休市日可能正常）':'');
   renderStrategyComparison(data);
   renderCloudEvidence(data);
@@ -184,7 +188,7 @@ async function loadCloudPerformance(){
    [label,String(s.closed??0),String(s.open_positions??0),money(Number(s.realized_net_ntd)||0),win,equity,ret,drawdown].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});
    body.appendChild(tr);
   }
- }catch(e){status.textContent='尚未取得雲端模擬資料：'+String(e?.message||e);$('cloudCompare').textContent='資料無法核對，暫停四策略排名。';$('cloudKpiStatus').textContent='資料失敗';$('cloudKpiLeader').textContent='--';$('cloudKpiDate').textContent='--'}
+ }catch(e){if(request!==CLOUD_PERFORMANCE_REQUEST)return;status.textContent='尚未取得雲端模擬資料：'+String(e?.message||e);$('cloudCompare').textContent='資料無法核對，暫停四策略排名。';$('cloudKpiStatus').textContent='資料失敗';$('cloudKpiLeader').textContent='--';$('cloudKpiDate').textContent='--'}
 }
 $('cloudRefresh').onclick=loadCloudPerformance;
 loadCloudPerformance();

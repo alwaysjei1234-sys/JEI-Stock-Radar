@@ -88,6 +88,8 @@ jobs:
           python-version: '3.11'
       - name: Dashboard smoke tests
         run: node tests/dashboard_smoke.test.cjs
+      - name: Reject stale cloud refresh completions
+        run: node tests/cash_cloud_refresh_race.test.cjs
       - name: Validate cash data equally on web and Android callbacks
         run: node tests/cash_static_validation.test.cjs
       - name: Shared strategy quality wiring (home, AI, paper, cash)
