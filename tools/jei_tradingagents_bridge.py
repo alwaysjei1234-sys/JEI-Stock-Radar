@@ -11,10 +11,8 @@ import json
 import math
 import os
 import re
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
-from zoneinfo import ZoneInfo
-from datetime import datetime
 
 MIN_CLOSE_COVERAGE = 500
 ALLOWED_MARKETS = ("TWSE", "TPEx", "US")
@@ -28,7 +26,7 @@ ROLES = {
     "investment_plan": "research_debate",
     "final_trade_decision": "portfolio_decision",
 }
-TAIPEI = ZoneInfo("Asia/Taipei")
+TAIPEI = timezone(timedelta(hours=8))  # Current Taiwan civil time; works on Windows without tzdata.
 
 
 def _date(value):
