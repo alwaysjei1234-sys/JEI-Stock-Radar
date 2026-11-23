@@ -4,7 +4,10 @@ on:
     paths:
       - 'config/jei_ai_trader_profile.json'
       - 'tools/jei_ai_trader_modes.py'
+      - 'tools/jei_tradingagents_bridge.py'
+      - 'docs/JEI_TRADINGAGENTS_RESEARCH_PILOT.md'
       - 'tests/test_jei_ai_trader_modes.py'
+      - 'tests/test_jei_tradingagents_bridge.py'
       - '.github/workflows/jei-ai-trader-modes.yml'
   workflow_dispatch:
 jobs:
@@ -16,3 +19,4 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m unittest discover -s tests -p 'test_jei_ai_trader_modes.py' -v
+      - run: python -m unittest discover -s tests -p 'test_jei_tradingagents_bridge.py' -v
