@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-24T10:26:24+08:00",
+  "updated_at": "2026-11-24T14:42:01+08:00",
   "editions": {
     "morning": {
       "date": "2026-11-23",
@@ -49,11 +49,11 @@
     "intraday": {
       "date": "2026-11-24",
       "edition": "intraday",
-      "checked_at": "2026-11-24T06:22:58+08:00",
+      "checked_at": "2026-11-24T14:42:01+08:00",
       "status": "blocked",
       "api_accepted": false,
       "delivery_confirmed": false,
-      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/45279110824",
+      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/45342118632",
       "reason_code": "live_gate"
     },
     "intraday_risk": {
@@ -78,16 +78,6 @@
         "attempts": 1
       }
     },
-    "intraday_index": {
-      "date": "2026-11-24",
-      "edition": "intraday_index",
-      "checked_at": "2026-11-24T04:35:30+08:00",
-      "status": "no_alert",
-      "api_accepted": false,
-      "delivery_confirmed": false,
-      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/45260929348",
-      "reason_code": "market_closed_or_outside_window"
-    },
     "intraday_momentum": {
       "date": "2026-11-24",
       "edition": "intraday_momentum",
@@ -109,6 +99,16 @@
         "http_status": 200,
         "attempts": 1
       }
+    },
+    "intraday_index": {
+      "date": "2026-11-24",
+      "edition": "intraday_index",
+      "checked_at": "2026-11-24T04:35:30+08:00",
+      "status": "no_alert",
+      "api_accepted": false,
+      "delivery_confirmed": false,
+      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/45260929348",
+      "reason_code": "market_closed_or_outside_window"
     }
   },
   "policy_checks": {
