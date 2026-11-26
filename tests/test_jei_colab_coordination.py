@@ -133,6 +133,33 @@ class ColabCoordinationTests(unittest.TestCase):
         self.assertIn("github.event_name == 'schedule'", workflow)
         self.assertNotIn("git push --force", workflow)
 
+    def test_primary_compute_and_checkpoint_precede_optional_drive_access(self):
+        workflow = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
+        primary = workflow.split("\n  optional_colab_review:\n", 1)[0]
+        self.assertLess(primary.index("Execute portable observed-performance computation"),
+                        primary.index("Read Colab heartbeat from authorized Drive"))
+        self.assertLess(primary.index("Persist checkpoint for future runs"),
+                        primary.index("Read Colab heartbeat from authorized Drive"))
+        self.assertNotIn("python -m unittest discover -s tests -p 'test_pick*.py'", primary)
+        drive = primary.split("Read Colab heartbeat from authorized Drive", 1)[1].split("      - name:", 1)[0]
+        self.assertIn("continue-on-error: true", drive)
+
+    def test_optional_review_cannot_block_publication_and_is_main_only(self):
+        workflow = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
+        primary, rest = workflow.split("\n  optional_colab_review:\n", 1)
+        optional, publisher = rest.split("\n  publish_coordination:\n", 1)
+        self.assertIn("needs: audit", optional)
+        self.assertIn("needs.audit.outputs.colab_review_authorized == 'true'", optional)
+        self.assertIn("needs: audit", publisher)
+        self.assertNotIn("optional_colab_review", publisher)
+        self.assertNotIn("secrets.", optional)
+        auth = primary.split("Authorize optional Colab review (main only)", 1)[1].split("      - name:", 1)[0]
+        self.assertIn("github.ref == 'refs/heads/main'", auth)
+        self.assertIn("github.event_name != 'pull_request'", auth)
+        self.assertIn("authorized=false", auth)
+        self.assertIn("continue-on-error: true", auth)
+        self.assertIn("github.event_name == 'workflow_dispatch'", publisher)
+
 
 if __name__ == "__main__":
     unittest.main()
