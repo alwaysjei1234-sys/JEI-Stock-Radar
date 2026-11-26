@@ -10,7 +10,7 @@ import datetime as dt
 import json
 import re
 from pathlib import Path
-from tools.jei_colab_heartbeat import observed_snapshot_digest
+from tools.jei_colab_heartbeat import observed_snapshot_digest, audit_observed_picks
 
 VALID_STATES = {"RECENT_HEARTBEAT", "STALE", "UNKNOWN"}
 STATUS_KEYS = ("schema", "colab_status", "reason", "evidence", "fallback",
@@ -97,6 +97,14 @@ def merge_status(watchdog, previous=None, now=None, picks=None, *, versioned=Fal
     task = task_from_picks(picks, versioned=versioned)
     fresh["colab_task"] = task
     fresh["colab_task_ack"] = safe_task_ack(watchdog, task)
+    if versioned and fresh["colab_task_ack"] is not None:
+        ack = watchdog["colab_task_result"]
+        expected = audit_observed_picks(task, fetcher=lambda: json.dumps({"latest_official_day": picks["latest_official_day"], "groups": picks["groups"]}, ensure_ascii=True).encode("utf-8"))
+        keys = ("eligible_aggregates", "underperforming_aggregates")
+        if any(type(ack.get(k)) is not int or ack[k] != expected[k] for k in keys):
+            fresh["colab_task_ack"] = None
+        else:
+            fresh["colab_task_ack"]["aggregate_match"] = True
     fresh["colab_requested_audit"] = (
         "review_pick_quality"
         if isinstance(watchdog, dict) and watchdog.get("status") == "RECENT_HEARTBEAT"
