@@ -3,6 +3,7 @@
 Not a distributed lock: use a local disk, never a Drive/FUSE/network share.
 The deterministic audit remains available independently of model completion.
 """
+from contextlib import closing, contextmanager
 import hashlib
 import math
 import sqlite3
@@ -26,7 +27,7 @@ class JobStore:
     def __init__(self, path):
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self._connect() as db:
+        with self._transaction() as db:
             db.execute("""CREATE TABLE IF NOT EXISTS jobs (
                 key TEXT PRIMARY KEY, status TEXT NOT NULL, token TEXT,
                 lease_until REAL NOT NULL, attempts INTEGER NOT NULL,
@@ -36,6 +37,12 @@ class JobStore:
         db = sqlite3.connect(str(self.path), timeout=5)
         db.row_factory = sqlite3.Row
         return db
+
+    @contextmanager
+    def _transaction(self):
+        with closing(self._connect()) as db:
+            with db:
+                yield db
 
     def claim(self, key, *, now=None):
         now = time.time() if now is None else now
