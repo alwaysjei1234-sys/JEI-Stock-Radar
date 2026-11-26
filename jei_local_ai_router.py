@@ -33,7 +33,7 @@ def local_ready():
 
 def route(*, data_class="restricted", enabled=False, local_available=False,
           colab_coordination=None, colab_heartbeat_verified=False,
-          colab_task_supported=False):
+          colab_task_supported=False, task_kind=None):
     """Return a routing decision, never invoke any backend.
 
     Public classification must be explicit. Unknown classes fail closed.
@@ -49,10 +49,11 @@ def route(*, data_class="restricted", enabled=False, local_available=False,
     # Published status alone is not proof of freshness. The caller must
     # independently verify a recent authenticated heartbeat and task support.
     if (isinstance(colab_coordination, dict)
-            and colab_coordination.get("colab_status") == "ACTIVE"
+            and colab_coordination.get("colab_status") == "RECENT_HEARTBEAT"
             and colab_coordination.get("evidence") == "authenticated_google_drive_heartbeat"
             and colab_heartbeat_verified is True
-            and colab_task_supported is True):
+            and colab_task_supported is True
+            and task_kind == "audit_observed_picks"):
         return "colab_candidate"
     return "existing_cloud_pipeline"
 
@@ -76,38 +77,51 @@ class RoutingTests(unittest.TestCase):
                                  else "existing_cloud_pipeline")
 
     def test_colab_candidate_requires_all_gates(self):
-        coord = {"colab_status": "ACTIVE",
+        coord = {"colab_status": "RECENT_HEARTBEAT",
                  "evidence": "authenticated_google_drive_heartbeat"}
         for verified in (False, True):
             for supported in (False, True):
                 self.assertEqual(route(data_class="public", enabled=True,
                                        colab_coordination=coord,
                                        colab_heartbeat_verified=verified,
-                                       colab_task_supported=supported),
+                                       colab_task_supported=supported,
+                                       task_kind="audit_observed_picks"),
                                  "colab_candidate" if verified and supported
                                  else "existing_cloud_pipeline")
 
     def test_stale_unknown_or_untrusted_colab_falls_back(self):
         for coord in (None, {}, {"colab_status": "STALE",
                                  "evidence": "authenticated_google_drive_heartbeat"},
-                      {"colab_status": "ACTIVE", "evidence": "unknown"}):
+                      {"colab_status": "RECENT_HEARTBEAT", "evidence": "unknown"}):
             self.assertEqual(route(data_class="public", enabled=True,
                                    colab_coordination=coord,
                                    colab_heartbeat_verified=True,
-                                   colab_task_supported=True),
+                                   colab_task_supported=True,
+                                   task_kind="audit_observed_picks"),
                              "existing_cloud_pipeline")
 
     def test_local_first_and_restricted_never_cloud(self):
         opts = dict(enabled=True, local_available=True,
-                    colab_coordination={"colab_status": "ACTIVE",
+                    colab_coordination={"colab_status": "RECENT_HEARTBEAT",
                         "evidence": "authenticated_google_drive_heartbeat"},
-                    colab_heartbeat_verified=True, colab_task_supported=True)
+                    colab_heartbeat_verified=True, colab_task_supported=True,
+                    task_kind="audit_observed_picks")
         self.assertEqual(route(data_class="public", **opts), "local_candidate")
         self.assertEqual(route(data_class="restricted", **opts), "hold_restricted")
         opts["local_available"] = False
         self.assertEqual(route(data_class="restricted", **opts), "hold_restricted")
         opts["enabled"] = False
         self.assertEqual(route(data_class="public", **opts), "existing_cloud_pipeline")
+
+    def test_unsupported_colab_task(self):
+        coord = {"colab_status": "RECENT_HEARTBEAT",
+                 "evidence": "authenticated_google_drive_heartbeat"}
+        for kind in (None, "llm_summary", "arbitrary_code"):
+            self.assertEqual(route(data_class="public", enabled=True,
+                                   colab_coordination=coord,
+                                   colab_heartbeat_verified=True,
+                                   colab_task_supported=True, task_kind=kind),
+                             "existing_cloud_pipeline")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
