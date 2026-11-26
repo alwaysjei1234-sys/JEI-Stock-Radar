@@ -10,6 +10,7 @@ import datetime as dt
 import json
 import re
 from pathlib import Path
+from tools.jei_colab_heartbeat import observed_snapshot_digest
 
 VALID_STATES = {"RECENT_HEARTBEAT", "STALE", "UNKNOWN"}
 STATUS_KEYS = ("schema", "colab_status", "reason", "evidence", "fallback",
@@ -50,7 +51,7 @@ def sanitized_status(watchdog):
     }
 
 
-def task_from_picks(picks):
+def task_from_picks(picks, *, versioned=False):
     """Invite a running Colab to independently re-evaluate observed aggregates.
 
     Once per official trading date, never arbitrary shell/code instructions.
@@ -65,7 +66,13 @@ def task_from_picks(picks):
         dt.date.fromisoformat(day)
     except ValueError:
         return None
-    return {"kind": "audit_observed_picks", "task_id": "observed-" + day,
+    task_id = "observed-" + day
+    if versioned:
+        try:
+            task_id += "-" + observed_snapshot_digest(picks)
+        except (TypeError, ValueError, KeyError):
+            return None
+    return {"kind": "audit_observed_picks", "task_id": task_id,
             "official_day": day}
 
 
@@ -82,19 +89,20 @@ def safe_task_ack(watchdog, task):
     return {"task_id": task["task_id"], "status": "reported_not_independently_attested"}
 
 
-def merge_status(watchdog, previous=None, now=None, picks=None):
+def merge_status(watchdog, previous=None, now=None, picks=None, *, versioned=False):
     now = now or dt.datetime.now(dt.timezone.utc)
     if now.tzinfo is None:
         raise ValueError("timezone required")
     fresh = sanitized_status(watchdog)
-    task = task_from_picks(picks)
+    task = task_from_picks(picks, versioned=versioned)
     fresh["colab_task"] = task
     fresh["colab_task_ack"] = safe_task_ack(watchdog, task)
     fresh["colab_requested_audit"] = (
         "review_pick_quality"
         if isinstance(watchdog, dict) and watchdog.get("status") == "RECENT_HEARTBEAT"
         and watchdog.get("drive_access") == "authenticated"
-        and watchdog.get("colab_request") == "review_pick_quality" else None
+        and watchdog.get("colab_request") == "review_pick_quality"
+        and (not versioned or fresh["colab_task_ack"] is not None) else None
     )
     if isinstance(previous, dict) and all(previous.get(k) == fresh[k] for k in STATUS_KEYS):
         old_date = previous.get("status_changed_at_utc")
@@ -126,7 +134,7 @@ def main():
         picks = json.loads(Path(args.picks).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         picks = None
-    result = merge_status(watchdog, previous, picks=picks)
+    result = merge_status(watchdog, previous, picks=picks, versioned=True)
     dest = Path(args.output)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
