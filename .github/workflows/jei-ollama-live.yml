@@ -31,7 +31,7 @@ jobs:
           sha256sum "$RUNNER_TEMP/ollama.tar.zst"
           tar --zstd -xf "$RUNNER_TEMP/ollama.tar.zst" -C "$RUNNER_TEMP/jei-ollama"
           echo "$RUNNER_TEMP/jei-ollama/bin" >> "$GITHUB_PATH"
-      - name: Start loopback server and pull real Qwen3 4B
+      - name: Start loopback server and pull real Qwen2.5 3B
         shell: bash
         run: |
           set -euo pipefail
@@ -42,7 +42,7 @@ jobs:
             sleep 1
           done
           curl --silent --fail --max-time 5 http://127.0.0.1:11434/api/version
-          timeout 300 ollama pull qwen3:4b
+          timeout 300 ollama pull qwen2.5:3b
           ollama list
       - name: Execute actual live public manifest and local model acceptance
         run: python -m tools.jei_ollama_live_acceptance
