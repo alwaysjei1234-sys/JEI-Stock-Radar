@@ -8,7 +8,7 @@ Ollama cloud features disabled). Never expose the Ollama port to the Internet.
 import argparse
 import json
 import unittest
-from urllib.request import HTTPRedirectHandler, Request, build_opener
+from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 MODEL = "qwen3:4b"
 TAGS_URL = "http://127.0.0.1:11434/api/tags"
@@ -20,7 +20,7 @@ class NoRedirect(HTTPRedirectHandler):
 def local_ready():
     """Read only installed model names; no user data is transmitted."""
     try:
-        with build_opener(NoRedirect()).open(Request(TAGS_URL), timeout=2) as res:
+        with build_opener(ProxyHandler({}), NoRedirect()).open(Request(TAGS_URL), timeout=2) as res:
             raw = res.read(1024 * 1024 + 1)
             if len(raw) > 1024 * 1024:
                 return False
