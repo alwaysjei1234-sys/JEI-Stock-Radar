@@ -4,6 +4,8 @@ Actions and Colab retain their existing independent deterministic audit.
 The optional Ollama narrative is secondary; no AI output affects the audit.
 """
 import argparse
+import hashlib
+import sqlite3
 import json
 import os
 import tempfile
@@ -13,6 +15,7 @@ from urllib.request import ProxyHandler, Request, build_opener
 from jei_local_ai_router import MODEL, NoRedirect, route
 from tools.jei_colab_coordination import merge_status, task_from_picks
 from tools.jei_colab_heartbeat import audit_observed_picks
+from tools.jei_hybrid_jobs import JobStore, job_key
 
 MAX_BYTES = 2_000_000
 
@@ -43,7 +46,7 @@ def local_summary(aggregate):
     return answer.strip()
 
 def run_audit(raw, *, enabled=False, local_available=False, watchdog=None,
-              summarize=local_summary):
+              summarize=local_summary, job_store=None):
     if not isinstance(raw, bytes) or len(raw) > MAX_BYTES:
         raise ValueError("invalid input size")
     picks = json.loads(raw)
@@ -66,12 +69,19 @@ def run_audit(raw, *, enabled=False, local_available=False, watchdog=None,
               "colab_status": coordination["colab_status"],
               "colab_ack": coordination["colab_task_ack"],
               "dispatch_performed": False,
-              "narrative_status": "not_requested"}
+              "narrative_status": "not_requested", "narrative_source": None}
     if decision == "local_candidate":
         try:
-            result["narrative"] = summarize(observed)
+            if job_store is None:
+                result["narrative"] = summarize(observed)
+                result["narrative_source"] = "model"
+            else:
+                engine = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+                key = job_key(raw, MODEL, engine)
+                result["narrative"], result["narrative_source"] = (
+                    job_store.summarize_once(key, observed, summarize))
             result["narrative_status"] = "local_model_returned_unverified_text"
-        except (OSError, ValueError, TypeError, KeyError, AttributeError):
+        except (OSError, ValueError, TypeError, KeyError, AttributeError, sqlite3.Error):
             result["narrative_status"] = "local_failed_deterministic_audit_retained"
             result["routing_candidate"] = route(
                 data_class="public", enabled=enabled, local_available=False,
@@ -86,6 +96,8 @@ def main():
                         help="opt in only after local/offline model setup is verified")
     parser.add_argument("--check-colab", action="store_true",
                         help="read current authorized Drive heartbeat if configured")
+    parser.add_argument("--job-db", default="audit-output/hybrid_jobs.sqlite3",
+                        help="persistent local disk only; never sync this database across devices")
     args = parser.parse_args()
     with Path("remote/pick_validation.json").open("rb") as f:
         raw = f.read(MAX_BYTES + 1)
@@ -97,9 +109,16 @@ def main():
                               os.environ.get("JEI_DRIVE_SERVICE_ACCOUNT_JSON"),
                               str(Path(d) / "watchdog.json"))
     from jei_local_ai_router import local_ready
+    available = args.local_ai and local_ready()
+    job_store = None
+    if available:
+        try:
+            job_store = JobStore(args.job_db)
+        except (OSError, sqlite3.Error):
+            available = False  # never run without the requested persistent guard
     result = run_audit(raw, enabled=args.local_ai or args.check_colab,
-                       local_available=args.local_ai and local_ready(),
-                       watchdog=watchdog)
+                       local_available=available,
+                       watchdog=watchdog, job_store=job_store)
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
