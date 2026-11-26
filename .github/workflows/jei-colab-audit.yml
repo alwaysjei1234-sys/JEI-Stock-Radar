@@ -112,11 +112,16 @@ jobs:
           set -euo pipefail
           if python - <<'PY'
           import json
+          from tools.jei_colab_coordination import merge_status
           with open("audit-output/colab_watchdog.json", encoding="utf-8") as source:
               status = json.load(source)
+          with open("remote/pick_validation.json", encoding="utf-8") as source:
+              picks = json.load(source)
+          coordinated = merge_status(status, picks=picks, versioned=True)
           authorized = (status.get("drive_access") == "authenticated" and
                         status.get("status") == "RECENT_HEARTBEAT" and
-                        status.get("colab_request") == "review_pick_quality")
+                        status.get("colab_request") == "review_pick_quality" and
+                        coordinated["colab_requested_audit"] == "review_pick_quality")
           raise SystemExit(0 if authorized else 1)
           PY
           then
@@ -211,6 +216,24 @@ jobs:
           set -euo pipefail
           test -s audit-output/colab_coordination.json
           python -m json.tool audit-output/colab_coordination.json >/dev/null
+          matches_current_snapshot() {
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          from tools.jei_colab_coordination import publish_matches_current_snapshot
+          candidate = json.loads(Path("audit-output/colab_coordination.json").read_text())
+          picks = json.loads(Path("remote/pick_validation.json").read_text())
+          try:
+              current = json.loads(Path("remote/colab_coordination.json").read_text())
+          except (OSError, ValueError):
+              current = None
+          raise SystemExit(0 if publish_matches_current_snapshot(candidate, current, picks) else 1)
+          PY
+          }
+          if ! matches_current_snapshot; then
+            echo "Skipping superseded or invalid coordination artifact"
+            exit 0
+          fi
           cp audit-output/colab_coordination.json remote/colab_coordination.json
           if git diff --quiet -- remote/colab_coordination.json && git ls-files --error-unmatch remote/colab_coordination.json >/dev/null 2>&1; then
             echo "Colab state unchanged; no repository write"
@@ -224,6 +247,10 @@ jobs:
             if git push origin HEAD:main; then exit 0; fi
             git fetch origin main
             git reset --hard origin/main
+            if ! matches_current_snapshot; then
+              echo "Newer snapshot or coordination state won the race; skipping old artifact"
+              exit 0
+            fi
             cp audit-output/colab_coordination.json remote/colab_coordination.json
             if git diff --quiet -- remote/colab_coordination.json; then
               echo "Handoff state was already published by another runner"
