@@ -1,5 +1,21 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
+// The report producer uses Python round(..., 2). At a mathematically
+// exact tie use half-even rather than JS toFixed's half-away rounding.
+// Work with integer win counts to avoid binary subtraction at 0.01.
+function winRateCents(wins, count){
+ const numerator=10000*wins;
+ const lower=Math.floor(numerator/count);
+ const remainder=numerator%count;
+ if(2*remainder<count)return lower;
+ if(2*remainder>count)return lower+1;
+ return lower+(lower%2);
+}
+assert.equal(winRateCents(10,64),1562,'15.625% half-even regression');
+assert.equal(winRateCents(30,64),4688,'46.875% half-even regression');
+assert.equal(winRateCents(1,3),3333,'non-tie rounding regression');
+assert.equal(winRateCents(0,64),0);
+assert.equal(winRateCents(64,64),10000);
 const data=JSON.parse(fs.readFileSync('remote/pick_validation.json','utf8'));
 assert.ok(Array.isArray(data.picks),'missing frozen picks');
 assert.equal(data.total_frozen_picks,data.picks.length,'archive count mismatch');
@@ -84,7 +100,8 @@ for(const [group,byHorizon] of Object.entries(data.groups)){
   const avg=returns.reduce((a,b)=>a+b,0)/returns.length;
   const mid=Math.floor(returns.length/2);
   const median=returns.length%2?returns[mid]:(returns[mid-1]+returns[mid])/2;
-  assert.ok(Math.abs(summary.win_rate_pct-round(100*wins/returns.length,2))<=0.01,'win rate mismatch: '+group+'/'+horizon);
+  assert.ok(Number.isFinite(summary.win_rate_pct)&&Math.abs(summary.win_rate_pct*100-Math.round(summary.win_rate_pct*100))<1e-8,'invalid win rate precision: '+group+'/'+horizon);
+  assert.equal(Math.round(summary.win_rate_pct*100),winRateCents(wins,returns.length),'win rate mismatch: '+group+'/'+horizon);
   assert.ok(Math.abs(summary.avg_estimated_net_pct-round(avg,3))<=0.001,'average return mismatch: '+group+'/'+horizon);
   assert.ok(Math.abs(summary.median_estimated_net_pct-round(median,3))<=0.001,'median return mismatch: '+group+'/'+horizon);
   assert.equal(summary.best_estimated_net_pct,returns[returns.length-1],'best return mismatch: '+group+'/'+horizon);
