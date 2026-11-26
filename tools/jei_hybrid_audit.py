@@ -50,12 +50,12 @@ def run_audit(raw, *, enabled=False, local_available=False, watchdog=None,
     if not isinstance(raw, bytes) or len(raw) > MAX_BYTES:
         raise ValueError("invalid input size")
     picks = json.loads(raw)
-    task = task_from_picks(picks)
+    task = task_from_picks(picks, versioned=True)
     if not task:
         raise ValueError("invalid public audit task")
     # Execute existing deterministic computation even when Colab is offline.
     observed = audit_observed_picks(task, fetcher=lambda: raw)
-    coordination = merge_status(watchdog, picks=picks)
+    coordination = merge_status(watchdog, picks=picks, versioned=True)
     recent = (isinstance(watchdog, dict)
               and watchdog.get("drive_access") == "authenticated"
               and watchdog.get("status") == "RECENT_HEARTBEAT")
