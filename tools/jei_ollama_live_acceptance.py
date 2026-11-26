@@ -17,6 +17,8 @@ def main():
         elapsed = time.monotonic()-start
         if result.get("status") != "receipt_saved" or result.get("narrative_source") != "model":
             print(json.dumps({"real_model_verified":False,"result":result}))
+            if result.get("status") == "receipt_saved":
+                print(Path(result["receipt"]).read_text(encoding="utf-8"))
             raise RuntimeError("real model response missing")
         receipt = json.loads(Path(result["receipt"]).read_text(encoding="utf-8"))
         if not receipt.get("narrative") or receipt.get("uploaded") is not False:
