@@ -28,12 +28,17 @@ def summary_counts(aggregate):
     return counts
 
 def validate_summary_response(result, counts):
-    if not isinstance(result, dict) or result.get("model") != MODEL or result.get("done") is not True or result.get("done_reason") != "stop":
+    if not isinstance(result, dict) or result.get("model") != MODEL or result.get("done") is not True:
         raise ValueError("incomplete_model_response")
+    if result.get("done_reason") != "stop":
+        raise ValueError("model_token_limit" if result.get("done_reason") == "length" else "unexpected_done_reason")
     message = result.get("message")
     if not isinstance(message, dict) or not isinstance(message.get("content"), str):
         raise ValueError("invalid_model_message")
-    payload = json.loads(message["content"])
+    try:
+        payload = json.loads(message["content"])
+    except ValueError:
+        raise ValueError("invalid_model_json") from None
     n, weak = counts.values()
     expected = "no_samples" if n == 0 else "all_weak" if weak == n else "none_weak" if weak == 0 else "some_weak"
     if (not isinstance(payload, dict) or set(payload) != {"eligible_aggregates", "underperforming_aggregates", "classification"}
@@ -52,10 +57,13 @@ def local_summary(aggregate):
               "properties":{"eligible_aggregates":{"type":"integer"},
                             "underperforming_aggregates":{"type":"integer"},
                             "classification":{"type":"string","enum":["no_samples","all_weak","none_weak","some_weak"]}}}
-    body = {"model": MODEL, "stream": False, "think": False, "format": schema,
-        "messages": [{"role":"system","content":"Return only JSON. Copy both integer counts exactly. Classification: no_samples if eligible is zero; all_weak if weak equals eligible and eligible > 0; none_weak if weak is zero and eligible > 0; otherwise some_weak. /no_think"},
+    body = {"model": MODEL, "stream": False, "format": schema,
+        "messages": [{"role":"system","content":"Return only JSON. Copy both integer counts exactly. Classification: no_samples if eligible is zero; all_weak if weak equals eligible and eligible > 0; none_weak if weak is zero and eligible > 0; otherwise some_weak."},
                      {"role":"user","content":json.dumps(counts)}],
         "options":{"num_predict":256,"temperature":0}}
+    if MODEL.startswith("qwen3:"):
+        body["think"] = False
+        body["messages"][-1]["content"] += " /no_think"
     request = Request("http://127.0.0.1:11434/api/chat",
                       data=json.dumps(body).encode(), method="POST",
                       headers={"Content-Type": "application/json"})
@@ -107,6 +115,9 @@ def run_audit(raw, *, enabled=False, local_available=False, watchdog=None,
             result["narrative_status"] = "local_model_returned_unverified_text"
         except (OSError, ValueError, TypeError, KeyError, AttributeError, sqlite3.Error) as exc:
             result["narrative_error_type"] = type(exc).__name__
+            safe_codes = {"incomplete_model_response", "model_token_limit", "unexpected_done_reason",
+                          "invalid_model_message", "invalid_model_json", "incorrect_model_classification"}
+            result["narrative_error_code"] = str(exc) if isinstance(exc, ValueError) and str(exc) in safe_codes else "other"
             result["narrative_status"] = "local_failed_deterministic_audit_retained"
             result["routing_candidate"] = route(
                 data_class="public", enabled=enabled, local_available=False,
