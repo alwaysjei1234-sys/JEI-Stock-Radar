@@ -26,7 +26,7 @@ def local_summary(aggregate):
               ("eligible_aggregates", "underperforming_aggregates")}
     if any(type(v) is not int or v < 0 for v in counts.values()):
         raise ValueError("invalid counts")
-    body = {"model": MODEL, "stream": False, "messages": [
+    body = {"model": MODEL, "stream": False, "think": False, "messages": [
         {"role": "system", "content": "用繁體中文簡短解釋統計，不得推測勝率或提供買賣建議。這不是獨立樣本外回測。"},
         {"role": "user", "content": json.dumps(counts)}],
         "options": {"num_predict": 160}}
@@ -42,7 +42,7 @@ def local_summary(aggregate):
         raise ValueError("unexpected model or incomplete reply")
     answer = result["message"]["content"]
     if not isinstance(answer, str) or not answer.strip() or len(answer) > 4000:
-        raise ValueError("invalid reply")
+        raise ValueError("empty_or_invalid_model_content")
     return answer.strip()
 
 def run_audit(raw, *, enabled=False, local_available=False, watchdog=None,
@@ -84,7 +84,8 @@ def run_audit(raw, *, enabled=False, local_available=False, watchdog=None,
                 result["narrative"], result["narrative_source"] = (
                     job_store.summarize_once(key, observed, summarize))
             result["narrative_status"] = "local_model_returned_unverified_text"
-        except (OSError, ValueError, TypeError, KeyError, AttributeError, sqlite3.Error):
+        except (OSError, ValueError, TypeError, KeyError, AttributeError, sqlite3.Error) as exc:
+            result["narrative_error_type"] = type(exc).__name__
             result["narrative_status"] = "local_failed_deterministic_audit_retained"
             result["routing_candidate"] = route(
                 data_class="public", enabled=enabled, local_available=False,
