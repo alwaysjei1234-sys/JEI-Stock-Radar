@@ -115,6 +115,33 @@ def merge_status(watchdog, previous=None, now=None, picks=None, *, versioned=Fal
     return {**fresh, "status_changed_at_utc": now.astimezone(dt.timezone.utc).isoformat()}
 
 
+def publish_matches_current_snapshot(candidate, current, picks):
+    """Fail closed when a delayed Actions artifact would roll back coordination."""
+    expected = task_from_picks(picks, versioned=True)
+    if (not expected or not isinstance(candidate, dict)
+            or candidate.get("colab_task") != expected):
+        return False
+    def stamp(value):
+        try:
+            parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+            return parsed if parsed.tzinfo is not None else None
+        except (TypeError, ValueError, AttributeError):
+            return None
+    candidate_at = stamp(candidate.get("status_changed_at_utc"))
+    if candidate_at is None:
+        return False
+    if not isinstance(current, dict):
+        return True
+    current_at = stamp(current.get("status_changed_at_utc"))
+    if current_at is None:
+        return True
+    if candidate_at < current_at:
+        return False
+    if candidate_at == current_at and candidate != current:
+        return False
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--watchdog", default="audit-output/colab_watchdog.json")
