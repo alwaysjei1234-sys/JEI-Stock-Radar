@@ -1,0 +1,38 @@
+name: JEI Live Public Task Pull
+on:
+  push:
+    branches: ['experiment/ollama-live-20261127']
+    paths:
+      - '.github/workflows/jei-live-public-pull.yml'
+permissions:
+  contents: read
+jobs:
+  live-pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read real main manifest and public snapshot, execute deterministic task
+        run: python -m tools.jei_hybrid_worker
+      - name: Verify immutable local receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          paths = list(Path("audit-output/hybrid-receipts").glob("*-deterministic.json"))
+          assert len(paths)==1
+          result=json.loads(paths[0].read_text())
+          assert result["observed"]["status"]=="completed"
+          assert result["observed"]["task_id"]==result["task_id"]
+          assert result["uploaded"] is False
+          assert result["narrative_source"] is None
+          print(json.dumps({"live_public_task_pull_verified": True, **result},ensure_ascii=False))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-public-task-receipt
+          path: audit-output/hybrid-receipts/
+          retention-days: 7
