@@ -57,6 +57,8 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      colab_review_authorized: ${{ steps.colab_review.outputs.authorized }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -88,57 +90,18 @@ jobs:
         run: python -m tools.jei_shared_compute --provider github_actions --source-commit "$GITHUB_SHA" --output-dir audit-output
       - name: Verify Colab stall watchdog
         run: python -m unittest discover -s tests -p 'test_jei_colab_watchdog.py' -v
-      - name: Assess accessible Colab heartbeat (UNKNOWN when unavailable)
-        run: python -m tools.jei_colab_watchdog --output audit-output/colab_watchdog.json
       - name: Verify live Colab heartbeat producer
         run: python -m unittest discover -s tests -p 'test_jei_colab_heartbeat.py' -v
       - name: Verify resumable checkpoints
         run: python -m unittest discover -s tests -p 'test_jei_batch_checkpoint.py' -v
       - name: Verify credential-free Google Drive error diagnostics
         run: python -m unittest discover -s tests -p 'test_jei_drive_heartbeat_ingest.py' -v
-      - name: Read Colab heartbeat from authorized Drive (if configured)
-        # Optional Drive access must not block the GitHub Actions compute fallback.
-        continue-on-error: true
-        env:
-          JEI_DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.JEI_DRIVE_SERVICE_ACCOUNT_JSON }}
-          JEI_COLAB_HEARTBEAT_FILE_ID: ${{ vars.JEI_COLAB_HEARTBEAT_FILE_ID }}
-        run: |
-          if [ -n "$JEI_DRIVE_SERVICE_ACCOUNT_JSON" ] && [ -n "$JEI_COLAB_HEARTBEAT_FILE_ID" ]; then
-            python -m pip install google-auth requests
-          fi
-          python -m tools.jei_drive_heartbeat_ingest --output audit-output/colab_watchdog.json
-      - name: Execute read-only verification requested by a live Colab heartbeat
-        shell: bash
-        run: |
-          set -euo pipefail
-          if python - <<'PY'
-          import json
-          from tools.jei_colab_coordination import merge_status
-          with open("audit-output/colab_watchdog.json", encoding="utf-8") as source:
-              status = json.load(source)
-          with open("remote/pick_validation.json", encoding="utf-8") as source:
-              picks = json.load(source)
-          coordinated = merge_status(status, picks=picks, versioned=True)
-          authorized = (status.get("drive_access") == "authenticated" and
-                        status.get("status") == "RECENT_HEARTBEAT" and
-                        status.get("colab_request") == "review_pick_quality" and
-                        coordinated["colab_requested_audit"] == "review_pick_quality")
-          raise SystemExit(0 if authorized else 1)
-          PY
-          then
-            echo "Colab requested verified pick quality regression"
-            python -m unittest discover -s tests -p 'test_pick*.py' -v
-          else
-            echo "No authenticated recent Colab review request; scheduled compute continues"
-          fi
       - name: Validate bidirectional coordination and no-false-restart logic
         run: python -m unittest discover -s tests -p 'test_jei_colab_coordination.py' -v
       - name: Verify 10 simulated reciprocal Colab/Actions handoffs
         run: python -m unittest discover -s tests -p 'test_jei_colab_10_roundtrips.py' -v
       - name: Validate versioned task and result matching
         run: python -m unittest discover -s tests -p 'test_jei_colab_versioned_bridge.py' -v
-      - name: Produce public, credential-free Colab handoff state
-        run: python -m tools.jei_colab_coordination --watchdog audit-output/colab_watchdog.json --previous remote/colab_coordination.json --output audit-output/colab_coordination.json
       - name: Restore checkpoint from prior workflow runs
         id: checkpoint_restore
         uses: actions/cache/restore@v4
@@ -169,6 +132,48 @@ jobs:
         with:
           path: audit-output/observed_checkpoint.json
           key: jei-observed-${{ runner.os }}-${{ hashFiles('remote/pick_validation.json', 'tools/jei_shared_compute.py', 'tools/jei_resumable_observed.py', 'tools/jei_batch_checkpoint.py') }}-${{ github.run_id }}
+      - name: Assess accessible Colab heartbeat (UNKNOWN when unavailable)
+        run: python -m tools.jei_colab_watchdog --output audit-output/colab_watchdog.json
+      - name: Read Colab heartbeat from authorized Drive (if configured)
+        # Optional Drive access must not block the GitHub Actions compute fallback.
+        continue-on-error: true
+        env:
+          JEI_DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.JEI_DRIVE_SERVICE_ACCOUNT_JSON }}
+          JEI_COLAB_HEARTBEAT_FILE_ID: ${{ vars.JEI_COLAB_HEARTBEAT_FILE_ID }}
+        run: |
+          if [ -n "$JEI_DRIVE_SERVICE_ACCOUNT_JSON" ] && [ -n "$JEI_COLAB_HEARTBEAT_FILE_ID" ]; then
+            python -m pip install google-auth requests
+          fi
+          python -m tools.jei_drive_heartbeat_ingest --output audit-output/colab_watchdog.json
+      - name: Authorize optional Colab review (main only)
+        id: colab_review
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          if python - <<'PY'
+          import json
+          from tools.jei_colab_coordination import merge_status
+          with open("audit-output/colab_watchdog.json", encoding="utf-8") as source:
+              status = json.load(source)
+          with open("remote/pick_validation.json", encoding="utf-8") as source:
+              picks = json.load(source)
+          coordinated = merge_status(status, picks=picks, versioned=True)
+          authorized = (status.get("drive_access") == "authenticated" and
+                        status.get("status") == "RECENT_HEARTBEAT" and
+                        status.get("colab_request") == "review_pick_quality" and
+                        coordinated["colab_requested_audit"] == "review_pick_quality")
+          raise SystemExit(0 if authorized else 1)
+          PY
+          then
+            echo "authorized=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "authorized=false" >> "$GITHUB_OUTPUT"
+            echo "No authenticated recent Colab review request; scheduled compute continues"
+          fi
+      - name: Produce public, credential-free Colab handoff state
+        run: python -m tools.jei_colab_coordination --watchdog audit-output/colab_watchdog.json --previous remote/colab_coordination.json --output audit-output/colab_coordination.json
       - name: Verify artifact manifest
         run: python -m unittest discover -s tests -p 'test_jei_audit_manifest.py' -v
       - name: Index audit evidence
@@ -186,8 +191,23 @@ jobs:
         if: always() && steps.feed_audit.outcome == 'failure'
         run: exit 1
 
+  optional_colab_review:
+    # An external request is a second opinion, never a dependency of
+    # checkpoint persistence or task publication. Failures remain visible.
+    needs: audit
+    if: needs.audit.result == 'success' && needs.audit.outputs.colab_review_authorized == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify pick quality requested by authenticated Colab
+        run: python -m unittest discover -s tests -p 'test_pick*.py' -v
+
   publish_coordination:
-    # Scheduled audits AND successful main pushes must publish queued Colab
+    # Scheduled audits, main pushes and manual main dispatches publish queued Colab
     # tasks. Otherwise a new task lives only in an Actions artifact until
     # GitHub eventually schedules a run (which may be delayed/skipped).
     # Branch-scoped push guard and the paths-ignore rule above prevent
@@ -196,7 +216,7 @@ jobs:
     if: >-
       needs.audit.result == 'success' &&
       (github.event_name == 'schedule' ||
-       (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+       ((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'))
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
