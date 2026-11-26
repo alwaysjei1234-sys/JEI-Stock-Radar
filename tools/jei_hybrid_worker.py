@@ -29,8 +29,10 @@ def fetch_public_picks():
 def atomic_receipt(folder, result):
     folder = Path(folder)
     folder.mkdir(parents=True, exist_ok=True)
-    target = folder / (result["task_id"] + ".json")
-    # Separate file per immutable task; no mutable latest pointer.
+    suffix = "-summary" if "narrative" in result else "-deterministic"
+    target = folder / (result["task_id"] + suffix + ".json")
+    # Separate deterministic and narrative receipts. A busy worker cannot
+    # overwrite a completed narrative with its deterministic-only fallback.
     fd, temp = tempfile.mkstemp(prefix=".receipt-", suffix=".tmp", dir=folder)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
@@ -38,7 +40,10 @@ def atomic_receipt(folder, result):
             handle.write("\n")
             handle.flush()
             os.fsync(handle.fileno())
-        os.replace(temp, target)
+        try:
+            os.link(temp, target)  # create once on a local NTFS/POSIX filesystem
+        except FileExistsError:
+            pass
     finally:
         if os.path.exists(temp):
             os.unlink(temp)
