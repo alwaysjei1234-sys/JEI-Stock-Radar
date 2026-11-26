@@ -106,6 +106,12 @@ def ingest(file_id, credential_json, out):
                         result["colab_task_result"] = {
                             "task_id": task_id, "status": "completed",
                             "observed_only": True}
+                        eligible = ack.get("eligible_aggregates")
+                        weak = ack.get("underperforming_aggregates")
+                        if (type(eligible) is int and type(weak) is int
+                                and 0 <= weak <= eligible <= 10000):
+                            result["colab_task_result"].update(
+                                eligible_aggregates=eligible, underperforming_aggregates=weak)
 
         except Exception as exc:
             # Never log the service-account JSON, response body, request URL,
