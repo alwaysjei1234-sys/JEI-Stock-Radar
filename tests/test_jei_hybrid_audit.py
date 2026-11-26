@@ -39,7 +39,7 @@ class HybridAuditTests(unittest.TestCase):
             self.assertEqual(result["observed"], run_audit(RAW)["observed"])
 
     def test_colab_ack_requires_matching_id_and_freshness(self):
-        ack = {"task_id": "observed-2026-11-26", "status": "completed", "observed_only": True}
+        ack = {"task_id": run_audit(RAW)["task_id"], "status": "completed", "observed_only": True}
         for watchdog, expected in ((FRESH, True), (STALE, False)):
             result = run_audit(RAW, enabled=True, watchdog={**watchdog, "colab_task_result": ack})
             self.assertEqual(result["colab_ack"] is not None, expected)
