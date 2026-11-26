@@ -6,6 +6,7 @@ No external API or Colab auto-restart is implied.
 import argparse
 import datetime as dt
 import json
+import hashlib
 import os
 import math
 import re
@@ -26,6 +27,28 @@ VALID_SIGNAL_STATES = {"RECENT_HEARTBEAT", "STALE", "UNKNOWN"}
 # day's Colab -> Actions verification task while the Colab kernel is alive.
 TASK_RETRY_BUDGET = 3
 TASK_RETRY_COOLDOWN_SECONDS = 30 * 60
+
+
+def observed_snapshot_digest(picks):
+    """Version the public aggregate input, excluding irrelevant timestamp metadata."""
+    payload = {"latest_official_day": picks["latest_official_day"],
+               "groups": picks["groups"]}
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"),
+                         ensure_ascii=True, allow_nan=False).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def valid_observed_task_id(task_id, day=None):
+    if not isinstance(task_id, str):
+        return False
+    match = re.fullmatch(r"observed-(20\d{2}-\d{2}-\d{2})(?:-([0-9a-f]{64}))?", task_id)
+    if match is None or (day is not None and match.group(1) != day):
+        return False
+    try:
+        dt.date.fromisoformat(match.group(1))
+    except ValueError:
+        return False
+    return True
 
 
 def allow_task_attempt(attempts, key, now=None):
@@ -87,7 +110,7 @@ def read_github_coordination():
         if (task.get("kind") == "audit_observed_picks"
                 and isinstance(day, str)
                 and re.fullmatch(r"20\d{2}-\d{2}-\d{2}", day)
-                and task_id == "observed-" + day):
+                and valid_observed_task_id(task_id, day)):
             signal["task"] = {"kind": "audit_observed_picks",
                               "task_id": task_id, "official_day": day}
     return signal
@@ -100,7 +123,8 @@ def audit_observed_picks(task, fetcher=None):
     No remote code execution, shell, trading, or private data.
     """
     if (not isinstance(task, dict) or task.get("kind") != "audit_observed_picks"
-            or task.get("task_id") != "observed-" + str(task.get("official_day"))):
+            or not isinstance(task.get("official_day"), str)
+            or not valid_observed_task_id(task.get("task_id"), task["official_day"])):
         raise ValueError("unsupported_colab_task")
     day = task["official_day"]
     if not re.fullmatch(r"20\d{2}-\d{2}-\d{2}", day):
@@ -121,6 +145,10 @@ def audit_observed_picks(task, fetcher=None):
     groups = data.get("groups")
     if not isinstance(groups, dict):
         raise ValueError("missing_observed_groups")
+    if task["task_id"] != "observed-" + day:
+        expected = "observed-" + day + "-" + observed_snapshot_digest(data)
+        if task["task_id"] != expected:
+            raise ValueError("official_snapshot_changed")
     eligible = 0
     weak = 0
     for horizons in groups.values():
