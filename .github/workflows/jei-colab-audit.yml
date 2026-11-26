@@ -54,6 +54,8 @@ permissions:
   contents: read
 jobs:
   audit:
+    outputs:
+      coordination_ready: ${{ steps.coordination.outputs.ready }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -130,7 +132,10 @@ jobs:
       - name: Verify 10 simulated reciprocal Colab/Actions handoffs
         run: python -m unittest discover -s tests -p 'test_jei_colab_10_roundtrips.py' -v
       - name: Produce public, credential-free Colab handoff state
-        run: python -m tools.jei_colab_coordination --watchdog audit-output/colab_watchdog.json --previous remote/colab_coordination.json --output audit-output/colab_coordination.json
+        id: coordination
+        run: |
+          python -m tools.jei_colab_coordination --watchdog audit-output/colab_watchdog.json --previous remote/colab_coordination.json --output audit-output/colab_coordination.json
+          echo 'ready=true' >> "$GITHUB_OUTPUT"
       - name: Restore checkpoint from prior workflow runs
         id: checkpoint_restore
         uses: actions/cache/restore@v4
@@ -186,9 +191,10 @@ jobs:
     # PR/feature-branch publication and self-triggering commit loops.
     needs: audit
     if: >-
-      needs.audit.result == 'success' &&
-      (github.event_name == 'schedule' ||
-       (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+      always() && !cancelled() && needs.audit.outputs.coordination_ready == 'true' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'schedule' || github.event_name == 'push' ||
+       github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
