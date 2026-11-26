@@ -10,7 +10,7 @@ import json
 import unittest
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
-MODEL = "qwen3:4b"
+MODEL = "qwen2.5:3b"
 TAGS_URL = "http://127.0.0.1:11434/api/tags"
 
 class NoRedirect(HTTPRedirectHandler):
