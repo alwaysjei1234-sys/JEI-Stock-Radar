@@ -19,17 +19,43 @@ from tools.jei_hybrid_jobs import JobStore, job_key
 
 MAX_BYTES = 2_000_000
 
+def summary_counts(aggregate):
+    counts = {k: aggregate[k] for k in
+              ("eligible_aggregates", "underperforming_aggregates")}
+    n, weak = counts.values()
+    if type(n) is not int or type(weak) is not int or not 0 <= weak <= n <= 10000:
+        raise ValueError("invalid counts")
+    return counts
+
+def validate_summary_response(result, counts):
+    if not isinstance(result, dict) or result.get("model") != MODEL or result.get("done") is not True or result.get("done_reason") != "stop":
+        raise ValueError("incomplete_model_response")
+    message = result.get("message")
+    if not isinstance(message, dict) or not isinstance(message.get("content"), str):
+        raise ValueError("invalid_model_message")
+    payload = json.loads(message["content"])
+    n, weak = counts.values()
+    expected = "no_samples" if n == 0 else "all_weak" if weak == n else "none_weak" if weak == 0 else "some_weak"
+    if (not isinstance(payload, dict) or set(payload) != {"eligible_aggregates", "underperforming_aggregates", "classification"}
+            or any(type(payload.get(k)) is not int or payload[k] != v for k,v in counts.items())
+            or payload.get("classification") != expected):
+        raise ValueError("incorrect_model_classification")
+    # Render verified facts ourselves, never publish free-form model thoughts.
+    return f"符合門檻的觀察統計共 {n} 組，其中 {weak} 組未達績效標準。此為既有觀察統計，並非獨立樣本外回測。"
+
 def local_summary(aggregate):
     # Only two validated integer aggregates are sent. No free-form input,
     # stock holdings, credentials, or raw feed content reaches this endpoint.
-    counts = {k: aggregate[k] for k in
-              ("eligible_aggregates", "underperforming_aggregates")}
-    if any(type(v) is not int or v < 0 for v in counts.values()):
-        raise ValueError("invalid counts")
-    body = {"model": MODEL, "stream": False, "think": False, "messages": [
-        {"role": "system", "content": "用繁體中文簡短解釋統計，不得推測勝率或提供買賣建議。這不是獨立樣本外回測。"},
-        {"role": "user", "content": json.dumps(counts)}],
-        "options": {"num_predict": 160}}
+    counts = summary_counts(aggregate)
+    schema = {"type":"object","additionalProperties":False,
+              "required":["eligible_aggregates","underperforming_aggregates","classification"],
+              "properties":{"eligible_aggregates":{"type":"integer"},
+                            "underperforming_aggregates":{"type":"integer"},
+                            "classification":{"type":"string","enum":["no_samples","all_weak","none_weak","some_weak"]}}}
+    body = {"model": MODEL, "stream": False, "think": False, "format": schema,
+        "messages": [{"role":"system","content":"Return only JSON. Copy both integer counts exactly. Classification: no_samples if eligible is zero; all_weak if weak equals eligible and eligible > 0; none_weak if weak is zero and eligible > 0; otherwise some_weak. /no_think"},
+                     {"role":"user","content":json.dumps(counts)}],
+        "options":{"num_predict":256,"temperature":0}}
     request = Request("http://127.0.0.1:11434/api/chat",
                       data=json.dumps(body).encode(), method="POST",
                       headers={"Content-Type": "application/json"})
@@ -38,12 +64,7 @@ def local_summary(aggregate):
     if len(raw) > 65536:
         raise ValueError("oversized model response")
     result = json.loads(raw)
-    if result.get("model") != MODEL or result.get("done") is not True:
-        raise ValueError("unexpected model or incomplete reply")
-    answer = result["message"]["content"]
-    if not isinstance(answer, str) or not answer.strip() or len(answer) > 4000:
-        raise ValueError("empty_or_invalid_model_content")
-    return answer.strip()
+    return validate_summary_response(result, counts)
 
 def run_audit(raw, *, enabled=False, local_available=False, watchdog=None,
               summarize=local_summary, job_store=None):
