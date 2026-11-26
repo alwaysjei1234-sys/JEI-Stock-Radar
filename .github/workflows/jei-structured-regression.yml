@@ -1,0 +1,25 @@
+name: JEI Structured Summary Regression
+on:
+  push:
+    branches: ['experiment/ollama-live-20261127']
+    paths:
+      - '.github/workflows/jei-structured-regression.yml'
+      - 'tests/test_jei_hybrid_structured_summary.py'
+      - 'tools/jei_hybrid_audit.py'
+      - 'tools/jei_hybrid_worker.py'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run existing and new hybrid regression
+        run: |
+          python jei_local_ai_router.py --self-test
+          python -m unittest discover -s tests -p 'test_jei_hybrid_*.py' -v
+          python -m unittest discover -s tests -p 'test_jei_colab_versioned_bridge.py' -v
