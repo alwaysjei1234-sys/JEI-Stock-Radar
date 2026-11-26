@@ -76,8 +76,11 @@ def run_audit(raw, *, enabled=False, local_available=False, watchdog=None,
                 result["narrative"] = summarize(observed)
                 result["narrative_source"] = "model"
             else:
-                engine = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
-                key = job_key(raw, MODEL, engine)
+                engine = hashlib.sha256(b"".join(
+                    (Path(__file__).parent / name).read_bytes()
+                    for name in ("jei_hybrid_audit.py", "jei_colab_heartbeat.py",
+                                 "jei_hybrid_jobs.py"))).hexdigest()
+                key = job_key(task["task_id"].encode("ascii"), MODEL, engine)
                 result["narrative"], result["narrative_source"] = (
                     job_store.summarize_once(key, observed, summarize))
             result["narrative_status"] = "local_model_returned_unverified_text"
