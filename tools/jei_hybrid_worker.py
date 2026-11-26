@@ -94,6 +94,7 @@ def pull_once(*, output_dir, job_db, enable_local=False,
                    "uploaded": False}
         if "narrative_error_type" in result:
             receipt["narrative_error_type"] = result["narrative_error_type"]
+            receipt["narrative_error_code"] = result.get("narrative_error_code", "other")
         if "narrative" in result:
             receipt["narrative"] = result["narrative"]
             receipt["summary_engine"] = hashlib.sha256(
