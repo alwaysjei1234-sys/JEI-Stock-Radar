@@ -48,7 +48,7 @@ class JobStore:
         now = time.time() if now is None else now
         if not math.isfinite(now):
             raise ValueError("invalid clock")
-        with self._connect() as db:
+        with self._transaction() as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute("SELECT * FROM jobs WHERE key=?", (key,)).fetchone()
             if row:
@@ -74,7 +74,7 @@ class JobStore:
         now = time.time() if now is None else now
         if not math.isfinite(now) or not valid_text(result):
             raise ValueError("invalid completion")
-        with self._connect() as db:
+        with self._transaction() as db:
             cursor = db.execute("""UPDATE jobs SET status='complete',result=?,
                 token=NULL,lease_until=0 WHERE key=? AND token=?
                 AND status='running' AND lease_until>?""",
@@ -85,7 +85,7 @@ class JobStore:
         now = time.time() if now is None else now
         if not math.isfinite(now):
             raise ValueError("invalid clock")
-        with self._connect() as db:
+        with self._transaction() as db:
             cursor = db.execute("""UPDATE jobs SET status='retry',token=NULL,
                 lease_until=? WHERE key=? AND token=? AND status='running'
                 AND lease_until>?""", (now + RETRY_SECONDS, key, token, now))
