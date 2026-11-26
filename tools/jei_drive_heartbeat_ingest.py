@@ -9,6 +9,7 @@ import os
 import re
 from pathlib import Path
 from tools.jei_colab_watchdog import assess
+from tools.jei_colab_heartbeat import valid_observed_task_id
 
 
 # Only these known Google error codes are safe to publish. Never echo the
@@ -99,8 +100,7 @@ def ingest(file_id, credential_json, out):
                 ack = report.get("colab_task_result")
                 if isinstance(ack, dict):
                     task_id = ack.get("task_id")
-                    if (isinstance(task_id, str)
-                            and re.fullmatch(r"observed-20\d{2}-\d{2}-\d{2}", task_id)
+                    if (valid_observed_task_id(task_id)
                             and ack.get("status") == "completed"
                             and ack.get("observed_only") is True):
                         result["colab_task_result"] = {
