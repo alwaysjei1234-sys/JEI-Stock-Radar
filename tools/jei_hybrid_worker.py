@@ -5,6 +5,7 @@ Never uploads anything or accepts arbitrary instructions or URLs.
 """
 import argparse
 import json
+import hashlib
 import os
 import sqlite3
 import tempfile
@@ -30,6 +31,8 @@ def atomic_receipt(folder, result):
     folder = Path(folder)
     folder.mkdir(parents=True, exist_ok=True)
     suffix = "-summary" if "narrative" in result else "-deterministic"
+    if "narrative" in result and result.get("summary_engine"):
+        suffix = "-" + result["summary_engine"] + suffix
     target = folder / (result["task_id"] + suffix + ".json")
     # Separate deterministic and narrative receipts. A busy worker cannot
     # overwrite a completed narrative with its deterministic-only fallback.
@@ -89,8 +92,12 @@ def pull_once(*, output_dir, job_db, enable_local=False,
                    "narrative_source": result["narrative_source"],
                    "routing_candidate": result["routing_candidate"],
                    "uploaded": False}
+        if "narrative_error_type" in result:
+            receipt["narrative_error_type"] = result["narrative_error_type"]
         if "narrative" in result:
             receipt["narrative"] = result["narrative"]
+            receipt["summary_engine"] = hashlib.sha256(
+                (Path(__file__).parent / "jei_hybrid_audit.py").read_bytes()).hexdigest()
         path = atomic_receipt(output_dir, receipt)
         return {"status": "receipt_saved", "task_id": expected["task_id"],
                 "receipt": str(path), "narrative_source": receipt["narrative_source"],
