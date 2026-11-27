@@ -1,0 +1,27 @@
+{
+  "checked_at_utc": "2026-11-27T06:06:04.104458+00:00",
+  "expected_date": "2026-11-27",
+  "sources": [
+    {
+      "source": "TWSE",
+      "url": "https://www.twse.com.tw/exchangeReport/MI_INDEX?response=json&date=20261127&type=ALLBUT0999",
+      "date": "20261127",
+      "stat": "OK",
+      "sha256": "09fb9af718904944ddbf715b90c6e3f8595b00ae2b10ad4529a610f58cfbd5fb",
+      "bytes": 242299,
+      "date_verified": true
+    },
+    {
+      "source": "TPEx",
+      "url": "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes?date=2026%2F11%2F27&id=&response=json",
+      "date": "20261127",
+      "stat": "ok",
+      "sha256": "31dcbe26ee1f1b106f8d6dab86635b9f488a9c9edbbcd311494444c5f49f44b5",
+      "bytes": 1630,
+      "date_verified": false,
+      "error_type": "RuntimeError",
+      "error": "TPEx dated coverage too low: 0 complete stocks"
+    }
+  ],
+  "same_day_dual_market_verified": false
+}

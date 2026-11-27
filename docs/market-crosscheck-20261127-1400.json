@@ -1,0 +1,39 @@
+{
+  "source_requests": [
+    {
+      "source": "TWSE",
+      "url": "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL",
+      "started_at": "2026-11-27T14:01:31.303937+08:00",
+      "finished_at": "2026-11-27T14:01:37.931104+08:00",
+      "exit_code": 0,
+      "bytes": 321553,
+      "sha256": "6e1c22e485dc2fa2fcf9fcd7b8bf81f55d5b6880b9b524df3648eb82d4ce810d",
+      "error": ""
+    },
+    {
+      "source": "TPEx",
+      "url": "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes?date=2026%2F11%2F26&id=&response=json",
+      "started_at": "2026-11-27T14:01:31.304343+08:00",
+      "finished_at": "2026-11-27T14:01:59.284250+08:00",
+      "exit_code": 0,
+      "bytes": 2017282,
+      "sha256": "505b3b6feab52ebe20cff2de9f97802c1ef0e0919492f10b32c52f4f7f2afdf9",
+      "error": ""
+    }
+  ],
+  "data_date": "2026-11-26",
+  "live_verified": false,
+  "TWSE": {
+    "valid": 1091,
+    "matched": 1091,
+    "missing": [],
+    "mismatch": []
+  },
+  "TPEx": {
+    "valid": 880,
+    "matched": 880,
+    "missing": [],
+    "mismatch": []
+  },
+  "checked_at": "2026-11-27T14:01:59.472317+08:00"
+}
