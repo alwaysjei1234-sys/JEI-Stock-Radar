@@ -887,7 +887,8 @@ def range_pct(s):
     return clamp((h-l)/c*100.0,1.0,12.0)
 
 def stock_only(s):
-    return bool(re.fullmatch(r"\d{4}",s.get("code",""))) and s.get("close") and s.get("pct") is not None
+    # Four-digit 00xx ETFs are quote references, not ordinary-stock breadth.
+    return bool(re.fullmatch(r"[1-9][0-9]{3}",s.get("code",""))) and s.get("close") and s.get("pct") is not None
 
 def official_close_observations(rows,day):
     """Raw dated closes remain valid when an ex-rights note replaces change."""
