@@ -27,11 +27,19 @@ def run(system_path, output_dir, max_codes=8, pause=4):
         print("Pattern feed not ready; no downloads")
         return 0
     asof=date.fromisoformat(patterns["data_date"])
+    # Pattern signals cover both exchanges, but STOCK_DAY serves TWSE only.
+    # Resolve identity from the same published official universe before the
+    # bounded selection; missing/conflicting markets must not consume requests.
+    markets={}
+    for row in system.get("universe",[]):
+        if isinstance(row,dict):
+            markets.setdefault(str(row.get("code","")),set()).add(row.get("market"))
     codes=[]
     for rows in patterns.get("signals",{}).values():
         for row in rows:
             code=str(row.get("code",""))
-            if len(code)==4 and code.isdigit() and code not in codes:
+            if (len(code)==4 and code.isdigit() and code not in codes
+                    and markets.get(code)=={"TWSE"}):
                 codes.append(code)
     output_dir=Path(output_dir)
     output_dir.mkdir(parents=True,exist_ok=True)
