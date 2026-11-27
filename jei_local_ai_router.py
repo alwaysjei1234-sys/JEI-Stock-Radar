@@ -8,6 +8,7 @@ Ollama cloud features disabled). Never expose the Ollama port to the Internet.
 import argparse
 from http.client import HTTPException
 import json
+import time
 import unittest
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
@@ -18,13 +19,40 @@ class NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
 
+def read_response(response, deadline, max_bytes):
+    """Bound returned bytes and check an attempt budget between body chunks.
+
+    Socket timeout still bounds a blocking read; DNS or an in-flight read can
+    overrun the budget until control returns. This is not a hard wall-clock cap.
+    """
+    chunks, size = [], 0
+    reader = getattr(response, "read1", None) or response.read
+    while True:
+        if time.monotonic() >= deadline:
+            raise TimeoutError("local response attempt budget exceeded")
+        chunk = reader(min(65536, max_bytes + 1 - size))
+        if time.monotonic() >= deadline:
+            raise TimeoutError("local response attempt budget exceeded")
+        if not chunk:
+            break
+        size += len(chunk)
+        if size > max_bytes:
+            raise ValueError("oversized local response")
+        chunks.append(chunk)
+    raw = b"".join(chunks)
+    header = getattr(response, "getheader", None)
+    length = header("Content-Length") if callable(header) else None
+    if length is not None and str(length).isdigit() and len(raw) != int(length):
+        raise ValueError("incomplete local response")
+    return raw
+
+
 def local_ready():
     """Read only installed model names; no user data is transmitted."""
     try:
+        deadline = time.monotonic() + 2
         with build_opener(ProxyHandler({}), NoRedirect()).open(Request(TAGS_URL), timeout=2) as res:
-            raw = res.read(1024 * 1024 + 1)
-            if len(raw) > 1024 * 1024:
-                return False
+            raw = read_response(res, deadline, 1024 * 1024)
             models = json.loads(raw)["models"]
             return isinstance(models, list) and any(
                 isinstance(m, dict) and m.get("name") == MODEL for m in models

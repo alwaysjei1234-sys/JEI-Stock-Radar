@@ -8,12 +8,13 @@ from http.client import HTTPException
 import hashlib
 import sqlite3
 import json
+import time
 import os
 import tempfile
 from pathlib import Path
 from urllib.request import ProxyHandler, Request, build_opener
 
-from jei_local_ai_router import MODEL, NoRedirect, route
+from jei_local_ai_router import MODEL, NoRedirect, route, read_response
 from tools.jei_colab_coordination import merge_status, task_from_picks
 from tools.jei_colab_heartbeat import audit_observed_picks
 from tools.jei_hybrid_jobs import JobStore, job_key
@@ -34,10 +35,9 @@ def local_summary(aggregate):
     request = Request("http://127.0.0.1:11434/api/chat",
                       data=json.dumps(body).encode(), method="POST",
                       headers={"Content-Type": "application/json"})
+    deadline = time.monotonic() + 45
     with build_opener(ProxyHandler({}), NoRedirect()).open(request, timeout=45) as res:
-        raw = res.read(65537)
-    if len(raw) > 65536:
-        raise ValueError("oversized model response")
+        raw = read_response(res, deadline, 65536)
     result = json.loads(raw)
     if result.get("model") != MODEL or result.get("done") is not True:
         raise ValueError("unexpected model or incomplete reply")
