@@ -40,25 +40,25 @@ MAX_RESPONSE_BYTES = 16 * 1024 * 1024
 ATTEMPT_SECONDS = 45
 
 
-def read_public_body(response, deadline: float) -> bytes:
+def read_public_body(response, deadline: float, max_bytes=MAX_RESPONSE_BYTES) -> bytes:
     """Bound bytes and check time between reads; in-flight I/O is not cancelled."""
     header = getattr(response, "getheader", None)
     length = header("Content-Length") if callable(header) else None
     expected = int(length) if length is not None and str(length).isdigit() else None
-    if expected is not None and expected > MAX_RESPONSE_BYTES:
+    if expected is not None and expected > max_bytes:
         raise ValueError("Official public API response too large")
     reader = getattr(response, "read1", None) or response.read
     chunks, size = [], 0
     while True:
         if time.monotonic() >= deadline:
             raise TimeoutError("Official public API attempt budget exceeded")
-        chunk = reader(min(65536, MAX_RESPONSE_BYTES + 1 - size))
+        chunk = reader(min(65536, max_bytes + 1 - size))
         if time.monotonic() >= deadline:
             raise TimeoutError("Official public API attempt budget exceeded")
         if not chunk:
             break
         size += len(chunk)
-        if size > MAX_RESPONSE_BYTES:
+        if size > max_bytes:
             raise ValueError("Official public API response too large")
         chunks.append(chunk)
     if expected is not None and size != expected:

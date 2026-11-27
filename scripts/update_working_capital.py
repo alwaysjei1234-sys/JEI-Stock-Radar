@@ -9,6 +9,7 @@ import hashlib
 import io
 import json
 import math
+import time
 import re
 import urllib.request
 import urllib.error
@@ -17,6 +18,13 @@ from datetime import date, datetime, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
+
+try:
+    from scripts.update_free_research import read_public_body
+except ModuleNotFoundError as exc:
+    if exc.name not in ("scripts", "scripts.update_free_research"):
+        raise
+    from update_free_research import read_public_body
 
 ROOT=Path(__file__).resolve().parents[1]
 BASE='https://mopsov.twse.com.tw/server-java/FileDownLoad'
@@ -130,7 +138,9 @@ def fetch_record(code,period,today):
     url=f'{BASE}?functionName=t164sb01&step=9&co_id={code}&year={year}&season={quarter}&report_id=C'
     request=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 JEI-public-research',
         'Referer':'https://mopsov.twse.com.tw/mops/web/t203sb01'})
-    with urllib.request.urlopen(request,timeout=20) as response:content=response.read(LIMIT+1)
+    deadline=time.monotonic()+20
+    with urllib.request.urlopen(request,timeout=20) as response:
+        content=read_public_body(response,deadline,max_bytes=LIMIT)
     return {**parse_filing(content,code,year,quarter,today),'source_url':url}
 
 
