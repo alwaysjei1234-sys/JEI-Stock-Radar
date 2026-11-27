@@ -764,12 +764,15 @@ def enrich_live(rows, asof=None, priority_codes=()):
                 if (code in requested_retry_codes
                         and mis_stock_identity(quote,code,by_code[code].get("market"))
                         and live_price(quote) is not None):
-                    replacements[str(quote.get("c",""))]=quote
+                    replacements.setdefault(code,[]).append(quote)
         except Exception as exc:
             errors.append("MIS retry: "+str(exc)[:100])
     if replacements:
-        messages=[replacements.get(str(m.get("c","")),m) for m in messages]
-        messages.extend(replacements[code] for code in omitted_codes if code in replacements)
+        # Retain every retry observation for the canonical date/time/price
+        # and conflict gates below; last-write-wins would hide ambiguity or
+        # let a stale retry erase an otherwise valid recovery.
+        messages=[m for m in messages if str(m.get("c","")) not in replacements]
+        messages.extend(quote for batch in replacements.values() for quote in batch)
     if not fixed_asof:asof=datetime.now(TZ)
     stats["quotes_checked_at"]=asof.isoformat()
     accepted_codes=set()
