@@ -522,8 +522,9 @@ def fetch_mis_channels(channels):
         "Accept":"application/json,text/plain,*/*",
         "Referer":"https://mis.twse.com.tw/stock/index.jsp"
     })
+    deadline=time.monotonic()+9
     with urllib.request.urlopen(req,timeout=9) as r:
-        j=json.loads(r.read().decode("utf-8-sig"))
+        j=read_json_with_budget(r,deadline)
     # A transport success can still carry an MIS application error. Do not
     # let its payload reach quote validation or count a malformed envelope
     # as a successful service response. Existing callers handle failures.
@@ -763,15 +764,21 @@ def enrich_live(rows, asof=None, priority_codes=()):
                 if (code in requested_retry_codes
                         and mis_stock_identity(quote,code,by_code[code].get("market"))
                         and live_price(quote) is not None):
-                    replacements[str(quote.get("c",""))]=quote
+                    replacements.setdefault(code,[]).append(quote)
         except Exception as exc:
             errors.append("MIS retry: "+str(exc)[:100])
     if replacements:
-        messages=[replacements.get(str(m.get("c","")),m) for m in messages]
-        messages.extend(replacements[code] for code in omitted_codes if code in replacements)
+        # Retain every retry observation for the canonical date/time/price
+        # and conflict gates below; last-write-wins would hide ambiguity or
+        # let a stale retry erase an otherwise valid recovery.
+        messages=[m for m in messages if str(m.get("c","")) not in replacements]
+        messages.extend(quote for batch in replacements.values() for quote in batch)
     if not fixed_asof:asof=datetime.now(TZ)
     stats["quotes_checked_at"]=asof.isoformat()
     accepted_codes=set()
+    candidates={}
+    stats["conflicting_symbols"]=0
+    stats["rejected_conflict_messages"]=0
     for m in messages:
         code=str(m.get("c","")).strip()
         x=by_code.get(code)
@@ -799,15 +806,28 @@ def enrich_live(rows, asof=None, priority_codes=()):
         if not valid_trade_time:
             stats["rejected_time"]+=1
             continue
-        if code in accepted_codes:
-            stats["duplicate_messages"]+=1
-            continue
         prev=num(m.get("y"));price=live_price(m)
         if price is None or price<=0 or prev is None or prev<=0:
             stats["rejected_price"]+=1
             if price is None or price<=0:stats["missing_last_trade"]+=1
             if prev is None or prev<=0:stats["missing_previous_close"]+=1
             continue
+        candidates.setdefault(code,[]).append((m,prev,price))
+    # Validate all executed observations before mutating any official row.
+    # As with TAIEX, ambiguous execution time/price/previous close cannot be
+    # certified by whichever response happened to arrive first.
+    for code,observations in candidates.items():
+        fingerprints=set()
+        for m,prev,price in observations:
+            execution=mis_execution(m)
+            fingerprints.add((execution["d"],execution["t"],prev,price))
+        if len(fingerprints)!=1:
+            stats["conflicting_symbols"]+=1
+            stats["rejected_conflict_messages"]+=len(observations)
+            continue
+        stats["duplicate_messages"]+=len(observations)-1
+        m,prev,price=observations[0]
+        x=by_code[code]
         x["close"]=price;x["change"]=price-prev;x["pct"]=(price-prev)/prev*100.0
         o=num(m.get("o"));h=num(m.get("h"));l=num(m.get("l"));v=num(m.get("v"))
         if o and o>0:x["open"]=o
@@ -888,7 +908,9 @@ def range_pct(s):
 
 def stock_only(s):
     # Four-digit 00xx ETFs are quote references, not ordinary-stock breadth.
-    return bool(re.fullmatch(r"[1-9][0-9]{3}",s.get("code",""))) and s.get("close") and s.get("pct") is not None
+    close, change_pct = num(s.get("close")), num(s.get("pct"))
+    return (bool(re.fullmatch(r"[1-9][0-9]{3}",s.get("code","")))
+            and close is not None and close > 0 and change_pct is not None)
 
 def official_close_observations(rows,day):
     """Raw dated closes remain valid when an ex-rights note replaces change."""
