@@ -35,13 +35,45 @@ SOURCES = {
 }
 
 
+
+MAX_RESPONSE_BYTES = 16 * 1024 * 1024
+ATTEMPT_SECONDS = 45
+
+
+def read_public_body(response, deadline: float, max_bytes=MAX_RESPONSE_BYTES) -> bytes:
+    """Bound bytes and check time between reads; in-flight I/O is not cancelled."""
+    header = getattr(response, "getheader", None)
+    length = header("Content-Length") if callable(header) else None
+    expected = int(length) if length is not None and str(length).isdigit() else None
+    if expected is not None and expected > max_bytes:
+        raise ValueError("Official public API response too large")
+    reader = getattr(response, "read1", None) or response.read
+    chunks, size = [], 0
+    while True:
+        if time.monotonic() >= deadline:
+            raise TimeoutError("Official public API attempt budget exceeded")
+        chunk = reader(min(65536, max_bytes + 1 - size))
+        if time.monotonic() >= deadline:
+            raise TimeoutError("Official public API attempt budget exceeded")
+        if not chunk:
+            break
+        size += len(chunk)
+        if size > max_bytes:
+            raise ValueError("Official public API response too large")
+        chunks.append(chunk)
+    if expected is not None and size != expected:
+        raise ValueError("Official public API response body incomplete")
+    return b"".join(chunks)
+
+
 def fetch_json(url: str) -> list[dict[str, Any]]:
     request = urllib.request.Request(url, headers={"User-Agent": "JEI-Stock-Radar/1.0 (free public market research)"})
     last_error = None
     for attempt in range(3):
         try:
-            with urllib.request.urlopen(request, timeout=45) as response:
-                payload = json.loads(response.read().decode("utf-8-sig"))
+            deadline = time.monotonic() + ATTEMPT_SECONDS
+            with urllib.request.urlopen(request, timeout=ATTEMPT_SECONDS) as response:
+                payload = json.loads(read_public_body(response, deadline).decode("utf-8-sig"))
             if not isinstance(payload, list) or any(not isinstance(row, dict) for row in payload):
                 raise ValueError(f"Unexpected public API payload: {url}")
             return payload
