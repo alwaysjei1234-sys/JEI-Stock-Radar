@@ -773,6 +773,9 @@ def enrich_live(rows, asof=None, priority_codes=()):
     if not fixed_asof:asof=datetime.now(TZ)
     stats["quotes_checked_at"]=asof.isoformat()
     accepted_codes=set()
+    candidates={}
+    stats["conflicting_symbols"]=0
+    stats["rejected_conflict_messages"]=0
     for m in messages:
         code=str(m.get("c","")).strip()
         x=by_code.get(code)
@@ -800,15 +803,28 @@ def enrich_live(rows, asof=None, priority_codes=()):
         if not valid_trade_time:
             stats["rejected_time"]+=1
             continue
-        if code in accepted_codes:
-            stats["duplicate_messages"]+=1
-            continue
         prev=num(m.get("y"));price=live_price(m)
         if price is None or price<=0 or prev is None or prev<=0:
             stats["rejected_price"]+=1
             if price is None or price<=0:stats["missing_last_trade"]+=1
             if prev is None or prev<=0:stats["missing_previous_close"]+=1
             continue
+        candidates.setdefault(code,[]).append((m,prev,price))
+    # Validate all executed observations before mutating any official row.
+    # As with TAIEX, ambiguous execution time/price/previous close cannot be
+    # certified by whichever response happened to arrive first.
+    for code,observations in candidates.items():
+        fingerprints=set()
+        for m,prev,price in observations:
+            execution=mis_execution(m)
+            fingerprints.add((execution["d"],execution["t"],prev,price))
+        if len(fingerprints)!=1:
+            stats["conflicting_symbols"]+=1
+            stats["rejected_conflict_messages"]+=len(observations)
+            continue
+        stats["duplicate_messages"]+=len(observations)-1
+        m,prev,price=observations[0]
+        x=by_code[code]
         x["close"]=price;x["change"]=price-prev;x["pct"]=(price-prev)/prev*100.0
         o=num(m.get("o"));h=num(m.get("h"));l=num(m.get("l"));v=num(m.get("v"))
         if o and o>0:x["open"]=o
