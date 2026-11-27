@@ -522,8 +522,9 @@ def fetch_mis_channels(channels):
         "Accept":"application/json,text/plain,*/*",
         "Referer":"https://mis.twse.com.tw/stock/index.jsp"
     })
+    deadline=time.monotonic()+9
     with urllib.request.urlopen(req,timeout=9) as r:
-        j=json.loads(r.read().decode("utf-8-sig"))
+        j=read_json_with_budget(r,deadline)
     # A transport success can still carry an MIS application error. Do not
     # let its payload reach quote validation or count a malformed envelope
     # as a successful service response. Existing callers handle failures.
