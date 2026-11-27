@@ -109,7 +109,14 @@ def dispatch(now, receipt):
     if not ok:
         receipt.update(status="blocked", reason_code="dispatch_gate")
         return
-    result = push(report, report["edition"], token, recipient, receipt=receipt)
+    def still_eligible():
+        current = now + timedelta(seconds=max(0, time.monotonic() - started))
+        return report_for_index(messages, current)[0] is not None
+    result = push(report, report["edition"], token, recipient, receipt=receipt,
+                  send_guard=still_eligible)
+    if receipt.get("status") == "blocked" and receipt.get("reason_code") == "dispatch_expired":
+        print(result)
+        return
     if receipt.get("status") not in ("accepted", "already_accepted"):
         raise RuntimeError("LINE index warning acceptance not verified")
     print(result)

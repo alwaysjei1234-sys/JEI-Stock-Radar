@@ -31,6 +31,7 @@ INDEX_REASON_STATUSES = {
     'alerts_disabled': 'disabled', 'master_switch_or_credentials': 'blocked',
     'market_closed_or_outside_window': 'no_alert',
     'decline_below_threshold': 'no_alert', 'dispatch_gate': 'blocked',
+    'dispatch_expired': 'blocked',
     **{'index_' + code: 'unverified' for code in (
         'source_unavailable', 'invalid_response', 'unavailable', 'identity_mismatch',
         'stale_or_invalid_time', 'invalid_price', 'conflicting_quotes')},

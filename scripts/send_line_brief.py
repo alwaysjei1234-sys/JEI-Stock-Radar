@@ -109,7 +109,7 @@ def quota_ok(token,cap=55):
     return (quota.get("type")=="limited" and type(maximum) is int and 0<maximum<=200
             and type(used) is int and 0<=used<min(cap,maximum))
 
-def push(report,edition,token,recipient,receipt=None,message_payload=None):
+def push(report,edition,token,recipient,receipt=None,message_payload=None,send_guard=None):
     receipt = receipt if receipt is not None else {}
     receipt["stage"]="quota"
     if not quota_ok(token):
@@ -127,6 +127,12 @@ def push(report,edition,token,recipient,receipt=None,message_payload=None):
     # Freeze content and recipient before retrying: a timeout may already have
     # been accepted upstream. Same key/body prevents a duplicate acceptance.
     for attempt in range(1,4):
+        # Quota reads and retry backoff may outlive a time-sensitive signal.
+        # Check immediately before every POST; keep prior attempt evidence if
+        # stopping here (an earlier timed-out request may already be accepted).
+        if send_guard is not None and not send_guard():
+            receipt.update(status="blocked",reason_code="dispatch_expired",stage="preflight")
+            return "LINE 警報已過有效時間，停止後續發送"
         receipt["attempts"]=attempt
         receipt.pop("http_status",None)
         req=urllib.request.Request(PUSH,data=body,method="POST",headers={
