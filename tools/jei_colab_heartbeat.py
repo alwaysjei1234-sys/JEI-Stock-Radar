@@ -88,13 +88,48 @@ def retain_current_task_result(last_result, task):
     return last_result
 
 
+def _read_public_body(response, deadline, max_bytes):
+    """Bound public reads by bytes and elapsed time between blocking reads.
+
+    Socket timeouts alone allow a peer to drip bytes indefinitely. read1 avoids
+    buffering a whole requested body before checking the elapsed budget again.
+    DNS and an in-flight blocking read can still overrun until control returns;
+    this is not a hard wall-clock cancellation mechanism.
+    """
+    read = getattr(response, "read1", None) or response.read
+    chunks, size = [], 0
+    while True:
+        if time.monotonic() >= deadline:
+            raise TimeoutError("public_read_budget_exceeded")
+        chunk = read(min(65536, max_bytes + 1 - size))
+        if time.monotonic() >= deadline:
+            raise TimeoutError("public_read_budget_exceeded")
+        if not chunk:
+            break
+        size += len(chunk)
+        if size > max_bytes:
+            raise ValueError("public_body_oversize")
+        chunks.append(chunk)
+    headers = getattr(response, "headers", {})
+    expected = headers.get("Content-Length")
+    if expected is not None:
+        try:
+            expected = int(expected)
+        except (TypeError, ValueError):
+            raise ValueError("invalid_public_content_length") from None
+        if expected != size:
+            raise ValueError("incomplete_public_body")
+    return b"".join(chunks)
+
+
 def read_github_coordination():
     """Poll the shared Actions status once per heartbeat while Colab is alive."""
     request = urllib.request.Request(
         COORDINATION_URL, headers={"User-Agent": "JEI-Colab-Heartbeat/1.0",
                                    "Cache-Control": "no-cache"})
+    deadline = time.monotonic() + 10
     with urllib.request.urlopen(request, timeout=10) as response:
-        raw = response.read(4096)
+        raw = _read_public_body(response, deadline, 4096)
     payload = json.loads(raw.decode("utf-8"))
     if (not isinstance(payload, dict) or payload.get("schema") != 1
             or payload.get("colab_status") not in VALID_SIGNAL_STATES
@@ -134,8 +169,9 @@ def audit_observed_picks(task, fetcher=None):
     if fetcher is None:
         def fetcher():
             request = urllib.request.Request(url, headers={"User-Agent": "JEI-Colab-Observed-Check"})
+            deadline = time.monotonic() + 20
             with urllib.request.urlopen(request, timeout=20) as response:
-                return response.read(2_000_001)
+                return _read_public_body(response, deadline, 2_000_000)
     raw = fetcher()
     if not isinstance(raw, bytes) or len(raw) > 2_000_000:
         raise ValueError("observed_data_invalid_or_oversize")
