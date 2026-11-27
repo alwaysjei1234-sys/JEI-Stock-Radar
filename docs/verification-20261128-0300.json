@@ -2,9 +2,9 @@
   "round": "2026-11-28 03:00 Asia/Taipei",
   "timezone": "Asia/Taipei",
   "started_at_utc": "2026-11-27T19:03:08Z",
-  "checked_at_utc": "2026-11-27T19:09:08Z",
+  "checked_at_utc": "2026-11-27T19:11:00Z",
   "starting_main": "cfe254d8220025a00979f7cd2839f03853d2d097",
-  "ending_main": "841caf025131f1d566554642893140ec86d426e5",
+  "ending_main": "25c415c14f8892f2c892d931fe41d91d8fd8d53f",
   "main_merged_repairs": 1,
   "new_prs": [
     "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/pull/239"
@@ -185,9 +185,9 @@
   },
   "deployment": {
     "source_only_merge_state": "CANCELED",
-    "final_data_main": "841caf025131f1d566554642893140ec86d426e5",
+    "final_data_main": "25c415c14f8892f2c892d931fe41d91d8fd8d53f",
     "final_state": "READY",
-    "deployment_id": "dpl_EsfpLksxKf9h17oS5jbd8iHaxYi4",
+    "deployment_id": "dpl_EeHNE5iAu55WR9vkUQKo69if12cd",
     "production_url": "https://jei-stock-radar.vercel.app",
     "system_line_update_exact_final_main": true,
     "verified_source_sha": "044232fbf46da20d1b8548efef8db12434a8cbd7",
@@ -248,17 +248,24 @@
         "sessions": 20,
         "last": "2026-11-27"
       }
-    ]
+    ],
+    "intermediate_verified_main": "841caf025131f1d566554642893140ec86d426e5",
+    "subsequent_changes": [
+      "remote/system.json",
+      "remote/news_intelligence.json",
+      "remote/line_status.json"
+    ],
+    "source_and_archives_unchanged_since_merge": true
   },
   "market": {
     "data_date": "2026-11-27",
     "valid_official_close_rows": 1953,
     "live_rows": 0,
     "price_validation_at_taipei": "2026-11-27 23:00",
-    "status_at_taipei": "2026-11-28 00:06",
-    "checked_at_taipei": "2026-11-28 03:09",
-    "validation_age_minutes_approx": 249,
-    "status_age_minutes_approx": 183,
+    "status_at_taipei": "2026-11-28 03:09",
+    "checked_at_taipei": "2026-11-28 03:11",
+    "validation_age_minutes_approx": 251,
+    "status_age_minutes_approx": 2,
     "session": "weekend_closed",
     "historical_readonly": true,
     "no_new_picks": true,
@@ -293,11 +300,11 @@
     "current_intraday": {
       "date": "2026-11-28",
       "edition": "intraday",
-      "checked_at": "2026-11-28T03:07:22+08:00",
+      "checked_at": "2026-11-28T03:09:22+08:00",
       "status": "blocked",
       "api_accepted": false,
       "delivery_confirmed": false,
-      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46054400341",
+      "evidence_url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46054628934",
       "reason_code": "live_gate"
     },
     "phone_delivery_verified": false,
@@ -443,7 +450,7 @@
         "requirement": "盤中每5分鐘更新及新鮮度",
         "weight": 1,
         "status": "FAIL",
-        "evidence_or_blocker": "本輪close1953/live0，價格驗證11/27 23:00距03:09約249分鐘、狀態00:06距約183分鐘；週末歷史唯讀，盤中5分鐘SLA未驗。",
+        "evidence_or_blocker": "本輪close1953/live0；價格驗證11/27 23:00距03:11約251分鐘，狀態更新03:09距約2分鐘。新狀態時間不是新行情；週末歷史唯讀，盤中5分鐘SLA未驗。",
         "current_round_full_e2e_reverified": false,
         "evidence_scope": "current_round_partial_only",
         "current_round_partial_evidence": true
@@ -493,7 +500,7 @@
         "requirement": "LINE盤前、盤中、盤後推播",
         "weight": 1,
         "status": "BLOCKED",
-        "evidence_or_blocker": "本輪03:07:22 intraday blocked/live_gate、index01:14 no_alert；未新增API接受。舊200/409均保留11/27日期，手機實收未驗。",
+        "evidence_or_blocker": "本輪03:09:22 intraday blocked/live_gate，無新API接受；index01:14 no_alert。舊HTTP200/409保留11/27日期，手機實收未驗。",
         "current_round_full_e2e_reverified": false,
         "current_round_partial_evidence": true,
         "evidence_scope": "current_round_partial_only"
@@ -703,7 +710,7 @@
         "requirement": "自動測試、部署與缺陷追蹤",
         "weight": 1,
         "status": "BLOCKED",
-        "evidence_or_blocker": "本輪PR239全綠後合併044232fb，main backfill9官方月檔/compute成功，8artifact檔驗證。Final841caf部署READY，正式system/LINE/update逐位元核對；全31功能端到端仍未完成。",
+        "evidence_or_blocker": "PR239全綠後合併044232fb，main backfill9官方月檔及compute成功；8artifact檔核驗。最後25c415c部署READY、正式system/LINE/update與main逐位元相符；源碼與價格/選股封存未被後續資料更新覆寫。",
         "current_round_full_e2e_reverified": false,
         "current_round_partial_evidence": true,
         "evidence_scope": "current_round_partial_only"
