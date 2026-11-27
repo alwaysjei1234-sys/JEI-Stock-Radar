@@ -27,11 +27,30 @@ def run(system_path, output_dir, max_codes=8, pause=4):
         print("Pattern feed not ready; no downloads")
         return 0
     asof=date.fromisoformat(patterns["data_date"])
+    # Pattern signals cover both exchanges, but STOCK_DAY serves TWSE only.
+    # Resolve identity from the same published official universe before the
+    # bounded selection; missing/conflicting markets must not consume requests.
+    markets={}
+    for row in system.get("universe",[]):
+        if isinstance(row,dict):
+            markets.setdefault(str(row.get("code","")),set()).add(row.get("market"))
+    required_dates={}
+    for rows in patterns.get("signals",{}).values():
+        for row in rows:
+            code=str(row.get("code",""))
+            for observed in row.get("close_series",[]):
+                try:
+                    day=date.fromisoformat(observed["date"])
+                except (KeyError,TypeError,ValueError):
+                    continue
+                if day<=asof:
+                    required_dates.setdefault((code,day.strftime("%Y%m")),set()).add(day.isoformat())
     codes=[]
     for rows in patterns.get("signals",{}).values():
         for row in rows:
             code=str(row.get("code",""))
-            if len(code)==4 and code.isdigit() and code not in codes:
+            if (len(code)==4 and code.isdigit() and code not in codes
+                    and markets.get(code)=={"TWSE"}):
                 codes.append(code)
     output_dir=Path(output_dir)
     output_dir.mkdir(parents=True,exist_ok=True)
@@ -70,10 +89,15 @@ def run(system_path, output_dir, max_codes=8, pause=4):
                         # The current month grows after each official close.
                         # A valid cached file can still be one trading day stale.
                         latest=max((str(c.get("date","")) for c in old["ohlcv"]),default="")
-                        if month!=asof.strftime("%Y%m") or latest>=asof.isoformat():
+                        needed=required_dates.get((code,month),set())
+                        present={c.get("date") for c in old["ohlcv"]}
+                        # A file fetched mid-month stays incomplete after month-end.
+                        # Use only already observed signal dates, never guessed sessions.
+                        if (needed<=present and
+                                (month!=asof.strftime("%Y%m") or latest>=asof.isoformat())):
                             print("Existing official OHLCV file:",path)
                             continue
-                        print("Refresh stale current month:",path,"latest",latest)
+                        print("Refresh incomplete official month:",path,"latest",latest)
                         refresh=True
                 except (OSError,ValueError,AttributeError):
                     pass
@@ -85,6 +109,11 @@ def run(system_path, output_dir, max_codes=8, pause=4):
                 result=fetch_month(code,month)
                 if refresh:
                     latest_new=max((str(c.get("date","")) for c in result.get("ohlcv",[])),default="")
+                    needed=required_dates.get((code,month),set())
+                    present_new={c.get("date") for c in result.get("ohlcv",[])}
+                    if not needed<=present_new:
+                        print("Official response still missing observed sessions; preserving:",path)
+                        continue
                     if latest_new<latest:
                         print("Official response older than cache; preserving:",path)
                         continue
