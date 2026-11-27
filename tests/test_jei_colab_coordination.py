@@ -114,13 +114,27 @@ class ColabCoordinationTests(unittest.TestCase):
         # the public coordination file contained no task for live Colab.
         workflow = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
         publisher = workflow.split("\n  publish_coordination:\n", 1)[1]
-        self.assertIn("needs.audit.result == 'success'", publisher)
+        self.assertIn("needs.audit.outputs.coordination_ready == 'true'", publisher)
         self.assertIn("github.event_name == 'schedule'", publisher)
         self.assertIn("github.event_name == 'push'", publisher)
         self.assertIn("github.ref == 'refs/heads/main'", publisher)
         self.assertIn("git diff --quiet -- remote/colab_coordination.json", publisher)
         self.assertIn("remote/colab_coordination.json", workflow.split("paths-ignore:", 1)[1])
         self.assertNotIn("github.event_name == 'pull_request'", publisher)
+
+    def test_completed_coordination_survives_failed_feed_audit(self):
+        workflow = Path('.github/workflows/jei-colab-audit.yml').read_text()
+        publisher = workflow.split('\n  publish_coordination:\n', 1)[1]
+        condition = publisher.split('    if: >-', 1)[1].split('    runs-on:', 1)[0]
+        self.assertIn('always()', condition)
+        self.assertIn('!cancelled()', condition)
+        self.assertIn("needs.audit.outputs.coordination_ready == 'true'", condition)
+        self.assertNotIn("needs.audit.result == 'success'", condition)
+        self.assertIn("github.ref == 'refs/heads/main'", condition)
+        self.assertIn("github.event_name == 'workflow_dispatch'", condition)
+        self.assertIn("steps.feed_audit.outcome == 'failure'", workflow)
+        self.assertIn('matches_current_snapshot', publisher)
+        self.assertNotIn('git push --force', publisher)
 
     def test_workflow_runs_fallback_then_writes_transition_not_hourly_commits(self):
         workflow = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
@@ -133,6 +147,7 @@ class ColabCoordinationTests(unittest.TestCase):
         self.assertIn("github.event_name == 'schedule'", workflow)
         self.assertNotIn("git push --force", workflow)
 
+
     def test_primary_compute_and_checkpoint_precede_optional_drive_access(self):
         workflow = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
         primary = workflow.split("\n  optional_colab_review:\n", 1)[0]
@@ -143,12 +158,16 @@ class ColabCoordinationTests(unittest.TestCase):
         self.assertNotIn("python -m unittest discover -s tests -p 'test_pick*.py'", primary)
         drive = primary.split("Read Colab heartbeat from authorized Drive", 1)[1].split("      - name:", 1)[0]
         self.assertIn("continue-on-error: true", drive)
+        self.assertIn("timeout-minutes: 2", drive)
 
     def test_optional_review_cannot_block_publication_and_is_main_only(self):
         workflow = Path(".github/workflows/jei-colab-audit.yml").read_text(encoding="utf-8")
         primary, rest = workflow.split("\n  optional_colab_review:\n", 1)
         optional, publisher = rest.split("\n  publish_coordination:\n", 1)
         self.assertIn("needs: audit", optional)
+        self.assertIn("always()", optional)
+        self.assertIn("!cancelled()", optional)
+        self.assertNotIn("needs.audit.result == 'success'", optional)
         self.assertIn("needs.audit.outputs.colab_review_authorized == 'true'", optional)
         self.assertIn("needs: audit", publisher)
         self.assertNotIn("optional_colab_review", publisher)

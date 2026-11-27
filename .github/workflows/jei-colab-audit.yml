@@ -58,6 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
+      coordination_ready: ${{ steps.coordination.outputs.ready }}
       colab_review_authorized: ${{ steps.colab_review.outputs.authorized }}
     steps:
       - uses: actions/checkout@v4
@@ -137,6 +138,7 @@ jobs:
       - name: Read Colab heartbeat from authorized Drive (if configured)
         # Optional Drive access must not block the GitHub Actions compute fallback.
         continue-on-error: true
+        timeout-minutes: 2
         env:
           JEI_DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.JEI_DRIVE_SERVICE_ACCOUNT_JSON }}
           JEI_COLAB_HEARTBEAT_FILE_ID: ${{ vars.JEI_COLAB_HEARTBEAT_FILE_ID }}
@@ -173,7 +175,10 @@ jobs:
             echo "No authenticated recent Colab review request; scheduled compute continues"
           fi
       - name: Produce public, credential-free Colab handoff state
-        run: python -m tools.jei_colab_coordination --watchdog audit-output/colab_watchdog.json --previous remote/colab_coordination.json --output audit-output/colab_coordination.json
+        id: coordination
+        run: |
+          python -m tools.jei_colab_coordination --watchdog audit-output/colab_watchdog.json --previous remote/colab_coordination.json --output audit-output/colab_coordination.json
+          echo 'ready=true' >> "$GITHUB_OUTPUT"
       - name: Verify artifact manifest
         run: python -m unittest discover -s tests -p 'test_jei_audit_manifest.py' -v
       - name: Index audit evidence
@@ -195,7 +200,9 @@ jobs:
     # An external request is a second opinion, never a dependency of
     # checkpoint persistence or task publication. Failures remain visible.
     needs: audit
-    if: needs.audit.result == 'success' && needs.audit.outputs.colab_review_authorized == 'true'
+    if: >-
+      always() && !cancelled() && github.ref == 'refs/heads/main' &&
+      needs.audit.outputs.colab_review_authorized == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -214,9 +221,10 @@ jobs:
     # PR/feature-branch publication and self-triggering commit loops.
     needs: audit
     if: >-
-      needs.audit.result == 'success' &&
-      (github.event_name == 'schedule' ||
-       ((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'))
+      always() && !cancelled() && needs.audit.outputs.coordination_ready == 'true' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'schedule' || github.event_name == 'push' ||
+       github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
