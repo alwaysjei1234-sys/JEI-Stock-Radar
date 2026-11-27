@@ -27,7 +27,7 @@ class BackfillCalendarTests(unittest.TestCase):
             base=Path(directory)
             source=base/"system.json"
             codes=["2328","2377","3005"]
-            source.write_text(json.dumps({"patterns":{"status":"ready","data_date":"2026-10-20",
+            source.write_text(json.dumps({"universe":[{"code":c,"market":"TWSE"} for c in codes],"patterns":{"status":"ready","data_date":"2026-10-20",
                 "signals":{"breakout":[{"code":code} for code in codes]}}}),encoding="utf-8")
             cache=base/"candles"
             cache.mkdir()
@@ -49,7 +49,7 @@ class BackfillCalendarTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             base=Path(directory)
             source=base/"system.json"
-            source.write_text(json.dumps({"patterns":{"status":"ready",
+            source.write_text(json.dumps({"universe":[{"code":"2328","market":"TWSE"}],"patterns":{"status":"ready",
                 "data_date":"2026-10-21","signals":{"a":[{"code":"2328"}]}}}),encoding="utf-8")
             cache=base/"candles"
             cache.mkdir()
