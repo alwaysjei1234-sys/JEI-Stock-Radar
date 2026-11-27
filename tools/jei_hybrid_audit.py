@@ -4,6 +4,7 @@ Actions and Colab retain their existing independent deterministic audit.
 The optional Ollama narrative is secondary; no AI output affects the audit.
 """
 import argparse
+from http.client import HTTPException
 import hashlib
 import sqlite3
 import json
@@ -84,7 +85,7 @@ def run_audit(raw, *, enabled=False, local_available=False, watchdog=None,
                 result["narrative"], result["narrative_source"] = (
                     job_store.summarize_once(key, observed, summarize))
             result["narrative_status"] = "local_model_returned_unverified_text"
-        except (OSError, ValueError, TypeError, KeyError, AttributeError, sqlite3.Error):
+        except (HTTPException, OSError, ValueError, TypeError, KeyError, AttributeError, sqlite3.Error):
             result["narrative_status"] = "local_failed_deterministic_audit_retained"
             result["routing_candidate"] = route(
                 data_class="public", enabled=enabled, local_available=False,

@@ -4,6 +4,7 @@ One-shot by default; suitable for an explicitly installed local scheduled task.
 Never uploads anything or accepts arbitrary instructions or URLs.
 """
 import argparse
+from http.client import HTTPException
 import json
 import os
 import sqlite3
@@ -95,7 +96,7 @@ def pull_once(*, output_dir, job_db, enable_local=False,
         return {"status": "receipt_saved", "task_id": expected["task_id"],
                 "receipt": str(path), "narrative_source": receipt["narrative_source"],
                 "uploaded": False}
-    except (OSError, ValueError, TypeError, KeyError, AttributeError, sqlite3.Error) as exc:
+    except (HTTPException, OSError, ValueError, TypeError, KeyError, AttributeError, sqlite3.Error) as exc:
         return {"status": "retry_later", "error_type": type(exc).__name__, "uploaded": False}
 
 def main():

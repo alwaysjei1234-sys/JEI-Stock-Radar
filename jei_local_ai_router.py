@@ -6,6 +6,7 @@ Local inference must be separately enabled and verified offline (including
 Ollama cloud features disabled). Never expose the Ollama port to the Internet.
 """
 import argparse
+from http.client import HTTPException
 import json
 import unittest
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
@@ -28,7 +29,7 @@ def local_ready():
             return isinstance(models, list) and any(
                 isinstance(m, dict) and m.get("name") == MODEL for m in models
             )
-    except (OSError, ValueError, KeyError, TypeError):
+    except (HTTPException, OSError, ValueError, KeyError, TypeError):
         return False
 
 def route(*, data_class="restricted", enabled=False, local_available=False,

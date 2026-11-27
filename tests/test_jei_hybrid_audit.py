@@ -1,4 +1,5 @@
 import json
+from http.client import IncompleteRead
 import unittest
 from unittest.mock import Mock
 from tools.jei_hybrid_audit import run_audit
@@ -37,6 +38,14 @@ class HybridAuditTests(unittest.TestCase):
             self.assertEqual(result["routing_candidate"], expected)
             self.assertEqual(result["narrative_status"], "local_failed_deterministic_audit_retained")
             self.assertEqual(result["observed"], run_audit(RAW)["observed"])
+
+    def test_chunked_disconnect_retains_deterministic_audit(self):
+        result = run_audit(RAW, enabled=True, local_available=True,
+                           summarize=Mock(side_effect=IncompleteRead(b"partial")))
+        self.assertEqual(result["observed"], run_audit(RAW)["observed"])
+        self.assertEqual(result["narrative_status"], "local_failed_deterministic_audit_retained")
+        self.assertEqual(result["routing_candidate"], "existing_cloud_pipeline")
+        self.assertNotIn("narrative", result)
 
     def test_colab_ack_requires_matching_id_and_freshness(self):
         ack = run_audit(RAW)["observed"]

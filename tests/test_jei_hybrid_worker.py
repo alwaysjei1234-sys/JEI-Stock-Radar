@@ -1,8 +1,9 @@
 import json
+from http.client import IncompleteRead, BadStatusLine
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from concurrent.futures import ThreadPoolExecutor
 from tools.jei_colab_coordination import task_from_picks
 from tools.jei_hybrid_worker import pull_once, atomic_receipt
@@ -83,6 +84,29 @@ class PullWorkerTests(unittest.TestCase):
         result=pull_once(**self.defaults,reader=reader,fetcher=lambda:raw(d))
         self.assertEqual(result["status"],"retry_later")
         self.assertFalse(self.defaults["output_dir"].exists())
+
+    def test_http_protocol_failures_retry_without_receipt(self):
+        d = data()
+        for error in (IncompleteRead(b"partial"), BadStatusLine("bad response")):
+            with self.subTest(error=type(error).__name__):
+                result = pull_once(**self.defaults, reader=lambda:signal(d),
+                                   fetcher=Mock(side_effect=error))
+                self.assertEqual(result["status"], "retry_later")
+                self.assertEqual(result["error_type"], type(error).__name__)
+                self.assertFalse(self.defaults["output_dir"].exists())
+
+    def test_model_probe_protocol_failure_uses_deterministic_fallback(self):
+        from jei_local_ai_router import local_ready
+        d = data()
+        with patch("jei_local_ai_router.build_opener") as opener:
+            opener.return_value.open.side_effect = BadStatusLine("bad response")
+            result = pull_once(**self.defaults, reader=lambda:signal(d),
+                               fetcher=lambda:raw(d), enable_local=True, probe=local_ready)
+        self.assertEqual(result["status"], "receipt_saved")
+        receipt = json.loads(Path(result["receipt"]).read_text())
+        self.assertEqual(receipt["observed"]["eligible_aggregates"], 1)
+        self.assertEqual(receipt["routing_candidate"], "existing_cloud_pipeline")
+        self.assertNotIn("narrative", receipt)
 
     def test_concurrent_fallback_does_not_replace_summary(self):
         task=signal(data())["task"]["task_id"]
