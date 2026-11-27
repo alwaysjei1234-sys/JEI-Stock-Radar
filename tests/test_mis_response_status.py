@@ -1,14 +1,14 @@
 """HTTP 200 alone cannot certify a successful MIS application response."""
+import io
 import json
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from scripts import update_system as u
 
 
 class MisResponseStatusTests(unittest.TestCase):
     def fetch(self, payload):
-        response = MagicMock()
-        response.__enter__.return_value.read.return_value = json.dumps(payload).encode()
+        response = io.BytesIO(json.dumps(payload).encode())
         with patch.object(u.urllib.request, 'urlopen', return_value=response):
             return u.fetch_mis_channels(['tse_2330.tw'])
 

@@ -6,9 +6,10 @@ Never infer today's index move from yesterday's close or bid/ask quotations.
 This early warning does not verify market breadth or individual holdings.
 """
 import argparse
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import os
+import time
 from pathlib import Path
 
 from scripts.market_sessions import closure_reason
@@ -85,21 +86,26 @@ def dispatch(now, receipt):
     if not index_window_open(now):
         receipt.update(status="no_alert", reason_code="market_closed_or_outside_window")
         return
+    started = time.monotonic()
     try:
         messages = fetch_mis_channels([INDEX_CHANNEL])
     except (OSError, ValueError, TimeoutError):
         receipt.update(status="unverified", reason_code="index_source_unavailable")
         return
-    report, reason = report_for_index(messages, now)
+    # A valid quote/window at request start can expire during the MIS read.
+    # Preserve deterministic replay time, but include elapsed network time.
+    checked_now = now + timedelta(seconds=max(0, time.monotonic() - started))
+    report, reason = report_for_index(messages, checked_now)
     if report is None:
         # A stale, malformed or wrong-identity quote cannot establish that
         # the market is below the warning threshold. Match transport failures
         # as unverified; only a verified small decline is a benign no-alert.
-        status = "no_alert" if reason == "decline_below_threshold" else "unverified"
+        status = ("no_alert" if reason in ("decline_below_threshold",
+                                            "market_closed_or_outside_window") else "unverified")
         receipt.update(status=status, reason_code=reason)
         return
     receipt["edition"] = report["edition"]
-    ok, why = can_send(report, report["edition"], now, "true", token, recipient)
+    ok, why = can_send(report, report["edition"], checked_now, "true", token, recipient)
     if not ok:
         receipt.update(status="blocked", reason_code="dispatch_gate")
         return

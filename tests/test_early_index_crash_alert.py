@@ -26,6 +26,30 @@ def quote(**changes):
 
 
 class EarlyIndexCrashTests(unittest.TestCase):
+    def test_network_delay_revalidates_quote_age_before_push(self):
+        self.check_delayed_response(NOW, "09:17:05", 8,
+                                    "unverified", "index_stale_or_invalid_time")
+
+    def test_network_delay_crossing_close_never_pushes(self):
+        at = datetime(2026,11,16,13,29,58,tzinfo=TZ)
+        self.check_delayed_response(at, "13:29:57", 3,
+                                    "no_alert", "market_closed_or_outside_window")
+
+    def check_delayed_response(self, at, quote_time, elapsed, status, reason):
+        env={"JEI_LINE_ENABLED":"true","JEI_LINE_ALERTS_ENABLED":"true",
+             "JEI_LINE_CHANNEL_ACCESS_TOKEN":SECRET,"JEI_LINE_USER_ID":RECIPIENT}
+        receipt={"status":"failed","delivery_confirmed":False}
+        def accepted(*args, **kwargs):
+            receipt.update(status="accepted")
+        with patch.dict(os.environ,env,clear=True), patch(
+                'time.monotonic', side_effect=[100,100+elapsed]), patch.object(
+                siren,'fetch_mis_channels',return_value=[quote(t=quote_time)]), patch.object(
+                siren,'push',side_effect=accepted) as push:
+            siren.dispatch(at,receipt)
+            push.assert_not_called()
+        self.assertEqual((receipt['status'],receipt['reason_code']), (status,reason))
+        self.assertFalse(receipt['delivery_confirmed'])
+
     def test_nested_index_conflict_never_pushes_a_crash_siren(self):
         env={"JEI_LINE_ENABLED":"true","JEI_LINE_ALERTS_ENABLED":"true",
              "JEI_LINE_CHANNEL_ACCESS_TOKEN":SECRET,"JEI_LINE_USER_ID":RECIPIENT}
