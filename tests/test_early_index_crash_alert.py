@@ -181,7 +181,8 @@ class EarlyIndexCrashTests(unittest.TestCase):
         env = {"JEI_LINE_ENABLED": "true", "JEI_LINE_ALERTS_ENABLED": "true",
                "JEI_LINE_CHANNEL_ACCESS_TOKEN": SECRET, "JEI_LINE_USER_ID": RECIPIENT}
 
-        def fake_push(report, edition, token, recipient, receipt):
+        def fake_push(report, edition, token, recipient, receipt, send_guard=None):
+            self.assertTrue(send_guard())
             self.assertEqual(edition, "intraday_index_crash_6pct")
             self.assertEqual(report["edition"], edition)
             receipt.update(status="accepted", stage="push", http_status=200, attempts=1)
@@ -254,7 +255,8 @@ class EarlyIndexCrashTests(unittest.TestCase):
         receipt={"status":"failed","delivery_confirmed":False}
         env={"JEI_LINE_ENABLED":"true","JEI_LINE_ALERTS_ENABLED":"true",
              "JEI_LINE_CHANNEL_ACCESS_TOKEN":SECRET,"JEI_LINE_USER_ID":RECIPIENT}
-        def fake_push(report,edition,token,recipient,receipt):
+        def fake_push(report,edition,token,recipient,receipt,send_guard=None):
+            self.assertTrue(send_guard())
             self.assertEqual(edition,"intraday_index_crash")
             receipt.update(status="accepted",stage="push",http_status=200,attempts=1)
             return "LINE accepted"
