@@ -10,7 +10,7 @@ import sys
 import urllib.error
 import urllib.request
 from http.client import HTTPException
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -170,6 +170,7 @@ def main():
     p.add_argument("--result-path",help="Write a credential-free API acceptance receipt")
     args=p.parse_args()
     now=datetime.now(TAIPEI)
+    started=time.monotonic()
     receipt={"date":now.date().isoformat(),"edition":args.edition,
              "checked_at":now.isoformat(timespec="seconds"),"status":"failed",
              "delivery_confirmed":False}
@@ -187,8 +188,16 @@ def main():
         if args.outbox:
             from scripts.line_outbox import load
             frozen=load(args.outbox,report["date"],edition)
-        result=push(report,edition,token,recipient,receipt=receipt,message_payload=frozen)
+        # Quota reads and retry backoff can cross midnight. Recheck the frozen
+        # report's date before each POST, including unavailable-data notices.
+        def still_current():
+            current=now+timedelta(seconds=max(0,time.monotonic()-started))
+            return can_send(report,edition,current,"true",token,recipient)[0]
+        result=push(report,edition,token,recipient,receipt=receipt,message_payload=frozen,
+                    send_guard=still_current)
         print(result)
+        if receipt.get("status")=="blocked" and receipt.get("reason_code")=="dispatch_expired":
+            return
         if receipt["status"] not in ("accepted","already_accepted"):
             raise SystemExit("未確認發送："+result)
     except (OSError, ValueError, RuntimeError) as error:

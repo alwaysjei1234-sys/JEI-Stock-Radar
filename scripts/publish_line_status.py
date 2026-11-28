@@ -70,6 +70,9 @@ def public_record(receipt, run_id, now):
     if type(attempts) is int and 1 <= attempts <= 3:
         result['attempts'] = attempts
     reason_code = receipt.get('reason_code')
+    if (edition in {'morning', 'close', 'morning_unavailable', 'close_unavailable'}
+            and status == 'blocked' and reason_code == 'dispatch_expired'):
+        result['reason_code'] = reason_code
     if (edition in {'intraday', 'intraday_risk', 'intraday_momentum'}
             and isinstance(reason_code, str)
             and INTRADAY_REASON_STATUSES.get(reason_code) == status):
