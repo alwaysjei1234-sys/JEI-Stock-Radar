@@ -49,6 +49,11 @@ def close_verified(feed, archive, date):
     market = feed.get("market") or {}
     if not isinstance(market, dict) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(date)):
         return False
+    # Explicit provenance must agree with the signal date. Older snapshots
+    # without these optional fields remain subject to all existing checks.
+    if ("source_data_date" in feed and feed["source_data_date"] != date
+            or "market_data_as_of" in market and market["market_data_as_of"] != date):
+        return False
     count = market.get("close_count")
     if (feed.get("data_date") != date or market.get("mode") != "今日收盤"
             or market.get("stale") is not False or isinstance(count, bool)
