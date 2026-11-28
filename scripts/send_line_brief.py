@@ -17,8 +17,6 @@ from zoneinfo import ZoneInfo
 ROOT=Path(__file__).resolve().parents[1]
 if __package__ in (None, ""):
     sys.path.insert(0,str(ROOT))
-from scripts.update_free_research import read_public_body
-
 QUOTA_TIMEOUT_SECONDS = 12
 QUOTA_MAX_BYTES = 64 * 1024
 TAIPEI=ZoneInfo("Asia/Taipei")
@@ -86,6 +84,7 @@ def payload(report,recipient):
 
 def api_get(path,token):
     """Retry only transient read failures; never bypass a missing quota check."""
+    from scripts.update_free_research import read_public_body
     req=urllib.request.Request(BASE+path)
     req.add_unredirected_header("Authorization","Bearer "+token)
     for attempt in range(1,4):
