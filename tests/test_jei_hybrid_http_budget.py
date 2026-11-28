@@ -140,4 +140,3 @@ class PublicWorkerHttpBudgetTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 worker.fetch_public_picks()
         self.assertTrue(response.closed)
-
