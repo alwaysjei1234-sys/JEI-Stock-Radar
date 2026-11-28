@@ -22,7 +22,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(ROOT))
 from scripts.paper_evidence import trade_metrics, full_drawdown
 from scripts.paper_provenance import capture as capture_provenance, copy_record as copy_provenance
-from scripts.market_sessions import next_expected_session
+from scripts.market_sessions import closure_reason, next_expected_session
 from scripts.corporate_actions import validated_actions
 
 CAPITAL = 1_000_000.0
@@ -101,6 +101,8 @@ def validate(feed, archive, day):
             raise ValueError("官方收盤時間未達 13:30；拒絕使用盤中價格模擬")
     except (TypeError, ValueError) as exc:
         raise ValueError("官方收盤時間或日期未驗證；拒絕模擬") from exc
+    if closure_reason(timestamp.date()) is not None:
+        raise ValueError("官方已知休市日；拒絕更新模擬")
     if (not isinstance(archive, dict) or archive.get("schema") != 1 or
         archive.get("kind") != "official_daily_close" or
         not isinstance(archive.get("days"), dict)):
