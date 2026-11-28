@@ -13,7 +13,7 @@ import statistics
 from scripts.pick_risk_metrics import max_close_drawdown, duplicate_signal_summary
 from scripts.public_holding_signals import is_safe_public_holdings
 from scripts.corporate_actions import validated_actions, actions_between
-from scripts.market_sessions import next_expected_session
+from scripts.market_sessions import closure_reason, next_expected_session
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -64,7 +64,8 @@ def close_verified(feed, archive, date):
         return False
     try:
         stamp = datetime.strptime(feed["updated_at"], "%Y-%m-%d %H:%M").replace(tzinfo=TZ)
-        if stamp.date().isoformat() != date or stamp.hour*60+stamp.minute < 810:
+        if (stamp.date().isoformat() != date or stamp.hour*60+stamp.minute < 810
+                or closure_reason(stamp.date()) is not None):
             return False
     except (KeyError, ValueError, TypeError):
         return False
