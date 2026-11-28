@@ -9,10 +9,11 @@ import json
 import os
 import sqlite3
 import tempfile
+import time
 from pathlib import Path
 from urllib.request import ProxyHandler, Request, build_opener
 
-from jei_local_ai_router import NoRedirect, local_ready
+from jei_local_ai_router import NoRedirect, local_ready, read_response
 from tools.jei_colab_heartbeat import read_github_coordination
 from tools.jei_colab_coordination import task_from_picks
 from tools.jei_hybrid_audit import MAX_BYTES, run_audit, local_summary
@@ -24,8 +25,9 @@ PICKS_URL = ("https://raw.githubusercontent.com/alwaysjei1234-sys/"
 def fetch_public_picks():
     request = Request(PICKS_URL, headers={"User-Agent": "JEI-Hybrid-Worker/1.0",
                                          "Cache-Control": "no-cache"})
+    deadline = time.monotonic() + 20
     with build_opener(ProxyHandler({}), NoRedirect()).open(request, timeout=20) as response:
-        return response.read(MAX_BYTES + 1)
+        return read_response(response, deadline, MAX_BYTES)
 
 def atomic_receipt(folder, result):
     folder = Path(folder)
