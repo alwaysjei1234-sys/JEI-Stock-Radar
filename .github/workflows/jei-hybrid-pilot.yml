@@ -1,0 +1,29 @@
+name: JEI Hybrid AI Pilot
+on:
+  pull_request:
+    paths:
+      - 'jei_local_ai_router.py'
+      - 'tools/jei_hybrid_*.py'
+      - 'tests/test_jei_hybrid_*.py'
+      - 'tools/jei_colab_*.py'
+      - '.github/workflows/jei-hybrid-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hybrid-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test routing policy
+        run: python jei_local_ai_router.py --self-test
+      - name: Test hybrid audit, switching cycles and local persistent leases
+        run: python -m unittest discover -s tests -p 'test_jei_hybrid_*.py' -v
+      - name: Verify existing Colab coordination contracts
+        run: python -m unittest discover -s tests -p 'test_jei_colab_coordination.py' -v
+      - name: Execute public deterministic audit (no secrets, no model)
+        run: python -m tools.jei_hybrid_audit
