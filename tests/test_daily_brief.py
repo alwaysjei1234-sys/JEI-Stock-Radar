@@ -231,10 +231,10 @@ class BriefTests(unittest.TestCase):
             self.assertEqual(saved["checks"]["close"]["status"],"pending")
 
     def test_quota_authorization_does_not_follow_redirect(self):
-        response = mock.MagicMock()
-        response.__enter__.return_value = response
-        response.status = 200
-        response.read.return_value = b'{"type":"limited","value":200}'
+        import io
+        class Response(io.BytesIO):
+            status = 200
+        response = Response(b'{"type":"limited","value":200}')
         with mock.patch.object(line.urllib.request, "urlopen", return_value=response) as open_url:
             line.api_get("/v2/bot/message/quota", "private-token")
         request = open_url.call_args.args[0]

@@ -258,12 +258,11 @@ class QuotaPreflightRecoveryTests(unittest.TestCase):
     @staticmethod
     def response(body):
         import json
-        from unittest.mock import MagicMock
-        result=MagicMock()
-        result.__enter__.return_value=result
-        result.status=200
-        result.read.return_value=json.dumps(body).encode()
-        return result
+        import io
+        class Response(io.BytesIO):
+            status=200
+            headers={}
+        return Response(json.dumps(body).encode())
 
     def test_transient_quota_reads_recover_before_one_push(self):
         from unittest.mock import patch, call
