@@ -70,7 +70,7 @@ class IntradayReceiptTests(unittest.TestCase):
 
     def test_acceptance_and_deduplication_never_claim_delivery(self):
         for status in ('accepted','already_accepted'):
-            def push(*args,receipt):
+            def push(*args,receipt,send_guard=None):
                 receipt.update(status=status,stage='push',attempts=1,http_status=200 if status=='accepted' else 409,request_id='fixture-request')
                 return 'accepted'
             with self.subTest(status=status):
@@ -78,7 +78,7 @@ class IntradayReceiptTests(unittest.TestCase):
                 self.assertEqual((r['status'],r['edition'],c,e),(status,'intraday_risk',1,None))
 
     def test_quota_blocked_is_recorded_and_not_reported_as_success(self):
-        def push(*args,receipt):
+        def push(*args,receipt,send_guard=None):
             receipt.update(stage='quota',status='quota_blocked')
             return 'quota blocked'
         r,c,e=self.run_main(push=push)
@@ -102,7 +102,7 @@ class IntradayReceiptTests(unittest.TestCase):
             doc = feed()
             doc["risk"]["reasons"] = reasons
 
-            def push(report, edition, *args, receipt):
+            def push(report, edition, *args, receipt, send_guard=None):
                 self.assertEqual(edition, "intraday_risk")
                 self.assertEqual(len(report["blocks"][0]["items"]), 1)
                 receipt.update(status="accepted", stage="push")

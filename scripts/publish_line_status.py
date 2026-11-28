@@ -24,6 +24,7 @@ INTRADAY_REASON_STATUSES = {
     'live_gate': 'blocked',
     'conditions_not_met': 'no_alert',
     'dispatch_gate': 'blocked',
+    'dispatch_expired': 'blocked',
 }
 
 # Index verification failures are diagnostic decisions, not benign no-alerts.
