@@ -1,0 +1,582 @@
+{
+  "round": "2026-11-28 10:00",
+  "timezone": "Asia/Taipei",
+  "started_at_utc": "2026-11-28T01:56:00Z",
+  "checked_at_utc": "2026-11-28T02:02:00Z",
+  "starting_main": "ff852a9a642ce629af2522436b83c08d6c17db35",
+  "merge_sha": "b2bb5bc2de5a459a0736e5bf290722c9a3ef1525",
+  "ending_main": "754803a5f08b899545cfe4f22c7322f01b923078",
+  "main_merged_repairs": 1,
+  "new_prs": [
+    {
+      "number": 243,
+      "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/pull/243",
+      "head": "8df4198607908e66373503193b240d79d42f5d05",
+      "merged": true
+    }
+  ],
+  "main_source_or_test_files_modified": [
+    "scripts/send_line_alert.py",
+    "scripts/publish_line_status.py",
+    "tests/test_send_line_alert_receipt.py",
+    "tests/test_intraday_alert_send_guard.py"
+  ],
+  "merged_deployed_this_round": true,
+  "diagnosis": {
+    "root_cause": "send_line_alert.dispatch did not pass existing push(send_guard). Quota reads/retry backoff could expire the original snapshot or cross close before POST.",
+    "red": {
+      "new_test_methods": 5,
+      "failing_assertions_or_subcases": 5,
+      "valid_case_passed": true,
+      "log_sha256": "b9bd91bb103fa7827a71b811a81d8e7cd9cade0228aa08f091d5fb0dc333867a"
+    },
+    "paths_explored": [
+      "Check eligibility only once around quota (cannot guard later retries; rejected)",
+      "Reuse per-POST callback with original time plus monotonic elapsed (selected, 5 end-to-end synthetic transport tests passed)"
+    ],
+    "correction": "Revalidate frozen feed before every POST; preserve prior attempt evidence and publicly allowlist blocked dispatch_expired. Message/retry key/thresholds unchanged.",
+    "regression_failure_and_resolution": "Initial broader suite failed three subcases because one existing fake push rejected new send_guard keyword. Read TypeError failures, updated all three receipt stubs to match production sender signature; final full suite green.",
+    "limits": "Does not cancel in-flight POSTs. Earlier timed-out requests may already be accepted; handset delivery unverified.",
+    "paper_separate_blocker": {
+      "run": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46084277456/job/140790077365",
+      "reproduced_error": "Historical strategy rules differ; cannot reconstruct b4472a2b0d544ea9accb98474b0bbd9e7fa26f27",
+      "temporary_and_original_ledger_unchanged": true,
+      "last_processed_day": "2026-11-26"
+    }
+  },
+  "tests": {
+    "new_guard": {
+      "passed": 5,
+      "seconds": 0.017
+    },
+    "line_regression": {
+      "passed": 129,
+      "seconds": 5.389,
+      "log_sha256": "321cc55ee187f47d363b15773d7d76044a96cecff189268705089ade4e88afcd"
+    },
+    "full": {
+      "passed": 1002,
+      "seconds": 16.317,
+      "log_sha256": "1a91bb2575c16a777b5a07006ae6005ac376c324e8a075268d3d8ea40af6744e"
+    },
+    "postmerge_CI": {
+      "passed": 1002,
+      "seconds": 12.932,
+      "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095850425/job/140826899053"
+    },
+    "real_LINE_requests_sent_by_tests": 0
+  },
+  "ci": {
+    "PR_checks": [
+      {
+        "name": "Vercel Preview Comments",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/runs/140826706810"
+      },
+      {
+        "name": "notify",
+        "status": "completed",
+        "result": "skipped",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095789390/job/140826703673"
+      },
+      {
+        "name": "generate",
+        "status": "completed",
+        "result": "skipped",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095789391/job/140826702949"
+      },
+      {
+        "name": "policy-tests",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095789391/job/140826702185"
+      },
+      {
+        "name": "node-tests",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095789374/job/140826702087"
+      },
+      {
+        "name": "regression",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095789390/job/140826702045"
+      },
+      {
+        "name": "feed-acceptance",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095789375/job/140826701941"
+      },
+      {
+        "name": "smoke",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095789389/job/140826701804"
+      },
+      {
+        "name": "node-tests",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095772913/job/140826648390"
+      },
+      {
+        "name": "smoke",
+        "status": "completed",
+        "result": "success",
+        "url": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095772886/job/140826648030"
+      }
+    ],
+    "all_executed_checks_passed_before_merge": true,
+    "notification_and_generate_jobs_skipped": true,
+    "market_update": {
+      "run": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095850431/job/140826899167",
+      "result": "success",
+      "pick_capture": false
+    }
+  },
+  "deployment": {
+    "merge_source_deployment": "CANCELED",
+    "merge_deployment_id": "dpl_EnpwMsha2TbkwV1gYBzVbqGkBmY1",
+    "cancellation_error_link": "https://vercel.com/docs/platform/projects#ignored-build-step",
+    "subsequent_data_deployment": "READY",
+    "production_sha": "754803a5f08b899545cfe4f22c7322f01b923078",
+    "deployment_id": "dpl_BxjzPezBL8C2SXm1SaThBKVXQDXT",
+    "url": "https://vercel.com/good-d475/jei-stock-radar/BxjzPezBL8C2SXm1SaThBKVXQDXT",
+    "eight_JSON_files_byte_equal": [
+      "system",
+      "brief",
+      "line_status",
+      "update",
+      "pick_validation",
+      "colab_coordination",
+      "free_research",
+      "working_capital"
+    ],
+    "manual_deployment_attempts": 0,
+    "merge_is_ancestor_of_production": true,
+    "postmerge_auto_changes_only": [
+      "remote/brief.json",
+      "remote/line_status.json",
+      "remote/news_intelligence.json",
+      "remote/system.json"
+    ]
+  },
+  "market": {
+    "official_day": "2026-11-27",
+    "close_count": 1953,
+    "valid_live_count": 0,
+    "price_validated_at_taipei": "2026-11-27 23:00",
+    "status_updated_at_taipei": "2026-11-28 10:00",
+    "price_validation_age_at_1002_minutes": 662,
+    "status_age_at_1002_minutes": 2,
+    "session": "weekend_closed",
+    "no_new_picks": true,
+    "five_minute_SLA_verified": false
+  },
+  "line": {
+    "intraday_checked_at": "2026-11-28T10:00:48+08:00",
+    "status": "blocked",
+    "reason": "live_gate",
+    "api_accepted": false,
+    "phone_delivery_verified": false,
+    "evidence": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095877735",
+    "index_checked_at": "2026-11-28T10:00:05+08:00",
+    "index_status": "no_alert",
+    "index_reason": "market_closed_or_outside_window",
+    "scheduled_eligible_accepted_and_delivery_kept_distinct": true
+  },
+  "android": {
+    "manifest_version": 42,
+    "version_name": "3.9.19 RISK GUARD",
+    "new_APK_build": false,
+    "phone_OTA_verified": false
+  },
+  "colab": {
+    "status": "STALE",
+    "evidence": "authenticated_google_drive_heartbeat",
+    "minutes_since_heartbeat_at_new_assessment": 1242.7,
+    "direct_Drive_search_results": 0,
+    "direct_Drive_visibility": "UNKNOWN",
+    "credentials_requested_again": false,
+    "restart_attempted": false,
+    "fallback": "github_actions",
+    "new_run": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/actions/runs/46095850413",
+    "event": "push",
+    "source_commit": "b2bb5bc2de5a459a0736e5bf290722c9a3ef1525",
+    "result": "success",
+    "artifact": 15243128581,
+    "artifact_zip_sha256": "103b440ef2a0055ec597ab49bb21c4deb636ac30d24193231f24e57420bf7ef6",
+    "manifest_verified_files": 8,
+    "manifest_missing": [],
+    "checkpoint": {
+      "completed_groups": 5,
+      "total_groups": 5,
+      "reused_groups": 5,
+      "independent_oos_verified": false
+    },
+    "new_schedule_punctuality_verified": false
+  },
+  "performance": {
+    "existing_pick_records": 570,
+    "latest_official_day": "2026-11-27",
+    "captured": false,
+    "real_main_workflow_recomputed": true,
+    "independent_OOS_verified": false,
+    "live_trading": false
+  },
+  "ollama": {
+    "changes_this_round": 0,
+    "pr": "https://github.com/alwaysjei1234-sys/JEI-Stock-Radar/pull/226",
+    "head": "1bd1b5c89115dac3af01e7b326070556dd8e2d71",
+    "draft": true,
+    "enabled": false,
+    "merged": false,
+    "router_tests": 7,
+    "hybrid_tests": 39,
+    "full_tests": 1036,
+    "seconds": 16.832,
+    "base_not_yet_reconciled_with_PR243": true,
+    "real_model_runs_this_round": 0,
+    "Qwen3_4B": "UNVERIFIED_THIS_ROUND",
+    "Qwen3_8B": "UNVERIFIED_THIS_ROUND",
+    "user_PC_accessed": false
+  },
+  "acceptance": {
+    "denominator": 31,
+    "rows": [
+      {
+        "id": 1,
+        "requirement": "手機瀏覽器逾時處理",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "先前輪次PR217合併82a4d89，RiskWorker背景HTTP本文從無上限readLine改12秒本文預算/16MiB上限。實際JVM+本機HTTP縮時回放2430ms未備援→375ms備援（CI371ms）；原首頁回放仍通過。正式APK簽章與實機未驗。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 2,
+        "requirement": "休市與假日判斷",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "正式與main週末休市、no_new_picks=true；非全年交易日完整驗收。",
+        "current_round_full_e2e_reverified": false,
+        "current_round_partial_evidence": true,
+        "evidence_scope": "current_round_partial_only"
+      },
+      {
+        "id": 3,
+        "requirement": "開盤後自動恢復更新",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺先前輪次開盤自動恢復證據",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 4,
+        "requirement": "盤中每5分鐘更新及新鮮度",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "1953官方收盤/live0；價格驗證11/27 23:00，10:02時約662分鐘；狀態10:00新不等於新報價，未達5分鐘盤中驗收。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "current_round_partial_only",
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 5,
+        "requirement": "TWSE／TPEx／MIS交叉驗證",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "先前輪次真實TWSE/TPEx研究API在新讀取器下成功，但不是即時MIS交叉驗收。",
+        "current_round_full_e2e_reverified": false,
+        "current_round_partial_evidence": false,
+        "evidence_scope": "historical_carried_forward_not_reverified"
+      },
+      {
+        "id": 6,
+        "requirement": "缺漏、過期、異常資料保護",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR243新增逾時/收盤POST前防護，5新測試、main1002通過；非全來源端到端驗收。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "current_round_partial_only",
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 7,
+        "requirement": "每日選股封存與歷史紀錄",
+        "weight": 1,
+        "status": "PASS",
+        "evidence_or_blocker": "合併後真實更新run46095850431，captured=false、既有570紀錄、官方日11/27；歷史PASS非本輪完整重驗。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "current_round_partial_only",
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 8,
+        "requirement": "模擬績效及交易日計算",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "先前輪次主線131訊號紙上帳本與正式站相符，截至11/20；無新交易日，沒有新增紙上成交或績效。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 9,
+        "requirement": "LINE盤前、盤中、盤後推播",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR243補盤中風險/強勢警報POST前時效；正式10:00:48 blocked/live_gate，無新API接受、裝置未驗。",
+        "current_round_full_e2e_reverified": false,
+        "current_round_partial_evidence": true,
+        "evidence_scope": "current_round_partial_only"
+      },
+      {
+        "id": 10,
+        "requirement": "GitHub、Vercel、Android串接",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "正式部署754803a5 READY，8份JSON相符；Android manifest42、OTA實機未驗。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "current_round_partial_only",
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 11,
+        "requirement": "持股成本、股數與分類",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "為保護隱私未讀私人部位；匯入持久化仍待裝置驗證",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 12,
+        "requirement": "持股權重與集中度",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "缺私人裝置集中度計算端到端驗收",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 13,
+        "requirement": "營收、毛利與獲利品質",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪正式free_research與working_capital均已與currentmain逐位元相符，上一輪同步落後解除；非完整財務來源/裝置驗收。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 14,
+        "requirement": "EPS與自由現金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "EPS與自由現金流完整來源驗收不足",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 15,
+        "requirement": "存貨、應收帳款異常",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "逾時→build整合證明保留原source_sha/observed_at、cached且source_revalidated=false/no alerts；真實12份財報更新成功，非全公司/實機完整驗收。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 16,
+        "requirement": "同業、產業與估值",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同業估值自動比較未驗收",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 17,
+        "requirement": "法人與大戶資金流",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "11/13 正式法人 1,865 筆與雙交易所官方資料逐筆相符，大戶持股集中度與跨日趨勢待驗。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 18,
+        "requirement": "強勢、震盪、轉弱情境",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "情境單元測試存在；實際資料端到端未驗",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 19,
+        "requirement": "模擬勝率、盈虧與回撤",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "最新紙上失敗run46084277456再次重現歷史規則差異b4472a2；暫存與正式帳本不變，仍11/26。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "current_round_partial_only",
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 20,
+        "requirement": "每日續抱／減碼理由",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "公開信號存在；八模組與私人端決策未實機驗證",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 21,
+        "requirement": "主流資金與族群輪動",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "同日雙市場法人欄位已對帳，跨日族群輪動與實機操作待驗。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 22,
+        "requirement": "突破、妖股與潛力妖股",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "未放寬選股；未有完整前瞻有效性證據",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 23,
+        "requirement": "3–5個獨立來源財經新聞",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "來源去重及逐條新聞核實未完成",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 24,
+        "requirement": "券商報告、目標價與催化劑自動取得",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "免費券商目標價及催化劑自動取得未驗收",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 25,
+        "requirement": "AI多模型會診及失敗復原",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "本輪Ollama0修改，既有Draft226 head1bd1b5c8路由7/試行39/full1036通過；停用未合併，無實際模型。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "current_round_partial_only",
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 26,
+        "requirement": "個股決策儀表板與手機首頁",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "先前輪次正式首頁資料system與main相符、11個官方K線代碼重驗一致；Android手機實機仍未驗。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 27,
+        "requirement": "大盤修正與逃命警示",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR243風險及動能警報於quota/重試後失效可被阻止，公開dispatch_expired保留；實際急跌手機送達仍未驗。",
+        "current_round_full_e2e_reverified": false,
+        "current_round_partial_evidence": true,
+        "evidence_scope": "current_round_partial_only"
+      },
+      {
+        "id": 28,
+        "requirement": "現金與當沖分開模擬",
+        "weight": 1,
+        "status": "FAIL",
+        "evidence_or_blocker": "現股及當沖分開實際驗證未完成",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      },
+      {
+        "id": 29,
+        "requirement": "3／7／15／30／60交易日績效及策略調整",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "合併後真實run重算570既有紀錄、無新捕捉；非獨立OOS/實盤。",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "current_round_partial_only",
+        "current_round_partial_evidence": true
+      },
+      {
+        "id": 30,
+        "requirement": "自動測試、部署與缺陷追蹤",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "PR243合併b2bb5bc2，主線CI1002/備援artifact8檔/正式754803a5八份JSON相符；持續每小時準時與自主修改仍未完整驗證。",
+        "current_round_full_e2e_reverified": false,
+        "current_round_partial_evidence": true,
+        "evidence_scope": "current_round_partial_only"
+      },
+      {
+        "id": 31,
+        "requirement": "推薦顯示八大指標、AI與全球市場影響",
+        "weight": 1,
+        "status": "BLOCKED",
+        "evidence_or_blocker": "八指標、多模型與全球影響整合未完整驗收",
+        "current_round_full_e2e_reverified": false,
+        "evidence_scope": "historical_carried_forward_not_reverified",
+        "current_round_partial_evidence": false
+      }
+    ],
+    "historical_carried_forward_status_counts": {
+      "PASS": 1,
+      "FAIL": 3,
+      "BLOCKED": 27
+    },
+    "new_full_pass": 0,
+    "status_changes_this_round": [],
+    "full_31_revalidation_completed": false,
+    "completion90_claimed": false,
+    "partial_blockers_resolved_this_round": [
+      "intraday risk/momentum post-quota/retry freshness gap",
+      "production brief/LINE JSON synchronization lag"
+    ],
+    "new_blockers_this_round": []
+  },
+  "next_blockers": [
+    "Paper recovery cannot cross historical rule versions without auditable version-aware handling; do not weaken guard",
+    "Real LINE handset receipt, Android signing/OTA and independent OOS evidence remain incomplete",
+    "Colab heartbeat remains authenticated stale; Actions push success is not proof of hourly schedule punctuality",
+    "Draft226 requires main integration and real model validation before any enablement"
+  ]
+}
