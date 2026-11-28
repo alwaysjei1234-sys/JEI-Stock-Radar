@@ -55,11 +55,13 @@ def atomic_receipt(folder, result):
 def pull_once(*, output_dir, job_db, enable_local=False,
               reader=read_github_coordination, fetcher=fetch_public_picks,
               probe=local_ready, summarize=local_summary):
+    stage = "coordination_read"
     try:
         signal = reader()
         task = signal.get("task") if isinstance(signal, dict) else None
         if not isinstance(task, dict):
             return {"status": "no_supported_task", "uploaded": False}
+        stage = "snapshot_fetch"
         raw = fetcher()
         if not isinstance(raw, bytes) or len(raw) > MAX_BYTES:
             raise ValueError("invalid input size")
@@ -67,6 +69,7 @@ def pull_once(*, output_dir, job_db, enable_local=False,
         expected = task_from_picks(picks, versioned=True)
         if not expected or task != expected:
             return {"status": "snapshot_mismatch_or_legacy_task", "uploaded": False}
+        stage = "local_probe"
         available = enable_local and probe()
         store = None
         if available:
@@ -74,10 +77,13 @@ def pull_once(*, output_dir, job_db, enable_local=False,
                 store = JobStore(job_db)
             except (OSError, sqlite3.Error):
                 available = False
+        stage = "audit"
         result = run_audit(raw, enabled=enable_local, local_available=available,
                            summarize=summarize, job_store=store)
         # Re-read both signals: same-day publication can race with inference.
+        stage = "coordination_recheck"
         after = reader()
+        stage = "snapshot_recheck"
         after_raw = fetcher()
         if not isinstance(after_raw, bytes) or len(after_raw) > MAX_BYTES:
             raise ValueError("invalid current snapshot size")
@@ -94,12 +100,15 @@ def pull_once(*, output_dir, job_db, enable_local=False,
                    "uploaded": False}
         if "narrative" in result:
             receipt["narrative"] = result["narrative"]
+        stage = "receipt_write"
         path = atomic_receipt(output_dir, receipt)
         return {"status": "receipt_saved", "task_id": expected["task_id"],
                 "receipt": str(path), "narrative_source": receipt["narrative_source"],
                 "uploaded": False}
     except (HTTPException, OSError, ValueError, TypeError, KeyError, AttributeError, sqlite3.Error) as exc:
-        return {"status": "retry_later", "error_type": type(exc).__name__, "uploaded": False}
+        # Fixed stage codes only: never expose exception text, URLs or paths.
+        return {"status": "retry_later", "error_type": type(exc).__name__,
+                "error_stage": stage, "uploaded": False}
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)

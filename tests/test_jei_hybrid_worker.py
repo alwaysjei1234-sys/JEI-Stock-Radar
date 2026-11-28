@@ -1,4 +1,5 @@
 import json
+from contextlib import nullcontext
 from http.client import IncompleteRead, BadStatusLine
 import tempfile
 import unittest
@@ -127,3 +128,37 @@ class PullWorkerTests(unittest.TestCase):
         self.assertEqual(receipt["routing_candidate"],"existing_cloud_pipeline")
         self.assertFalse(receipt["uploaded"])
         self.assertIsNone(receipt["narrative_source"])
+
+class FailureStageTests(unittest.TestCase):
+    """Report fixed boundary codes without copying network/path exception text."""
+    def check_failure(self, readers, fetchers, stage, *, receipt_error=False):
+        with tempfile.TemporaryDirectory() as td:
+            folder = Path(td) / 'receipts'
+            with patch('tools.jei_hybrid_worker.atomic_receipt',
+                       side_effect=OSError('SECRET_PATH')) if receipt_error else nullcontext():
+                result = pull_once(output_dir=folder, job_db=Path(td) / 'jobs.db',
+                    reader=Mock(side_effect=readers), fetcher=Mock(side_effect=fetchers))
+            self.assertEqual(result['status'], 'retry_later')
+            self.assertEqual(result.get('error_stage'), stage)
+            self.assertFalse(result['uploaded'])
+            self.assertNotIn('SECRET', json.dumps(result))
+            self.assertFalse(folder.exists())
+
+    def test_initial_read_boundary_is_distinguishable(self):
+        from urllib.error import URLError
+        d = data()
+        self.check_failure([URLError('SECRET_HOST')], [], 'coordination_read')
+        self.check_failure([signal(d)], [URLError('SECRET_HOST')], 'snapshot_fetch')
+
+    def test_recheck_read_boundary_is_distinguishable(self):
+        from urllib.error import URLError
+        d = data()
+        self.check_failure([signal(d), URLError('SECRET_HOST')], [raw(d)],
+                           'coordination_recheck')
+        self.check_failure([signal(d), signal(d)], [raw(d), URLError('SECRET_HOST')],
+                           'snapshot_recheck')
+
+    def test_receipt_storage_failure_does_not_leak_path(self):
+        d = data()
+        self.check_failure([signal(d), signal(d)], [raw(d), raw(d)],
+                           'receipt_write', receipt_error=True)
