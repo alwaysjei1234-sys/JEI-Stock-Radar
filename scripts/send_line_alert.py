@@ -9,7 +9,8 @@ import math
 import json
 import os
 import re
-from datetime import datetime, timezone
+import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from scripts.market_sessions import closure_reason
@@ -146,6 +147,7 @@ def build_alert(feed, now):
 
 def dispatch(now, receipt):
     """Keep every skip distinct from an API rejection or confirmed acceptance."""
+    started = time.monotonic()
     if os.getenv("JEI_LINE_ALERTS_ENABLED", "").lower() != "true":
         receipt.update(status="disabled", reason_code="alerts_disabled")
         print("JEI 盤中 LINE 額外警報尚未啟用；沒有發送")
@@ -180,8 +182,14 @@ def dispatch(now, receipt):
         return
     # Keep independent daily de-duplication buckets: a momentum watch must NOT
     # silence a later crash warning. At most one of each edition per day.
-    result = push(report, edition, token, recipient, receipt=receipt)
+    def still_eligible():
+        current = now + timedelta(seconds=max(0, time.monotonic() - started))
+        return trusted_live(feed, current)
+    result = push(report, edition, token, recipient, receipt=receipt,
+                  send_guard=still_eligible)
     print(result)
+    if receipt.get("status") == "blocked" and receipt.get("reason_code") == "dispatch_expired":
+        return
     if receipt.get("status") not in ("accepted", "already_accepted"):
         raise SystemExit("盤中 LINE 未確認接受；請查看結果紀錄")
 
