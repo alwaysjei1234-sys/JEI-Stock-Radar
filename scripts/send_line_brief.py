@@ -9,6 +9,7 @@ import uuid
 import sys
 import urllib.error
 import urllib.request
+from http.client import HTTPException
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -16,6 +17,8 @@ from zoneinfo import ZoneInfo
 ROOT=Path(__file__).resolve().parents[1]
 if __package__ in (None, ""):
     sys.path.insert(0,str(ROOT))
+QUOTA_TIMEOUT_SECONDS = 12
+QUOTA_MAX_BYTES = 64 * 1024
 TAIPEI=ZoneInfo("Asia/Taipei")
 BASE="https://api.line.me"
 PUSH=BASE+"/v2/bot/message/push"
@@ -81,21 +84,23 @@ def payload(report,recipient):
 
 def api_get(path,token):
     """Retry only transient read failures; never bypass a missing quota check."""
+    from scripts.update_free_research import read_public_body
     req=urllib.request.Request(BASE+path)
     req.add_unredirected_header("Authorization","Bearer "+token)
     for attempt in range(1,4):
         try:
-            with urllib.request.urlopen(req,timeout=12) as r:
+            deadline = time.monotonic() + QUOTA_TIMEOUT_SECONDS
+            with urllib.request.urlopen(req,timeout=QUOTA_TIMEOUT_SECONDS) as r:
                 if r.status!=200:
                     raise RuntimeError("LINE quota unexpected response")
-                document=json.loads(r.read().decode("utf-8"))
+                document=json.loads(read_public_body(r,deadline,max_bytes=QUOTA_MAX_BYTES).decode("utf-8"))
                 if not isinstance(document,dict):
                     raise ValueError("LINE quota invalid response")
                 return document
         except urllib.error.HTTPError as error:
             if not 500<=error.code<600 or attempt==3:
                 raise RuntimeError("LINE quota HTTP "+str(error.code)) from None
-        except OSError:
+        except (OSError, HTTPException):
             if attempt==3:
                 raise RuntimeError("LINE quota network retries exhausted") from None
         time.sleep(2**(attempt-1))
